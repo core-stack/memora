@@ -1,0 +1,20 @@
+model Group {
+  id      String   @id @default(uuid()) @db.Char(36)
+
+  slug    String
+  name    String
+
+  parentId String? @map("parent_id") @db.Char(36)
+  parent   Group?  @relation(name: "parent_children", fields: [parentId], references: [id], onDelete: Cascade)
+  children Group[] @relation(name: "parent_children")
+
+  sources Source[]
+
+  tenantId String @map("tenant_id") @db.Char(36)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@unique([tenantId, slug])
+}
