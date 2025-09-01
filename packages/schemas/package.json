@@ -1,0 +1,45 @@
+{
+  "name": "@memora/schemas",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/es/index.js",
+  "module": "./dist/es/index.js",
+  "types": "./dist/es/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/es/index.d.ts",
+        "default": "./dist/es/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.cts",
+        "default": "./dist/cjs/index.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "build": "bunchee",
+    "dev": "bunchee",
+    "lint": "eslint src/",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.24",
+    "typescript": "5.8.3",
+    "bunchee": "^6.4.0",
+    "eslint": "^9.26.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.1"
+}
