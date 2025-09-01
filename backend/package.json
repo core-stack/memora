@@ -31,6 +31,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
     "@prisma/client": "^6.15.0",
     "arangojs": "^10.1.2",
     "dotenv": "^17.2.1",

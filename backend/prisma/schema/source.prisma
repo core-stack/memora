@@ -37,8 +37,11 @@ model Source {
 
   memoryId String? @map("memory_id")
 
-  groupId String @map("group_id") @db.Char(36)
-  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  knowledgeBaseId String @map("knowledge_base_id") @db.Char(36)
+  knowledgeBase   KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
+
+  knowledgeBaseFolderId String @map("knowledge_base_folder_id") @db.Char(36)
+  knowledgeBaseFolder   KnowledgeBaseFolder @relation(fields: [knowledgeBaseFolderId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

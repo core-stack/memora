@@ -1,8 +1,8 @@
-import {
-  CopyObjectCommand, GetObjectCommand, PutObjectCommand, S3Client
-} from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Injectable } from '@nestjs/common';
+import { CopyObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Injectable } from "@nestjs/common";
+
+import { env } from "src/env";
 
 type S3Options = {
   endpoint?: string;
@@ -16,7 +16,7 @@ type S3Options = {
 type GetPreSignedUploadUrlOptions = {
   publicAccess?: boolean;
   bucket?: string
-  temp?: boolean 
+  temp?: boolean
 }
 
 @Injectable()
@@ -24,15 +24,16 @@ export class StorageService {
   private readonly s3: S3Client;
   private readonly defaultBucket?: string;
   private readonly publicBaseURL?: string;
-  constructor(opts: S3Options) {
-    this.defaultBucket = opts.defaultBucket;
-    this.publicBaseURL = opts.publicBaseURL;
+  constructor() {
+    if (!env.S3_ACCESS_KEY_ID || !env.S3_SECRET_ACCESS_KEY) return;
+    this.defaultBucket = env.S3_DEFAULT_BUCKET;
+    this.publicBaseURL = env.S3_PUBLIC_BASE_URL;
     this.s3 = new S3Client({
-      region: opts.region ?? "auto",
-      endpoint: opts.endpoint,
+      region: env.S3_REGION ?? "auto",
+      endpoint: env.S3_ENDPOINT,
       credentials: {
-        accessKeyId: opts.accessKeyId,
-        secretAccessKey: opts.secretAccessKey,
+        accessKeyId: env.S3_ACCESS_KEY_ID,
+        secretAccessKey: env.S3_SECRET_ACCESS_KEY,
       },
     });
   }
@@ -52,7 +53,7 @@ export class StorageService {
       key = `temp/${key}`
     }
     console.log(bucket, key);
-    
+
     const command = new PutObjectCommand({
       Bucket: bucket,
       Key: key,

@@ -1,0 +1,44 @@
+model KnowledgeBase {
+  id      String   @id @default(uuid()) @db.Char(36)
+
+  slug        String
+  title       String
+  description String?
+
+  folders KnowledgeBaseFolder[]
+  sources Source[]
+
+  tenantId String @map("tenant_id") @db.Char(36)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@unique([tenantId, slug])
+}
+
+model KnowledgeBaseFolder {
+  id      String   @id @default(uuid()) @db.Char(36)
+
+  knowledgeBaseId String @map("knowledge_base_id") @db.Char(36)
+  knowledgeBase   KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
+
+  slug        String @db.VarChar(50)
+  name        String @db.VarChar(100)
+  description String?
+  root        Boolean?
+
+  sources Source[]
+
+  parentId String? @map("parent_id") @db.Char(36)
+  parent   KnowledgeBaseFolder?  @relation(name: "parent_children", fields: [parentId], references: [id], onDelete: Cascade)
+  children KnowledgeBaseFolder[] @relation(name: "parent_children")
+
+  tenantId String @map("tenant_id") @db.Char(36)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@unique([tenantId, knowledgeBaseId, slug])
+}

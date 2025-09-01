@@ -3,10 +3,11 @@ import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { IngestModule } from "./modules/ingest/ingest.module";
+import { KnowledgeModule } from "./modules/knowledge/knowledge.module";
 import { SearchModule } from "./modules/search/search.module";
 import { DatabaseModule } from "./services/database/database.module";
-import { PrismaModule } from './services/prisma/prisma.module';
-import { StorageModule } from './services/storage/storage.module';
+import { PrismaModule } from "./services/prisma/prisma.module";
+import { StorageModule } from "./services/storage/storage.module";
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { StorageModule } from './services/storage/storage.module';
     SearchModule,
     DatabaseModule,
     PrismaModule,
-    StorageModule
+    StorageModule,
+    KnowledgeModule
   ],
   controllers: [AppController],
   providers: [AppService],
