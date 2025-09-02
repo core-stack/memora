@@ -1,6 +1,5 @@
-import { basic } from "@memora/schemas";
-import { Injectable } from "@nestjs/common";
 
-basic.parse({});
+import { Injectable } from '@nestjs/common';
+
 @Injectable()
 export class SearchService {}

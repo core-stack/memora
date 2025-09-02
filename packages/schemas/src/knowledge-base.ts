@@ -1,14 +1,13 @@
-import z from "zod";
-import { id } from "zod/locales";
+import z from 'zod';
 
 export const knowledgeBaseSchema = z.object({
-  id: z.uuid(),
+  id: z.string().uuid(),
 
   slug: z.string(),
   title: z.string(),
   description: z.string(),
 
-  tenantId: z.uuid(),
+  tenantId: z.string().uuid(),
 
   createdAt: z.date(),
   updatedAt: z.date(),

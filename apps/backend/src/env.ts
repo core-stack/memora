@@ -1,4 +1,4 @@
-import z from "zod";
+import z from 'zod';
 
 const envSchema = z.object({
   ARANGODB_URL: z.string().url(),
@@ -19,6 +19,13 @@ const envSchema = z.object({
   APP_PORT: z.coerce.number().default(3000),
 
   TENANT_ID: z.string().uuid(),
+
+  AWS_ACCESS_KEY_ID: z.string().optional(),
+  AWS_SECRET_ACCESS_KEY: z.string().optional(),
+  AWS_REGION: z.string().optional(),
+  AWS_ENDPOINT: z.string().optional(),
+  AWS_PUBLIC_BUCKET_BASE_URL: z.string().optional(),
+  AWS_BUCKET: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

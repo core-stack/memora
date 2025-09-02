@@ -1,12 +1,16 @@
-import { CreateKnowledgeBase, UpdateKnowledgeBase } from "@memora/schemas";
-import { Injectable } from "@nestjs/common";
+import { env } from 'src/env';
+import { PrismaService } from 'src/services/prisma/prisma.service';
 
-import { env } from "src/env";
-import { PrismaService } from "src/services/prisma/prisma.service";
+import { CreateKnowledgeBase, UpdateKnowledgeBase } from '@memora/schemas';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class KnowledgeService {
   constructor(private prisma: PrismaService) {}
+
+  async getAll() {
+    return this.prisma.knowledgeBase.findMany({ where: { tenantId: env.TENANT_ID } });
+  }
 
   async create(kb: CreateKnowledgeBase) {
     return this.prisma.knowledgeBase.create({
@@ -27,5 +31,9 @@ export class KnowledgeService {
         description: kb.description
       }
     });
+  }
+
+  async delete(id: string) {
+    return this.prisma.knowledgeBase.delete({ where: { id } });
   }
 }
