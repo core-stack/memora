@@ -1,29 +1,30 @@
-import { useForm } from 'react-hook-form';
-
-import { FormInput } from '@/components/form/input';
-import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
-import { DialogType } from '@/dialogs';
-import { useDialog } from '@/hooks/use-dialog';
+import { Button } from "@/components/ui/button";
+import { DialogType } from "@/dialogs";
+import { useDialog } from "@/hooks/use-dialog";
+import { FilePlus2, FolderPlus, ListCollapse, Search } from "lucide-react";
 
 export const TreeSource = () => {
-  const form = useForm();
   const { openDialog } = useDialog();
 
   return (
-    <div className='space-y-2 divide-y divide-solid'>
-      <div className='p-2'>
-        <Button className='w-full' variant="outline" onClick={() => openDialog({ type: DialogType.CREATE_SOURCE })}> 
-          Add source
+    <div className='divide-y divide-solid'>
+
+      <div className='p-1 flex gap-2 justify-evenly'>
+        <Button size="icon" variant="ghost" onClick={() => openDialog({ type: DialogType.CREATE_SOURCE })}>
+          <Search />
+        </Button>
+        <Button size="icon" variant="ghost" onClick={() => openDialog({ type: DialogType.CREATE_SOURCE })}>
+          <FilePlus2 />
+        </Button>
+        <Button size="icon" variant="ghost" onClick={() => openDialog({ type: DialogType.CREATE_SOURCE })}>
+          <FolderPlus />
+        </Button>
+        <Button size="icon" variant="ghost" onClick={() => openDialog({ type: DialogType.CREATE_SOURCE })}>
+          <ListCollapse />
         </Button>
       </div>
-      <Form {...form}>
-        <form className='p-2'>
-          <FormInput name="search" placeholder="Search" />
-        </form>
-      </Form>
       <div>
-        
+
       </div>
     </div>
   )

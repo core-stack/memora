@@ -1,12 +1,11 @@
-import { Blocks, Cpu, Database, ListTree } from 'lucide-react';
-import { useState } from 'react';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { Blocks, Cpu, Database, ListTree } from "lucide-react";
+import { useState } from "react";
 
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-
-import { AddSource } from './components/add-source';
-import { ExternalSource } from './components/external-source';
-import { TabButton } from './components/sidebar';
-import { TreeSource } from './components/tree-source';
+import { AddSource } from "./components/add-source";
+import { ExternalSource } from "./components/external-source";
+import { TabButton } from "./components/sidebar";
+import { TreeSource } from "./components/tree-source";
 
 enum Tabs {
   TREE_SOURCE,
@@ -17,6 +16,7 @@ enum Tabs {
 
 export default function Source() {
   const [tab, setTab] = useState<Tabs>(Tabs.TREE_SOURCE);
+
   const toogleTab = (tab: Tabs) => {
     setTab(current => {
       if (current === tab) {
@@ -25,6 +25,7 @@ export default function Source() {
       return tab
     })
   }
+
   return (
     <div className='h-full flex'>
       <div className='h-full w-min bg-background border-r flex flex-col'>
