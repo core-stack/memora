@@ -2,7 +2,10 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DialogType } from "@/dialogs";
+import { useDialog } from "@/hooks/use-dialog";
 import { BookOpen, Brain, Clock, Database, FileText, Globe, PlusCircle, Star, Users } from "lucide-react";
+import { useNavigate } from "react-router";
 
 interface KnowledgeBase {
   id: string
@@ -85,19 +88,21 @@ const typeLabels = {
 }
 
 export default function Home() {
+  const navigate = useNavigate();
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star key={i} className={`w-4 h-4 ${i < rating ? "fill-accent text-accent" : "text-muted-foreground"}`} />
     ))
   }
-
-  const handleSelect = (id: string) => {
-
+  const { openDialog } = useDialog();
+  const handleSelect = (slug: string) => {
+    navigate(`/${slug}`);
   }
+
+  const handleCreateKnowledge = () => openDialog({ type: DialogType.CREATE_KNOWLEDGE });
+
   return (
     <div className="min-h-screen bg-background">
-
-
       <div className="container mx-auto px-6 py-8">
         {/* Title Section */}
         <div className="text-center mb-8">
@@ -167,7 +172,7 @@ export default function Home() {
           })}
           <Card
             className="group cursor-pointer transition-all duration-200 hover:shadow-lg"
-            onClick={() => handleSelect("")}
+            onClick={handleCreateKnowledge}
           >
             <CardContent className="text-lg flex items-center gap-2 flex-col justify-center h-full">
               <PlusCircle className="w-20 h-20 opacity-25 group-hover:text-primary group-hover:opacity-100 transition" />
