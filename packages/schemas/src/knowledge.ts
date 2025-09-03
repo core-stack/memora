@@ -18,18 +18,18 @@ export const knowledgeSchema = z.object({
 export type Knowledge = z.infer<typeof knowledgeSchema>;
 
 export const knowledgeFilterSchema = filterSchema.extend({
-  filter: knowledgeSchema.pick({
-    id: true,
-    slug: true,
-    title: true,
-  }),
+  filter: z.object({
+    id: z.string().uuid().optional(),
+    slug: z.string().optional(),
+    title: z.string().optional(),
+  }).strict().optional(),
   order: z.object({
     slug: orderSchema,
     title: orderSchema,
     createdAt: orderSchema,
     updatedAt: orderSchema,
-  }),
-});
+  }).strict().optional(),
+}).strict();
 
 export type KnowledgeFilter = z.infer<typeof knowledgeFilterSchema>;
 

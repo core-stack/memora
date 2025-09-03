@@ -8,7 +8,7 @@ export const knowledgeFolderSchema = z.object({
   slug: z.string(),
   name: z.string(),
   description: z.string(),
-  root: z.boolean().default(false),
+  root: z.boolean(),
 
   parentId: z.string().uuid().optional(),
   knowledgeBaseId: z.string().uuid(),
@@ -21,19 +21,19 @@ export const knowledgeFolderSchema = z.object({
 export type KnowledgeFolder = z.infer<typeof knowledgeFolderSchema>;
 
 export const knowledgeFolderFilterSchema = filterSchema.extend({
-  filter: knowledgeFolderSchema.pick({
-    id: true,
-    slug: true,
-    name: true,
-    parentId: true,
-  }),
+  filter: z.object({
+    id: z.string().uuid().optional(),
+    slug: z.string().optional(),
+    name: z.string().optional(),
+    parentId: z.string().uuid().optional(),
+  }).strict().optional(),
   order: z.object({
     slug: orderSchema,
     name: orderSchema,
     createdAt: orderSchema,
     updatedAt: orderSchema,
-  }),
-});
+  }).strict().optional(),
+}).strict();
 export type KnowledgeFolderFilter = z.infer<typeof knowledgeFolderFilterSchema>;
 
 export const createKnowledgeFolderSchema = knowledgeFolderSchema.omit({

@@ -30,7 +30,7 @@ export const baseSourceSchema = z.object({
 
   createdAt: z.date(),
   updatedAt: z.date().optional(),
-})
+});
 
 export const withSourceRefinements = <T extends z.ZodType>(schema: T): z.ZodEffects<T> =>
   schema.superRefine((data: any, ctx) => {
@@ -59,20 +59,20 @@ export const sourceSchema = withSourceRefinements(baseSourceSchema);
 export type Source = z.infer<typeof sourceSchema>;
 
 export const sourceFilterSchema = filterSchema.extend({
-  filter: baseSourceSchema.pick({
-    id: true,
-    name: true,
-    originalName: true,
-    indexStatus: true,
-  }),
+  filter: z.object({
+    id: z.string().uuid().optional(),
+    name: z.string().optional(),
+    originalName: z.string().optional(),
+    indexStatus: indexStatusSchema.optional(),
+  }).strict().optional(),
   order: z.object({
     name: orderSchema,
     originalName: orderSchema,
     indexStatus: orderSchema,
     createdAt: orderSchema,
     updatedAt: orderSchema,
-  }),
-})
+  }).strict().optional(),
+}).strict()
 
 export const createSourceSchema = withSourceRefinements(baseSourceSchema.omit({
   id: true,
