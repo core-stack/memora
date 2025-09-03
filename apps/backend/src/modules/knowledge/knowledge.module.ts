@@ -1,20 +1,20 @@
-import { Module } from "@nestjs/common";
-import { RouterModule } from "@nestjs/core";
+import { RepositoryModule } from '@/services/repository/repository.module';
+import { Module } from '@nestjs/common';
+import { RouterModule } from '@nestjs/core';
 
-import { PrismaModule } from "src/services/prisma/prisma.module";
-
-import { FolderModule } from "./folder/folder.module";
-import { KnowledgeController } from "./knowledge.controller";
-import { KnowledgeService } from "./knowledge.service";
-import { SourceModule } from "./source/source.module";
+import { FolderModule } from './folder/folder.module';
+import { KnowledgeController } from './knowledge.controller';
+import { KnowledgeRepository } from './knowledge.repository';
+import { KnowledgeService } from './knowledge.service';
+import { SourceModule } from './source/source.module';
 
 @Module({
   controllers: [KnowledgeController],
-  providers: [KnowledgeService],
+  providers: [KnowledgeService, KnowledgeRepository],
   imports: [
-    PrismaModule,
     FolderModule,
     SourceModule,
+    RepositoryModule,
     RouterModule.register([
       {
         path: ":knowledge_slug",

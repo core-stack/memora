@@ -1,6 +1,8 @@
 import z from 'zod';
 
 const envSchema = z.object({
+  DATABASE_URL: z.string(),
+
   ARANGODB_URL: z.string().url(),
   ARANGODB_DATABASE: z.string(),
   ARANGODB_USERNAME: z.string(),

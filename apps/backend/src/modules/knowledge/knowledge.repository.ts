@@ -1,21 +1,16 @@
-
-
-
 import { knowledge } from '@/db/schema';
-import { GenericService } from '@/generics';
+import { GenericRepository } from '@/generics';
 import { CreateKnowledge, Knowledge, UpdateKnowledge } from '@memora/schemas';
 import { Injectable } from '@nestjs/common';
 
-import { KnowledgeRepository } from './knowledge.repository';
-
 @Injectable()
-export class KnowledgeService extends GenericService<
+export class KnowledgeRepository extends GenericRepository<
   typeof knowledge,
   Knowledge,
   CreateKnowledge,
   UpdateKnowledge
 > {
-  constructor(protected readonly repository: KnowledgeRepository) {
-    super(repository);
+  constructor() {
+    super(knowledge);
   }
 }
