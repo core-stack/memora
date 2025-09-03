@@ -1,7 +1,9 @@
 import { knowledge } from '@/db/schema';
 import { GenericRepository } from '@/generics';
-import { CreateKnowledge, Knowledge, UpdateKnowledge } from '@memora/schemas';
+import { Knowledge, UpdateKnowledge } from '@memora/schemas';
 import { Injectable } from '@nestjs/common';
+
+import { CreateKnowledge } from './knowledge.schema';
 
 @Injectable()
 export class KnowledgeRepository extends GenericRepository<

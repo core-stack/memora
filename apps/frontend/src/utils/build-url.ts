@@ -3,12 +3,10 @@ export function buildUrl(
   params?: Record<string, any>,
   query?: Record<string, any>
 ) {
-  const match = path.match(/\]\s+(.+)$/);
-  let finalPath = match ? match[1] : "";
 
   if (params) {
     for (const [key, value] of Object.entries(params)) {
-      finalPath = finalPath.replace(
+      path = path.replace(
         new RegExp(`[:\\[]${key}\\]?`, "g"),
         encodeURIComponent(String(value))
       );
@@ -19,9 +17,10 @@ export function buildUrl(
     Object.entries(query ?? {}).filter(([, value]) => value !== undefined && value !== null)
   )
 
-  const search = query
+  const search = query && Object.keys(query).length
     ? `?${new URLSearchParams(query).toString()}`
     : "";
-
-  return `${finalPath}${search}`;
+  console.log(query);
+  
+  return `${path}${search}`;
 }

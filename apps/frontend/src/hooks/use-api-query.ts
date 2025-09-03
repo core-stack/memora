@@ -44,8 +44,7 @@ export function useApiQuery<
       }
       const query = opts?.query ?? (opts.passQuery ? searchParams : {});   
      
-      const url = buildUrl(path, params, query);
-
+      const url = buildUrl(path, params, query);      
       const res = await fetch(url, {
         method,
         headers: {
