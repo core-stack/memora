@@ -1,10 +1,15 @@
+import { Toaster } from './components/ui/toaster';
 import { DialogProvider } from './context/dialog';
+import { QueryClientContext } from './context/query-client';
 import { dialogs } from './dialogs';
 
-export const RootProviders = ({ children }: {children: React.ReactNode}) => {
+export const RootProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <DialogProvider dialogs={dialogs}>
-      {children}
-    </DialogProvider>
+    <QueryClientContext>
+      <DialogProvider dialogs={dialogs}>
+        {children}
+      </DialogProvider>
+      <Toaster />
+    </QueryClientContext>
   )
 }
