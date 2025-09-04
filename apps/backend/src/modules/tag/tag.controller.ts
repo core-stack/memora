@@ -1,25 +1,12 @@
-import { tag } from "@/db/schema";
 import { GenericController } from "@/generics";
-import {
-  CreateTag, createTagSchema, Tag, tagFilterSchema, UpdateTag, updateTagSchema
-} from "@memora/schemas";
+import { createTagSchema, Tag, tagFilterSchema, updateTagSchema } from "@memora/schemas";
 import { Controller } from "@nestjs/common";
 
 import { TagService } from "./tag.service";
 
 @Controller('tag')
-export class TagController extends GenericController<
-  typeof tag,
-  Tag,
-  CreateTag,
-  UpdateTag
->  {
+export class TagController extends GenericController<Tag> {
   constructor(tagService: TagService) {
-    super(
-      tagService,
-      tagFilterSchema,
-      createTagSchema,
-      updateTagSchema
-    );
+    super(tagService, tagFilterSchema, createTagSchema, updateTagSchema);
   }
 }

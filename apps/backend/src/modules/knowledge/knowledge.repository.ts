@@ -1,17 +1,10 @@
-import { knowledge } from '@/db/schema';
-import { GenericRepository } from '@/generics';
-import { Knowledge, UpdateKnowledge } from '@memora/schemas';
-import { Injectable } from '@nestjs/common';
-
-import { CreateKnowledge } from './knowledge.schema';
+import { knowledge } from "@/db/schema";
+import { DrizzleGenericRepository } from "@/generics";
+import { Knowledge } from "@memora/schemas";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
-export class KnowledgeRepository extends GenericRepository<
-  typeof knowledge,
-  Knowledge,
-  CreateKnowledge,
-  UpdateKnowledge
-> {
+export class KnowledgeRepository extends DrizzleGenericRepository<typeof knowledge, Knowledge> {
   constructor() {
     super(knowledge);
   }

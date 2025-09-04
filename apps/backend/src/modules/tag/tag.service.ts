@@ -1,24 +1,19 @@
-import { tag } from "@/db/schema";
 import { env } from "@/env";
 import { GenericService } from "@/generics";
-import { Tag, UpdateTag } from "@memora/schemas";
+import { BeforeCreate } from "@/generics/hooks.decorators";
+import { Tag } from "@memora/schemas";
 import { Injectable } from "@nestjs/common";
 
 import { TagRepository } from "./tag.repository";
-import { CreateTag } from "./tag.schema";
 
 @Injectable()
-export class TagService extends GenericService<
-  typeof tag,
-  Tag,
-  CreateTag,
-  UpdateTag
-> {
+export class TagService extends GenericService<Tag> {
   constructor(repository: TagRepository) {
     super(repository);
   }
 
-  protected override beforeCreate = (data: CreateTag): CreateTag => {
+  @BeforeCreate<Tag>()
+  protected beforeCreate(data: Partial<Tag>): Partial<Tag> {
     data.tenantId = env.TENANT_ID;
     return data;
   }

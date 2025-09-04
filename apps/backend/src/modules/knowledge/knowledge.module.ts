@@ -1,12 +1,12 @@
-import { RepositoryModule } from '@/services/repository/repository.module';
-import { Module } from '@nestjs/common';
-import { RouterModule } from '@nestjs/core';
+import { RepositoryModule } from "@/infra/repository/repository.module";
+import { Module } from "@nestjs/common";
+import { RouterModule } from "@nestjs/core";
 
-import { FolderModule } from './folder/folder.module';
-import { KnowledgeController } from './knowledge.controller';
-import { KnowledgeRepository } from './knowledge.repository';
-import { KnowledgeService } from './knowledge.service';
-import { SourceModule } from './source/source.module';
+import { FolderModule } from "./folder/folder.module";
+import { KnowledgeController } from "./knowledge.controller";
+import { KnowledgeRepository } from "./knowledge.repository";
+import { KnowledgeService } from "./knowledge.service";
+import { SourceModule } from "./source/source.module";
 
 @Module({
   controllers: [KnowledgeController],

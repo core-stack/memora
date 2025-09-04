@@ -1,3 +1,3 @@
 export * from "./controller";
-export * from "./repository";
+export * from "./drizzle.repository";
 export * from "./service";

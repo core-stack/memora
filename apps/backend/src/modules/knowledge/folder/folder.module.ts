@@ -1,4 +1,4 @@
-import { RepositoryModule } from "@/services/repository/repository.module";
+import { RepositoryModule } from "@/infra/repository/repository.module";
 import { Module } from "@nestjs/common";
 
 import { FolderController } from "./folder.controller";

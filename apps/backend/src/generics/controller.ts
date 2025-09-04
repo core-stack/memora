@@ -1,25 +1,16 @@
-import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
-import z from 'zod';
+import { idSchema } from "@memora/schemas";
+import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
+import z from "zod";
 
-import { idSchema } from '@memora/schemas';
-import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
-
-import { GenericService } from './service';
+import { IService } from "./service.interface";
 
 import type { FilterOptions } from './filter-options';
-
-export abstract class GenericController<
-  TTable extends PgTable,
-  TEntity,
-  CreateDto extends PgUpdateSetSource<TTable> = PgUpdateSetSource<TTable>,
-  UpdateDto extends PgUpdateSetSource<TTable> = PgUpdateSetSource<TTable>,
-> {
-
+export abstract class GenericController<TEntity> {
   constructor(
-    protected service: GenericService<TTable, TEntity, CreateDto, UpdateDto>,
+    protected service: IService<TEntity>,
     protected filterSchema: z.ZodType<FilterOptions<TEntity>>,
-    protected createDtoSchema: z.ZodType<CreateDto>,
-    protected updateDtoSchema: z.ZodType<UpdateDto>,
+    protected createDtoSchema: z.ZodType<Partial<TEntity>>,
+    protected updateDtoSchema: z.ZodType<Partial<TEntity>>,
   ) {}
 
   @Get(":id")
@@ -32,17 +23,17 @@ export abstract class GenericController<
   async findMany(@Query() allParams: Record<string, unknown>): Promise<TEntity[]> {
     const opts = this.paramsToFilter(allParams);
     this.validateSchema(this.filterSchema, opts);
-    return this.service.findMany(opts);
+    return this.service.find(opts);
   }
 
   @Post()
-  async create(@Body() data: CreateDto): Promise<TEntity> {
+  async create(@Body() data: Partial<TEntity>): Promise<TEntity> {
     this.validateSchema(this.createDtoSchema, data);
     return this.service.create(data);
   }
 
   @Put(":id")
-  async update(@Param("id") id: string, @Body() data: UpdateDto): Promise<TEntity> {
+  async update(@Param("id") id: string, @Body() data: Partial<TEntity>): Promise<void> {
     this.validateSchema(idSchema, id);
     this.validateSchema(this.updateDtoSchema, data);
     return this.service.update(id, data);

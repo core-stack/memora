@@ -1,13 +1,8 @@
 import { folder } from "@/db/schema";
-import { GenericRepository } from "@/generics";
-import { CreateKnowledgeFolder, KnowledgeFolder, UpdateKnowledgeFolder } from "@memora/schemas";
+import { DrizzleGenericRepository } from "@/generics";
+import { KnowledgeFolder } from "@memora/schemas";
 
-export class FolderRepository extends GenericRepository<
-  typeof folder,
-  KnowledgeFolder,
-  CreateKnowledgeFolder,
-  UpdateKnowledgeFolder
-> {
+export class FolderRepository extends DrizzleGenericRepository<typeof folder, KnowledgeFolder> {
   constructor() {
     super(folder);
   }

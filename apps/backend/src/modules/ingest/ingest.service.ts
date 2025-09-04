@@ -1,10 +1,10 @@
+import { VectorDatabaseService } from "@/infra/database/vector-database.service";
+import { StorageService } from "@/infra/storage/storage.service";
 import { Embeddings } from "@langchain/core/embeddings";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import streamToBlob from "stream-to-blob";
 
 import { Chunk } from "src/@types";
-import { VectorDatabaseService } from "src/services/database/vector-database.service";
-import { StorageService } from "src/services/storage/storage.service";
 import { Batcher } from "src/utils/batcher.service";
 
 import { PDFProcessor } from "./processors/pdf.processor";
