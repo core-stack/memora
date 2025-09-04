@@ -1,9 +1,10 @@
-import { useParams, useSearchParams } from 'react-router';
-
 import { ApiError } from '@/utils/api-error';
 import { buildUrl } from '@/utils/build-url';
 import { catchError } from '@/utils/catch-error';
 import { useQuery } from '@tanstack/react-query';
+
+import { useParams } from './use-params';
+import { useSearchParams } from './use-search-params';
 
 import type { QueryKey, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 type ApiQueryOpts<TBody> = {
