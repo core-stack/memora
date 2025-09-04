@@ -1,7 +1,5 @@
 import { relations, sql } from 'drizzle-orm';
-import {
-  boolean, index, pgTable, text, timestamp, uniqueIndex, varchar
-} from 'drizzle-orm/pg-core';
+import { boolean, index, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 import { knowledge } from './knowledge';
 
@@ -10,9 +8,7 @@ export const folder = pgTable("folder", {
 
   knowledgeId: varchar("knowledge_id", { length: 36 }).notNull(),
 
-  slug: varchar("slug", { length: 50 }).notNull(),
   name: varchar("name", { length: 100 }).notNull(),
-  description: text("description"),
   root: boolean("root"),
 
   parentId: varchar("parent_id", { length: 36 }),
@@ -22,8 +18,7 @@ export const folder = pgTable("folder", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => [
-  index("folder_tenant_idx").on(table.tenantId),
-  uniqueIndex("folder_tenant_knowledge_slug_unique").on(table.tenantId, table.knowledgeId, table.slug)
+  index("folder_tenant_idx").on(table.tenantId)
 ]);
 
 

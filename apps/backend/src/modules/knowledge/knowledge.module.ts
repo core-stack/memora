@@ -17,7 +17,7 @@ import { SourceModule } from './source/source.module';
     RepositoryModule,
     RouterModule.register([
       {
-        path: ":knowledge_slug",
+        path: "knowledge/:knowledge_slug",
         children: [
           { path: "", module: FolderModule },
           { path: "", module: SourceModule }

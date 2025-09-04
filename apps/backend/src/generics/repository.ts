@@ -1,11 +1,12 @@
-import * as schema from "@/db/schema";
-import { DrizzleAsyncProvider } from "@/services/repository/drizzle.provider";
-import { Inject } from "@nestjs/common";
-import { and, asc, desc, eq, getTableColumns, SQL } from "drizzle-orm";
-import { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { PgTable, PgUpdateSetSource } from "drizzle-orm/pg-core";
+import { and, asc, desc, eq, getTableColumns, SQL } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
-import { FilterOptions } from "./filter-options";
+import * as schema from '@/db/schema';
+import { DrizzleAsyncProvider } from '@/services/repository/drizzle.provider';
+import { Inject } from '@nestjs/common';
+
+import { FilterOptions } from './filter-options';
 
 export abstract class GenericRepository<
   TTable extends PgTable,
@@ -35,7 +36,7 @@ export abstract class GenericRepository<
     return created as TEntity;
   }
 
-  async findMany(opts: FilterOptions): Promise<TEntity[]> {
+  async find(opts: FilterOptions<TEntity>): Promise<TEntity[]> {
     if (!opts.limit) opts.limit = 1000;
     if (!opts.offset) opts.offset = 0;
 

@@ -15,4 +15,8 @@ export class KnowledgeRepository extends GenericRepository<
   constructor() {
     super(knowledge);
   }
+
+  async findBySlug(slug: string) {
+    return this.find({ filter: { slug } });
+  }
 }

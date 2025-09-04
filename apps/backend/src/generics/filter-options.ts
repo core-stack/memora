@@ -1,6 +1,6 @@
-export type FilterOptions = {
+export type FilterOptions<TEntity> = {
   limit?: number;
   offset?: number;
-  filter?: Record<string, unknown>;
-  order?: Record<string, 'ASC' | 'DESC'>;
+  filter?: Partial<TEntity>;
+  order?: Partial<Record<keyof TEntity, 'ASC' | 'DESC'>>;
 }

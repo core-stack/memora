@@ -1,7 +1,7 @@
-import { PgTable, PgUpdateSetSource } from "drizzle-orm/pg-core";
+import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
-import { FilterOptions } from "./filter-options";
-import { GenericRepository } from "./repository";
+import { FilterOptions } from './filter-options';
+import { GenericRepository } from './repository';
 
 export abstract class GenericService<
   TTable extends PgTable,
@@ -17,13 +17,12 @@ export abstract class GenericService<
   protected beforeUpdate?: (id: string, data: UpdateDto) => UpdateDto;
   protected afterUpdate?: (id: string, data: TEntity) => TEntity;
 
-
   constructor(
     protected readonly repository: GenericRepository<TTable, TEntity, CreateDto, UpdateDto>
   ) { }
 
-  async findMany(opts: FilterOptions): Promise<TEntity[]> {
-    return this.repository.findMany(opts);
+  async findMany(opts: FilterOptions<TEntity>): Promise<TEntity[]> {
+    return this.repository.find(opts);
   }
 
   async findByID(id: string): Promise<TEntity | null> {

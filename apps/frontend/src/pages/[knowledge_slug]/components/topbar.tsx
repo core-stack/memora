@@ -44,6 +44,7 @@ type NavLinkProps = {
 const NavLink = ({ children, href }: NavLinkProps) => {
   const { pathname } = useLocation();
   const active = pathname.startsWith(href);
+
   return (
     <Link 
       className={cn(

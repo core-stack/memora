@@ -1,9 +1,10 @@
-import { idSchema } from "@memora/schemas";
-import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
-import { PgTable, PgUpdateSetSource } from "drizzle-orm/pg-core";
-import z from "zod";
+import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
+import z from 'zod';
 
-import { GenericService } from "./service";
+import { idSchema } from '@memora/schemas';
+import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+
+import { GenericService } from './service';
 
 import type { FilterOptions } from './filter-options';
 
@@ -16,7 +17,7 @@ export abstract class GenericController<
 
   constructor(
     protected service: GenericService<TTable, TEntity, CreateDto, UpdateDto>,
-    protected filterSchema: z.ZodType<FilterOptions>,
+    protected filterSchema: z.ZodType<FilterOptions<TEntity>>,
     protected createDtoSchema: z.ZodType<CreateDto>,
     protected updateDtoSchema: z.ZodType<UpdateDto>,
   ) {}
@@ -61,8 +62,8 @@ export abstract class GenericController<
     throw new BadRequestException(result.error.format());
   }
 
-  protected paramsToFilter(allParams: Record<string, unknown>): FilterOptions {
-    const result: FilterOptions = {};
+  protected paramsToFilter(allParams: Record<string, unknown>): FilterOptions<TEntity> {
+    const result: FilterOptions<TEntity> = {};
     for (const [key, value] of Object.entries(allParams)) {
       if (key === "limit" || key === "offset") {
         result[key] = parseInt(value as string);
@@ -82,7 +83,7 @@ export abstract class GenericController<
           return {...acc, [f.substring(1)]: "DESC"};
         }
         return {...acc, [f]: "ASC"}
-      }, {});
+      }, {} as Record<keyof TEntity, 'ASC' | 'DESC'>);
     }
     return result;
   }
