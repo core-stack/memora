@@ -1,4 +1,4 @@
-import { GenericController } from "@/generics";
+import { CrudController } from "@/generics";
 import {
   createKnowledgeFolderSchema, KnowledgeFolder, knowledgeFolderFilterSchema, updateKnowledgeFolderSchema
 } from "@memora/schemas";
@@ -7,7 +7,7 @@ import { Controller } from "@nestjs/common";
 import { FolderService } from "./folder.service";
 
 @Controller('folder')
-export class FolderController extends GenericController<KnowledgeFolder> {
+export class FolderController extends CrudController<KnowledgeFolder> {
   constructor(folderService: FolderService) {
     super(
       folderService,

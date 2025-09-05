@@ -1,11 +1,11 @@
-import { GenericController } from "@/generics";
+import { CrudController } from "@/generics";
 import { createSourceSchema, Source, sourceFilterSchema, updateSourceSchema } from "@memora/schemas";
 import { Controller } from "@nestjs/common";
 
 import { SourceService } from "./source.service";
 
 @Controller('source')
-export class SourceController extends GenericController<Source> {
+export class SourceController extends CrudController<Source> {
   constructor(sourceService: SourceService) {
     super(
       sourceService,

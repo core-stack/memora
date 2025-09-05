@@ -1,17 +1,17 @@
 import * as schema from "@/db/schema";
-import { DrizzleAsyncProvider } from "@/infra/repository/drizzle.provider";
+import { DrizzleAsyncProvider } from "@/infra/database/drizzle.provider";
 import { Inject } from "@nestjs/common";
 import { and, asc, desc, eq, getTableColumns, SQL } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { PgTable, PgUpdateSetSource } from "drizzle-orm/pg-core";
 
-import { FilterOptions } from "./filter-options";
-import { IRepository } from "./repository.interface";
+import { FilterOptions } from "../../generics/filter-options";
+import { ICrudRepository } from "../../generics/repository.interface";
 
 export abstract class DrizzleGenericRepository<
   TTable extends PgTable,
   TEntity extends PgUpdateSetSource<TTable> = PgUpdateSetSource<TTable>,
-> implements IRepository<TEntity> {
+> implements ICrudRepository<TEntity> {
   @Inject(DrizzleAsyncProvider) protected readonly db: NodePgDatabase<typeof schema>;
   private readonly columns: TTable["_"]["columns"];
 

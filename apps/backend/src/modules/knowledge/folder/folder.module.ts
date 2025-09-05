@@ -1,4 +1,4 @@
-import { RepositoryModule } from "@/infra/repository/repository.module";
+import { DatabaseModule } from "@/infra/database/database.module";
 import { Module } from "@nestjs/common";
 
 import { FolderController } from "./folder.controller";
@@ -8,6 +8,6 @@ import { FolderService } from "./folder.service";
 @Module({
   controllers: [FolderController],
   providers: [FolderService, FolderRepository],
-  imports: [RepositoryModule]
+  imports: [DatabaseModule]
 })
 export class FolderModule {}

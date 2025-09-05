@@ -1,4 +1,4 @@
-import { RepositoryModule } from "@/infra/repository/repository.module";
+import { DatabaseModule } from "@/infra/database/database.module";
 import { Module } from "@nestjs/common";
 import { RouterModule } from "@nestjs/core";
 
@@ -14,7 +14,7 @@ import { SourceModule } from "./source/source.module";
   imports: [
     FolderModule,
     SourceModule,
-    RepositoryModule,
+    DatabaseModule,
     RouterModule.register([
       {
         path: "knowledge/:knowledge_slug",

@@ -2,12 +2,12 @@ import { idSchema } from "@memora/schemas";
 import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 import z from "zod";
 
-import { IService } from "./service.interface";
+import { ICrudService } from "./service.interface";
 
 import type { FilterOptions } from './filter-options';
-export abstract class GenericController<TEntity> {
+export abstract class CrudController<TEntity> {
   constructor(
-    protected service: IService<TEntity>,
+    protected service: ICrudService<TEntity>,
     protected filterSchema: z.ZodType<FilterOptions<TEntity>>,
     protected createDtoSchema: z.ZodType<Partial<TEntity>>,
     protected updateDtoSchema: z.ZodType<Partial<TEntity>>,

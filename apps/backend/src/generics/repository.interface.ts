@@ -1,6 +1,6 @@
 import { FilterOptions } from "./filter-options";
 
-export interface IRepository<TEntity> {
+export interface ICrudRepository<TEntity> {
 
   find(opts: FilterOptions<TEntity>): Promise<TEntity[]>;
   findByID(id: string): Promise<TEntity | null>;

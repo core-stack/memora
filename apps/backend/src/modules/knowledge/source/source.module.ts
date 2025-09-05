@@ -1,4 +1,4 @@
-import { RepositoryModule } from "@/infra/repository/repository.module";
+import { DatabaseModule } from "@/infra/database/database.module";
 import { Module } from "@nestjs/common";
 
 import { SourceController } from "./source.controller";
@@ -8,6 +8,6 @@ import { SourceService } from "./source.service";
 @Module({
   controllers: [SourceController],
   providers: [SourceService, SourceRepository],
-  imports: [RepositoryModule]
+  imports: [DatabaseModule]
 })
 export class SourceModule {}

@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
 
-import { VectorDatabaseService } from "./vector-database.service";
+import { DrizzleAsyncProvider, drizzleProvider } from "./drizzle.provider";
 
 @Module({
-  providers: [VectorDatabaseService],
-  exports: [VectorDatabaseService],
+  providers: [...drizzleProvider],
+  exports: [DrizzleAsyncProvider],
 })
 export class DatabaseModule {}

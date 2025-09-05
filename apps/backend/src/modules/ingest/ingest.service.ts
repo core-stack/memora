@@ -1,5 +1,5 @@
-import { VectorDatabaseService } from "@/infra/database/vector-database.service";
 import { StorageService } from "@/infra/storage/storage.service";
+import { VectorDatabaseService } from "@/infra/vector/vector-database.service";
 import { Embeddings } from "@langchain/core/embeddings";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import streamToBlob from "stream-to-blob";
