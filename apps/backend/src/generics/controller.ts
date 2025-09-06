@@ -1,8 +1,9 @@
-import { idSchema } from "@memora/schemas";
-import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
-import z from "zod";
+import z from 'zod';
 
-import { ICrudService } from "./service.interface";
+import { idSchema } from '@memora/schemas';
+import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+
+import { ICrudService } from './service.interface';
 
 import type { FilterOptions } from './filter-options';
 export abstract class CrudController<TEntity> {
@@ -62,8 +63,8 @@ export abstract class CrudController<TEntity> {
       }
       const filterMatch = key.match(/^filter\[(.+)\]$/);
       if (filterMatch) {
-        result.filter = result.filter || {};
-        result.filter[filterMatch[1]] = value;
+        result.filter = result.filter || {};        
+        result.filter[filterMatch[1]] = value === "null" ? null : value;
       }
     }
 

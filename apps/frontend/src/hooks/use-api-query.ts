@@ -7,9 +7,9 @@ import { useParams } from './use-params';
 import { useSearchParams } from './use-search-params';
 
 import type { QueryKey, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
-type ApiQueryOpts<TBody> = {
+type ApiQueryOpts<TBody, TQuery> = {
   params?: Record<string, any>;
-  query?: Record<string, any>;
+  query?: TQuery;
   body?: TBody;
   enabled?: boolean;
   passParams?: boolean;
@@ -19,13 +19,14 @@ type ApiQueryOpts<TBody> = {
 
 export function useApiQuery<
   TQueryFnData = unknown,
+  Tquery = Record<string, any>,
   TError extends Error = ApiError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TBody = undefined
 >(
   path: string,
-  opts: ApiQueryOpts<TBody> & 
+  opts: ApiQueryOpts<TBody, Tquery> & 
     Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryKey" | "queryFn"> = { passParams: true, passQuery: true }
 ): UseQueryResult<TData, TError> {
   const method = opts.method ?? "GET";

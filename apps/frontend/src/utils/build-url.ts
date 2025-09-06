@@ -14,13 +14,29 @@ export function buildUrl(
   }
 
   query = Object.fromEntries(
-    Object.entries(query ?? {}).filter(([, value]) => value !== undefined && value !== null)
+    Object.entries(query ?? {}).filter(([, value]) => value !== undefined)
   )
-
-  const search = query && Object.keys(query).length
-    ? `?${new URLSearchParams(query).toString()}`
-    : "";
-  console.log(query);
   
+  let search = "";
+  if (query) {
+    search = `?`;
+    search += Object.entries(query).map(([key, value]) => {
+      if (key === "limit" || key === "offset") {
+        return `${key}=${value}`;
+      }
+      if (key === "order") {
+        return "sort=" + Object.entries(value)
+          .map(([orderKey, orderValue]) => `${orderValue === "ASC" ? "" : "-"}${orderKey}`)
+          .join(",");
+      }
+      if (key === "filter") {
+        return Object.entries(value)
+          .map(([filterKey, filterValue]) => filterValue !== undefined ? `filter[${filterKey}]=${filterValue}`: undefined)
+          .filter(Boolean)
+          .join("&");
+      }
+      return `${key}=${value}`;
+    }).join("&");
+  }  
   return `${path}${search}`;
 }

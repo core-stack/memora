@@ -3,9 +3,7 @@ CREATE TYPE "public"."source_type" AS ENUM('TEXT', 'FILE', 'LINK', 'VIDEO', 'AUD
 CREATE TABLE "folder" (
 	"id" varchar(36) PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"knowledge_id" varchar(36) NOT NULL,
-	"slug" varchar(50) NOT NULL,
 	"name" varchar(100) NOT NULL,
-	"description" text,
 	"root" boolean,
 	"parent_id" varchar(36),
 	"tenant_id" varchar(36) NOT NULL,
@@ -59,7 +57,6 @@ CREATE TABLE "knowledge" (
 );
 --> statement-breakpoint
 CREATE INDEX "folder_tenant_idx" ON "folder" USING btree ("tenant_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "folder_tenant_knowledge_slug_unique" ON "folder" USING btree ("tenant_id","knowledge_id","slug");--> statement-breakpoint
 CREATE INDEX "sources_memory_idx" ON "sources" USING btree ("memory_id");--> statement-breakpoint
 CREATE INDEX "sources_index_status_idx" ON "sources" USING btree ("index_status");--> statement-breakpoint
 CREATE UNIQUE INDEX "source_tag_unique" ON "source_tags" USING btree ("source_id","tag_id");--> statement-breakpoint

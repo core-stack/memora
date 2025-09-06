@@ -1,12 +1,13 @@
-import { CrudController } from "@/generics";
+import { CrudController } from '@/generics';
 import {
-  createKnowledgeFolderSchema, KnowledgeFolder, knowledgeFolderFilterSchema, updateKnowledgeFolderSchema
-} from "@memora/schemas";
-import { Controller } from "@nestjs/common";
+  createKnowledgeFolderSchema, KnowledgeFolder, knowledgeFolderFilterSchema,
+  updateKnowledgeFolderSchema
+} from '@memora/schemas';
+import { Controller } from '@nestjs/common';
 
-import { FolderService } from "./folder.service";
+import { FolderService } from './folder.service';
 
-@Controller('folder')
+@Controller('knowledge/:knowledgeSlug/folder')
 export class FolderController extends CrudController<KnowledgeFolder> {
   constructor(folderService: FolderService) {
     super(

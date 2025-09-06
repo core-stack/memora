@@ -7,7 +7,7 @@ import { Input } from '../ui/input';
 type Props = React.ComponentProps<"input"> & {
   label?: string
   name: string
-  fieldClassName?: string
+  fieldclassname?: string
 }
 export const FormInput = (props: Props) => {
   const form = useFormContext();
@@ -18,7 +18,7 @@ export const FormInput = (props: Props) => {
       control={form.control}
       name={props.name}
       render={({ field }) => (
-        <FormItem className={props.fieldClassName}>
+        <FormItem className={props.fieldclassname}>
           {props.label && (<FormLabel>{props.label}</FormLabel>)}
           <FormControl>
             <Input disabled={isLoading} {...field} {...props} />

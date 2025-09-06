@@ -1,18 +1,22 @@
-import * as schema from "@/db/schema";
-import { DrizzleAsyncProvider } from "@/infra/database/drizzle.provider";
-import { Inject } from "@nestjs/common";
-import { and, asc, desc, eq, getTableColumns, SQL } from "drizzle-orm";
-import { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { PgTable, PgUpdateSetSource } from "drizzle-orm/pg-core";
+import { and, asc, desc, eq, getTableColumns, isNull, SQL } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
-import { FilterOptions } from "../../generics/filter-options";
-import { ICrudRepository } from "../../generics/repository.interface";
+import * as schema from '@/db/schema';
+import { DrizzleAsyncProvider } from '@/infra/database/drizzle.provider';
+import { Inject } from '@nestjs/common';
+
+import { FilterOptions } from '../../generics/filter-options';
+import { ICrudRepository } from '../../generics/repository.interface';
+import { ContextProvider } from '../context/context.provider';
 
 export abstract class DrizzleGenericRepository<
   TTable extends PgTable,
   TEntity extends PgUpdateSetSource<TTable> = PgUpdateSetSource<TTable>,
 > implements ICrudRepository<TEntity> {
   @Inject(DrizzleAsyncProvider) protected readonly db: NodePgDatabase<typeof schema>;
+  @Inject() protected readonly ctxProvider: ContextProvider;
+  
   private readonly columns: TTable["_"]["columns"];
 
   constructor(protected readonly table: TTable) {
@@ -31,7 +35,12 @@ export abstract class DrizzleGenericRepository<
     let filters: SQL[] = []
     if (opts.filter) {
       filters = Object.entries(opts.filter)
-        .map(([key, value]) => eq(this.columns[key as keyof typeof this.columns], value));
+        .map(([key, value]) => {
+          if (value === null) {
+            return isNull(this.columns[key as keyof typeof this.columns]);
+          }
+          return eq(this.columns[key as keyof typeof this.columns], value)
+        });
     }
 
     let order: SQL[] = []

@@ -7,7 +7,7 @@ import { Textarea } from '../ui/textarea';
 type Props = React.ComponentProps<"textarea"> & {
   label?: string
   name: string
-  fieldClassName?: string
+  fieldclassname?: string
 }
 
 export const FormTextarea = (props: Props) => {
@@ -19,7 +19,7 @@ export const FormTextarea = (props: Props) => {
       control={form.control}
       name={props.name}
       render={({ field }) => (
-        <FormItem className={props.fieldClassName}>
+        <FormItem className={props.fieldclassname}>
           {props.label && (<FormLabel>{props.label}</FormLabel>)}
           <FormControl>
             <Textarea disabled={isLoading} {...field} {...props} />

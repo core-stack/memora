@@ -1,6 +1,6 @@
-import z from "zod";
+import z from 'zod';
 
-import { filterSchema, orderSchema } from "./shared";
+import { filterSchema, orderSchema } from './shared';
 
 export const sourceTypeSchema = z.enum(["TEXT", "IMAGE", "VIDEO", "AUDIO", "FILE", "LINK"]);
 export const indexStatusSchema = z.enum(["PENDING", "INDEXED", "INDEXING", "ERROR"]);
@@ -25,8 +25,8 @@ export const baseSourceSchema = z.object({
   indexError: z.string().optional(),
 
   memoryId: z.string().uuid().optional(),
-  knowledgeBaseId: z.string().uuid(),
-  knowledgeFolderId: z.string().uuid(),
+  knowledgeId: z.string().uuid(),
+  folderId: z.string().uuid(),
 
   createdAt: z.date(),
   updatedAt: z.date().optional(),
@@ -60,10 +60,11 @@ export type Source = z.infer<typeof sourceSchema>;
 
 export const sourceFilterSchema = filterSchema.extend({
   filter: z.object({
-    id: z.string().uuid().optional(),
+    id: z.string().uuid().nullable().optional(),
     name: z.string().optional(),
     originalName: z.string().optional(),
     indexStatus: indexStatusSchema.optional(),
+    folderId: z.string().uuid().nullable().optional(),
   }).strict().optional(),
   order: z.object({
     name: orderSchema,
@@ -72,7 +73,9 @@ export const sourceFilterSchema = filterSchema.extend({
     createdAt: orderSchema,
     updatedAt: orderSchema,
   }).strict().optional(),
-}).strict()
+}).strict();
+
+export type SourceFilter = z.infer<typeof sourceFilterSchema>;
 
 export const createSourceSchema = withSourceRefinements(baseSourceSchema.omit({
   id: true,

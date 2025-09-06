@@ -32,7 +32,7 @@ const TopBarSearch = () => {
   const form = useForm();
   return (
     <Form {...form}>
-      <FormInput className='w-full' fieldClassName='w-full max-w-[40%]' name='search' placeholder='Search' />
+      <FormInput className='w-full' fieldclassname='w-full max-w-[40%]' name='search' placeholder='Search' />
     </Form>
   )
 }

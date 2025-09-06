@@ -1,11 +1,17 @@
 
 
-import { FilterOptions } from "./filter-options";
-import { ICrudRepository } from "./repository.interface";
-import { ICrudService } from "./service.interface";
+import { ContextProvider } from '@/infra/context/context.provider';
+import { Inject } from '@nestjs/common';
+
+import { FilterOptions } from './filter-options';
+import { ICrudRepository } from './repository.interface';
+import { ICrudService } from './service.interface';
 
 export abstract class CrudService<TEntity> implements ICrudService<TEntity> {
-  constructor(protected readonly repository: ICrudRepository<TEntity>) { }
+  @Inject() protected readonly ctxProvider: ContextProvider;
+  constructor(
+    protected readonly repository: ICrudRepository<TEntity>,
+  ) { }
 
   async find(opts: FilterOptions<TEntity>): Promise<TEntity[]> {
     let res = await this.repository.find(opts);

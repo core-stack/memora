@@ -1,29 +1,14 @@
-import { DatabaseModule } from "@/infra/database/database.module";
-import { Module } from "@nestjs/common";
-import { RouterModule } from "@nestjs/core";
+import { DatabaseModule } from '@/infra/database/database.module';
+import { Module } from '@nestjs/common';
 
-import { FolderModule } from "./folder/folder.module";
-import { KnowledgeController } from "./knowledge.controller";
-import { KnowledgeRepository } from "./knowledge.repository";
-import { KnowledgeService } from "./knowledge.service";
-import { SourceModule } from "./source/source.module";
+import { KnowledgeController } from './knowledge.controller';
+import { KnowledgeRepository } from './knowledge.repository';
+import { KnowledgeService } from './knowledge.service';
 
 @Module({
   controllers: [KnowledgeController],
   providers: [KnowledgeService, KnowledgeRepository],
-  imports: [
-    FolderModule,
-    SourceModule,
-    DatabaseModule,
-    RouterModule.register([
-      {
-        path: "knowledge/:knowledge_slug",
-        children: [
-          { path: "", module: FolderModule },
-          { path: "", module: SourceModule }
-        ]
-      }
-    ])
-  ]
+  imports: [DatabaseModule],
+  exports: [KnowledgeService]
 })
 export class KnowledgeModule {}

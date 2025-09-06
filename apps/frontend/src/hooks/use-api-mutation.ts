@@ -37,11 +37,12 @@ export function useApiMutation<
   return useMutation<TData, TError, Partial<TVariables>, TContext>({
     mutationFn: async ({ body, params: p, query: q }: Partial<TVariables>): Promise<TData> => {
       const params = p ?? (options.passParams ? routeParams : {});
+      
       const searchParams: Record<string, string> = {};
       for (const [key, value] of routeSearchParams.entries()) {
         searchParams[key] = value;
       }
-      const query = q ?? (options.passQuery ? searchParams : {});      
+      const query = q ?? (options.passQuery ? searchParams : {});            
       const url = buildUrl(key, params, query);
 
       const res = await fetch(url, {

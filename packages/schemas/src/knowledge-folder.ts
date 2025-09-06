@@ -9,7 +9,7 @@ export const knowledgeFolderSchema = z.object({
   root: z.boolean(),
 
   parentId: z.string().uuid().optional(),
-  knowledgeBaseId: z.string().uuid(),
+  knowledgeId: z.string().uuid(),
 
   tenantId: z.string().uuid(),
 
@@ -20,9 +20,9 @@ export type KnowledgeFolder = z.infer<typeof knowledgeFolderSchema>;
 
 export const knowledgeFolderFilterSchema = filterSchema.extend({
   filter: z.object({
-    id: z.string().uuid().optional(),
+    id: z.string().uuid().nullable().optional(),
     name: z.string().optional(),
-    parentId: z.string().uuid().optional(),
+    parentId: z.string().uuid().nullable().optional(),
   }).strict().optional(),
   order: z.object({
     name: orderSchema,

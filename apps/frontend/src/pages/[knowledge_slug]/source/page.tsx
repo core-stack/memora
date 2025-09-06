@@ -1,11 +1,12 @@
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Blocks, Cpu, Database, ListTree } from "lucide-react";
-import { useState } from "react";
+import { Blocks, Cpu, Database, ListTree } from 'lucide-react';
+import { useState } from 'react';
 
-import { AddSource } from "./components/add-source";
-import { ExternalSource } from "./components/external-source";
-import { TabButton } from "./components/sidebar";
-import { TreeSource } from "./components/tree-source";
+import { TreeSource } from '@/components/tree-source';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+
+import { AddSource } from './components/add-source';
+import { ExternalSource } from './components/external-source';
+import { TabButton } from './components/sidebar';
 
 enum Tabs {
   TREE_SOURCE,
