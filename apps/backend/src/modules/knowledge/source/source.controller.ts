@@ -1,19 +1,32 @@
 import { CrudController } from '@/generics';
+import { ZodBody } from '@/shared/decorators/zod-body';
+import { ZodParam } from '@/shared/decorators/zod-param';
 import {
-  createSourceSchema, Source, sourceFilterSchema, updateSourceSchema
+  createSourceSchema, getUploadUrlSchema, idSchema, Source, sourceFilterSchema, updateSourceSchema
 } from '@memora/schemas';
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 
 import { SourceService } from './source.service';
 
+import type { GetUploadUrl } from '@memora/schemas';
 @Controller('knowledge/:knowledgeSlug/source')
 export class SourceController extends CrudController<Source> {
-  constructor(sourceService: SourceService) {
+  constructor(protected readonly service: SourceService) {
     super(
-      sourceService,
+      service,
       sourceFilterSchema,
       createSourceSchema,
       updateSourceSchema
     );
+  }
+  
+  @Get(":source_id/view")
+  async view(@ZodParam("source_id", idSchema) sourceId: string) {
+    return this.service.view(sourceId);
+  }
+
+  @Post("upload-url")
+  async upload(@ZodBody(getUploadUrlSchema) body: GetUploadUrl) {
+    return this.service.getUploadUrl(body);
   }
 }

@@ -10,7 +10,7 @@ type TreeItemProps =  {
 export const TreeItem = ({ item }: TreeItemProps) => {
   return (
     <div className="pl-3">
-      { isSource(item) ? <TreeItemSource {...item} /> : <TreeItemFolder item={item} />}
+      { isSource(item) ? <TreeItemSource item={item} /> : <TreeItemFolder item={item} />}
     </div>
   )
 }

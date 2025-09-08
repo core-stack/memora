@@ -47,7 +47,8 @@ interface FileUploadProps {
   className?: string
 }
 
-export function FileUploader({
+export function 
+FileUploader({
   generateUploadUrl,
   multiple = false,
   maxSize = 10 * 1024 * 1024, // 10MB padrão
@@ -126,6 +127,7 @@ export function FileUploader({
   }
 
   const uploadFile = async (fileInfo: UploadedFile, url: string, key: string) => {
+    // TODO : upload file with multipart/form-data
     try {
       // Criar um XMLHttpRequest para monitorar o progresso
       const xhr = new XMLHttpRequest()

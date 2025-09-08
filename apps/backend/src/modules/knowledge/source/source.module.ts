@@ -1,4 +1,5 @@
 import { DatabaseModule } from '@/infra/database/database.module';
+import { StorageModule } from '@/infra/storage/storage.module';
 import { Module } from '@nestjs/common';
 
 import { KnowledgeModule } from '../knowledge.module';
@@ -9,7 +10,7 @@ import { SourceService } from './source.service';
 @Module({
   controllers: [SourceController],
   providers: [SourceService, SourceRepository],
-  imports: [DatabaseModule, KnowledgeModule],
+  imports: [DatabaseModule, KnowledgeModule, StorageModule.register()],
   exports: [SourceService],
 })
 export class SourceModule {}

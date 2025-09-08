@@ -8,10 +8,14 @@ import { useSearchParams } from './use-search-params';
 
 import type { UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 
-type MutationVariables = {
-  body?: any;
-  params?: Record<string, any>;
-  query?: Record<string, any>;
+export type MutationVariables<
+  TBody = any, 
+  TQuery = Record<string, any>,
+  TParams = Record<string, any>
+> = {
+  body?: TBody;
+  params?: TParams;
+  query?: TQuery;
 };
 
 type ApiMutationOpts<TData, TError, TVariables, TContext> = Omit<
@@ -23,9 +27,9 @@ type ApiMutationOpts<TData, TError, TVariables, TContext> = Omit<
   };
 
 export function useApiMutation<
+  TVariables extends MutationVariables = MutationVariables,
   TData = unknown,
   TError extends Error = ApiError,
-  TVariables extends MutationVariables = MutationVariables,
   TContext = unknown
 >(
   key: string,

@@ -5,7 +5,12 @@ import { TabsList } from '@radix-ui/react-tabs';
 import { CreateSourceFile } from './file';
 import { CreateSourceLink } from './link';
 
-export const CreateSourceDialog = () => {
+type Props = {
+  folderId?: string;
+  slug: string;
+}
+
+export const CreateSourceDialog = ({ slug, folderId }: Props) => {
   return (
     <div>
       <DialogHeader>
@@ -20,7 +25,7 @@ export const CreateSourceDialog = () => {
           <TabsTrigger value='link'>{"Link"}</TabsTrigger>
         </TabsList>
         <TabsContent value='file'>
-          <CreateSourceFile/>
+          <CreateSourceFile slug={slug} folderId={folderId} />
         </TabsContent>
         <TabsContent value='link'>
           <CreateSourceLink />

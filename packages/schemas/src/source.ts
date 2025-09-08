@@ -8,7 +8,7 @@ export const indexStatusSchema = z.enum(["PENDING", "INDEXED", "INDEXING", "ERRO
 export const baseSourceSchema = z.object({
   id: z.string().uuid(),
 
-  name: z.string().max(255, { message: /*i18n*/("Name cannot be longer than 255 characters") }),
+  name: z.string().max(255),
   description: z.string().optional(),
 
   originalName: z.string().optional(),
@@ -83,7 +83,10 @@ export const createSourceSchema = withSourceRefinements(baseSourceSchema.omit({
   updatedAt: true,
   indexStatus: true,
   indexError: true,
+  knowledgeId: true,
   memoryId: true,
+}).extend({
+  folderId: z.string().uuid().optional(),
 }));
 export type CreateSource = z.infer<typeof createSourceSchema>;
 
@@ -95,3 +98,16 @@ export const updateSourceSchema = withSourceRefinements(baseSourceSchema.omit({
   memoryId: true,
 }));
 export type UpdateSource = z.infer<typeof updateSourceSchema>;
+
+export const getUploadUrlSchema = z.object({
+  fileName: z.string({ message: "File name is required" }).min(1, "File name cannot be empty"),
+  contentType: z.string({ message: "Content type is required" }).min(1, "Content type cannot be empty"),
+  fileSize: z.number({ message: "File size is required" }).max(20 * 1024 * 1024, "File size must be less than 20MB"),
+});
+export type GetUploadUrl = z.infer<typeof getUploadUrlSchema>;
+
+export const getUploadUrlResponseSchema = z.object({
+  url: z.string().url(),
+  key: z.string(),
+})
+export type GetUploadUrlResponse = z.infer<typeof getUploadUrlResponseSchema>;
