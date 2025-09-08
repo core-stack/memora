@@ -36,7 +36,7 @@ export class SourceService extends TenantService<Source> {
       throw new BadRequestException("Invalid key");
     }
 
-    const cratedSource = super.create(input, ctx);
+    const cratedSource = await super.create(input, ctx);
     this.ingestQueue.add("ingest", cratedSource);
     return cratedSource;
   }
