@@ -20,9 +20,19 @@ export class SourceService extends TenantService<Source> {
   }
 
   override async create(input: Partial<Source>) {
+    if (!input.key) throw new BadRequestException("Key is required");
+
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug());
     input.knowledgeId = knowledgeId;
     input.indexStatus = 'PENDING';
+
+    try {
+      input.key = await this.storageService.confirmTempUpload(input.key);
+    } catch (error) {
+      throw new BadRequestException("Invalid key");
+    }
+
+
     return super.create(input);
   }
 

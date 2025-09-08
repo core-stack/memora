@@ -2,13 +2,13 @@
 
 import type { UploadedFile } from '@/components/file-uploader';
 
-import { FileUploader } from '@/components/file-uploader';
-import { useApiMutation } from '@/hooks/use-api-mutation';
-import { useDialog } from '@/hooks/use-dialog';
-import { useToast } from '@/hooks/use-toast';
-import { getFileMetadata } from '@/lib/metadata';
+import { FileUploader } from "@/components/file-uploader";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { useDialog } from "@/hooks/use-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { getFileMetadata } from "@/lib/metadata";
 
-import { DialogType } from '../';
+import { DialogType } from "../";
 
 import type { MutationVariables } from '@/hooks/use-api-mutation';
 
@@ -24,14 +24,14 @@ export const CreateSourceFile = ({ slug, folderId }: Props) => {
   >(`/api/knowledge/${slug}/source/upload-url`);
   const { closeDialog } = useDialog();
   const { toast } = useToast();
-  
+
   const generateUploadUrl = async (info: UploadedFile): Promise<{ url: string, key: string }> => {
     return await generateUrl({
       body: { fileName: info.name, contentType: info.type, fileSize: info.size }
     });
   }
   console.log(folderId, slug);
-  
+
   const { mutate: createSource } = useApiMutation<MutationVariables<CreateSource>>(`/api/knowledge/${slug}/source`);
   const onUploadComplete = async (f: UploadedFile) => {
     const metadata = await getFileMetadata(f.file);
@@ -45,14 +45,14 @@ export const CreateSourceFile = ({ slug, folderId }: Props) => {
       originalName: f.name,
       name: f.name,
       folderId,
+      key: f.key,
       size: f.size,
-
     }
     createSource({ body }, {
       onError(error) {
         toast({ title:"Error processing source", description: error.message, variant: "destructive" });
       }
-    });   
+    });
   }
 
   const onFinish = () => {

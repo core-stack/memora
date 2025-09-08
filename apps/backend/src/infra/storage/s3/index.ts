@@ -58,16 +58,22 @@ export class S3Service extends StorageService {
     return { url: await getSignedUrl(this.s3, command, { expiresIn: 300 }), key};
   }
 
-  async confirmTempUpload(key: string, bucket = this.defaultBucket): Promise<boolean> {
-    key = `temp/${key}`
+  async confirmTempUpload(key: string, bucket = this.defaultBucket): Promise<string> {
+    const targetKey = key.replace("temp/", "");
+    const sourceKey = key.startsWith("temp/") ? key : `temp/${key}`
+
     const command = new CopyObjectCommand({
       Bucket: bucket,
-      CopySource: `/${bucket}/${key}`,
-      Key: key,
+      CopySource: `/${bucket}/${sourceKey}`,
+      Key: targetKey,
     });
 
     const res = await this.s3.send(command);
-    return !!res.$metadata.httpStatusCode && res.$metadata.httpStatusCode >= 200 && res.$metadata.httpStatusCode < 300
+    if (!!res.$metadata.httpStatusCode && res.$metadata.httpStatusCode >= 200 && res.$metadata.httpStatusCode < 300) {
+      return targetKey;
+    }
+
+    throw new Error("Error copying object");
   }
 
   async getPreSignedDownloadUrl(key: string, bucket = this.defaultBucket): Promise<string> {
