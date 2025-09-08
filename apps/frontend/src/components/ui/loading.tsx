@@ -98,11 +98,6 @@ export function Loading({
   // Função para renderizar pulse
   const renderPulse = () => {
     const widths = Array.isArray(width) ? width : Array(count).fill(width)
-    const shapeClasses = {
-      circle: "rounded-full",
-      square: "rounded-md aspect-square",
-      rect: "rounded-md",
-    }
 
     return (
       <div className="space-y-2" {...props}>

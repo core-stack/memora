@@ -35,6 +35,6 @@ const RemoteDocumentViewer = (props: RemoteDocumentViewerProps) => {
 
 const LocalDocumentViewer = (props: LocalDocumentViewerProps) => {
   return (
-    <iframe />
+    <iframe src={props.type}/>
   )
 }

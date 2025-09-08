@@ -2,7 +2,9 @@ import { ExpressAdapter } from "@bull-board/express";
 import { BullBoardModule } from "@bull-board/nestjs";
 import { BullModule } from "@nestjs/bullmq";
 import { Module } from "@nestjs/common";
+import { ServeStaticModule } from "@nestjs/serve-static";
 import basicAuth from "express-basic-auth";
+import { join } from "path";
 
 import { env } from "./env";
 import { DatabaseModule } from "./infra/database/database.module";
@@ -17,6 +19,10 @@ import { TagModule } from "./modules/tag/tag.module";
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../../frontend'),
+      exclude: ['/api*'],
+    }),
     IngestModule,
     SearchModule,
     DatabaseModule,
