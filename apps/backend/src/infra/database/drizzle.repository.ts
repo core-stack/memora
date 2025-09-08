@@ -1,22 +1,19 @@
-import { and, asc, desc, eq, getTableColumns, isNull, SQL } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
+import * as schema from "@/db/schema";
+import { DrizzleAsyncProvider } from "@/infra/database/drizzle.provider";
+import { Inject } from "@nestjs/common";
+import { and, asc, desc, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
+import { PgTable, PgUpdateSetSource } from "drizzle-orm/pg-core";
 
-import * as schema from '@/db/schema';
-import { DrizzleAsyncProvider } from '@/infra/database/drizzle.provider';
-import { Inject } from '@nestjs/common';
-
-import { FilterOptions } from '../../generics/filter-options';
-import { ICrudRepository } from '../../generics/repository.interface';
-import { ContextProvider } from '../context/context.provider';
+import { FilterOptions } from "../../generics/filter-options";
+import { ICrudRepository } from "../../generics/repository.interface";
 
 export abstract class DrizzleGenericRepository<
   TTable extends PgTable,
   TEntity extends PgUpdateSetSource<TTable> = PgUpdateSetSource<TTable>,
 > implements ICrudRepository<TEntity> {
   @Inject(DrizzleAsyncProvider) protected readonly db: NodePgDatabase<typeof schema>;
-  @Inject() protected readonly ctxProvider: ContextProvider;
-  
+
   private readonly columns: TTable["_"]["columns"];
 
   constructor(protected readonly table: TTable) {

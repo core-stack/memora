@@ -44,6 +44,9 @@ const envSchema = z.object({
   REDIS_PASSWORD: z.string().optional().default(""),
   REDIS_DB: z.coerce.number().optional().default(0),
 
+  BULL_BOARD_USER: z.string().optional().default("admin"),
+  BULL_BOARD_PASSWORD: z.string().optional().default("admin"),
+
 }).transform((data) => {
   if (!data.API_URL) {
     return {

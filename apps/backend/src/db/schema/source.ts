@@ -30,7 +30,7 @@ export const source = pgTable("sources", {
   memoryId: varchar("memory_id", { length: 36 }),
 
   knowledgeId: varchar("knowledge_id", { length: 36 }).notNull(),
-  folderId: varchar("folder_id", { length: 36 }).notNull(),
+  folderId: varchar("folder_id", { length: 36 }),
 
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),

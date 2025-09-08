@@ -1,10 +1,10 @@
+import { ExpressAdapter } from "@bull-board/express";
+import { BullBoardModule } from "@bull-board/nestjs";
 import { BullModule } from "@nestjs/bullmq";
 import { Module } from "@nestjs/common";
-import { APP_INTERCEPTOR } from "@nestjs/core";
+import basicAuth from "express-basic-auth";
 
 import { env } from "./env";
-import { ContextInterceptor } from "./infra/context/context.interceptor";
-import { ContextModule } from "./infra/context/context.module";
 import { DatabaseModule } from "./infra/database/database.module";
 import { StorageModule } from "./infra/storage/storage.module";
 import { VectorModule } from "./infra/vector/vector.module";
@@ -27,7 +27,6 @@ import { TagModule } from "./modules/tag/tag.module";
     TagModule,
     FolderModule,
     SourceModule,
-    ContextModule.forRoot(),
     BullModule.forRoot({
       connection: {
         host: env.REDIS_HOST,
@@ -37,12 +36,14 @@ import { TagModule } from "./modules/tag/tag.module";
         db: env.REDIS_DB
       },
     }),
-  ],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ContextInterceptor
-    }
+    BullBoardModule.forRoot({
+      route: '/queues',
+      adapter: ExpressAdapter,
+      middleware: basicAuth({
+        challenge: true,
+        users: { [env.BULL_BOARD_USER]: env.BULL_BOARD_PASSWORD },
+      }),
+    }),
   ]
 })
 export class AppModule {}

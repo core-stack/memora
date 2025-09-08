@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { Context } from "@/generics/context";
 import { StorageService } from "@/infra/storage/storage.service";
 import { TenantService } from "@/services/tenant.service";
 import { GetUploadUrl, Source } from "@memora/schemas";
@@ -22,10 +23,10 @@ export class SourceService extends TenantService<Source> {
     super(repository);
   }
 
-  override async create(input: Partial<Source>) {
+  override async create(input: Partial<Source>, ctx: Context) {
     if (!input.key) throw new BadRequestException("Key is required");
 
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug());
+    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
     input.knowledgeId = knowledgeId;
     input.indexStatus = 'PENDING';
 
@@ -35,18 +36,18 @@ export class SourceService extends TenantService<Source> {
       throw new BadRequestException("Invalid key");
     }
 
-    const res = super.create(input);
-    this.ingestQueue.add("", res);
-    return res;
+    const cratedSource = super.create(input, ctx);
+    this.ingestQueue.add("ingest", cratedSource);
+    return cratedSource;
   }
 
-  async getUploadUrl(input: GetUploadUrl) {
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug());
+  async getUploadUrl(input: GetUploadUrl, ctx: Context) {
+    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
     const key = `source/${env.TENANT_ID}/${knowledgeId}/${randomUUID()}.${input.fileName.split(".").pop()}`;
     return this.storageService.getUploadUrl(key, input.contentType, { temp: true, publicAccess: false });
   }
 
-  async view(sourceId: string) {
+  async view(sourceId: string, ctx: Context) {
     const source = (await this.repository.find({ filter: { id: sourceId } }))[0];
     if (!source) throw new BadRequestException("Source not found");
     return this.storageService.getVisualizationUrl(source.key);

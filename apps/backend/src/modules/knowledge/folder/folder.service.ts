@@ -1,11 +1,13 @@
 
 
-import { TenantService } from '@/services/tenant.service';
-import { KnowledgeFolder } from '@memora/schemas';
-import { Injectable } from '@nestjs/common';
+import { Context } from "@/generics/context";
+import { TenantService } from "@/services/tenant.service";
+import { KnowledgeFolder } from "@memora/schemas";
+import { Injectable } from "@nestjs/common";
 
-import { KnowledgeService } from '../knowledge.service';
-import { FolderRepository } from './folder.repository';
+import { KnowledgeService } from "../knowledge.service";
+
+import { FolderRepository } from "./folder.repository";
 
 @Injectable()
 export class FolderService extends TenantService<KnowledgeFolder> {
@@ -16,13 +18,12 @@ export class FolderService extends TenantService<KnowledgeFolder> {
     super(repository);
   }
 
-  override async create(input: Partial<KnowledgeFolder>): Promise<KnowledgeFolder> {
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug());
-    const parentId = this.ctxProvider.context.query.getString("parentId");
-    console.log(parentId);
-    
+  override async create(input: Partial<KnowledgeFolder>, ctx: Context): Promise<KnowledgeFolder> {
+    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
+    const parentId = ctx.query.getString("parentId");
+
     if (parentId) input.parentId = parentId;
     input.knowledgeId = knowledgeId;
-    return super.create(input);
+    return super.create(input, ctx);
   }
 }

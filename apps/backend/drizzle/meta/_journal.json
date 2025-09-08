@@ -15,6 +15,13 @@
       "when": 1757340895648,
       "tag": "0001_complex_turbo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757355376978,
+      "tag": "0002_nasty_madame_masque",
+      "breakpoints": true
     }
   ]
 }

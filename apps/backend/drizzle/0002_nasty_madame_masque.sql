@@ -1,0 +1,1 @@
+ALTER TABLE "sources" ALTER COLUMN "folder_id" DROP NOT NULL;

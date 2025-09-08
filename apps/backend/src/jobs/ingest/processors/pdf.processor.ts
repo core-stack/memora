@@ -22,6 +22,17 @@ export class PDFProcessor implements IProcessor {
     return loader.load();
   }
 
+  async process(knowledgeId: string, pathOrBlob: string | Blob): Promise<Omit<Chunk, "embeddings">[]> {
+    const docs = await this.load(pathOrBlob);
+    const docChunks = await this.splitter.splitDocuments(docs);
+    return docChunks.map((chunk, idx) => ({
+      knowledgeId,
+      content: chunk.pageContent,
+      metadata: chunk.metadata,
+      seqId: idx,
+    } as Chunk));
+  }
+
   async *processIterable(knowledgeId: string, pathOrBlob: string | Blob): AsyncGenerator<Omit<Chunk, "embeddings">> {
     for (const doc of await this.load(pathOrBlob)) {
       const docChunks = await this.splitter.splitDocuments([doc]);

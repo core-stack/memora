@@ -1,11 +1,12 @@
-import z from 'zod';
+import { idSchema } from "@memora/schemas";
+import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
+import z from "zod";
 
-import { idSchema } from '@memora/schemas';
-import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
-
-import { ICrudService } from './service.interface';
+import { Context } from "./context";
+import { ICrudService } from "./service.interface";
 
 import type { FilterOptions } from './filter-options';
+import type { Request } from 'express';
 export abstract class CrudController<TEntity> {
   constructor(
     protected service: ICrudService<TEntity>,
@@ -14,36 +15,40 @@ export abstract class CrudController<TEntity> {
     protected updateDtoSchema: z.ZodType<Partial<TEntity>>,
   ) {}
 
+  protected loadContext(req: Request) {
+    return new Context(req);
+  }
+
   @Get(":id")
-  async findByID(@Param("id") id: string): Promise<TEntity | null> {
+  async findByID(@Req() req: Request, @Param("id") id: string): Promise<TEntity | null> {
     this.validateSchema(idSchema, id);
-    return this.service.findByID(id);
+    return this.service.findByID(id, this.loadContext(req));
   }
 
   @Get()
-  async findMany(@Query() allParams: Record<string, unknown>): Promise<TEntity[]> {
+  async findMany(@Req() req: Request, @Query() allParams: Record<string, unknown>): Promise<TEntity[]> {
     const opts = this.paramsToFilter(allParams);
     this.validateSchema(this.filterSchema, opts);
-    return this.service.find(opts);
+    return this.service.find(opts, this.loadContext(req));
   }
 
   @Post()
-  async create(@Body() data: Partial<TEntity>): Promise<TEntity> {
+  async create(@Req() req: Request, @Body() data: Partial<TEntity>): Promise<TEntity> {
     this.validateSchema(this.createDtoSchema, data);
-    return this.service.create(data);
+    return this.service.create(data, this.loadContext(req));
   }
 
   @Put(":id")
-  async update(@Param("id") id: string, @Body() data: Partial<TEntity>): Promise<void> {
+  async update(@Req() req: Request, @Param("id") id: string, @Body() data: Partial<TEntity>): Promise<void> {
     this.validateSchema(idSchema, id);
     this.validateSchema(this.updateDtoSchema, data);
-    return this.service.update(id, data);
+    return this.service.update(id, data, this.loadContext(req));
   }
 
   @Delete(":id")
-  async delete(@Param("id") id: string): Promise<void> {
+  async delete(@Req() req: Request, @Param("id") id: string): Promise<void> {
     this.validateSchema(idSchema, id);
-    return this.service.delete(id);
+    return this.service.delete(id, this.loadContext(req));
   }
 
   protected validateSchema<T>(schema: z.ZodType<T>, data: T): T {
@@ -63,7 +68,7 @@ export abstract class CrudController<TEntity> {
       }
       const filterMatch = key.match(/^filter\[(.+)\]$/);
       if (filterMatch) {
-        result.filter = result.filter || {};        
+        result.filter = result.filter || {};
         result.filter[filterMatch[1]] = value === "null" ? null : value;
       }
     }

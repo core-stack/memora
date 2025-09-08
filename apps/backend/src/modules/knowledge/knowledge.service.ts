@@ -1,8 +1,9 @@
-import { TenantService } from '@/services/tenant.service';
-import { Knowledge } from '@memora/schemas';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Context } from "@/generics/context";
+import { TenantService } from "@/services/tenant.service";
+import { Knowledge } from "@memora/schemas";
+import { BadRequestException, Injectable } from "@nestjs/common";
 
-import { KnowledgeRepository } from './knowledge.repository';
+import { KnowledgeRepository } from "./knowledge.repository";
 
 @Injectable()
 export class KnowledgeService extends TenantService<Knowledge> {
@@ -16,8 +17,8 @@ export class KnowledgeService extends TenantService<Knowledge> {
     return this.repository.findBySlug(slug);
   }
 
-  async loadFromSlug(): Promise<Knowledge> {
-    const knowledgeSlug = this.ctxProvider.context.params.shouldGetString("knowledgeSlug");
+  async loadFromSlug(context: Context): Promise<Knowledge> {
+    const knowledgeSlug = context.params.shouldGetString("knowledgeSlug");
     const knowledge = await this.findBySlug(knowledgeSlug);
     if (!knowledge) throw new BadRequestException("Knowledge not found");
     return knowledge;
