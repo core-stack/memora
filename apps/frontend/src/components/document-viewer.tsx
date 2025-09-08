@@ -1,4 +1,4 @@
-import { useApiQuery } from '@/hooks/use-api-query';
+import { useApiQuery } from "@/hooks/use-api-query";
 
 import type { GetUploadUrlResponse } from "@memora/schemas";
 
@@ -24,12 +24,12 @@ export const DocumentViewer = (props: Props) => {
 
 const RemoteDocumentViewer = (props: RemoteDocumentViewerProps) => {
   const { data } = useApiQuery<GetUploadUrlResponse>(
-    "/api/knowledge/:knowledge_slug/source/:source_id/view", 
+    "/api/knowledge/:knowledge_slug/source/:source_id/view",
     { params: { knowledge_slug: props.knowledgeSlug, source_id: props.sourceId } }
   );
-  
+
   return (
-    <iframe src={`https://docs.google.com/viewer?url=${data?.url}`} width={"100%"} height={"100%"} />
+    <iframe src={data?.url} width={"100%"} height={"100%"} />
   )
 }
 

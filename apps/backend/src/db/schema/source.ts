@@ -1,14 +1,15 @@
-import { relations, sql } from 'drizzle-orm';
-import { index, integer, jsonb, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { relations, sql } from "drizzle-orm";
+import { index, integer, jsonb, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
-import { indexStatusEnum, sourceTypeEnum } from './enums';
-import { folder } from './folder';
-import { knowledge } from './knowledge';
-import { sourceTag } from './source_tag';
+import { indexStatusEnum, sourceTypeEnum } from "./enums";
+import { folder } from "./folder";
+import { knowledge } from "./knowledge";
+import { sourceTag } from "./source_tag";
 
 export const source = pgTable("sources", {
   id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
 
+  key: varchar("key", { length: 255 }).notNull().default(""),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
 
@@ -35,6 +36,7 @@ export const source = pgTable("sources", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => [
   index("sources_memory_idx").on(table.memoryId),
+  index("sources_key_idx").on(table.key),
   index("sources_index_status_idx").on(table.indexStatus),
 ]);
 

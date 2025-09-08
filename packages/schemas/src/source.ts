@@ -1,6 +1,6 @@
-import z from 'zod';
+import z from "zod";
 
-import { filterSchema, orderSchema } from './shared';
+import { filterSchema, orderSchema } from "./shared";
 
 export const sourceTypeSchema = z.enum(["TEXT", "IMAGE", "VIDEO", "AUDIO", "FILE", "LINK"]);
 export const indexStatusSchema = z.enum(["PENDING", "INDEXED", "INDEXING", "ERROR"]);
@@ -8,6 +8,7 @@ export const indexStatusSchema = z.enum(["PENDING", "INDEXED", "INDEXING", "ERRO
 export const baseSourceSchema = z.object({
   id: z.string().uuid(),
 
+  key: z.string().max(255),
   name: z.string().max(255),
   description: z.string().optional(),
 
@@ -61,6 +62,7 @@ export type Source = z.infer<typeof sourceSchema>;
 export const sourceFilterSchema = filterSchema.extend({
   filter: z.object({
     id: z.string().uuid().nullable().optional(),
+    key: z.string().optional(),
     name: z.string().optional(),
     originalName: z.string().optional(),
     indexStatus: indexStatusSchema.optional(),

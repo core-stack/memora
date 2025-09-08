@@ -1,11 +1,10 @@
-import { Blocks, Database, ListTree } from 'lucide-react';
-import React, { useState } from 'react';
+import { TreeSource } from "@/components/tree-source";
+import { cn } from "@/lib/utils";
+import { Blocks, Database, ListTree } from "lucide-react";
+import React, { useState } from "react";
 
-import { TreeSource } from '@/components/tree-source';
-import { cn } from '@/lib/utils';
-
-import { AddSource } from './add-source';
-import { ExternalSource } from './external-source';
+import { AddSource } from "./add-source";
+import { ExternalSource } from "./external-source";
 
 enum Tabs {
   TREE_SOURCE,

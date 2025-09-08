@@ -1,4 +1,4 @@
-import z from 'zod';
+import z from "zod";
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
@@ -27,6 +27,7 @@ const envSchema = z.object({
   AWS_ENDPOINT: z.string().optional(),
   AWS_PUBLIC_BUCKET_BASE_URL: z.string().optional(),
   AWS_BUCKET: z.string().optional(),
+  AWS_FORCE_PATH_STYLE: z.coerce.boolean().optional().default(false),
 
   API_URL: z.string().url().optional(),
 

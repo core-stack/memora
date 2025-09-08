@@ -1,18 +1,17 @@
-import { env } from 'src/env';
+import { CopyObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Injectable } from "@nestjs/common";
 
-import {
-  CopyObjectCommand, GetObjectCommand, PutObjectCommand, S3Client
-} from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Injectable } from '@nestjs/common';
+import { env } from "src/env";
 
-import { GetPreSignedUploadUrlOptions, StorageService } from '../storage.service';
+import { GetPreSignedUploadUrlOptions, StorageService } from "../storage.service";
 
 @Injectable()
 export class S3Service extends StorageService {
   private readonly s3: S3Client;
   private readonly defaultBucket?: string;
   private readonly publicBaseURL?: string;
+
   constructor() {
     super();
     if (!env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY) return;
@@ -21,6 +20,7 @@ export class S3Service extends StorageService {
     this.s3 = new S3Client({
       region: env.AWS_REGION ?? "auto",
       endpoint: env.AWS_ENDPOINT,
+      forcePathStyle: env.AWS_FORCE_PATH_STYLE,
       credentials: {
         accessKeyId: env.AWS_ACCESS_KEY_ID,
         secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
