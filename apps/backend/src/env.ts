@@ -36,6 +36,14 @@ const envSchema = z.object({
   CORS_METHODS: z.string().array().optional().default(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]),
   CORS_HEADERS: z.string().array().optional().default(["*"]),
   CORS_CREDENTIALS: z.boolean().optional().default(true),
+
+  // BULL
+  REDIS_HOST: z.string().optional().default("localhost"),
+  REDIS_PORT: z.coerce.number().optional().default(6379),
+  REDIS_USER: z.string().optional().default("default"),
+  REDIS_PASSWORD: z.string().optional().default(""),
+  REDIS_DB: z.coerce.number().optional().default(0),
+
 }).transform((data) => {
   if (!data.API_URL) {
     return {

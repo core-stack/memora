@@ -2,7 +2,9 @@ import { env } from "@/env";
 import { StorageService } from "@/infra/storage/storage.service";
 import { TenantService } from "@/services/tenant.service";
 import { GetUploadUrl, Source } from "@memora/schemas";
+import { InjectQueue } from "@nestjs/bullmq";
 import { BadRequestException, Injectable } from "@nestjs/common";
+import { Queue } from "bullmq";
 import { randomUUID } from "crypto";
 
 import { KnowledgeService } from "../knowledge.service";
@@ -14,7 +16,8 @@ export class SourceService extends TenantService<Source> {
   constructor(
     protected readonly repository: SourceRepository,
     private readonly knowledgeService: KnowledgeService,
-    private readonly storageService: StorageService
+    private readonly storageService: StorageService,
+    @InjectQueue("ingest") private readonly ingestQueue: Queue
   ) {
     super(repository);
   }
@@ -32,8 +35,9 @@ export class SourceService extends TenantService<Source> {
       throw new BadRequestException("Invalid key");
     }
 
-
-    return super.create(input);
+    const res = super.create(input);
+    this.ingestQueue.add("", res);
+    return res;
   }
 
   async getUploadUrl(input: GetUploadUrl) {

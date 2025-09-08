@@ -1,17 +1,19 @@
-import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { BullModule } from "@nestjs/bullmq";
+import { Module } from "@nestjs/common";
+import { APP_INTERCEPTOR } from "@nestjs/core";
 
-import { ContextInterceptor } from './infra/context/context.interceptor';
-import { ContextModule } from './infra/context/context.module';
-import { DatabaseModule } from './infra/database/database.module';
-import { StorageModule } from './infra/storage/storage.module';
-import { VectorModule } from './infra/vector/vector.module';
-import { IngestModule } from './modules/ingest/ingest.module';
-import { FolderModule } from './modules/knowledge/folder/folder.module';
-import { KnowledgeModule } from './modules/knowledge/knowledge.module';
-import { SourceModule } from './modules/knowledge/source/source.module';
-import { SearchModule } from './modules/search/search.module';
-import { TagModule } from './modules/tag/tag.module';
+import { env } from "./env";
+import { ContextInterceptor } from "./infra/context/context.interceptor";
+import { ContextModule } from "./infra/context/context.module";
+import { DatabaseModule } from "./infra/database/database.module";
+import { StorageModule } from "./infra/storage/storage.module";
+import { VectorModule } from "./infra/vector/vector.module";
+import { IngestModule } from "./jobs/ingest/ingest.module";
+import { FolderModule } from "./modules/knowledge/folder/folder.module";
+import { KnowledgeModule } from "./modules/knowledge/knowledge.module";
+import { SourceModule } from "./modules/knowledge/source/source.module";
+import { SearchModule } from "./modules/search/search.module";
+import { TagModule } from "./modules/tag/tag.module";
 
 @Module({
   imports: [
@@ -25,7 +27,16 @@ import { TagModule } from './modules/tag/tag.module';
     TagModule,
     FolderModule,
     SourceModule,
-    ContextModule.forRoot()
+    ContextModule.forRoot(),
+    BullModule.forRoot({
+      connection: {
+        host: env.REDIS_HOST,
+        port: env.REDIS_PORT,
+        username: env.REDIS_USER,
+        password: env.REDIS_PASSWORD,
+        db: env.REDIS_DB
+      },
+    }),
   ],
   providers: [
     {

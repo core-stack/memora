@@ -3,5 +3,5 @@ export type Chunk = {
   content: string;
   embeddings: number[];
   metadata: Record<string, string>;
-  tenantId: string;
+  knowledgeId: string;
 }
