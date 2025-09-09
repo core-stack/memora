@@ -13,6 +13,7 @@ CREATE TABLE "folder" (
 --> statement-breakpoint
 CREATE TABLE "sources" (
 	"id" varchar(36) PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"key" varchar(255) DEFAULT '' NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"description" text,
 	"original_name" varchar(255),
@@ -28,7 +29,7 @@ CREATE TABLE "sources" (
 	"index_error" text,
 	"memory_id" varchar(36),
 	"knowledge_id" varchar(36) NOT NULL,
-	"folder_id" varchar(36) NOT NULL,
+	"folder_id" varchar(36),
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -58,6 +59,7 @@ CREATE TABLE "knowledge" (
 --> statement-breakpoint
 CREATE INDEX "folder_tenant_idx" ON "folder" USING btree ("tenant_id");--> statement-breakpoint
 CREATE INDEX "sources_memory_idx" ON "sources" USING btree ("memory_id");--> statement-breakpoint
+CREATE INDEX "sources_key_idx" ON "sources" USING btree ("key");--> statement-breakpoint
 CREATE INDEX "sources_index_status_idx" ON "sources" USING btree ("index_status");--> statement-breakpoint
 CREATE UNIQUE INDEX "source_tag_unique" ON "source_tags" USING btree ("source_id","tag_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "tags_name_tenant_unique" ON "tags" USING btree ("name","tenant_id");--> statement-breakpoint

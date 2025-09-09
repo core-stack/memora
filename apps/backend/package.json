@@ -42,6 +42,7 @@
     "@nestjs/swagger": "^11.2.0",
     "@prisma/client": "^6.15.0",
     "@qdrant/js-client-rest": "^1.15.1",
+    "@zilliz/milvus2-sdk-node": "^2.6.0",
     "arangojs": "^10.1.2",
     "bullmq": "^5.58.5",
     "dotenv": "^17.2.1",

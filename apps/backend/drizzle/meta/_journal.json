@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1757112742623,
-      "tag": "0000_nasty_the_spike",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1757340895648,
-      "tag": "0001_complex_turbo",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1757355376978,
-      "tag": "0002_nasty_madame_masque",
+      "when": 1757423937413,
+      "tag": "0000_dry_victor_mancha",
       "breakpoints": true
     }
   ]

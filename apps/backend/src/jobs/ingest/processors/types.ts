@@ -1,5 +1,6 @@
-import { Chunks } from '@/generics/chunk';
+import { Chunks } from "@/generics/chunk";
+import { Source } from "@memora/schemas";
 
 export interface IProcessor {
-  process(tenantId: string, input: string | Blob): Promise<Chunks>
+  process(source: Source, input: string | Blob): Promise<Chunks>
 }

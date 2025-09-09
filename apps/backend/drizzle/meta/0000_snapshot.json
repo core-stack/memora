@@ -1,5 +1,5 @@
 {
-  "id": "80f4af0d-77ff-49f1-8ea9-d3e332b46943",
+  "id": "9df1b192-f3ed-4050-9019-96f10dc340a1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -94,6 +94,13 @@
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
+        },
+        "key": {
+          "name": "key",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
         },
         "name": {
           "name": "name",
@@ -191,7 +198,7 @@
           "name": "folder_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -214,6 +221,21 @@
           "columns": [
             {
               "expression": "memory_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "sources_key_idx": {
+          "name": "sources_key_idx",
+          "columns": [
+            {
+              "expression": "key",
               "isExpression": false,
               "asc": true,
               "nulls": "last"

@@ -1,21 +1,24 @@
-import { Document } from '@langchain/core/documents';
+import { Document } from "@langchain/core/documents";
 
 export class Chunk {
   seqId: number;
   content: string;
   metadata: Record<string, string>;
   knowledgeId: string;
+  sourceId: string;
 
   constructor(
     seqId: number,
     content: string,
     metadata: Record<string, string>,
-    knowledgeId: string
+    knowledgeId: string,
+    sourceId: string
   ) {
     this.seqId = seqId;
     this.content = content;
     this.metadata = metadata;
     this.knowledgeId = knowledgeId;
+    this.sourceId = sourceId;
   }
 
   toDocument(): Document {

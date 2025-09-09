@@ -71,7 +71,17 @@ services:
       - minio-data:/data
     restart: unless-stopped
 
+  qdrant:
+    image: qdrant/qdrant
+    container_name: qdrant
+    volumes:
+      - qdrant_storage:/qdrant/storage:z
+    ports:
+      - "6333:6333"
+    restart: unless-stopped
+
 volumes:
   redis-data:
   postgres-data:
   minio-data:
+  qdrant_storage:
