@@ -1,4 +1,4 @@
-import { Document } from "@langchain/core/documents";
+
 
 export class Chunk {
   seqId: number;
@@ -6,6 +6,7 @@ export class Chunk {
   metadata: Record<string, string>;
   knowledgeId: string;
   sourceId: string;
+  embedding?: number[];
 
   constructor(
     seqId: number,
@@ -21,26 +22,34 @@ export class Chunk {
     this.sourceId = sourceId;
   }
 
-  toDocument(): Document {
-    return {
-      pageContent: this.content,
-      metadata: {
-        ...this.metadata,
-        seqId: this.seqId,
-        knowledgeId: this.knowledgeId
-      }
-    } as Document;
+  setEmbedding(embedding: number[]) {
+    this.embedding = embedding;
   }
 }
 
 export class Chunks {
   constructor(private list: Chunk[] = []) {}
 
-  toDocuments(): Document[] {
-    return this.list.map(c => c.toDocument());
+  push(...chunk: Chunk[]) {
+    this.list.push(...chunk);
+  }
+
+  import(chunks: Chunks) {
+    this.list = this.list.concat(chunks.list);
+  }
+
+  setEmbeddings(embeddings: number[][]) {
+    this.list.forEach((chunk, idx) => {
+      chunk.setEmbedding(embeddings[idx]);
+    });
+  }
+
+  map<T>(fn: (chunk: Chunk) => T) {
+    return this.list.map<T>(fn);
   }
 
   static fromChunks(chunks: Chunk[]): Chunks {
     return new Chunks(chunks);
   }
+
 }

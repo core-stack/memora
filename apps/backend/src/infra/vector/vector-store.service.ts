@@ -5,6 +5,6 @@ export type SearchOptions = {
 }
 export abstract class VectorStore {
   abstract addChunks(chunks: Chunk[] | Chunk | Chunks): Promise<void>;
-  abstract search(query: string, knowledgeId: string, opts: SearchOptions): Promise<Chunk[]>;
+  abstract search(queryEmbedding: number[], knowledgeId: string, opts: SearchOptions): Promise<Chunks>;
   abstract deleteChunks(chunks: Chunk[] | Chunk | Chunks): Promise<void>;
 }
