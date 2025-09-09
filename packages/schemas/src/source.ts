@@ -1,6 +1,6 @@
-import z from "zod";
+import z from 'zod';
 
-import { filterSchema, orderSchema } from "./shared";
+import { filterSchema, orderSchema } from './shared';
 
 export const sourceTypeSchema = z.enum(["TEXT", "IMAGE", "VIDEO", "AUDIO", "FILE", "LINK"]);
 export const indexStatusSchema = z.enum(["PENDING", "INDEXED", "INDEXING", "ERROR"]);
@@ -104,7 +104,7 @@ export type UpdateSource = z.infer<typeof updateSourceSchema>;
 export const getUploadUrlSchema = z.object({
   fileName: z.string({ message: "File name is required" }).min(1, "File name cannot be empty"),
   contentType: z.string({ message: "Content type is required" }).min(1, "Content type cannot be empty"),
-  fileSize: z.number({ message: "File size is required" }).max(20 * 1024 * 1024, "File size must be less than 20MB"),
+  fileSize: z.number({ message: "File size is required" }).max(100 * 1024 * 1024, "File size must be less than 100MB"),
 });
 export type GetUploadUrl = z.infer<typeof getUploadUrlSchema>;
 

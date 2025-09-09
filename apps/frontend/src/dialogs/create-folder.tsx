@@ -32,8 +32,8 @@ export const CreateKnowledgeFolderDialog = ({ folderId, slug }: DialogProps) => 
     console.log(body, folderId);
     mutate({ body, query: { parentId: folderId } }, {
       onSuccess: () => {
-        invalidate(`/api/knowledge/${slug}/folder`);
-        invalidate(`/api/knowledge/${slug}/source`);
+        invalidate(`/api/knowledge/:knowledge_slug/folder`);
+        invalidate(`/api/knowledge/:knowledge_slug/source`);
         closeDialog(DialogType.CREATE_FOLDER);
       }
     });

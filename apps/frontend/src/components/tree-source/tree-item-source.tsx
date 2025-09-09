@@ -1,32 +1,37 @@
 import type { Source } from "@memora/schemas"
-import { cn } from "@/lib/utils";
-import { File, Info } from "lucide-react";
+import { File, Info } from 'lucide-react';
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { cn } from '@/lib/utils';
 
-import { useTreeSource } from "./hooks/use-tree-source";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { useTreeSource } from './hooks/use-tree-source';
 
 export const TreeItemSource = ({ item }: { item: Source }) => {
   const { setSelectedFileId, selectedFileId } = useTreeSource();
   const toggleSelect = () => setSelectedFileId(item.id);
   const selected = selectedFileId === item.id;
-
+  const indexing = ["PENDING", "INDEXING"].includes(item.indexStatus);
+ 
   return (
-    <div className={cn("relative group hover:bg-accent", selected && "text-primary")}>
+    <div className={cn("group hover:bg-accent", selected && "text-primary")}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <button className="flex w-full items-center gap-1 cursor-pointer" onClick={toggleSelect}>
-              <File className="w-4 h-4" />
-              <span className="w-full truncate">{item.name}</span>
-            </button>
+            <div className={cn("display flex items-center w-full overflow-hidden", indexing && "text-yellow-500")}>
+              <button className="flex items-center gap-1 cursor-pointer min-w-0" onClick={toggleSelect}>
+                <File className="w-4 h-4 shrink-0" />
+                <span className="truncate">{item.name}</span>
+              </button>
+              <div className="flex items-center px-2 gap-2 bg-background group-hover:bg-accent">
+                <button className="cursor-pointer transition-opacity opacity-0 group-hover:opacity-100 group-hover:block">
+                  <Info className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </TooltipTrigger>
-          <TooltipContent>{item.name}</TooltipContent>
+          <TooltipContent>{item.name}{indexing && " - Indexing"}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <button className="absolute right-0 top-1/2 -translate-y-1/2 h-full flex items-center bg-accent px-2 cursor-pointer transition-opacity opacity-0 group-hover:opacity-100">
-        <Info className="w-4 h-4" />
-      </button>
     </div>
   )
 }

@@ -1,11 +1,7 @@
-
-
-
-
-import { Context } from "./context";
-import { FilterOptions } from "./filter-options";
-import { ICrudRepository } from "./repository.interface";
-import { ICrudService } from "./service.interface";
+import { Context } from './context';
+import { FilterOptions } from './filter-options';
+import { ICrudRepository } from './repository.interface';
+import { ICrudService } from './service.interface';
 
 export abstract class CrudService<TEntity> implements ICrudService<TEntity> {
   constructor(
