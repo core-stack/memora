@@ -4,52 +4,32 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: monorepo-app
+    container_name: app
     ports:
       - "${APP_PORT:-3100}:3100"
     environment:
       # App settings
       APP_PORT: ${APP_PORT:-3100}
-      TENANT_ID: ${TENANT_ID}
-
-      # ArangoDB
-      ARANGODB_URL: ${ARANGODB_URL}
-      ARANGODB_DATABASE: ${ARANGODB_DATABASE}
-      ARANGODB_USERNAME: ${ARANGODB_USERNAME}
-      ARANGODB_PASSWORD: ${ARANGODB_PASSWORD}
+      TENANT_ID: ${TENANT_ID-cab0b6a7-749f-4ea4-9f94-485acebe57ed}
 
       # Gemini API
       GEMINI_API_KEY: ${GEMINI_API_KEY}
 
       # Postgres
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/memora
+      DATABASE_URL: ${DATABASE_URL-postgresql://postgres:postgres@db/postgres}
 
       # Storage
-      STORAGE_TYPE: ${STORAGE_TYPE}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_REGION: ${AWS_REGION}
-      AWS_ENDPOINT: ${AWS_ENDPOINT}
-      AWS_PUBLIC_BUCKET_BASE_URL: ${AWS_PUBLIC_BUCKET_BASE_URL}
-      AWS_BUCKET: ${AWS_BUCKET}
-      AWS_FORCE_PATH_STYLE: ${AWS_FORCE_PATH_STYLE}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID-minio}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY-adminadmin}
+      AWS_REGION: ${AWS_REGION-us-east-1}
+      AWS_ENDPOINT: ${AWS_ENDPOINT-http://minio:9000}
+      AWS_PUBLIC_BUCKET_BASE_URL: ${AWS_PUBLIC_BUCKET_BASE_URL-http://minio:9000}
+      AWS_BUCKET: ${AWS_BUCKET-memora}
+      AWS_FORCE_PATH_STYLE: ${AWS_FORCE_PATH_STYLE-true}
     depends_on:
-      - arangodb
       - redis
       - db
       - minio
-    restart: unless-stopped
-
-  # ArangoDB
-  arangodb:
-    image: arangodb:latest
-    container_name: arangodb
-    environment:
-      ARANGO_ROOT_PASSWORD: ${ARANGODB_PASSWORD}
-    ports:
-      - "8529:8529"
-    volumes:
-      - arangodb-data:/var/lib/arangodb3
     restart: unless-stopped
 
   # Redis
@@ -67,9 +47,9 @@ services:
     image: postgres:15-alpine
     container_name: db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: memora
+      POSTGRES_USER: ${POSTGRES_USER-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-postgres}
+      POSTGRES_DB: ${POSTGRES_DB-postgres}
     ports:
       - "5432:5432"
     volumes:
@@ -81,8 +61,8 @@ services:
     image: minio/minio:latest
     container_name: minio
     environment:
-      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
-      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID-minio}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY-adminadmin}
     command: server /data --console-address ":9001"
     ports:
       - "9000:9000"   # API
@@ -92,7 +72,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  arangodb-data:
   redis-data:
   postgres-data:
   minio-data:

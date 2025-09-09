@@ -1,12 +1,13 @@
-import * as schema from "@/db/schema";
-import { DrizzleAsyncProvider } from "@/infra/database/drizzle.provider";
-import { Inject } from "@nestjs/common";
-import { and, asc, desc, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
-import { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { PgTable, PgUpdateSetSource } from "drizzle-orm/pg-core";
+import { and, asc, desc, eq, getTableColumns, isNull, SQL } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
-import { FilterOptions } from "../../generics/filter-options";
-import { ICrudRepository } from "../../generics/repository.interface";
+import * as schema from '@/db/schema';
+import { DrizzleAsyncProvider } from '@/infra/database/drizzle.provider';
+import { Inject } from '@nestjs/common';
+
+import { FilterOptions } from '../../generics/filter-options';
+import { ICrudRepository } from '../../generics/repository.interface';
 
 export abstract class DrizzleGenericRepository<
   TTable extends PgTable,
@@ -66,7 +67,7 @@ export abstract class DrizzleGenericRepository<
   }
 
   async update(id: string, data: Partial<TEntity>): Promise<void> {
-    this.db.update(this.table).set(data).where(eq(this.columns.id, id))
+    await this.db.update(this.table).set(data).where(eq(this.columns.id, id))
   }
 
   async delete(id: string): Promise<void> {

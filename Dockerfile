@@ -15,6 +15,8 @@ RUN pnpm install
 
 COPY . .
 
+RUN pnpm --filter schemas build
+
 RUN pnpm --filter frontend build
 
 RUN pnpm --filter backend build

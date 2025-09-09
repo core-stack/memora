@@ -24,7 +24,7 @@
   },
   "scripts": {
     "build": "bunchee",
-    "dev": "bunchee",
+    "dev": "bunchee --watch",
     "lint": "eslint src/",
     "check-types": "tsc --noEmit"
   },

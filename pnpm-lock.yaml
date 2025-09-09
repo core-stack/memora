@@ -30,13 +30,16 @@ importers:
         version: 0.24.1
       '@langchain/community':
         specifier: ^0.3.53
-        version: 0.3.53(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-s3@3.879.0)(@aws-sdk/credential-provider-node@3.879.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.55.0)(deepmerge@4.3.1)(dotenv@17.2.1)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(zod@3.25.76))(@ibm-cloud/watsonx-ai@1.6.12)(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76)))(@langchain/google-genai@0.2.16(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76))))(@smithy/util-utf8@2.3.0)(axios@1.11.0)(fast-xml-parser@5.2.5)(handlebars@4.7.8)(ibm-cloud-sdk-core@5.4.2)(ignore@5.3.2)(ioredis@5.7.0)(jsonwebtoken@9.0.2)(lodash@4.17.21)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(pdf-parse@1.1.1)(pg@8.16.3)(playwright@1.55.0)(weaviate-client@3.8.1)(ws@8.18.3)
+        version: 0.3.53(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-s3@3.879.0)(@aws-sdk/credential-provider-node@3.879.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.55.0)(deepmerge@4.3.1)(dotenv@17.2.1)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(zod@3.25.76))(@ibm-cloud/watsonx-ai@1.6.12)(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76)))(@langchain/google-genai@0.2.16(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76))))(@qdrant/js-client-rest@1.15.1(typescript@5.8.3))(@smithy/util-utf8@2.3.0)(axios@1.11.0)(fast-xml-parser@5.2.5)(handlebars@4.7.8)(ibm-cloud-sdk-core@5.4.2)(ignore@5.3.2)(ioredis@5.7.0)(jsonwebtoken@9.0.2)(lodash@4.17.21)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(pdf-parse@1.1.1)(pg@8.16.3)(playwright@1.55.0)(weaviate-client@3.8.1)(ws@8.18.3)
       '@langchain/core':
         specifier: ^0.3.72
         version: 0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76))
       '@langchain/google-genai':
         specifier: ^0.2.16
         version: 0.2.16(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76)))
+      '@langchain/qdrant':
+        specifier: ^0.1.3
+        version: 0.1.3(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76)))(typescript@5.8.3)
       '@memora/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
@@ -67,9 +70,12 @@ importers:
       '@prisma/client':
         specifier: ^6.15.0
         version: 6.15.0(prisma@6.15.0(typescript@5.8.3))(typescript@5.8.3)
+      '@qdrant/js-client-rest':
+        specifier: ^1.15.1
+        version: 1.15.1(typescript@5.8.3)
       arangojs:
         specifier: ^10.1.2
-        version: 10.1.2
+        version: 10.1.2(undici@6.21.3)
       bullmq:
         specifier: ^5.58.5
         version: 5.58.5
@@ -1843,6 +1849,12 @@ packages:
     peerDependencies:
       '@langchain/core': '>=0.3.68 <0.4.0'
 
+  '@langchain/qdrant@0.1.3':
+    resolution: {integrity: sha512-3cay+u3Ri7KPEwBrn/e0V2GPJDHz8U/ZetSjexB7kbgBJeljzEoRxXEeoDCd4pok48GA+n+j0/p+rPA0K7zedQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@langchain/core': '>=0.2.21 <0.4.0'
+
   '@langchain/textsplitters@0.1.0':
     resolution: {integrity: sha512-djI4uw9rlkAb5iMhtLED+xJebDdAG935AdP4eRTB02R7OB/act55Bj9wsskhZsvuyQRpO4O1wQOp85s6T6GWmw==}
     engines: {node: '>=18'}
@@ -2188,6 +2200,16 @@ packages:
 
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
+
+  '@qdrant/js-client-rest@1.15.1':
+    resolution: {integrity: sha512-FAPMz6Z7RFj9vUun8R9e8SYcX6EkZtdfYfnh5lFXWcjEaat9q/jce1baAJCWAr3k8yHh62HpzCRYOatLVII28g==}
+    engines: {node: '>=18.17.0', pnpm: '>=8'}
+    peerDependencies:
+      typescript: '>=4.7'
+
+  '@qdrant/openapi-typescript-fetch@1.2.6':
+    resolution: {integrity: sha512-oQG/FejNpItrxRHoyctYvT3rwGZOnK4jr3JdppO/c78ktDvkWiPXPHNsrDf33K9sZdRb6PR7gi4noIapu5q4HA==}
+    engines: {node: '>=18.0.0', pnpm: '>=8'}
 
   '@radix-ui/number@1.1.1':
     resolution: {integrity: sha512-MkKCwxlXTgz6CFoJx3pCwn07GKp36+aZyu/u2Ln2VrA5DcdyCZkASEDBTd8x5whTQQL5CiYf4prXKLcgQdv29g==}
@@ -2822,6 +2844,9 @@ packages:
 
   '@scarf/scarf@1.4.0':
     resolution: {integrity: sha512-xxeapPiUXdZAE3che6f3xogoJPeZgig6omHEy1rIY5WVsB3H2BHNnZH+gHG6x91SCWyQCzWGsuL2Hh3ClO5/qQ==}
+
+  '@sevinf/maybe@0.5.0':
+    resolution: {integrity: sha512-ARhyoYDnY1LES3vYI0fiG6e9esWfTNcXcO6+MPJJXcnyMV3bim4lnFt45VXouV7y82F4x3YH8nOQ6VztuvUiWg==}
 
   '@sinclair/typebox@0.34.41':
     resolution: {integrity: sha512-6gS8pZzSXdyRHTIqoqSVknxolr1kzfy4/CeDnrzsVz8TTIWUbOBr6gnzOmTYJ3eXQNh4IYHIGi5aIL7sOZ2G/g==}
@@ -6560,6 +6585,10 @@ packages:
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
+  undici@6.21.3:
+    resolution: {integrity: sha512-gBLkYIlEnSp8pFbT64yFgGE6UIB9tAkhukC23PmMDCe5Nd+cRqKxSjw5y54MK2AZMgZfJWMaNE4nYUHgi1XEOw==}
+    engines: {node: '>=18.17'}
+
   universalify@0.2.0:
     resolution: {integrity: sha512-CJ1QgKmNg3CwvAv/kOFmtnEN05f0D/cn9QntgNOQlQF9dgvVTHj3t+8JPdjqawCHk7V/KA+fbUqzZ9XWhcqPUg==}
     engines: {node: '>= 4.0.0'}
@@ -8261,7 +8290,7 @@ snapshots:
 
   '@js-sdsl/ordered-map@4.4.2': {}
 
-  '@langchain/community@0.3.53(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-s3@3.879.0)(@aws-sdk/credential-provider-node@3.879.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.55.0)(deepmerge@4.3.1)(dotenv@17.2.1)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(zod@3.25.76))(@ibm-cloud/watsonx-ai@1.6.12)(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76)))(@langchain/google-genai@0.2.16(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76))))(@smithy/util-utf8@2.3.0)(axios@1.11.0)(fast-xml-parser@5.2.5)(handlebars@4.7.8)(ibm-cloud-sdk-core@5.4.2)(ignore@5.3.2)(ioredis@5.7.0)(jsonwebtoken@9.0.2)(lodash@4.17.21)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(pdf-parse@1.1.1)(pg@8.16.3)(playwright@1.55.0)(weaviate-client@3.8.1)(ws@8.18.3)':
+  '@langchain/community@0.3.53(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-s3@3.879.0)(@aws-sdk/credential-provider-node@3.879.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.55.0)(deepmerge@4.3.1)(dotenv@17.2.1)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(zod@3.25.76))(@ibm-cloud/watsonx-ai@1.6.12)(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76)))(@langchain/google-genai@0.2.16(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76))))(@qdrant/js-client-rest@1.15.1(typescript@5.8.3))(@smithy/util-utf8@2.3.0)(axios@1.11.0)(fast-xml-parser@5.2.5)(handlebars@4.7.8)(ibm-cloud-sdk-core@5.4.2)(ignore@5.3.2)(ioredis@5.7.0)(jsonwebtoken@9.0.2)(lodash@4.17.21)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(pdf-parse@1.1.1)(pg@8.16.3)(playwright@1.55.0)(weaviate-client@3.8.1)(ws@8.18.3)':
     dependencies:
       '@browserbasehq/stagehand': 1.14.0(@playwright/test@1.55.0)(deepmerge@4.3.1)(dotenv@17.2.1)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(zod@3.25.76)
       '@ibm-cloud/watsonx-ai': 1.6.12
@@ -8283,6 +8312,7 @@ snapshots:
       '@aws-sdk/client-s3': 3.879.0
       '@aws-sdk/credential-provider-node': 3.879.0
       '@browserbasehq/sdk': 2.6.0
+      '@qdrant/js-client-rest': 1.15.1(typescript@5.8.3)
       '@smithy/util-utf8': 2.3.0
       fast-xml-parser: 5.2.5
       ignore: 5.3.2
@@ -8349,6 +8379,14 @@ snapshots:
       zod: 3.25.76
     transitivePeerDependencies:
       - ws
+
+  '@langchain/qdrant@0.1.3(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76)))(typescript@5.8.3)':
+    dependencies:
+      '@langchain/core': 0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76))
+      '@qdrant/js-client-rest': 1.15.1(typescript@5.8.3)
+      uuid: 10.0.0
+    transitivePeerDependencies:
+      - typescript
 
   '@langchain/textsplitters@0.1.0(@langchain/core@0.3.72(openai@5.12.2(ws@8.18.3)(zod@3.25.76)))':
     dependencies:
@@ -8657,6 +8695,15 @@ snapshots:
   '@protobufjs/pool@1.1.0': {}
 
   '@protobufjs/utf8@1.1.0': {}
+
+  '@qdrant/js-client-rest@1.15.1(typescript@5.8.3)':
+    dependencies:
+      '@qdrant/openapi-typescript-fetch': 1.2.6
+      '@sevinf/maybe': 0.5.0
+      typescript: 5.8.3
+      undici: 6.21.3
+
+  '@qdrant/openapi-typescript-fetch@1.2.6': {}
 
   '@radix-ui/number@1.1.1': {}
 
@@ -9258,6 +9305,8 @@ snapshots:
     optional: true
 
   '@scarf/scarf@1.4.0': {}
+
+  '@sevinf/maybe@0.5.0': {}
 
   '@sinclair/typebox@0.34.41': {}
 
@@ -10274,9 +10323,11 @@ snapshots:
 
   append-field@1.0.0: {}
 
-  arangojs@10.1.2:
+  arangojs@10.1.2(undici@6.21.3):
     dependencies:
       '@types/node': 20.19.11
+    optionalDependencies:
+      undici: 6.21.3
 
   arg@4.1.3: {}
 
@@ -13213,6 +13264,8 @@ snapshots:
   undici-types@5.26.5: {}
 
   undici-types@6.21.0: {}
+
+  undici@6.21.3: {}
 
   universalify@0.2.0: {}
 

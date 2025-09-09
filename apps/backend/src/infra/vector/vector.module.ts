@@ -1,10 +1,23 @@
-import { Module } from "@nestjs/common";
+import { env } from '@/env';
+import { Embeddings } from '@langchain/core/embeddings';
+import { VectorStore } from '@langchain/core/vectorstores';
+import { QdrantVectorStore } from '@langchain/qdrant';
+import { Module } from '@nestjs/common';
 
-import { ArangoService } from "./arango";
-import { VectorDatabaseService } from "./vector-database.service";
+import { EmbeddingsModule } from '../embeddings/embeddings.module';
 
 @Module({
-  providers: [{ provide: VectorDatabaseService, useClass: ArangoService }],
-  exports: [VectorDatabaseService],
+  imports: [EmbeddingsModule],
+  providers: [{ 
+    provide: VectorStore,
+    inject: [Embeddings],
+    useFactory: async (embeddings: Embeddings) => {
+      return QdrantVectorStore.fromExistingCollection(embeddings, {
+        url: env.QDRANT_URL,
+        collectionName: env.QDRANT_COLLECTION,
+      });
+    }
+  }],
+  exports: [VectorStore],
 })
 export class VectorModule {}

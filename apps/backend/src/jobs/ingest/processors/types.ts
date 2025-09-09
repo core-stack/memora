@@ -1,7 +1,5 @@
-
-import { Chunk } from "src/@types";
+import { Chunks } from '@/generics/chunk';
 
 export interface IProcessor {
-  processIterable(tenantId: string, input: string | Blob): AsyncGenerator<Omit<Chunk, "embeddings">>
-  process(tenantId: string, input: string | Blob): Promise<Array<Omit<Chunk, "embeddings">>>
+  process(tenantId: string, input: string | Blob): Promise<Chunks>
 }

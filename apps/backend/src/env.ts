@@ -1,13 +1,12 @@
-import z from "zod";
+import dotenv from 'dotenv';
+import z from 'zod';
+
+dotenv.config({
+  path: [".env", "../../.env", "../../.env.local"],
+});
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
-
-  ARANGODB_URL: z.string().url(),
-  ARANGODB_DATABASE: z.string(),
-  ARANGODB_USERNAME: z.string(),
-  ARANGODB_PASSWORD: z.string(),
-  ARANGODB_VECTOR_COLLECTION: z.string().default("vectors"),
 
   GEMINI_API_KEY: z.string(),
 
@@ -15,10 +14,7 @@ const envSchema = z.object({
 
   TENANT_ID: z.string().uuid(),
 
-  STORAGE_TYPE: z.enum(['s3', 'local']).default('local'),
-
-  // Local
-  LOCAL_STORAGE_PATH: z.string().optional().default(`${process.cwd()}/files`),
+  STORAGE_TYPE: z.enum(['s3']).default('s3'),
 
   // S3
   AWS_ACCESS_KEY_ID: z.string().optional(),
@@ -43,10 +39,12 @@ const envSchema = z.object({
   REDIS_USER: z.string().optional().default("default"),
   REDIS_PASSWORD: z.string().optional().default(""),
   REDIS_DB: z.coerce.number().optional().default(0),
-
   BULL_BOARD_USER: z.string().optional().default("admin"),
   BULL_BOARD_PASSWORD: z.string().optional().default("admin"),
 
+  // Vector
+  QDRANT_URL: z.string().optional().default("http://127.0.0.1:6333"),
+  QDRANT_COLLECTION: z.string().optional().default("default"),
 }).transform((data) => {
   if (!data.API_URL) {
     return {

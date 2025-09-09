@@ -1,10 +1,10 @@
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { Injectable } from "@nestjs/common";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
-import { Chunk } from "src/@types";
+import { Chunk, Chunks } from '@/generics/chunk';
+import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
+import { Injectable } from '@nestjs/common';
 
-import { IProcessor } from "./types";
+import { IProcessor } from './types';
 
 @Injectable()
 export class PDFProcessor implements IProcessor {
@@ -22,30 +22,12 @@ export class PDFProcessor implements IProcessor {
     return loader.load();
   }
 
-  async process(knowledgeId: string, pathOrBlob: string | Blob): Promise<Omit<Chunk, "embeddings">[]> {
+  async process(knowledgeId: string, pathOrBlob: string | Blob): Promise<Chunks> {
     const docs = await this.load(pathOrBlob);
     const docChunks = await this.splitter.splitDocuments(docs);
-    return docChunks.map((chunk, idx) => ({
-      knowledgeId,
-      content: chunk.pageContent,
-      metadata: chunk.metadata,
-      seqId: idx,
-    } as Chunk));
-  }
-
-  async *processIterable(knowledgeId: string, pathOrBlob: string | Blob): AsyncGenerator<Omit<Chunk, "embeddings">> {
-    for (const doc of await this.load(pathOrBlob)) {
-      const docChunks = await this.splitter.splitDocuments([doc]);
-      let idx = 0;
-      for (const chunk of docChunks) {
-        idx++;
-        yield {
-          knowledgeId,
-          content: chunk.pageContent,
-          metadata: chunk.metadata,
-          seqId: idx,
-        } as Chunk;
-      }
-    }
+    
+    return Chunks.fromChunks(
+      docChunks.map((chunk, idx) => new Chunk(idx, chunk.pageContent, chunk.metadata, knowledgeId))
+    );
   }
 }
