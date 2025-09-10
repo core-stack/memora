@@ -1,6 +1,6 @@
-import { Outlet } from 'react-router';
+import { Outlet } from "react-router";
 
-import { TopBar } from './components/topbar';
+import { TopBar } from "../../components/topbar";
 
 export default function Knowledge() {
   return (

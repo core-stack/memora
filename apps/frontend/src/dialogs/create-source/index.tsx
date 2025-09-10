@@ -1,16 +1,18 @@
-import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsTrigger } from '@/components/ui/tabs';
-import { TabsList } from '@radix-ui/react-tabs';
+import { DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs";
+import { useKnowledge } from "@/hooks/use-knowledge";
+import { TabsList } from "@radix-ui/react-tabs";
 
-import { CreateSourceFile } from './file';
-import { CreateSourceLink } from './link';
+import { CreateSourceFile } from "./file";
+import { CreateSourceLink } from "./link";
 
 type Props = {
   folderId?: string;
   slug: string;
 }
 
-export const CreateSourceDialog = ({ slug, folderId }: Props) => {
+export const CreateSourceDialog = ({ folderId }: Props) => {
+  const { slug } = useKnowledge();
   return (
     <div>
       <DialogHeader>

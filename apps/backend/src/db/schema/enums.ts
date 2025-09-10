@@ -1,4 +1,4 @@
-import { pgEnum } from 'drizzle-orm/pg-core';
+import { pgEnum } from "drizzle-orm/pg-core";
 
 export const indexStatusEnum = pgEnum("index_status", [
   "PENDING",
@@ -14,4 +14,9 @@ export const sourceTypeEnum = pgEnum("source_type", [
   "VIDEO",
   "AUDIO",
   "IMAGE",
+]);
+
+export const messageRoleEnum = pgEnum("message_role", [
+  "USER",
+  "AI"
 ]);

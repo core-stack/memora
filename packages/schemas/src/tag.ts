@@ -24,6 +24,7 @@ export const tagFilterSchema = filterSchema.extend({
     updatedAt: orderSchema,
   }).strict().optional()
 }).strict();
+export type TagFilter = z.infer<typeof tagFilterSchema>;
 
 export const createTagSchema = tagSchema.pick({
   name: true

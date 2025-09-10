@@ -2,21 +2,21 @@
 
 import type { UploadedFile } from '@/components/file-uploader';
 
-import { FileUploader } from '@/components/file-uploader';
-import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useApiMutation } from '@/hooks/use-api-mutation';
-import { useDialog } from '@/hooks/use-dialog';
-import { useToast } from '@/hooks/use-toast';
-import { getFileMetadata } from '@/lib/metadata';
+import { FileUploader } from "@/components/file-uploader";
+import { useApiInvalidate } from "@/hooks/use-api-invalidate";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { useDialog } from "@/hooks/use-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { getFileMetadata } from "@/lib/metadata";
 
-import { DialogType } from '../';
+import { DialogType } from "../";
 
 import type { MutationVariables } from '@/hooks/use-api-mutation';
 
 import type { CreateSource, GetUploadUrl, GetUploadUrlResponse } from '@memora/schemas';
 type Props = {
   folderId?: string;
-  slug: string;
+  slug?: string;
 }
 
 export const CreateSourceFile = ({ slug, folderId }: Props) => {
