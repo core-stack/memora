@@ -6,7 +6,7 @@ import { Module } from '@nestjs/common';
 @Module({
   providers: [{
     provide: Embeddings,
-    useFactory: () => new GoogleGenerativeAIEmbeddings({ apiKey: env.GEMINI_API_KEY }),
+    useFactory: () => new GoogleGenerativeAIEmbeddings({ apiKey: env.GEMINI_API_KEY, model: env.EMBEDDING_MODEL }),
   }],
   exports: [ Embeddings ]
 })

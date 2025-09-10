@@ -1,10 +1,12 @@
-import { Chunk, Chunks } from "@/generics/chunk";
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { Source } from "@memora/schemas";
-import { Injectable } from "@nestjs/common";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
-import { IProcessor } from "./types";
+import { env } from '@/env';
+import { Chunk, Chunks } from '@/generics/chunk';
+import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
+import { Source } from '@memora/schemas';
+import { Injectable } from '@nestjs/common';
+
+import { IProcessor } from './types';
 
 @Injectable()
 export class PDFProcessor implements IProcessor {
@@ -28,7 +30,7 @@ export class PDFProcessor implements IProcessor {
 
     return Chunks.fromChunks(
       docChunks.map((chunk, idx) => new Chunk(
-        idx, chunk.pageContent, chunk.metadata, source.knowledgeId, source.id
+        idx, chunk.pageContent, source.knowledgeId, source.id, env.TENANT_ID
       ))
     );
   }

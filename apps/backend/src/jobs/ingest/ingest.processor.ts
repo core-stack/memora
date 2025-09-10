@@ -1,18 +1,21 @@
-import { StorageService } from "@/infra/storage/storage.service";
-import { SourceRepository } from "@/modules/knowledge/source/source.repository";
-import { VectorStore } from "@langchain/core/vectorstores";
-import { Source } from "@memora/schemas";
-import { OnWorkerEvent, Processor, WorkerHost } from "@nestjs/bullmq";
-import { forwardRef, Inject } from "@nestjs/common";
-import { Job } from "bullmq";
-import streamToBlob from "stream-to-blob";
+import { Job } from 'bullmq';
+import streamToBlob from 'stream-to-blob';
 
-import { PDFProcessor } from "./processors/pdf.processor";
+import { StorageService } from '@/infra/storage/storage.service';
+import { VectorStore } from '@/infra/vector/vector-store.service';
+import { SourceRepository } from '@/modules/knowledge/source/source.repository';
+import { Embeddings } from '@langchain/core/embeddings';
+import { Source } from '@memora/schemas';
+import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
+import { forwardRef, Inject } from '@nestjs/common';
+
+import { PDFProcessor } from './processors/pdf.processor';
 
 @Processor("ingest", { concurrency: 5 })
 export class IngestProcessor extends WorkerHost {
   @Inject() private readonly pdfProcessor!: PDFProcessor;
   @Inject() private readonly vectorStore!: VectorStore;
+  @Inject() private readonly embeddings!: Embeddings;
   @Inject() private readonly storage!: StorageService;
 
   constructor(
@@ -25,15 +28,15 @@ export class IngestProcessor extends WorkerHost {
     if (!obj) throw new Error("File not found");
 
     const chunks = await this.pdfProcessor.process(source, await streamToBlob(obj));
-
-    await this.vectorStore.addDocuments(chunks.toDocuments());
+    const embeddings = await this.embeddings.embedDocuments(chunks.map(c => c.content));
+    chunks.setEmbeddings(embeddings);
+    await this.vectorStore.addChunks(chunks);
   }
 
   @OnWorkerEvent("active")
   async onStart(job: Job<Source>) {
     const source = job.data;
     await this.sourceRepository.update(source.id, { indexStatus: "INDEXING" });
-    console.log(job.data);
   }
 
   @OnWorkerEvent("completed")

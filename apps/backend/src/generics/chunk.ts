@@ -1,25 +1,39 @@
-
+import { randomUUID } from 'crypto';
 
 export class Chunk {
+  id: string;
   seqId: number;
   content: string;
-  metadata: Record<string, string>;
   knowledgeId: string;
   sourceId: string;
+  tenantId: string;
   embedding?: number[];
 
   constructor(
     seqId: number,
     content: string,
-    metadata: Record<string, string>,
     knowledgeId: string,
-    sourceId: string
+    sourceId: string,
+    tenantId: string,
+    id?: string
   ) {
+    this.id = id ?? randomUUID();
     this.seqId = seqId;
     this.content = content;
-    this.metadata = metadata;
     this.knowledgeId = knowledgeId;
     this.sourceId = sourceId;
+    this.tenantId = tenantId;
+  }
+
+  static fromObject(obj: any): Chunk {
+    return new Chunk(
+      obj.seqId,
+      obj.content,
+      obj.knowledgeId,
+      obj.sourceId,
+      obj.tenantId,
+      obj.id
+    );
   }
 
   setEmbedding(embedding: number[]) {

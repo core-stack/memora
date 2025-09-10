@@ -6,16 +6,23 @@ dotenv.config({
 });
 
 const envSchema = z.object({
+  // APP
+  APP_PORT: z.coerce.number().default(3000),
+  API_URL: z.string().url().optional().default("http://localhost:3000/api"),
+
+  // CORS
+  CORS_ORIGINS: z.string().transform((s) => s.split(",")).array().optional().default(["*", "http://localhost:3000", "http://localhost:5173"]),
+  CORS_METHODS: z.string().array().optional().default(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]),
+  CORS_HEADERS: z.string().array().optional().default(["*"]),
+  CORS_CREDENTIALS: z.boolean().optional().default(true),
+
+  // DATABASE
   DATABASE_URL: z.string(),
 
-  GEMINI_API_KEY: z.string(),
-
-  APP_PORT: z.coerce.number().default(3000),
-
   TENANT_ID: z.string().uuid(),
-
+  
+  // STORAGE
   STORAGE_TYPE: z.enum(['s3']).default('s3'),
-
   // S3
   AWS_ACCESS_KEY_ID: z.string().optional(),
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
@@ -24,27 +31,30 @@ const envSchema = z.object({
   AWS_PUBLIC_BUCKET_BASE_URL: z.string().optional(),
   AWS_BUCKET: z.string().optional(),
   AWS_FORCE_PATH_STYLE: z.coerce.boolean().optional().default(false),
-
-  API_URL: z.string().url().optional(),
-
-  // CORS
-  CORS_ORIGINS: z.string().transform((s) => s.split(",")).array().optional().default(["*", "http://localhost:3000", "http://localhost:5173"]),
-  CORS_METHODS: z.string().array().optional().default(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]),
-  CORS_HEADERS: z.string().array().optional().default(["*"]),
-  CORS_CREDENTIALS: z.boolean().optional().default(true),
-
-  // BULL
+  
+  // REDIS
   REDIS_HOST: z.string().optional().default("localhost"),
   REDIS_PORT: z.coerce.number().optional().default(6379),
   REDIS_USER: z.string().optional().default("default"),
   REDIS_PASSWORD: z.string().optional().default(""),
   REDIS_DB: z.coerce.number().optional().default(0),
+
+  // BULLBOARD
   BULL_BOARD_USER: z.string().optional().default("admin"),
   BULL_BOARD_PASSWORD: z.string().optional().default("admin"),
 
-  // Vector
-  QDRANT_URL: z.string().optional().default("http://127.0.0.1:6333"),
-  QDRANT_COLLECTION: z.string().optional().default("default"),
+  // EMBEDDINGS
+  EMBEDDING_ENGINE: z.enum(['gemini']).default('gemini'),
+  EMBEDDING_DIMENSION: z.coerce.number().optional().default(3072),
+  EMBEDDING_MODEL: z.string().optional().default("gemini-embedding-001"),
+  // GEMINI
+  GEMINI_API_KEY: z.string(),
+  
+  // VECTOR
+  VECTOR_ENGINE: z.enum(['milvus']).default('milvus'),
+  // MILVUS
+  MILVUS_URL: z.string().url().optional().default("localhost:19530"),
+  MILVUS_COLLECTION: z.string().optional().default("default"),
 }).transform((data) => {
   if (!data.API_URL) {
     return {
