@@ -1,9 +1,9 @@
-import { env } from '@/env';
-import { Chunk, Chunks } from '@/generics/chunk';
-import { OnModuleInit } from '@nestjs/common';
-import { DataType, FieldType, MilvusClient } from '@zilliz/milvus2-sdk-node';
+import { env } from "@/env";
+import { Chunk, Chunks } from "@/generics/chunk";
+import { OnModuleInit } from "@nestjs/common";
+import { DataType, FieldType, MilvusClient } from "@zilliz/milvus2-sdk-node";
 
-import { SearchOptions, VectorStore } from '../vector-store.service';
+import { SearchOptions, VectorStore } from "../vector-store.service";
 
 export class MilvusService extends VectorStore implements OnModuleInit {
   client: MilvusClient;
@@ -104,12 +104,12 @@ export class MilvusService extends VectorStore implements OnModuleInit {
     }));
 
     if (data.some(d => !d.embedding)) throw new Error("Invalid chunk data");
-    
+
     const res = await this.client.insert({
       collection_name: this.collectionName,
       fields_data: data
     });
-    
+
     await this.client.flushSync({ collection_names: [this.collectionName] });
   }
 
@@ -131,8 +131,8 @@ export class MilvusService extends VectorStore implements OnModuleInit {
       },
       output_fields: ["seqId", "content", "knowledgeId", "sourceId", "tenantId", "createdAt", "updatedAt"],
     });
-    
-    return Chunks.fromChunks(result.results.map(r => Chunk.fromObject(r)));
+
+    return Chunks.fromChunkArray(result.results.map(r => Chunk.fromObject(r)));
   }
 
   async deleteChunks(c: Chunk[] | Chunk | Chunks): Promise<void> {
