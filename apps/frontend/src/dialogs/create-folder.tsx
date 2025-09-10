@@ -1,40 +1,37 @@
-import { FormInput } from "@/components/form/input";
-import { Button } from "@/components/ui/button";
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form } from "@/components/ui/form";
-import { useApiInvalidate } from "@/hooks/use-api-invalidate";
-import { useApiMutation } from "@/hooks/use-api-mutation";
-import { useApiQuery } from "@/hooks/use-api-query";
-import { useDialog } from "@/hooks/use-dialog";
-import { useKnowledge } from "@/hooks/use-knowledge";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createKnowledgeFolderSchema } from "@memora/schemas";
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 
-import { DialogType } from "./";
+import { FormInput } from '@/components/form/input';
+import { Button } from '@/components/ui/button';
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Form } from '@/components/ui/form';
+import { useApiInvalidate } from '@/hooks/use-api-invalidate';
+import { useApiMutation } from '@/hooks/use-api-mutation';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { useDialog } from '@/hooks/use-dialog';
+import { useKnowledge } from '@/hooks/use-knowledge';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createKnowledgeFolderSchema } from '@memora/schemas';
 
-import type {  KnowledgeFolder } from '@memora/schemas';
-type DialogProps = {
-  folderId?: string;
-  slug: string;
-}
+import { DialogType } from './';
 
-export const CreateKnowledgeFolderDialog = ({ folderId }: DialogProps) => {
+export const CreateKnowledgeFolderDialog = ({ folderId }: { folderId?: string }) => {
   const { closeDialog } = useDialog();
   const { slug } = useKnowledge();
   const form = useForm({ resolver: zodResolver(createKnowledgeFolderSchema) });
   const isLoading = form.formState.isSubmitting;
 
-  const { data: folder } = useApiQuery<KnowledgeFolder>(`/api/knowledge/${slug}/folder/${folderId}`, { enabled: !!folderId });
+  const { data: folder } = useApiQuery(
+    "/api/knowledge/:knowledgeSlug/folder/:id",
+    { method: "GET", params: { id: folderId }, enabled: !!folderId }
+  );
 
   const invalidate = useApiInvalidate();
-  const { mutate } = useApiMutation(`/api/knowledge/${slug}/folder`);
+  const { mutate } = useApiMutation('/api/knowledge/:knowledgeSlug/folder', { method: 'POST' });
   const onSubmit = form.handleSubmit(async (body) => {
-    console.log(body, folderId);
-    mutate({ body, query: { parentId: folderId } }, {
+    mutate({ body, params: { knowledgeSlug: slug! }, query: { parentId: folderId } }, {
       onSuccess: () => {
-        invalidate(`/api/knowledge/:knowledge_slug/folder`);
-        invalidate(`/api/knowledge/:knowledge_slug/source`);
+        invalidate('/api/knowledge/:knowledgeSlug/folder');
+        invalidate('/api/knowledge/:knowledgeSlug/source');
         closeDialog(DialogType.CREATE_FOLDER);
       }
     });

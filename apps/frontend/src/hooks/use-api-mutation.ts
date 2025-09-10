@@ -7,39 +7,57 @@ import { useParams } from './use-params';
 import { useSearchParams } from './use-search-params';
 
 import type { UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import type { ApiRoutes } from '@/types/api';
 
-export type MutationVariables<
-  TBody = any, 
-  TQuery = Record<string, any>,
-  TParams = Record<string, any>
-> = {
-  body?: TBody;
-  params?: TParams;
-  query?: TQuery;
+export type MutationVariables<TPath extends keyof ApiRoutes, TMethod extends keyof ApiRoutes[TPath]> = {
+  body?: ApiRoutes[TPath][TMethod] extends { body: unknown }
+    ? ApiRoutes[TPath][TMethod]["body"]
+    : never;
+  params?: ApiRoutes[TPath][TMethod] extends { params: unknown }
+    ? ApiRoutes[TPath][TMethod]["params"]
+    : never;
+  query?: ApiRoutes[TPath][TMethod] extends { query: unknown }
+    ? ApiRoutes[TPath][TMethod]["query"]
+    : never;
 };
 
-type ApiMutationOpts<TData, TError, TVariables, TContext> = Omit<
+type ResponseMutation<TPath extends keyof ApiRoutes, TMethod extends keyof ApiRoutes[TPath]> = 
+  ApiRoutes[TPath][TMethod] extends { response: unknown }
+    ? ApiRoutes[TPath][TMethod]["response"]
+    : unknown;
+  
+type ApiMutationOpts<
+  TPath extends keyof ApiRoutes = keyof ApiRoutes,
+  TMethod extends keyof ApiRoutes[TPath] = keyof ApiRoutes[TPath],
+  TData extends ResponseMutation<TPath, TMethod> = ResponseMutation<TPath, TMethod>,
+  TError extends ApiError = ApiError,
+  TVariables extends MutationVariables<TPath, TMethod> = MutationVariables<TPath, TMethod>,
+  TContext = unknown> = Omit<
   UseMutationOptions<TData, TError, TVariables, TContext>, "mutationKey" | "mutationFn"> &
   {
     passParams?: boolean;
     passQuery?: boolean;
-    method?: string;
+    method: TMethod;
   };
 
 export function useApiMutation<
-  TVariables extends MutationVariables = MutationVariables,
-  TData = unknown,
+  TPath extends keyof ApiRoutes,
+  TMethod extends keyof ApiRoutes[TPath],
+  TData = ApiRoutes[TPath][TMethod] extends { response: unknown }
+    ? ApiRoutes[TPath][TMethod]["response"]
+    : unknown,
   TError extends Error = ApiError,
   TContext = unknown
 >(
-  key: string,
-  options: ApiMutationOpts<TData, TError, Partial<TVariables>, TContext> = { passParams: true, passQuery: true, method: "POST" }
-): UseMutationResult<TData, TError, Partial<TVariables>, TContext> {
+  key: TPath,
+  options: ApiMutationOpts<TPath, TMethod, TData, TError, MutationVariables<TPath, TMethod>, TContext> = 
+  { passParams: true, passQuery: true, method: "POST" as TMethod }
+): UseMutationResult<TData, TError, MutationVariables<TPath, TMethod>, TContext> {
   const routeParams = useParams();
   const [routeSearchParams] = useSearchParams();
 
-  return useMutation<TData, TError, Partial<TVariables>, TContext>({
-    mutationFn: async ({ body, params: p, query: q }: Partial<TVariables>): Promise<TData> => {
+  return useMutation<TData, TError, MutationVariables<TPath, TMethod>, TContext>({
+    mutationFn: async ({ body, params: p, query: q }: MutationVariables<TPath, TMethod>): Promise<TData> => {
       const params = p ?? (options.passParams ? routeParams : {});
       
       const searchParams: Record<string, string> = {};
@@ -50,7 +68,7 @@ export function useApiMutation<
       const url = buildUrl(key, params, query);
 
       const res = await fetch(url, {
-        method: options.method,
+        method: options.method as string,
         headers: {
           "Content-Type": "application/json",
         },

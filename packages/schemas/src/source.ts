@@ -107,9 +107,3 @@ export const getUploadUrlSchema = z.object({
   fileSize: z.number({ message: "File size is required" }).max(100 * 1024 * 1024, "File size must be less than 100MB"),
 });
 export type GetUploadUrl = z.infer<typeof getUploadUrlSchema>;
-
-export const getUploadUrlResponseSchema = z.object({
-  url: z.string().url(),
-  key: z.string(),
-})
-export type GetUploadUrlResponse = z.infer<typeof getUploadUrlResponseSchema>;

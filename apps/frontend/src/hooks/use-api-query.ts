@@ -1,26 +1,26 @@
-import { ApiError } from "@/utils/api-error";
-import { buildUrl } from "@/utils/build-url";
-import { catchError } from "@/utils/catch-error";
-import { useQuery } from "@tanstack/react-query";
+import { ApiError } from '@/utils/api-error';
+import { buildUrl } from '@/utils/build-url';
+import { catchError } from '@/utils/catch-error';
+import { useQuery } from '@tanstack/react-query';
 
-import { useParams } from "./use-params";
-import { useSearchParams } from "./use-search-params";
+import { useParams } from './use-params';
+import { useSearchParams } from './use-search-params';
 
 import type { QueryKey, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import type { ApiRoutes } from '@/types/api';
-type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-type ApiQueryOpts<TPath extends keyof ApiRoutes, TMethod extends keyof ApiRoutes[TPath] & Method> = {
+
+type ApiQueryOpts<TPath extends keyof ApiRoutes, TMethod extends keyof ApiRoutes[TPath]> = {
   params?: ApiRoutes[TPath][TMethod] extends { params: unknown }
-    ? ApiRoutes[TPath][TMethod]["params"]
+    ? Partial<ApiRoutes[TPath][TMethod]["params"]>
     : never;
   query?: ApiRoutes[TPath][TMethod] extends { query: unknown }
-    ? ApiRoutes[TPath][TMethod]["query"]
+    ? Partial<ApiRoutes[TPath][TMethod]["query"]>
     : never;
   body?: ApiRoutes[TPath][TMethod] extends { body: unknown }
     ? ApiRoutes[TPath][TMethod]["body"]
     : never;
   enabled?: boolean;
-  method?: TMethod;
+  method: TMethod;
   passParams?: boolean;
   passQuery?: boolean;
 };
@@ -28,7 +28,7 @@ type ApiQueryOpts<TPath extends keyof ApiRoutes, TMethod extends keyof ApiRoutes
 
 export function useApiQuery<
   TPath extends keyof ApiRoutes,
-  TMethod extends keyof ApiRoutes[TPath] & Method = keyof ApiRoutes[TPath] & Method,
+  TMethod extends keyof ApiRoutes[TPath] = keyof ApiRoutes[TPath],
   TError extends Error = ApiError,
   TData = ApiRoutes[TPath][TMethod] extends { response: unknown }
     ? ApiRoutes[TPath][TMethod]["response"]
@@ -40,13 +40,13 @@ export function useApiQuery<
     Omit<UseQueryOptions<TData, TError, TData, TQueryKey>, "queryKey" | "queryFn">
     = { passParams: true, passQuery: true, method: 'GET' as TMethod }
 ): UseQueryResult<TData, TError> {
-  const method = (opts?.method ?? "GET") as keyof ApiRoutes[TPath] & Method;
+  const method = (opts?.method ?? "GET") as keyof ApiRoutes[TPath];
   const routeParams = useParams();
   const [routeSearchParams] = useSearchParams();
 
   return useQuery<TData, TError, TData, TQueryKey>({
     ...opts,
-    queryKey: [path, opts?.params, opts?.query, opts?.body] as unknown as TQueryKey,
+    queryKey: [path, opts?.params, opts?.query] as unknown as TQueryKey,
     enabled: opts?.enabled,
     queryFn: async (): Promise<TData> => {
       const params = opts?.params ?? (opts.passParams ? routeParams : {});

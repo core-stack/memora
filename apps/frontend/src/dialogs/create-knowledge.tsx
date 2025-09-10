@@ -9,9 +9,12 @@ import { Form } from '@/components/ui/form';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createKnowledgeSchema } from '@memora/schemas';
 
 import { DialogType } from './';
 
+import type { CreateKnowledge } from '@memora/schemas';
 const generateSlug = (name: string) => {
   return name
     .toLowerCase()
@@ -23,10 +26,10 @@ const generateSlug = (name: string) => {
 export const CreateKnowledgeDialog = () => {
   const { closeDialog } = useDialog();
 
-  const form = useForm();
+  const form = useForm<CreateKnowledge>({ resolver: zodResolver(createKnowledgeSchema) });
   const isLoading = form.formState.isSubmitting;
   const invalidate = useApiInvalidate();
-  const { mutate } = useApiMutation("/api/knowledge");
+  const { mutate } = useApiMutation("/api/knowledge", { method: "POST" });
   const onSubmit = form.handleSubmit(async (body) => {
     mutate({ body }, {
       onSuccess: () => {

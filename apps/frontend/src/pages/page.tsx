@@ -1,19 +1,18 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DialogType } from "@/dialogs";
-import { useApiQuery } from "@/hooks/use-api-query";
-import { useDialog } from "@/hooks/use-dialog";
-import { useRouter } from "@/hooks/use-router";
-import { Clock, Database, PlusCircle } from "lucide-react";
+import { Clock, Database, PlusCircle } from 'lucide-react';
 
-import type { Knowledge } from "@memora/schemas";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { DialogType } from '@/dialogs';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { useDialog } from '@/hooks/use-dialog';
+import { useRouter } from '@/hooks/use-router';
 
 export default function Home() {
   const router = useRouter();
   const { openDialog } = useDialog();
 
-  const { data } = useApiQuery<Knowledge[]>("/api/knowledge");
+  const { data } = useApiQuery("/api/knowledge", { method: "GET" });
 
   const handleSelect = (slug: string) => router.push(`/${slug}`);
 

@@ -1,11 +1,8 @@
-import { useApiQuery } from "@/hooks/use-api-query";
-
-import type { GetUploadUrlResponse } from "@memora/schemas";
+import { useApiQuery } from '@/hooks/use-api-query';
 
 type RemoteDocumentViewerProps = {
   type: "remote";
   sourceId: string;
-  knowledgeSlug: string;
 }
 type LocalDocumentViewerProps = {
   type: "local";
@@ -21,12 +18,8 @@ export const DocumentViewer = (props: Props) => {
   }
 }
 
-
-const RemoteDocumentViewer = (props: RemoteDocumentViewerProps) => {
-  const { data } = useApiQuery<GetUploadUrlResponse>(
-    "/api/knowledge/:knowledge_slug/source/:source_id/view",
-    { params: { knowledge_slug: props.knowledgeSlug, source_id: props.sourceId } }
-  );
+const RemoteDocumentViewer = ({ sourceId }: RemoteDocumentViewerProps) => {
+  const { data } = useApiQuery("/api/knowledge/:knowledgeSlug/source/:sourceId/view", { method: "GET", params: { sourceId } });
 
   return (
     <iframe src={data?.url} width={"100%"} height={"100%"} />
