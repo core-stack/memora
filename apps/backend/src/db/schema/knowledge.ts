@@ -1,5 +1,10 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import { index, pgTable, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+
+import { chat } from './chat';
+import { folder } from './folder';
+import { plugin } from './plugin';
+import { source } from './source';
 
 export const knowledge = pgTable("knowledge", {
   id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
@@ -16,3 +21,10 @@ export const knowledge = pgTable("knowledge", {
   index("knowledge_tenant_idx").on(table.tenantId),
   uniqueIndex("knowledge_tenant_slug_unique").on(table.tenantId, table.slug),
 ]);
+
+export const knowledgeRelations = relations(knowledge, ({ many }) => ({
+  folders: many(folder),
+  sources: many(source),
+  plugins: many(plugin),
+  chats: many(chat),
+}));

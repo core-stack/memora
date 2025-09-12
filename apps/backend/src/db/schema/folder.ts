@@ -2,6 +2,7 @@ import { relations, sql } from 'drizzle-orm';
 import { boolean, index, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 import { knowledge } from './knowledge';
+import { source } from './source';
 
 export const folder = pgTable("folder", {
   id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
@@ -39,5 +40,5 @@ export const folderRelations = relations(folder, ({ one, many }) => ({
     relationName: "parent_children",
   }),
 
-  // sources: many(source) <-- deixamos pra depois quando tivermos a tabela Source
+  sources: many(source),
 }));

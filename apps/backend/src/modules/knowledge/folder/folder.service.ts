@@ -1,13 +1,12 @@
 
 
-import { Context } from "@/generics/context";
-import { TenantService } from "@/services/tenant.service";
-import { KnowledgeFolder } from "@memora/schemas";
-import { Injectable } from "@nestjs/common";
+import { Context } from '@/generics/context';
+import { TenantService } from '@/generics/tenant.service';
+import { KnowledgeFolder } from '@memora/schemas';
+import { Injectable } from '@nestjs/common';
 
-import { KnowledgeService } from "../knowledge.service";
-
-import { FolderRepository } from "./folder.repository";
+import { KnowledgeService } from '../knowledge.service';
+import { FolderRepository } from './folder.repository';
 
 @Injectable()
 export class FolderService extends TenantService<KnowledgeFolder> {

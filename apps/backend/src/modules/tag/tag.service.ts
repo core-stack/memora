@@ -1,8 +1,8 @@
-import { TenantService } from "@/services/tenant.service";
-import { Tag } from "@memora/schemas";
-import { Injectable } from "@nestjs/common";
+import { TenantService } from '@/generics/tenant.service';
+import { Tag } from '@memora/schemas';
+import { Injectable } from '@nestjs/common';
 
-import { TagRepository } from "./tag.repository";
+import { TagRepository } from './tag.repository';
 
 @Injectable()
 export class TagService extends TenantService<Tag> {

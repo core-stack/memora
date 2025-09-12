@@ -1,9 +1,9 @@
-import { Context } from "@/generics/context";
-import { TenantService } from "@/services/tenant.service";
-import { Knowledge } from "@memora/schemas";
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Context } from '@/generics/context';
+import { TenantService } from '@/generics/tenant.service';
+import { Knowledge } from '@memora/schemas';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { KnowledgeRepository } from "./knowledge.repository";
+import { KnowledgeRepository } from './knowledge.repository';
 
 @Injectable()
 export class KnowledgeService extends TenantService<Knowledge> {

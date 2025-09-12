@@ -1,16 +1,16 @@
-import { env } from "@/env";
-import { Context } from "@/generics/context";
-import { StorageService } from "@/infra/storage/storage.service";
-import { TenantService } from "@/services/tenant.service";
-import { GetUploadUrl, Source } from "@memora/schemas";
-import { InjectQueue } from "@nestjs/bullmq";
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { Queue } from "bullmq";
-import { randomUUID } from "crypto";
+import { Queue } from 'bullmq';
+import { randomUUID } from 'crypto';
 
-import { KnowledgeService } from "../knowledge.service";
+import { env } from '@/env';
+import { Context } from '@/generics/context';
+import { TenantService } from '@/generics/tenant.service';
+import { StorageService } from '@/infra/storage/storage.service';
+import { GetUploadUrl, Source } from '@memora/schemas';
+import { InjectQueue } from '@nestjs/bullmq';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { SourceRepository } from "./source.repository";
+import { KnowledgeService } from '../knowledge.service';
+import { SourceRepository } from './source.repository';
 
 @Injectable()
 export class SourceService extends TenantService<Source> {

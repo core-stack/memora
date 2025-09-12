@@ -43,6 +43,7 @@
     "@prisma/client": "^6.15.0",
     "@zilliz/milvus2-sdk-node": "^2.6.0",
     "arangojs": "^10.1.2",
+    "argon2": "^0.44.0",
     "bullmq": "^5.58.5",
     "dotenv": "^17.2.1",
     "drizzle-orm": "^0.44.5",

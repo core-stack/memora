@@ -15,6 +15,13 @@
       "when": 1757520296796,
       "tag": "0001_absurd_may_parker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757717168291,
+      "tag": "0002_add_plugins",
+      "breakpoints": true
     }
   ]
 }
