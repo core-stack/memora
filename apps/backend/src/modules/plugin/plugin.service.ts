@@ -1,12 +1,17 @@
-import { CrudService } from '@/generics';
-import { Plugin } from '@memora/schemas';
-import { Injectable } from '@nestjs/common';
+import { CrudService } from "@/generics";
+import { plugins } from "@/plugin/plugins";
+import { Plugin } from "@memora/schemas";
+import { Injectable } from "@nestjs/common";
 
-import { PluginRepository } from './plugin.repository';
+import { PluginRepository } from "./plugin.repository";
 
 @Injectable()
 export class PluginService extends CrudService<Plugin> {
   constructor(repository: PluginRepository) {
     super(repository);
+  }
+
+  list() {
+    return plugins;
   }
 }

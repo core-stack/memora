@@ -1,10 +1,10 @@
-import z from 'zod';
+import z from "zod";
 
-import { orderSchema } from './shared';
+import { orderSchema } from "./shared";
 
 export const pluginSchema = z.object({
   id: z.string().uuid(),
-  
+
   name: z.string().max(50).optional(),
   type: z.string().max(255),
   config: z.record(z.string(), z.any()),
@@ -33,3 +33,15 @@ export type CreatePlugin = z.infer<typeof createPluginSchema>;
 
 export const updatePluginSchema = pluginSchema.pick({ id: true, name: true, type: true, config: true });
 export type UpdatePlugin = z.infer<typeof updatePluginSchema>;
+
+export const pluginDefinitionSchema = z.object({
+  name: z.string().max(50),
+  description: z.string().max(255),
+  icon: z.string().max(255),
+  configSchema: z.record(
+    z.string(),
+    z.enum(["string", "number", "boolean", "secret-string", "secret-number", "secret-boolean"])
+  ),
+})
+export const listPluginsSchema = z.array(pluginDefinitionSchema);
+export type ListPlugins = z.infer<typeof listPluginsSchema>;

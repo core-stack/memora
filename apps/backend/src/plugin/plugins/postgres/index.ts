@@ -1,30 +1,16 @@
-import { Client } from 'pg';
+import { OnDemandPlugin } from "@/plugin/base/on-demand.plugin";
+import { Client } from "pg";
 
-import { PluginConfigFieldType } from '@/plugin/base/config.interface';
-import { OnDemandPlugin } from '@/plugin/base/on-demand.plugin';
-
-export type PostgresPluginConfigType = {
-  host: string,
-  port: number,
-  username: string,
-  password: string,
-  database: string
-}
+import { postgresPlugin, PostgresPluginConfigType } from "./config";
 
 export class PostgresPlugin extends OnDemandPlugin<PostgresPluginConfigType> {
   name = "Postgres";
   description: "Postgres";
   icon: "database";
-  configSchema = {
-    host: PluginConfigFieldType.STRING,
-    port: PluginConfigFieldType.NUMBER,
-    username: PluginConfigFieldType.STRING,
-    password: PluginConfigFieldType.SECRET_STRING,
-    database: PluginConfigFieldType.STRING
-  };
+  configSchema = postgresPlugin.configSchema;
 
   private client: Client;
-  
+
   async test(config: PostgresPluginConfigType): Promise<boolean> {
     try {
       await this.load(config);
@@ -46,7 +32,7 @@ export class PostgresPlugin extends OnDemandPlugin<PostgresPluginConfigType> {
       password: config.password,
       database: config.database
     });
-    
+
     await this.client.connect();
   }
 
@@ -55,6 +41,6 @@ export class PostgresPlugin extends OnDemandPlugin<PostgresPluginConfigType> {
   }
 
   async run(): Promise<void> {
-    
+
   }
 }

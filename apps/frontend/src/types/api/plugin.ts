@@ -1,4 +1,4 @@
-import type { PluginFilter, CreatePlugin, UpdatePlugin, Plugin } from "@memora/schemas"
+import type { PluginFilter, CreatePlugin, UpdatePlugin, Plugin, ListPlugins } from "@memora/schemas"
 
 export interface PluginRoutes {
   "/api/plugin": {
@@ -22,4 +22,9 @@ export interface PluginRoutes {
       response: undefined;
     }
   },
+  "/api/plugin/list": {
+    GET: {
+      response: ListPlugins;
+    }
+  }
 }
