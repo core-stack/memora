@@ -1,13 +1,21 @@
-import { OnDemandPlugin } from "@/plugin/base/on-demand.plugin";
+import { OnDemandPlugin } from "@/modules/plugin/plugins/base/on-demand.plugin";
 import { Client } from "pg";
 
-import { postgresPlugin, PostgresPluginConfigType } from "./config";
+import { PluginConfigFieldType } from "../base/config.interface";
+
+import { PostgresPluginConfigType } from "./config";
 
 export class PostgresPlugin extends OnDemandPlugin<PostgresPluginConfigType> {
   name = "Postgres";
   description: "Postgres";
   icon: "database";
-  configSchema = postgresPlugin.configSchema;
+  configSchema = {
+    host: PluginConfigFieldType.STRING,
+    port: PluginConfigFieldType.NUMBER,
+    username: PluginConfigFieldType.STRING,
+    password: PluginConfigFieldType.SECRET_STRING,
+    database: PluginConfigFieldType.STRING
+  };
 
   private client: Client;
 
