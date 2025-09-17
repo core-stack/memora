@@ -2,7 +2,7 @@ import { idSchema } from "@memora/schemas";
 import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
 import z from "zod";
 
-import { Context } from "./context";
+import { HttpContext } from "./http-context";
 import { ICrudService } from "./service.interface";
 
 import type { FilterOptions } from './filter-options';
@@ -16,7 +16,7 @@ export abstract class CrudController<TEntity> {
   ) {}
 
   protected loadContext(req: Request) {
-    return new Context(req);
+    return new HttpContext(req);
   }
 
   @Get(":id")

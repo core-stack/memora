@@ -1,17 +1,28 @@
 import { CrudService } from "@/generics";
-import { plugins } from "@/plugin/plugins";
 import { Plugin } from "@memora/schemas";
 import { Injectable } from "@nestjs/common";
 
+import { KnowledgePluginRepository } from "./knowledge-plugin.repository";
+import { PluginManager } from "./plugin.manager";
 import { PluginRepository } from "./plugin.repository";
 
 @Injectable()
 export class PluginService extends CrudService<Plugin> {
-  constructor(repository: PluginRepository) {
+  constructor(
+    protected repository: PluginRepository,
+    private readonly knowledgePluginRepository: KnowledgePluginRepository,
+    private readonly pluginManager: PluginManager
+  ) {
     super(repository);
   }
 
-  list() {
-    return plugins;
+  async searchInPlugins(knowledgeId: string, query: string) {
+    const plugins = await this.repository.findByKnowledgeId(knowledgeId);
+
+    // TODO: determine plugins to use
+
+    await this.pluginManager.loadPlugins(plugins);
+
+
   }
 }

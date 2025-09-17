@@ -1,7 +1,7 @@
-import { Context } from '@/generics/context';
-import { Controller, Get, Req } from '@nestjs/common';
+import { HttpContext } from "@/generics/http-context";
+import { Controller, Get, Req } from "@nestjs/common";
 
-import { SearchService } from './search.service';
+import { SearchService } from "./search.service";
 
 import type { Request } from 'express';
 
@@ -11,7 +11,7 @@ export class SearchController {
 
   @Get(":knowledgeSlug")
   async search(@Req() req: Request) {
-    const ctx = new Context(req);
+    const ctx = new HttpContext(req);
     return this.searchService.search(ctx);
   }
 }

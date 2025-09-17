@@ -1,6 +1,5 @@
-import { Request } from 'express';
-
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException } from "@nestjs/common";
+import { Request } from "express";
 
 abstract class Getter {
   constructor(private params: Record<string, string | number | boolean | undefined>, private name: string) { }
@@ -40,7 +39,7 @@ abstract class Getter {
     const res = this.getBoolean(key);
     if (res === undefined) throw new BadRequestException(`Missing ${this.name} ${key}`);
     return res;
-  } 
+  }
 }
 
 export class Params extends Getter {
@@ -54,7 +53,7 @@ export class Query extends Getter {
   }
 }
 
-export class Context {
+export class HttpContext {
   params: Params;
   query: Query;
 

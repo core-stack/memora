@@ -1,17 +1,29 @@
-import { OnDemandPlugin } from "@/plugin/base/on-demand.plugin";
 import { Client } from "pg";
 
-import { postgresPlugin, PostgresPluginConfigType } from "./config";
+import { PluginConfigFieldType } from "../base/config.interface";
+import { PluginInstance } from "../base/plugin";
 
-export class PostgresPlugin extends OnDemandPlugin<PostgresPluginConfigType> {
-  name = "Postgres";
-  description: "Postgres";
-  icon: "database";
-  configSchema = postgresPlugin.configSchema;
+export type PostgresPluginConfigType = {
+  host: string,
+  port: number,
+  username: string,
+  password: string,
+  database: string
+}
+export class PostgresPlugin extends PluginInstance<PostgresPluginConfigType> {
+  configSchema = {
+    host: PluginConfigFieldType.STRING,
+    port: PluginConfigFieldType.NUMBER,
+    username: PluginConfigFieldType.STRING,
+    password: PluginConfigFieldType.SECRET_STRING,
+    database: PluginConfigFieldType.STRING
+  };
 
   private client: Client;
 
   async test(config: PostgresPluginConfigType): Promise<boolean> {
+    const test = await super.test(config);
+    if (!test) return false;
     try {
       await this.load(config);
       const msg = "Hello world!";
