@@ -5,9 +5,11 @@ import { orderSchema } from "./shared";
 export const pluginSchema = z.object({
   id: z.string().uuid(),
 
-  name: z.string().max(50).optional(),
+  name: z.string().max(50).nullable(),
+  description: z.string().nullable(),
+  whenUse: z.string().nullable(),
   type: z.string().max(255),
-  config: z.record(z.string(), z.any()),
+  config: z.unknown(),
 
   tenantId: z.string().uuid(),
 
@@ -20,6 +22,7 @@ export const pluginFilterSchema = pluginSchema.extend({
   filter: z.object({
     id: z.string().uuid().optional(),
     name: z.string().optional(),
+
   }).strict().optional(),
   order: z.object({
     createdAt: orderSchema,

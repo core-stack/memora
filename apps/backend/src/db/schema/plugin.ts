@@ -1,13 +1,15 @@
-import { relations, sql } from 'drizzle-orm';
-import { index, jsonb, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { relations, sql } from "drizzle-orm";
+import { index, jsonb, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
-import { knowledgePlugin } from './knowledge_plugin';
+import { knowledgePlugin } from "./knowledge_plugin";
 
 export const plugin = pgTable("plugin", {
   id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
 
   name: varchar("name", { length: 50 }),
   type: varchar("type", { length: 255 }).notNull(),
+  description: text(),
+  whenUse: text(),
   config: jsonb().default({}),
 
   tenantId: varchar("tenant_id", { length: 36 }).notNull(),

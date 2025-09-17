@@ -1,13 +1,13 @@
-import z from 'zod';
+import z from "zod";
 
-import { PluginConfigSchema } from './config.interface';
-import { IPlugin } from './plugin.interface';
+import { PluginConfigSchema } from "./config.interface";
 
-export abstract class BasePlugin<T> implements IPlugin<T> {
-  abstract name: string;
-  abstract description: string;
-  abstract icon: string;
+export abstract class PluginInstance<T> {
   abstract configSchema: PluginConfigSchema<T>;
+
+  constructor(public readonly id: string) {
+
+  }
 
   private schemaFromConfig(): z.ZodType<T> {
     const shape: Record<keyof T, z.ZodTypeAny> = {} as Record<keyof T, z.ZodTypeAny>;
@@ -39,5 +39,16 @@ export abstract class BasePlugin<T> implements IPlugin<T> {
     return this.schemaFromConfig().parse(data);
   }
 
-  abstract test(config: T): Promise<boolean> | boolean;
+  test(config: T): Promise<boolean> | boolean {
+    try {
+      this.validateSchema(config);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  abstract load(config: T): Promise<void>;
+  abstract unload(): Promise<void>;
+  abstract run(): Promise<void>;
 }
