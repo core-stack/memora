@@ -49,6 +49,7 @@ const envSchema = z.object({
   EMBEDDING_MODEL: z.string().optional().default("gemini-embedding-001"),
   // GEMINI
   GEMINI_API_KEY: z.string(),
+  GEMINI_MODEL: z.string().optional().default("gemini-flash-1.5-lite"),
   
   // VECTOR
   VECTOR_ENGINE: z.enum(['milvus']).default('milvus'),
