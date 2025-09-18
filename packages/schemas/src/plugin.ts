@@ -22,13 +22,13 @@ export const pluginFilterSchema = pluginSchema.extend({
   filter: z.object({
     id: z.string().uuid().optional(),
     name: z.string().optional(),
-
   }).strict().optional(),
   order: z.object({
     createdAt: orderSchema,
     updatedAt: orderSchema,
   }).strict().optional()
 }).strict();
+
 export type PluginFilter = z.infer<typeof pluginFilterSchema>;
 
 export const createPluginSchema = pluginSchema.pick({ name: true, type: true, config: true });

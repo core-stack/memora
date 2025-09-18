@@ -9,10 +9,10 @@ import type { FilterOptions } from './filter-options';
 import type { Request } from 'express';
 export abstract class CrudController<TEntity> {
   constructor(
-    protected service: ICrudService<TEntity>,
-    protected filterSchema: z.ZodType<FilterOptions<TEntity>>,
-    protected createDtoSchema: z.ZodType<Partial<TEntity>>,
-    protected updateDtoSchema: z.ZodType<Partial<TEntity>>,
+    protected readonly service: ICrudService<TEntity>,
+    protected readonly filterSchema: z.ZodType<FilterOptions<TEntity>>,
+    protected readonly createDtoSchema: z.ZodType<Partial<TEntity>>,
+    protected readonly updateDtoSchema: z.ZodType<Partial<TEntity>>,
   ) {}
 
   protected loadContext(req: Request) {
@@ -28,7 +28,8 @@ export abstract class CrudController<TEntity> {
   @Get()
   async findMany(@Req() req: Request, @Query() allParams: Record<string, unknown>): Promise<TEntity[]> {
     const opts = this.paramsToFilter(allParams);
-    this.validateSchema(this.filterSchema, opts);
+
+    // this.validateSchema(this.filterSchema, opts);
     return this.service.find(opts, this.loadContext(req));
   }
 
