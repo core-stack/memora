@@ -18,9 +18,9 @@ import { MessageModule } from './modules/knowledge/chat/message/message.module';
 import { FolderModule } from './modules/knowledge/folder/folder.module';
 import { KnowledgeModule } from './modules/knowledge/knowledge.module';
 import { SourceModule } from './modules/knowledge/source/source.module';
-import { PluginModule } from './modules/plugin/plugin.module';
 import { SearchModule } from './modules/search/search.module';
 import { TagModule } from './modules/tag/tag.module';
+import { PluginModule } from './plugin/plugin.module';
 
 @Module({
   imports: [
@@ -58,7 +58,7 @@ import { TagModule } from './modules/tag/tag.module';
       }),
     }),
     SecurityModule,
-    PluginModule,
+    PluginModule.forRoot(env.PLUGINS_DIR),
   ],
 })
 export class AppModule {}

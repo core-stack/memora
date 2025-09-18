@@ -17,8 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:migrate:dev": "npx prisma migrate dev --schema prisma/schema"
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.879.0",
@@ -40,7 +39,6 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/serve-static": "^5.0.3",
     "@nestjs/swagger": "^11.2.0",
-    "@prisma/client": "^6.15.0",
     "@zilliz/milvus2-sdk-node": "^2.6.0",
     "arangojs": "^10.1.2",
     "argon2": "^0.44.0",
@@ -78,7 +76,6 @@
     "globals": "^16.0.0",
     "jest": "^30.0.0",
     "prettier": "^3.4.2",
-    "prisma": "^6.15.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
@@ -103,9 +100,6 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "prisma": {
-      "schema": "./prisma/schema/schema.prisma"
-    },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }

@@ -1,13 +1,19 @@
-import { HttpContext } from "@/generics/http-context";
-import { VectorStore } from "@/infra/vector/vector-store.service";
-import { Embeddings } from "@langchain/core/embeddings";
-import { Injectable } from "@nestjs/common";
+import { HttpContext } from '@/generics/http-context';
+import { VectorStore } from '@/infra/vector/vector-store.service';
+import { PluginManagerService } from '@/plugin/plugin-manager.service';
+import { Embeddings } from '@langchain/core/embeddings';
+import { Injectable } from '@nestjs/common';
 
-import { KnowledgeService } from "../knowledge/knowledge.service";
+import { KnowledgeService } from '../knowledge/knowledge.service';
 
 @Injectable()
 export class SearchService {
-  constructor(private vectorStore: VectorStore, private embeddings: Embeddings, private knowledgeService: KnowledgeService) {}
+  constructor(
+    private vectorStore: VectorStore,
+    private embeddings: Embeddings,
+    private knowledgeService: KnowledgeService,
+    private pluginManager: PluginManagerService
+  ) {}
 
   async search(ctx: HttpContext) {
     console.log("search");
