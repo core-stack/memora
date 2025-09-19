@@ -1,0 +1,10 @@
+{
+  "name": "test",
+  "displayName": "Test",
+  "version": "0.0.1",
+  "description": "Test plugin",
+  "type": "source",
+  "inputSchema": {},
+  "configSchema": {},
+  "documentation": "test"
+}

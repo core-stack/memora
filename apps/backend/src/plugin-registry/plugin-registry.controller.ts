@@ -1,6 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get } from "@nestjs/common";
 
-import { PluginRegistryService } from './plugin-registry.service';
+import { PluginRegistryService } from "./plugin-registry.service";
 
 @Controller("plugin-registry")
 export class PluginRegistryController {
@@ -10,5 +10,4 @@ export class PluginRegistryController {
   async get() {
     return this.pluginRegistryService.plugins;
   }
-
 }

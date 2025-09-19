@@ -1,16 +1,9 @@
-import { LLMService } from '@/infra/llm/llm.service';
-import { Plugin } from '@memora/schemas';
-// src/plugins/manager/plugin-manager.service.ts
-import { Injectable, Logger } from '@nestjs/common';
+import { LLMService } from "@/infra/llm/llm.service";
+import { Plugin } from "@memora/schemas";
+import { Injectable, Logger } from "@nestjs/common";
 
-import { PluginRegistryService } from './plugin-registry.service';
-import { PluginSchemaBuilderService } from './plugin-schema-builder.service';
-
-interface PluginConfig {
-  pluginName: string;
-  instanceId: string;
-  config: any;
-}
+import { PluginRegistryService } from "./plugin-registry.service";
+import { PluginSchemaBuilderService } from "./plugin-schema-builder.service";
 
 @Injectable()
 export class PluginManagerService {
@@ -35,7 +28,7 @@ export class PluginManagerService {
       throw error;
     }
   }
-  
+
   async executeFromQuery<T>(p: Plugin, query: string): Promise<T> {
     try {
       const def = await this.pluginRegistry.getDefinition(p);
@@ -58,15 +51,5 @@ export class PluginManagerService {
         this.logger.warn(`Failed to preload plugin ${p.id}: ${error.message}`);
       }
     }
-  }
-
-  async cleanupInstance(pluginName: string, instanceId: string): Promise<void> {
-    const instanceKey = `${pluginName}:${instanceId}`;
-
-    const instance = this.pluginRegistry['pluginInstances'].get(instanceKey);
-    if (instance && instance.timeoutId) {
-      clearTimeout(instance.timeoutId);
-    }
-    await this.pluginRegistry['cleanupInstance'](instanceKey);
   }
 }

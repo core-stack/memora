@@ -1,13 +1,12 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import { Plugin } from "@memora/schemas";
+import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import * as fs from "fs";
+import * as path from "path";
 
-import { Plugin } from '@memora/schemas';
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-
-import { PluginProviderRegistry } from './plugin-provider.service';
-import { IPlugin } from './types/plugin';
-import { PluginDefinition, pluginDefinitionSchema } from './types/plugin-definition';
-import { PluginModule } from './types/plugin-module';
+import { PluginProviderRegistry } from "./plugin-provider.service";
+import { IPlugin } from "./types/plugin";
+import { PluginDefinition, pluginDefinitionSchema } from "./types/plugin-definition";
+import { PluginModule } from "./types/plugin-module";
 
 export const PLUGINS_DIR = Symbol('PLUGINS_DIR');
 
@@ -22,12 +21,12 @@ export class PluginRegistryService implements OnModuleInit {
   private readonly logger = new Logger(PluginRegistryService.name);
   private pluginModules = new Map<string, PluginModule>();
   private pluginInstances = new Map<string, PluginInstance>();
-  
+
   private _plugins: PluginDefinition[] = [];
   get plugins(): PluginDefinition[] {
     return this._plugins;
   }
-  
+
   private readonly INSTANCE_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
   constructor(
@@ -110,7 +109,7 @@ export class PluginRegistryService implements OnModuleInit {
       });
 
       const instanceKey = this.getInstanceKey(p);
-      
+
       this.pluginInstances.set(instanceKey, { instance, lastUsed: new Date() });
 
       this.scheduleCleanup(instanceKey);
@@ -146,7 +145,7 @@ export class PluginRegistryService implements OnModuleInit {
     const instance = this.pluginInstances.get(instanceKey);
     if (!instance) return;
 
-    
+
     if (instance.timeoutId) {
       clearTimeout(instance.timeoutId);
     }
@@ -168,7 +167,7 @@ export class PluginRegistryService implements OnModuleInit {
         if (instanceData.instance.dispose && typeof instanceData.instance.dispose === 'function') {
           await instanceData.instance.dispose();
         }
-        
+
         this.pluginInstances.delete(instanceKey);
         this.logger.log(`Instance ${instanceKey} cleaned up`);
       } catch (error) {
