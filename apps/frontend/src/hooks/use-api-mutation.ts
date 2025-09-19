@@ -58,6 +58,9 @@ export function useApiMutation<
 
   return useMutation<TData, TError, MutationVariables<TPath, TMethod>, TContext>({
     mutationFn: async ({ body, params: p, query: q }: MutationVariables<TPath, TMethod>): Promise<TData> => {
+      if (options.passParams === undefined) options.passParams = true;
+      if (options.passQuery === undefined) options.passQuery = true;
+      
       const params = p ?? (options.passParams ? routeParams : {});
       
       const searchParams: Record<string, string> = {};

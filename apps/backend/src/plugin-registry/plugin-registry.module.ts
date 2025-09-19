@@ -1,9 +1,9 @@
-import { DynamicModule, Module, OnApplicationShutdown } from "@nestjs/common";
+import { DynamicModule, Module, OnApplicationShutdown } from '@nestjs/common';
 
-import { DynamicPluginRegistry, PLUGINS_DIR } from "./dynamic-plugin-registry";
-import { PluginFactoryService } from "./plugin-factory.service";
-import { PluginManagerService } from "./plugin-manager.service";
-import { PluginProviderRegistry } from "./plugin-provider.service";
+import { PluginManagerService } from './plugin-manager.service';
+import { PluginProviderRegistry } from './plugin-provider.service';
+import { PluginRegistryController } from './plugin-registry.controller';
+import { PluginRegistryService, PLUGINS_DIR } from './plugin-registry.service';
 
 @Module({})
 export class PluginRegistryModule implements OnApplicationShutdown {
@@ -11,18 +11,18 @@ export class PluginRegistryModule implements OnApplicationShutdown {
     return {
       module: PluginRegistryModule,
       providers: [
-        PluginFactoryService,
+        PluginRegistryService,
         PluginManagerService,
         PluginProviderRegistry,
-        DynamicPluginRegistry,
         { provide: PLUGINS_DIR, useValue: pluginDir }
       ],
+      controllers: [PluginRegistryController],
       global: true,
-      exports: [PluginManagerService, PluginFactoryService, PluginProviderRegistry],
+      exports: [PluginManagerService, PluginRegistryService, PluginProviderRegistry],
     }
   }
 
-  constructor(private readonly pluginFactory: PluginFactoryService) {}
+  constructor(private readonly pluginFactory: PluginRegistryService) {}
 
   onApplicationShutdown() {
     return this.pluginFactory.cleanupAllInstances();

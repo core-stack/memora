@@ -18,7 +18,7 @@ export const TopBar = () => {
           <nav className='flex items-center gap-10 h-full'>
             <NavLink href={`/${slug}/chat`}>Chats</NavLink>
             <NavLink href={`/${slug}/source`}>Source</NavLink>
-            <NavLink href={`/${slug}/integration`}>Integrations</NavLink>
+            <NavLink href={`/${slug}/plugin`}>Plugin</NavLink>
           </nav>
         </div>
         <TopBarSearch />
@@ -26,7 +26,6 @@ export const TopBar = () => {
     </header>
   )
 }
-
 
 const TopBarSearch = () => {
   const form = useForm();

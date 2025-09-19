@@ -49,8 +49,11 @@ export function useApiQuery<
     queryKey: [path, opts?.params, opts?.query] as unknown as TQueryKey,
     enabled: opts?.enabled,
     queryFn: async (): Promise<TData> => {
+      if (opts.passParams === undefined) opts.passParams = true;
+      if (opts.passQuery === undefined) opts.passQuery = true;
+      
       const params = opts?.params ?? (opts.passParams ? routeParams : {});
-
+      
       const searchParams: Record<string, string> = {};
       for (const [key, value] of routeSearchParams.entries()) {
         searchParams[key] = value;

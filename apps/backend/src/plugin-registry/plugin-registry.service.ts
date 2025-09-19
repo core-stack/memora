@@ -1,38 +1,95 @@
-import { Plugin } from '@memora/schemas';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import * as fs from 'fs';
+import * as path from 'path';
 
-import { DynamicPluginRegistry } from './dynamic-plugin-registry';
+import { Plugin } from '@memora/schemas';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+
 import { PluginProviderRegistry } from './plugin-provider.service';
 import { IPlugin } from './types/plugin';
-import { PluginDefinition } from './types/plugin-definition';
+import { PluginDefinition, pluginDefinitionSchema } from './types/plugin-definition';
+import { PluginModule } from './types/plugin-module';
 
-interface PluginInstance<T = any> {
+export const PLUGINS_DIR = Symbol('PLUGINS_DIR');
+
+interface PluginInstance {
   instance: IPlugin;
   lastUsed: Date;
   timeoutId?: NodeJS.Timeout;
 }
 
 @Injectable()
-export class PluginFactoryService implements OnModuleInit {
-  private readonly logger = new Logger(PluginFactoryService.name);
-  private pluginDefinitions = new Map<string, PluginDefinition>();
+export class PluginRegistryService implements OnModuleInit {
+  private readonly logger = new Logger(PluginRegistryService.name);
+  private pluginModules = new Map<string, PluginModule>();
   private pluginInstances = new Map<string, PluginInstance>();
+  
+  private _plugins: PluginDefinition[] = [];
+  get plugins(): PluginDefinition[] {
+    return this._plugins;
+  }
+  
   private readonly INSTANCE_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
   constructor(
+    @Inject(PLUGINS_DIR) private readonly pluginsDir: string,
     private providerRegistry: PluginProviderRegistry,
-    private registry: DynamicPluginRegistry
   ) {}
 
   onModuleInit() {
     this.loadPluginModule();
   }
-  
+
+  async discoverPlugins(): Promise<{ name: string, module: any }[]> {
+    if (!this.pluginsDir || !fs.existsSync(this.pluginsDir)) {
+      this.logger.warn(`Plugins directory ${this.pluginsDir} does not exist`);
+      return [];
+    }
+
+    this.logger.log(`Discovering plugins in ${this.pluginsDir}`);
+    const pluginDirs = fs.readdirSync(this.pluginsDir);
+    const validPlugins: { name: string, module: any }[] = [];
+
+    for (const dir of pluginDirs) {
+      const pluginPath = path.join(this.pluginsDir, dir);
+      const packageJsonPath = path.join(pluginPath, 'package.json');
+
+      if (fs.existsSync(packageJsonPath)) {
+        try {
+          const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+          if (packageJson.name && packageJson.main) {
+            validPlugins.push({
+              name: packageJson.name,
+              module: await import(path.join(pluginPath, packageJson.main))
+            });
+            this._plugins.some(p => p.name === packageJson.name)
+            this.logger.log(`Discovered plugin: ${packageJson.name}`);
+          }
+        } catch (error) {
+          this.logger.warn(`Invalid plugin package.json in ${dir}: ${error.message}`);
+        }
+      }
+
+      const pluginJsonPath = path.join(pluginPath, 'memora-plugin.json');
+      if (fs.existsSync(pluginJsonPath)) {
+        try {
+          const pluginJson = pluginDefinitionSchema.parse(JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8')));
+          if (this._plugins.every(p => p.name !== pluginJson.name)) {
+            this._plugins.push(pluginJson);
+          }
+        } catch (error) {
+          this.logger.warn(`Invalid plugin.json in ${dir}: ${error.message}`);
+        }
+      }
+    }
+
+    return validPlugins;
+  }
+
   async loadPluginModule(): Promise<void> {
     try {
-      const plugins = await this.registry.discoverPlugins();
-      for (const { definition, name } of plugins) {
-        this.pluginDefinitions.set(name, definition);
+      const plugins = await this.discoverPlugins();
+      for (const { module, name } of plugins) {
+        this.pluginModules.set(name, module);
         this.logger.log(`Plugin module ${name} loaded`);
       }
     } catch (error) {
@@ -42,7 +99,7 @@ export class PluginFactoryService implements OnModuleInit {
   }
 
   async createInstance(p: Plugin): Promise<IPlugin> {
-    const pluginModule = this.pluginDefinitions.get(p.type);
+    const pluginModule = this.pluginModules.get(p.type);
     if (!pluginModule) throw new Error(`Plugin ${p.type} not loaded`);
 
     try {
@@ -75,6 +132,10 @@ export class PluginFactoryService implements OnModuleInit {
     }
 
     return this.createInstance(p);
+  }
+
+  async getDefinition(p: Plugin): Promise<PluginDefinition | undefined> {
+    return this.plugins.find(plugin => plugin.name === p.type);
   }
 
   private getInstanceKey(p: Plugin): string {

@@ -1,9 +1,12 @@
-import { idSchema } from "@memora/schemas";
-import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
-import z from "zod";
+import z from 'zod';
 
-import { HttpContext } from "./http-context";
-import { ICrudService } from "./service.interface";
+import { idSchema } from '@memora/schemas';
+import {
+  BadRequestException, Body, Delete, Get, Param, Post, Put, Query, Req
+} from '@nestjs/common';
+
+import { HttpContext } from './http-context';
+import { ICrudService } from './service.interface';
 
 import type { FilterOptions } from './filter-options';
 import type { Request } from 'express';
@@ -28,8 +31,7 @@ export abstract class CrudController<TEntity> {
   @Get()
   async findMany(@Req() req: Request, @Query() allParams: Record<string, unknown>): Promise<TEntity[]> {
     const opts = this.paramsToFilter(allParams);
-
-    // this.validateSchema(this.filterSchema, opts);
+    this.validateSchema(this.filterSchema, opts);
     return this.service.find(opts, this.loadContext(req));
   }
 

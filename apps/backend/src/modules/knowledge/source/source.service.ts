@@ -1,16 +1,17 @@
-import { env } from "@/env";
-import { HttpContext } from "@/generics/http-context";
-import { TenantService } from "@/generics/tenant.service";
-import { StorageService } from "@/infra/storage/storage.service";
-import { GetUploadUrl, Source } from "@memora/schemas";
-import { InjectQueue } from "@nestjs/bullmq";
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { Queue } from "bullmq";
-import { randomUUID } from "crypto";
+import { Queue } from 'bullmq';
+import { randomUUID } from 'crypto';
 
-import { KnowledgeService } from "../knowledge.service";
+import { env } from '@/env';
+import { FilterOptions } from '@/generics/filter-options';
+import { HttpContext } from '@/generics/http-context';
+import { TenantService } from '@/generics/tenant.service';
+import { StorageService } from '@/infra/storage/storage.service';
+import { GetUploadUrl, Source } from '@memora/schemas';
+import { InjectQueue } from '@nestjs/bullmq';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { SourceRepository } from "./source.repository";
+import { KnowledgeService } from '../knowledge.service';
+import { SourceRepository } from './source.repository';
 
 @Injectable()
 export class SourceService extends TenantService<Source> {
@@ -21,6 +22,13 @@ export class SourceService extends TenantService<Source> {
     @InjectQueue("ingest") private readonly ingestQueue: Queue
   ) {
     super(repository);
+  }
+
+  override async find(opts: FilterOptions<Source>, ctx: HttpContext): Promise<Source[]> {
+    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
+    opts.filter = opts.filter ?? {};
+    opts.filter.knowledgeId = knowledgeId;
+    return super.find(opts, ctx);
   }
 
   override async create(input: Partial<Source>, ctx: HttpContext) {
@@ -47,7 +55,7 @@ export class SourceService extends TenantService<Source> {
     return this.storageService.getUploadUrl(key, input.contentType, { temp: true, publicAccess: false });
   }
 
-  async view(sourceId: string, ctx: HttpContext) {
+  async view(sourceId: string) {
     const source = (await this.repository.find({ filter: { id: sourceId } }))[0];
     if (!source) throw new BadRequestException("Source not found");
     return this.storageService.getVisualizationUrl(source.key);

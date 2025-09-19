@@ -1,12 +1,13 @@
-import * as schema from "@/db/schema";
-import { DrizzleAsyncProvider } from "@/infra/database/drizzle.provider";
-import { Inject } from "@nestjs/common";
-import { and, asc, desc, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
-import { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { PgTable, PgUpdateSetSource } from "drizzle-orm/pg-core";
+import { and, asc, desc, eq, getTableColumns, isNull, SQL } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
-import { FilterOptions } from "../../generics/filter-options";
-import { ICrudRepository } from "../../generics/repository.interface";
+import * as schema from '@/db/schema';
+import { DrizzleAsyncProvider } from '@/infra/database/drizzle.provider';
+import { Inject } from '@nestjs/common';
+
+import { FilterOptions } from '../../generics/filter-options';
+import { ICrudRepository } from '../../generics/repository.interface';
 
 export abstract class DrizzleGenericRepository<
   TTable extends PgTable,
@@ -54,7 +55,6 @@ export abstract class DrizzleGenericRepository<
     if (!opts.offset) opts.offset = 0;
 
     const { filter, order } = this.buildFilter(opts);
-
     const results = await this.db.select().from(this.table as PgTable)
       .where(and(...filter))
       .limit(opts.limit)

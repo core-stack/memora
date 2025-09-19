@@ -51,9 +51,10 @@ const envSchema = z.object({
   EMBEDDING_ENGINE: z.enum(['gemini']).default('gemini'),
   EMBEDDING_DIMENSION: z.coerce.number().optional().default(3072),
   EMBEDDING_MODEL: z.string().optional().default("gemini-embedding-001"),
+
   // GEMINI
   GEMINI_API_KEY: z.string(),
-  GEMINI_MODEL: z.string().optional().default("gemini-flash-1.5-lite"),
+  GEMINI_MODEL: z.string().optional().default("gemini-1.5-flash"),
   
   // VECTOR
   VECTOR_ENGINE: z.enum(['milvus']).default('milvus'),
