@@ -1,15 +1,14 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import { env } from "@/env";
+import { StorageService } from "@/infra/storage/storage.service";
+import { Plugin } from "@memora/schemas";
+import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import * as fs from "fs";
+import * as path from "path";
 
-import { env } from '@/env';
-import { StorageService } from '@/infra/storage/storage.service';
-import { Plugin } from '@memora/schemas';
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-
-import { PluginProviderRegistry } from './plugin-provider.service';
-import { PluginRegistryWithInput, pluginRegistryWithInputSchema } from './plugin-registry';
-import { IPlugin } from './types/plugin';
-import { PluginModule } from './types/plugin-module';
+import { PluginProviderRegistry } from "./plugin-provider.service";
+import { PluginRegistryWithInput, pluginRegistryWithInputSchema } from "./plugin-registry";
+import { IPlugin } from "./types/plugin";
+import { PluginModule } from "./types/plugin-module";
 
 export const PLUGINS_DIR = Symbol('PLUGINS_DIR');
 
@@ -40,6 +39,10 @@ export class PluginRegistryService implements OnModuleInit {
 
   onModuleInit() {
     this.loadPluginModule();
+  }
+
+  async getByName(name: string): Promise<PluginRegistryWithInput | undefined> {
+    return this.plugins.find(plugin => plugin.name === name);
   }
 
   async discoverPlugins(): Promise<{ name: string, module: any }[]> {
@@ -81,7 +84,7 @@ export class PluginRegistryService implements OnModuleInit {
         try {
           pluginJson = pluginRegistryWithInputSchema.parse(JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8')));
           if (this._plugins.every(p => p.name !== pluginJson?.name)) {
-            newPlugin = true;  
+            newPlugin = true;
             this._plugins.push(pluginJson);
           }
         } catch (error) {

@@ -1,12 +1,11 @@
-import { LLMModule } from '@/infra/llm/llm.module';
-import { StorageModule } from '@/infra/storage/storage.module';
-import { DynamicModule, Module, OnApplicationShutdown } from '@nestjs/common';
+import { LLMModule } from "@/infra/llm/llm.module";
+import { StorageModule } from "@/infra/storage/storage.module";
+import { DynamicModule, Module, OnApplicationShutdown } from "@nestjs/common";
 
-import { PluginManagerService } from './plugin-manager.service';
-import { PluginProviderRegistry } from './plugin-provider.service';
-import { PluginRegistryController } from './plugin-registry.controller';
-import { PluginRegistryService, PLUGINS_DIR } from './plugin-registry.service';
-import { PluginSchemaBuilderService } from './plugin-schema-builder.service';
+import { PluginManagerService } from "./plugin-manager.service";
+import { PluginProviderRegistry } from "./plugin-provider.service";
+import { PluginRegistryController } from "./plugin-registry.controller";
+import { PluginRegistryService, PLUGINS_DIR } from "./plugin-registry.service";
 
 @Module({})
 export class PluginRegistryModule implements OnApplicationShutdown {
@@ -17,7 +16,6 @@ export class PluginRegistryModule implements OnApplicationShutdown {
         PluginRegistryService,
         PluginManagerService,
         PluginProviderRegistry,
-        PluginSchemaBuilderService,
         { provide: PLUGINS_DIR, useValue: pluginDir }
       ],
       imports: [ LLMModule, StorageModule ],

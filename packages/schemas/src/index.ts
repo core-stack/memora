@@ -8,3 +8,4 @@ export * from "./chat";
 export * from "./message";
 export * from "./plugin";
 export * from "./plugin-registry";
+export * from "./utils";

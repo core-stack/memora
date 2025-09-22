@@ -1,25 +1,21 @@
-import z from 'zod';
+import z from "zod";
 
 export const configSchema: z.ZodType<IConfigSchema> = z.lazy((): z.ZodType<IConfigSchema> => z.object({
-  type: z.enum(["string", "number", "boolean", "object", "secret-string", "secret-number", "secret-boolean"]),
+  type: z.enum(["string", "number", "boolean", "secret-string", "secret-number"]),
   required: z.boolean(),
-  description: z.string(),
-  child: z.array(configSchema).or(configSchema).optional()
-})).superRefine((data, ctx) => {
-  if ((data.type === "object") && !data.child) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Config child is required when type is object",
-    });
-  }
-});
+  label: z.string().optional(),
+  placeholder: z.string().optional(),
+  description: z.string().optional(),
+}));
 
 export type IConfigSchema = {
-  type: "string" | "number" | "boolean" | "object" | "secret-string" | "secret-number" | "secret-boolean";
+  type: "string" | "number" | "boolean" | "secret-string" | "secret-number";
   required: boolean;
-  description: string;
-  child?: IConfigSchema[] | IConfigSchema;
+  label?: string;
+  placeholder?: string;
+  description?: string;
 };
+
 export const pluginRegistrySchema = z.object({
   name: z.string(),
   displayName: z.string().optional(),

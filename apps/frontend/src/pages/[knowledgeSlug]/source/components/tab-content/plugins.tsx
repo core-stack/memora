@@ -1,18 +1,18 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DialogType } from "@/dialogs";
+import { env } from "@/env";
+import { useApiQuery } from "@/hooks/use-api-query";
+import { useDialog } from "@/hooks/use-dialog";
+import { cn } from "@/lib/utils";
 
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { env } from '@/env';
-import { useApiQuery } from '@/hooks/use-api-query';
-import { cn } from '@/lib/utils';
-
-import { useSource } from '../../hooks/use-source';
+import { useSource } from "../../hooks/use-source";
 
 import type { PluginRegistry } from '@memora/schemas';
 
 export const Plugins = () => {
   const { data: plugins, isLoading } = useApiQuery("/api/plugin-registry", { method: "GET" });
   return (
-    <ul className='flex flex-col gap-2'> 
+    <ul className='flex flex-col gap-2'>
       {
         !isLoading && plugins?.map((plugin) => (
           <SourceItem key={plugin.name} plugin={plugin} />
@@ -24,10 +24,11 @@ export const Plugins = () => {
 
 const SourceItem = ({ plugin }: { plugin: PluginRegistry }) => {
   const { setPlugin, plugin: selectedPlugin } = useSource();
-  
+  const { openDialog } = useDialog();
   const isSelected = selectedPlugin?.name === plugin.name;
   const handleInstall = (event: React.MouseEvent) => {
     event.stopPropagation()
+    openDialog({ type: DialogType.INSTALL_PLUGIN, props: { plugin } });
   }
 
   return (
@@ -42,7 +43,7 @@ const SourceItem = ({ plugin }: { plugin: PluginRegistry }) => {
         <div className='flex justify-between w-full'>
           <span>v{plugin.version.startsWith("v") ? plugin.version.slice(1) : plugin.version}</span>
           <button
-            onClick={handleInstall} 
+            onClick={handleInstall}
             className='rounded-sm cursor-pointer text-xs py-0.5 px-2 bg-primary hover:brightness-150'
           >Install</button>
         </div>

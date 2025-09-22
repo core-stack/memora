@@ -3,17 +3,13 @@ import { Plugin } from "@memora/schemas";
 import { Injectable, Logger } from "@nestjs/common";
 
 import { PluginRegistryService } from "./plugin-registry.service";
-import { PluginSchemaBuilderService } from "./plugin-schema-builder.service";
+import { buildInputObjectSchema } from "./utils/plugin-schema-builder";
 
 @Injectable()
 export class PluginManagerService {
   private readonly logger = new Logger(PluginManagerService.name);
 
-  constructor(
-    private pluginRegistry: PluginRegistryService,
-    private pluginSchemaBuilder: PluginSchemaBuilderService,
-    private llmService: LLMService
-  ) {}
+  constructor(private pluginRegistry: PluginRegistryService, private llmService: LLMService) {}
 
   async executePlugin<T>(p: Plugin, data: any): Promise<T> {
     try {
@@ -33,7 +29,7 @@ export class PluginManagerService {
     try {
       const def = await this.pluginRegistry.getDefinition(p);
       if (!def) throw new Error(`Plugin ${p.type} not found`);
-      const schema = this.pluginSchemaBuilder.buildInputObjectSchema(def.inputSchema);
+      const schema = buildInputObjectSchema(def.inputSchema);
       const result = await this.llmService.withStructuredOutput(query, schema);
       return this.executePlugin<T>(p, result);
     } catch (error) {

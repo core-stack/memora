@@ -1,6 +1,6 @@
-import z from 'zod';
+import z from "zod";
 
-import { orderSchema } from './shared';
+import { orderSchema } from "./shared";
 
 export const pluginSchema = z.object({
   id: z.string().uuid(),
@@ -9,9 +9,10 @@ export const pluginSchema = z.object({
   description: z.string().nullable(),
   whenUse: z.string().nullable(),
   type: z.string().max(255),
-  config: z.unknown(),
+  config: z.any(),
 
   tenantId: z.string().uuid(),
+  pluginRegistry: z.string(),
 
   createdAt: z.date(),
   updatedAt: z.date(),
