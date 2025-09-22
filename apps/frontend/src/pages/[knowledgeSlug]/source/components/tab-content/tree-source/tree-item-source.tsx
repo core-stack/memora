@@ -1,13 +1,13 @@
 import type { Source } from "@memora/schemas"
 import { File, Info } from 'lucide-react';
 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import { useTreeSource } from './hooks/use-tree-source';
+import { useSource } from '../../../hooks/use-source';
 
 export const TreeItemSource = ({ item }: { item: Source }) => {
-  const { setSelectedFileId, selectedFileId } = useTreeSource();
+  const { setSelectedFileId, selectedFileId } = useSource();
   const toggleSelect = () => setSelectedFileId(item.id);
   const selected = selectedFileId === item.id;
   const indexing = ["PENDING", "INDEXING"].includes(item.indexStatus);

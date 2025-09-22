@@ -1,11 +1,10 @@
-"use client"
+import { Laptop, Moon, Sun } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { useTheme } from "@/context/theme";
-import { Laptop, Moon, Sun } from "lucide-react";
+} from '@/components/ui/dropdown-menu';
+import { useTheme } from '@/context/theme';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()

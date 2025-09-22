@@ -1,9 +1,10 @@
-import { Spinner } from "@/components/ui/spinner";
-import { AlertOctagon, FileQuestion } from "lucide-react";
+import { AlertOctagon, FileQuestion } from 'lucide-react';
 
-import { TreeSourceHeader } from "./header";
-import { useExplore } from "./hooks/use-explore";
-import { TreeItem } from "./tree-item";
+import { Spinner } from '@/components/ui/spinner';
+
+import { useExplore } from '../../../hooks/use-explore';
+import { TreeSourceHeader } from './header';
+import { TreeItem } from './tree-item';
 
 export const TreeSource = () => {
   const { data, error, isLoading } = useExplore();

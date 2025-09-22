@@ -1,12 +1,12 @@
 import { ChevronRight, Folder } from 'lucide-react';
 import { useState } from 'react';
 
+import { Spinner } from '@/components/ui/spinner';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-import { Spinner } from '../ui/spinner';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import { useExplore } from './hooks/use-explore';
-import { useTreeSource } from './hooks/use-tree-source';
+import { useExplore } from '../../../hooks/use-explore';
+import { useSource } from '../../../hooks/use-source';
 import { TreeItem } from './tree-item';
 import { TreeItemEmpty } from './tree-item-empty';
 import { TreeItemError } from './tree-item-error';
@@ -18,7 +18,7 @@ type TreeItemFolderProps =  {
 
 export const TreeItemFolder = ({ item }: TreeItemFolderProps) => {
   const [open, setOpen] = useState(false);
-  const { setSelectedFolderId, selectedFolderId } = useTreeSource();
+  const { setSelectedFolderId, selectedFolderId } = useSource();
   const selected = selectedFolderId === item.id;
   const toggleOpen = () => {
     setSelectedFolderId(item.id);

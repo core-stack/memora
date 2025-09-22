@@ -5,6 +5,7 @@ import type { MessageRoutes } from "./message";
 import type { PluginRoutes } from "./plugin";
 import type { SourceRoutes } from "./source";
 import type { TagRoutes } from "./tag";
+import type { PluginRegistryRoutes } from "./plugin-registry";
 
 export type ApiRoutes =
-  TagRoutes & FolderRoutes & KnowledgeRoutes & SourceRoutes & ChatRoutes & MessageRoutes & PluginRoutes;
+  TagRoutes & FolderRoutes & KnowledgeRoutes & SourceRoutes & ChatRoutes & MessageRoutes & PluginRoutes & PluginRegistryRoutes;

@@ -1,14 +1,14 @@
 import { FilePlus2, FolderPlus, ListCollapse, Search } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import { DialogType } from '@/dialogs';
 import { useDialog } from '@/hooks/use-dialog';
 
-import { Button } from '../ui/button';
-import { useTreeSource } from './hooks/use-tree-source';
+import { useSource } from '../../../hooks/use-source';
 
 export const TreeSourceHeader = () => {
   const { openDialog } = useDialog();
-  const { selectedFolderId } = useTreeSource();
+  const { selectedFolderId } = useSource();
 
   const handleCreateSource = () => {
     openDialog({ type: DialogType.CREATE_SOURCE, props: { folderId: selectedFolderId } });

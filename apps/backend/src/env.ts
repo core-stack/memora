@@ -13,6 +13,7 @@ const envSchema = z.object({
 
   // PLUGIN
   PLUGINS_DIR: z.string().optional().default(path.join(__dirname, "..", "..", "plugins")),
+  PLUGINS_BUCKET: z.string().optional().default("plugins"),
 
   // CORS
   CORS_ORIGINS: z.string().transform((s) => s.split(",")).array().optional().default(["*", "http://localhost:3000", "http://localhost:5173"]),

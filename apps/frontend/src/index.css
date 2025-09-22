@@ -118,3 +118,67 @@
     @apply bg-background text-foreground;
   }
 }
+
+.markdown {
+  @apply leading-relaxed text-base px-2;
+}
+
+.markdown h1 {
+  @apply text-3xl font-bold mt-8 mb-4 border-b pb-2;
+}
+
+.markdown h2 {
+  @apply text-2xl font-semibold mt-6 mb-3 border-b pb-1;
+}
+
+.markdown h3 {
+  @apply text-xl font-semibold mt-4 mb-2;
+}
+
+.markdown p {
+  @apply my-4;
+}
+
+.markdown a {
+  @apply text-blue-600 underline hover:text-blue-800;
+}
+
+.markdown ul {
+  @apply list-disc ml-6 my-4;
+}
+
+.markdown ol {
+  @apply list-decimal ml-6 my-4;
+}
+
+.markdown li {
+  @apply my-1;
+}
+
+.markdown blockquote {
+  @apply border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4;
+}
+
+.markdown code {
+  @apply px-1 py-0.5 rounded text-sm font-mono;
+}
+
+.markdown pre {
+  @apply bg-accent p-4 rounded-lg overflow-x-auto text-sm leading-snug my-4;
+}
+
+.markdown img {
+  @apply max-w-full rounded-md my-4;
+}
+
+.markdown table {
+  @apply w-full border border-gray-300 my-6 text-sm;
+}
+
+.markdown th {
+  @apply border border-gray-300 px-3 py-2 text-left font-semibold;
+}
+
+.markdown td {
+  @apply border border-gray-300 px-3 py-2;
+}

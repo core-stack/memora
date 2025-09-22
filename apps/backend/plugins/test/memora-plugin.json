@@ -1,10 +1,9 @@
 {
-  "name": "test",
-  "displayName": "Test",
+  "name": "postgres",
+  "displayName": "Postgres SQL",
   "version": "0.0.1",
-  "description": "Test plugin",
+  "description": "Do fugiat cillum sint dolore nostrud ullamco esse veniam non sint ad. Quis elit ea do consequat enim nostrud occaecat cillum non.", 
   "type": "source",
   "inputSchema": {},
-  "configSchema": {},
-  "documentation": "test"
+  "configSchema": {}
 }

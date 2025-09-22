@@ -2,7 +2,7 @@ import z, { ZodTypeAny } from 'zod';
 
 import { Injectable } from '@nestjs/common';
 
-import { IInputSchema } from './types/plugin-definition';
+import { IInputSchema } from './plugin-registry';
 
 @Injectable()
 export class PluginSchemaBuilderService {

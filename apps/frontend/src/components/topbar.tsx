@@ -8,6 +8,8 @@ import { useKnowledge } from '@/hooks/use-knowledge';
 import { useLocation } from '@/hooks/use-location';
 import { cn } from '@/lib/utils';
 
+import { ThemeToggle } from './theme-toggle';
+
 export const TopBar = () => {
   const { slug } = useKnowledge();
   return (
@@ -21,7 +23,10 @@ export const TopBar = () => {
             <NavLink href={`/${slug}/plugin`}>Plugin</NavLink>
           </nav>
         </div>
-        <TopBarSearch />
+        <div className='flex w-full max-w-[40%] gap-2 items-center'>
+          <TopBarSearch />
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   )
@@ -31,7 +36,7 @@ const TopBarSearch = () => {
   const form = useForm();
   return (
     <Form {...form}>
-      <FormInput className='w-full' fieldclassname='w-full max-w-[40%]' name='search' placeholder='Search' />
+      <FormInput className='w-full' fieldclassname='w-full' name='search' placeholder='Search' />
     </Form>
   )
 }

@@ -1,12 +1,15 @@
-import { Plugin } from "@memora/schemas";
-import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
-import { PluginProviderRegistry } from "./plugin-provider.service";
-import { IPlugin } from "./types/plugin";
-import { PluginDefinition, pluginDefinitionSchema } from "./types/plugin-definition";
-import { PluginModule } from "./types/plugin-module";
+import { env } from '@/env';
+import { StorageService } from '@/infra/storage/storage.service';
+import { Plugin } from '@memora/schemas';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+
+import { PluginProviderRegistry } from './plugin-provider.service';
+import { PluginRegistryWithInput, pluginRegistryWithInputSchema } from './plugin-registry';
+import { IPlugin } from './types/plugin';
+import { PluginModule } from './types/plugin-module';
 
 export const PLUGINS_DIR = Symbol('PLUGINS_DIR');
 
@@ -22,8 +25,8 @@ export class PluginRegistryService implements OnModuleInit {
   private pluginModules = new Map<string, PluginModule>();
   private pluginInstances = new Map<string, PluginInstance>();
 
-  private _plugins: PluginDefinition[] = [];
-  get plugins(): PluginDefinition[] {
+  private _plugins: PluginRegistryWithInput[] = [];
+  get plugins(): PluginRegistryWithInput[] {
     return this._plugins;
   }
 
@@ -32,6 +35,7 @@ export class PluginRegistryService implements OnModuleInit {
   constructor(
     @Inject(PLUGINS_DIR) private readonly pluginsDir: string,
     private providerRegistry: PluginProviderRegistry,
+    private storage: StorageService
   ) {}
 
   onModuleInit() {
@@ -50,8 +54,9 @@ export class PluginRegistryService implements OnModuleInit {
 
     for (const dir of pluginDirs) {
       const pluginPath = path.join(this.pluginsDir, dir);
-      const packageJsonPath = path.join(pluginPath, 'package.json');
 
+      // Check for package.json
+      const packageJsonPath = path.join(pluginPath, 'package.json');
       if (fs.existsSync(packageJsonPath)) {
         try {
           const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
@@ -68,16 +73,84 @@ export class PluginRegistryService implements OnModuleInit {
         }
       }
 
+      let newPlugin = false;
+      let pluginJson: PluginRegistryWithInput | undefined;
+      // Check for memora-plugin.json
       const pluginJsonPath = path.join(pluginPath, 'memora-plugin.json');
       if (fs.existsSync(pluginJsonPath)) {
         try {
-          const pluginJson = pluginDefinitionSchema.parse(JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8')));
-          if (this._plugins.every(p => p.name !== pluginJson.name)) {
+          pluginJson = pluginRegistryWithInputSchema.parse(JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8')));
+          if (this._plugins.every(p => p.name !== pluginJson?.name)) {
+            newPlugin = true;  
             this._plugins.push(pluginJson);
           }
         } catch (error) {
           this.logger.warn(`Invalid plugin.json in ${dir}: ${error.message}`);
         }
+      }
+      if (newPlugin && pluginJson) {
+        let loadIcon = false;
+        // Check for icon
+        const extensions = ['png', 'jpg', 'jpeg', 'svg'];
+        if (pluginJson.iconPath) {
+          const ext = pluginJson.iconPath.split('.').pop();
+          const iconPath = path.join(pluginPath, pluginJson.iconPath);
+          if (fs.existsSync(iconPath)) {
+            await this.storage.putObject(
+              `${pluginJson.name}/icon.${ext}`,
+              fs.readFileSync(iconPath),
+              `image/${ext}`,
+              { bucket: env.PLUGINS_BUCKET }
+            );
+            loadIcon = true;
+            continue;
+          }
+        }
+        for (const ext of extensions) {
+          const iconPath = path.join(pluginPath, `icon.${ext}`);
+          if (fs.existsSync(iconPath)) {
+            await this.storage.putObject(
+              `${pluginJson.name}/icon.${ext}`,
+              fs.readFileSync(iconPath),
+              `image/${ext}`,
+              { bucket: env.PLUGINS_BUCKET }
+            );
+            loadIcon = true;
+            break;
+          }
+        }
+        if (!loadIcon) this.logger.warn(`No icon found for ${pluginJson.name}`);
+
+        let loadDocumentation = false;
+        // Check for documentation
+        if (pluginJson.documentationPath) {
+          const documentationPath = path.join(pluginPath, pluginJson.documentationPath);
+          if (fs.existsSync(documentationPath)) {
+            await this.storage.putObject(
+              `${pluginJson.name}/documentation.md`,
+              fs.readFileSync(documentationPath),
+              'text/markdown',
+              { bucket: env.PLUGINS_BUCKET }
+            );
+            loadDocumentation = true;
+            continue;
+          }
+        }
+        const docNames = ['docs.md', 'docs.txt', 'documentation.md', 'documentation.txt', 'readme.md', 'readme.txt'];
+        for (const docName of docNames) {
+          const iconPath = path.join(pluginPath, docName);
+          if (fs.existsSync(iconPath)) {
+            await this.storage.putObject(
+              `${pluginJson.name}/${docName}`,
+              fs.readFileSync(iconPath),
+              `text/markdown`,
+              { bucket: env.PLUGINS_BUCKET }
+            );
+            loadDocumentation = true;
+            break;
+          }
+        }
+        if (!loadDocumentation) this.logger.warn(`No documentation found for ${pluginJson.name}`);
       }
     }
 
@@ -133,7 +206,7 @@ export class PluginRegistryService implements OnModuleInit {
     return this.createInstance(p);
   }
 
-  async getDefinition(p: Plugin): Promise<PluginDefinition | undefined> {
+  async getDefinition(p: Plugin): Promise<PluginRegistryWithInput | undefined> {
     return this.plugins.find(plugin => plugin.name === p.type);
   }
 
