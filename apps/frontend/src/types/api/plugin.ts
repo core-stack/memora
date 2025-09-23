@@ -22,4 +22,10 @@ export interface PluginRoutes {
       response: undefined;
     }
   },
+  "/api/plugin/test": {
+    POST: {
+      body: CreatePlugin;
+      response: boolean;
+    }
+  }
 }

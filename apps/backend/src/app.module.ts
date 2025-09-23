@@ -21,6 +21,7 @@ import { PluginModule } from "./modules/plugin/plugin.module";
 import { SearchModule } from "./modules/search/search.module";
 import { TagModule } from "./modules/tag/tag.module";
 import { PluginRegistryModule } from "./plugin-registry/plugin-registry.module";
+import { MemoryModule } from './modules/memory/memory.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { PluginRegistryModule } from "./plugin-registry/plugin-registry.module";
     }),
     SecurityModule,
     PluginRegistryModule.forRoot(env.PLUGINS_DIR),
+    MemoryModule,
   ],
 })
 export class AppModule {}

@@ -12,4 +12,8 @@ export class TestPlugin implements IPlugin {
   dispose?(): Promise<void> | void {
     console.log("dispose");
   }
+
+  async test(): Promise<boolean> {
+    return true;
+  }
 }

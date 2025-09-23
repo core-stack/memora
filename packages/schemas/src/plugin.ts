@@ -1,6 +1,6 @@
-import z from "zod";
+import z from 'zod';
 
-import { orderSchema } from "./shared";
+import { orderSchema } from './shared';
 
 export const pluginSchema = z.object({
   id: z.string().uuid(),
@@ -32,7 +32,7 @@ export const pluginFilterSchema = pluginSchema.extend({
 
 export type PluginFilter = z.infer<typeof pluginFilterSchema>;
 
-export const createPluginSchema = pluginSchema.pick({ name: true, type: true, config: true });
+export const createPluginSchema = pluginSchema.pick({ name: true, type: true, config: true, pluginRegistry: true });
 export type CreatePlugin = z.infer<typeof createPluginSchema>;
 
 export const updatePluginSchema = pluginSchema.pick({ id: true, name: true, type: true, config: true });

@@ -8,7 +8,7 @@
   "configSchema": {
     "host": { "type": "string", "required": true, "label": "Host" },
     "port": { "type": "number", "required": true, "label": "Port" },
-    "schema": { "type": "string", "required": true, "label": "Schema" },
+    "schema": { "type": "string", "required": true, "label": "Schema", "default": "public" },
     "database": { "type": "string", "required": true, "label": "Database" },
     "user": { "type": "string", "required": true, "label": "User" },
     "password": { "type": "secret-string", "required": true, "label": "Password" }

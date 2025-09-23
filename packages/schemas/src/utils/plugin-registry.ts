@@ -1,6 +1,6 @@
-import z, { ZodTypeAny } from "zod";
+import z, { ZodTypeAny } from 'zod';
 
-import { IConfigSchema } from "../plugin-registry";
+import { IConfigSchema } from '../plugin-registry';
 
 const buildZodFromSchema = (def: IConfigSchema): ZodTypeAny => {
   let base: ZodTypeAny;
@@ -12,7 +12,7 @@ const buildZodFromSchema = (def: IConfigSchema): ZodTypeAny => {
       break;
     case "number":
     case "secret-number":
-      base = z.number();
+      base = z.coerce.number();
       break;
     case "boolean":
       base = z.boolean();

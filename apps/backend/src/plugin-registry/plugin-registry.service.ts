@@ -1,14 +1,15 @@
-import { env } from "@/env";
-import { StorageService } from "@/infra/storage/storage.service";
-import { Plugin } from "@memora/schemas";
-import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
-import { PluginProviderRegistry } from "./plugin-provider.service";
-import { PluginRegistryWithInput, pluginRegistryWithInputSchema } from "./plugin-registry";
-import { IPlugin } from "./types/plugin";
-import { PluginModule } from "./types/plugin-module";
+import { env } from '@/env';
+import { StorageService } from '@/infra/storage/storage.service';
+import { Plugin } from '@memora/schemas';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+
+import { PluginProviderRegistry } from './plugin-provider.service';
+import { PluginRegistryWithInput, pluginRegistryWithInputSchema } from './plugin-registry';
+import { IPlugin } from './types/plugin';
+import { PluginModule } from './types/plugin-module';
 
 export const PLUGINS_DIR = Symbol('PLUGINS_DIR');
 
@@ -173,19 +174,22 @@ export class PluginRegistryService implements OnModuleInit {
     }
   }
 
-  async createInstance(p: Plugin): Promise<IPlugin> {
-    const pluginModule = this.pluginModules.get(p.type);
-    if (!pluginModule) throw new Error(`Plugin ${p.type} not loaded`);
+  async createInstance(p: Plugin | Partial<Plugin>, temp: boolean = false): Promise<IPlugin> {    
+    if (!p.pluginRegistry) throw new Error(`Plugin registry not provided`);
+    console.log(this.pluginModules);
+    
+    const pluginModule = this.pluginModules.get(p.pluginRegistry);
+    if (!pluginModule) throw new Error(`Plugin ${p.pluginRegistry} not loaded`);
 
     try {
       const instance = await pluginModule.initialize({
-        logger: new Logger(p.type),
         provider: this.providerRegistry,
         config: p.config
       });
+      if (temp) return instance;
 
       const instanceKey = this.getInstanceKey(p);
-
+      
       this.pluginInstances.set(instanceKey, { instance, lastUsed: new Date() });
 
       this.scheduleCleanup(instanceKey);
@@ -213,7 +217,7 @@ export class PluginRegistryService implements OnModuleInit {
     return this.plugins.find(plugin => plugin.name === p.type);
   }
 
-  private getInstanceKey(p: Plugin): string {
+  private getInstanceKey(p: Plugin | Partial<Plugin>): string {
     return `${p.type}:${p.id}`;
   }
 

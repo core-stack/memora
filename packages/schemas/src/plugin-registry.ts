@@ -1,8 +1,9 @@
-import z from "zod";
+import z from 'zod';
 
 export const configSchema: z.ZodType<IConfigSchema> = z.lazy((): z.ZodType<IConfigSchema> => z.object({
   type: z.enum(["string", "number", "boolean", "secret-string", "secret-number"]),
   required: z.boolean(),
+  default: z.any().optional(),
   label: z.string().optional(),
   placeholder: z.string().optional(),
   description: z.string().optional(),
@@ -11,6 +12,7 @@ export const configSchema: z.ZodType<IConfigSchema> = z.lazy((): z.ZodType<IConf
 export type IConfigSchema = {
   type: "string" | "number" | "boolean" | "secret-string" | "secret-number";
   required: boolean;
+  default?: any;
   label?: string;
   placeholder?: string;
   description?: string;
