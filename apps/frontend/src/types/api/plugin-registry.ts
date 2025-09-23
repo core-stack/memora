@@ -1,9 +1,9 @@
-import type { PluginFilter, PluginRegistry } from "@memora/schemas"
+import type { PluginRegistry, PluginRegistryFilter } from "@memora/schemas"
 
 export interface PluginRegistryRoutes {
   "/api/plugin-registry": {
     GET: {
-      query: PluginFilter;
+      query: PluginRegistryFilter;
       response: PluginRegistry[];
     }
   },

@@ -1,6 +1,6 @@
-import z from 'zod';
+import z from "zod";
 
-import { orderSchema } from './shared';
+import { filterSchema, orderSchema } from "./shared";
 
 export const pluginSchema = z.object({
   id: z.string().uuid(),
@@ -19,10 +19,11 @@ export const pluginSchema = z.object({
 });
 export type Plugin = z.infer<typeof pluginSchema>;
 
-export const pluginFilterSchema = pluginSchema.extend({
+export const pluginFilterSchema = filterSchema.extend({
   filter: z.object({
     id: z.string().uuid().optional(),
     name: z.string().optional(),
+    type: z.string().optional(),
   }).strict().optional(),
   order: z.object({
     createdAt: orderSchema,

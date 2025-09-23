@@ -10,7 +10,9 @@ import { useSource } from "../../hooks/use-source";
 import type { PluginRegistry } from '@memora/schemas';
 
 export const Plugins = () => {
-  const { data: plugins, isLoading } = useApiQuery("/api/plugin-registry", { method: "GET" });
+  const { data: plugins, isLoading } = useApiQuery(
+    "/api/plugin-registry", { method: "GET", query: { filter: { type: "source" } } }
+  );
   return (
     <ul className='flex flex-col gap-2'>
       {

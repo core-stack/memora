@@ -2,7 +2,8 @@ import { BrowserRouter, Route, Routes } from "react-router";
 
 import ChatPage from "./pages/[knowledgeSlug]/chat/page";
 import Knowledge from "./pages/[knowledgeSlug]/page";
-import Source from "./pages/[knowledgeSlug]/source/page";
+import PluginPage from "./pages/[knowledgeSlug]/plugins/page";
+import SourcePage from "./pages/[knowledgeSlug]/source/page";
 import { RootProviders } from "./root-providers";
 
 export const Router = () => {
@@ -14,7 +15,8 @@ export const Router = () => {
           <Route path="/:knowledgeSlug" element={ <Knowledge /> }>
             <Route path='chat' element={ <ChatPage /> } />
             <Route path='chat/:chatId' element={ <ChatPage /> } />
-            <Route path='source' element={ <Source /> } />
+            <Route path='source' element={ <SourcePage /> } />
+            <Route path='plugin' element={ <PluginPage /> } />
           </Route>
         </Route>
       </Routes>

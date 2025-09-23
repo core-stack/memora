@@ -1,12 +1,9 @@
-import z from 'zod';
+import { idSchema } from "@memora/schemas";
+import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
+import z from "zod";
 
-import { idSchema } from '@memora/schemas';
-import {
-  BadRequestException, Body, Delete, Get, Param, Post, Put, Query, Req
-} from '@nestjs/common';
-
-import { HttpContext } from './http-context';
-import { ICrudService } from './service.interface';
+import { HttpContext } from "./http-context";
+import { ICrudService } from "./service.interface";
 
 import type { FilterOptions } from './filter-options';
 import type { Request } from 'express';
@@ -30,7 +27,7 @@ export abstract class CrudController<TEntity> {
 
   @Get()
   async findMany(@Req() req: Request, @Query() allParams: Record<string, unknown>): Promise<TEntity[]> {
-    const opts = this.paramsToFilter(allParams);
+    const opts = queryToFilter(allParams);
     this.validateSchema(this.filterSchema, opts);
     return this.service.find(opts, this.loadContext(req));
   }
@@ -61,8 +58,9 @@ export abstract class CrudController<TEntity> {
 
     throw new BadRequestException(result.error.format());
   }
+}
 
-  protected paramsToFilter(allParams: Record<string, unknown>): FilterOptions<TEntity> {
+export const queryToFilter = <TEntity>(allParams: Record<string, unknown>): FilterOptions<TEntity> => {
     const result: FilterOptions<TEntity> = {};
     for (const [key, value] of Object.entries(allParams)) {
       if (key === "limit" || key === "offset") {
@@ -87,4 +85,3 @@ export abstract class CrudController<TEntity> {
     }
     return result;
   }
-}

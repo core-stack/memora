@@ -1,4 +1,6 @@
-import z from 'zod';
+import z from "zod";
+
+import { filterSchema } from "./shared";
 
 export const configSchema: z.ZodType<IConfigSchema> = z.lazy((): z.ZodType<IConfigSchema> => z.object({
   type: z.enum(["string", "number", "boolean", "secret-string", "secret-number"]),
@@ -30,3 +32,12 @@ export const pluginRegistrySchema = z.object({
 })
 
 export type PluginRegistry = z.infer<typeof pluginRegistrySchema>;
+
+export const pluginRegistryFilterSchema = filterSchema.extend({
+  filter: z.object({
+    name: z.string().optional(),
+    type: z.string().optional(),
+  }).strict().optional(),
+}).strict();
+
+export type PluginRegistryFilter = z.infer<typeof pluginRegistryFilterSchema>;
