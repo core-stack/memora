@@ -1,44 +1,6 @@
-import crypto from 'crypto';
-
-import { Chunks } from '@/generics/chunk';
-import { mergeBy } from '@/utils/array';
-
-export enum OriginType {
-  PLUGIN,
-  FILES
-}
-
-export class Fragment {
-  id: string;
-
-  get content() { return this._content; }
-  get cached() { return this._cached; }
-  get metadata() { return this._metadata; }
-  get originType() { return this._originType; }
-  get originId() { return this._originId; }
-
-  constructor(
-    private _originType: OriginType,
-    private _originId: string,
-    private _content: string,
-    private _cached: boolean,
-    private _metadata?: Record<string, any>,
-  ) {
-    this.id = this.generateId();
-  }
-
-  private generateId(): string {
-    const data = JSON.stringify({
-      originType: this._originType,
-      originId: this._originId,
-      content: this._content,
-      cached: this._cached,
-    })
-
-    return crypto.createHash("sha256").update(data).digest("hex")
-  }
-}
-
+import { Chunks } from "@/generics/chunk";
+import { mergeBy } from "@/utils/array";
+import { Fragment, OriginType } from "@memora/schemas";
 
 export class Fragments {
   static fromFragmentArray(fragments: Fragment[]): Fragments {
@@ -47,24 +9,41 @@ export class Fragments {
 
   constructor(private fragments: Fragment[] = []) {}
 
-  push(...fragments: Fragment[]) {
-    if (!fragments.length) return;
+  push(...fragments: Fragment[]): this {
+    if (!fragments.length) return this;
     this.fragments = mergeBy("id", this.fragments, fragments);
+    return this;
   }
 
-  merge(fragments: Fragments) {
+  merge(fragments: Fragments): this {
     this.push(...fragments.fragments);
+    return this;
   }
 
-  fromChunks(chunks: Chunks) {
-    this.push(
-      ...chunks.map(chunk => new Fragment(
-        OriginType.FILES,
-        chunk.id,
-        chunk.content,
-        false,
-        { seqId: chunk.seqId, knowledgeId: chunk.knowledgeId, sourceId: chunk.sourceId, tenantId: chunk.tenantId }
-      ))
+  static fromChunks(chunks: Chunks): Fragments {
+    const fragments = new Fragments();
+    fragments.push(
+      ...chunks.map(chunk => ({
+        id: chunk.id,
+        content: chunk.content,
+        originType: OriginType.FILES,
+        originId: chunk.sourceId,
+        tenantId: chunk.tenantId,
+        knowledgeId: chunk.knowledgeId,
+        cached: false,
+        metadata: {
+          seqId: chunk.seqId,
+          knowledgeId: chunk.knowledgeId,
+          sourceId: chunk.sourceId,
+          tenantId: chunk.tenantId
+        }
+      } as Fragment)
+      )
     );
+    return fragments;
+  }
+
+  toArray(): Fragment[] {
+    return this.fragments;
   }
 }

@@ -1,9 +1,11 @@
 import { env } from "@/env";
 import { Chunk, Chunks } from "@/generics/chunk";
 import { OnModuleInit } from "@nestjs/common";
-import { DataType, FieldType, MilvusClient } from "@zilliz/milvus2-sdk-node";
+import { MilvusClient } from "@zilliz/milvus2-sdk-node";
 
-import { SearchOptions, VectorStore } from "../vector-store.service";
+import { SearchByEmbeddingOptions, SearchByTermOptions, VectorStore } from "../vector-store.service";
+
+import { schema } from "./schemas";
 
 export class MilvusService extends VectorStore implements OnModuleInit {
   client: MilvusClient;
@@ -19,52 +21,6 @@ export class MilvusService extends VectorStore implements OnModuleInit {
     if ((await this.client.hasCollection({ collection_name: this.collectionName })).value) {
       return;
     }
-
-    const schema: FieldType[] = [
-      {
-        name: "id",
-        data_type: DataType.VarChar,
-        max_length: 36,
-        is_primary_key: true,
-      },
-      {
-        name: "seqId",
-        data_type: DataType.Int32
-      },
-      {
-        name: "embedding",
-        data_type: DataType.FloatVector,
-        dim: env.EMBEDDING_DIMENSION
-      },
-      {
-        name: "content",
-        data_type: DataType.VarChar,
-        max_length: 2048
-      },
-      {
-        name: "sourceId",
-        data_type: DataType.VarChar,
-        max_length: 36,
-      },
-      {
-        name: "knowledgeId",
-        data_type: DataType.VarChar,
-        max_length: 36
-      },
-      {
-        name: "tenantId",
-        data_type: DataType.VarChar,
-        max_length: 36
-      },
-      {
-        name: "createdAt",
-        data_type: DataType.Int64
-      },
-      {
-        name: "updatedAt",
-        data_type: DataType.Int64
-      }
-    ];
 
     await this.client.createCollection({
       collection_name: this.collectionName,
@@ -113,8 +69,27 @@ export class MilvusService extends VectorStore implements OnModuleInit {
     await this.client.flushSync({ collection_names: [this.collectionName] });
   }
 
+  async deleteChunks(c: Chunk[] | Chunk | Chunks): Promise<void> {
+    const chunks = new Chunks();
 
-  async search(queryEmbedding: number[], knowledgeId?: string, opts?: SearchOptions): Promise<Chunks> {
+    if (c instanceof Chunk) chunks.push(c);
+    else if (c instanceof Chunks) chunks.import(c);
+    else chunks.push(...c);
+    const keys = chunks.map(c => `${c.knowledgeId}-${c.seqId}`);
+
+    await this.client.delete({
+      collection_name: "default",
+      filter: `key in [${keys.map(k => `"${k}"`).join(", ")}]`
+    });
+
+    await this.client.flushSync({ collection_names: ["default"] });
+  }
+
+  async searchByEmbeddings(
+    knowledgeId: string,
+    queryEmbedding: number[],
+    opts?: SearchByEmbeddingOptions
+  ): Promise<Chunks> {
     const exprParts: string[] = [];
     if (knowledgeId) exprParts.push(`knowledgeId == "${knowledgeId}"`);
     const expr = exprParts.join(" && ");
@@ -135,20 +110,22 @@ export class MilvusService extends VectorStore implements OnModuleInit {
     return Chunks.fromChunkArray(result.results.map(r => Chunk.fromObject(r)));
   }
 
-  async deleteChunks(c: Chunk[] | Chunk | Chunks): Promise<void> {
-    const chunks = new Chunks();
+  async searchByTerm(knowledgeId: string, term: string, opts?: SearchByTermOptions): Promise<Chunks> {
+    const exprParts: string[] = [];
+    if (knowledgeId) exprParts.push(`knowledgeId == "${knowledgeId}"`);
+    if (term) exprParts.push(`TEXT_MATCH(content, '${term}')`);
 
-    if (c instanceof Chunk) chunks.push(c);
-    else if (c instanceof Chunks) chunks.import(c);
-    else chunks.push(...c);
-    const keys = chunks.map(c => `${c.knowledgeId}-${c.seqId}`);
+    const expr = exprParts.join(" && ");
+    console.log(expr);
 
-    await this.client.delete({
-      collection_name: "default",
-      filter: `key in [${keys.map(k => `"${k}"`).join(", ")}]`
+    const result = await this.client.search({
+      collection_name: this.collectionName,
+      anns_field: "embedding",
+      filter: expr,
+      params: { "nprobe": 10 },
+      limit: 10,
+      output_fields: ["seqId", "content", "knowledgeId", "sourceId", "tenantId", "createdAt", "updatedAt"],
     });
-
-    await this.client.flushSync({ collection_names: ["default"] });
+    return Chunks.fromChunkArray(result.results.map(r => Chunk.fromObject(r)));
   }
-
 }

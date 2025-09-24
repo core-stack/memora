@@ -1,16 +1,14 @@
 "use client"
 
-import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useApiQuery } from "@/hooks/use-api-query";
+import { Search } from "lucide-react";
+import { useState } from "react";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useApiQuery } from '@/hooks/use-api-query';
-import { useToast } from '@/hooks/use-toast';
-
-import { PluginCard } from './components/plugin-card';
-import { PluginDocumentationSheet } from './components/plugin-documentation-sheet';
+import { PluginCard } from "./components/plugin-card";
+import { PluginDocumentationSheet } from "./components/plugin-documentation-sheet";
 
 import type { PluginRegistry } from "@memora/schemas";
 
@@ -19,7 +17,6 @@ export default function PluginPage() {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedPlugin, setSelectedPlugin] = useState<PluginRegistry | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const { toast } = useToast();
 
   const { data: plugins } = useApiQuery("/api/plugin-registry", { method: "GET" });
   const pluginTypes = Array.from(new Set(plugins?.map((plugin) => plugin.type)))
@@ -38,13 +35,6 @@ export default function PluginPage() {
   const handleCardClick = (plugin: PluginRegistry) => {
     setSelectedPlugin(plugin)
     setIsSheetOpen(true)
-  }
-
-  const handleInstall = (plugin: PluginRegistry) => {
-    toast({
-      title: "Plugin Installed",
-      description: `${plugin.displayName || plugin.name} v${plugin.version} has been installed successfully.`,
-    })
   }
 
   const handleCloseSheet = () => {

@@ -1,10 +1,9 @@
 "use client"
 
 import type React from "react"
-import { createContext, useEffect } from 'react';
-
-import { DialogType } from '@/dialogs';
-import { useDialog } from '@/hooks/use-dialog';
+import { DialogType } from "@/dialogs";
+import { useDialog } from "@/hooks/use-dialog";
+import { createContext, useCallback, useEffect } from "react";
 
 interface SearchContextType {
   openSearch: () => void
@@ -20,20 +19,20 @@ interface SearchProviderProps {
 export function SearchProvider({ children }: SearchProviderProps) {
   const { openDialog, closeDialog } = useDialog();
 
-  const openSearch = () => openDialog({ type: DialogType.SEARCH })
-  const closeSearch = () => closeDialog(DialogType.SEARCH)
+  const openSearch = useCallback(() => openDialog({ type: DialogType.SEARCH }), [openDialog]);
+  const closeSearch = useCallback(() => closeDialog(DialogType.SEARCH), [closeDialog]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-        e.preventDefault()
-        openSearch()
+        e.preventDefault();
+        openSearch();
       }
     }
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [])
+  }, [openSearch])
 
   return (
     <SearchContext.Provider value={{ openSearch, closeSearch }}>

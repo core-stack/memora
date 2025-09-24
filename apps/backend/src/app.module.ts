@@ -16,12 +16,13 @@ import { ChatModule } from "./modules/knowledge/chat/chat.module";
 import { MessageModule } from "./modules/knowledge/chat/message/message.module";
 import { FolderModule } from "./modules/knowledge/folder/folder.module";
 import { KnowledgeModule } from "./modules/knowledge/knowledge.module";
+import { SearchModule } from "./modules/knowledge/search/search.module";
 import { SourceModule } from "./modules/knowledge/source/source.module";
+import { MemoryModule } from "./modules/memory/memory.module";
 import { PluginModule } from "./modules/plugin/plugin.module";
-import { SearchModule } from "./modules/search/search.module";
 import { TagModule } from "./modules/tag/tag.module";
 import { PluginRegistryModule } from "./plugin-registry/plugin-registry.module";
-import { MemoryModule } from './modules/memory/memory.module';
+import { CacheModule } from './infra/cache/cache.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { MemoryModule } from './modules/memory/memory.module';
     SecurityModule,
     PluginRegistryModule.forRoot(env.PLUGINS_DIR),
     MemoryModule,
+    CacheModule,
   ],
 })
 export class AppModule {}

@@ -7,5 +7,6 @@ export * from "./tag";
 export * from "./chat";
 export * from "./message";
 export * from "./plugin";
+export * from "./fragment";
 export * from "./plugin-registry";
 export * from "./utils";

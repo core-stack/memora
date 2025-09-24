@@ -1,32 +1,34 @@
 "use client"
 
-import { Clock, File, Folder, Search } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Badge } from "@/components/ui/badge";
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useDialog } from "@/hooks/use-dialog";
+import { OriginType } from "@memora/schemas";
+import { Clock, File, Folder, Search } from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
-import { Badge } from '@/components/ui/badge';
-import {
-  DialogContent, DialogDescription, DialogHeader, DialogTitle
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useDialog } from '@/hooks/use-dialog';
-import {
-  mockRecentSearches, mockSearchResults, mockSearchSuggestions
-} from '@/lib/mock-search-data';
+import { DialogType } from "./";
 
-import { DialogType } from './';
-
-import type { SearchResult, RecentSearch, SearchSuggestion } from '@/lib/search-types';
+import type { Fragment } from "@memora/schemas";
+import type { RecentSearch, SearchSuggestion } from '@/lib/search-types';
 
 export function SearchDialog() {
-  const [query, setQuery] = useState("")
-  const [results, setResults] = useState<SearchResult[]>([])
-  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>(mockRecentSearches)
-  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([])
+  const [query, setQuery] = useState("");
+  const { mutateAsync: search, data: results = [] } = useApiMutation(
+    "/api/knowledge/:knowledgeSlug/search/term",
+    { method: "GET" }
+  );
+  const [recentSearches] = useState<RecentSearch[]>([])
+  const [suggestions] = useState<SearchSuggestion[]>([])
   const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const { closeDialog } = useDialog()
+
   // Focus input when modal opens
   useEffect(() => {
     if (inputRef.current) {
@@ -34,32 +36,16 @@ export function SearchDialog() {
     }
   }, [])
 
+  const [, startTransition] = useTransition();
+  const debouncedQuery = useDebounce(query, 500);
+
   // Handle search
   useEffect(() => {
-    if (query.trim()) {
-      // Simulate search with mock data
-      const filteredResults = mockSearchResults.filter(
-        (result) =>
-          result.title.toLowerCase().includes(query.toLowerCase()) ||
-          result.content.toLowerCase().includes(query.toLowerCase()),
-      )
-      setResults(filteredResults)
-
-      // Generate suggestions based on query
-      const filteredSuggestions = mockSearchSuggestions
-        .filter(
-          (suggestion) =>
-            suggestion.text.toLowerCase().includes(query.toLowerCase()) &&
-            suggestion.text.toLowerCase() !== query.toLowerCase(),
-        )
-        .slice(0, 3)
-      setSuggestions(filteredSuggestions)
-    } else {
-      setResults([])
-      setSuggestions([])
-    }
-    setSelectedIndex(0)
-  }, [query])
+    startTransition(async () => {
+      if (debouncedQuery.trim()) await search({ query: { query: debouncedQuery.trim() } });
+      setSelectedIndex(0);
+    })
+  }, [debouncedQuery, search]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -86,7 +72,7 @@ export function SearchDialog() {
             const resultIndex = selectedIndex - suggestions.length
             if (results[resultIndex]) {
               console.log(results[resultIndex]);
-              
+
               // onResultSelect(results[resultIndex]);
               closeDialog(DialogType.SEARCH);
             }
@@ -100,7 +86,7 @@ export function SearchDialog() {
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [selectedIndex, suggestions, results])
+  }, [selectedIndex, suggestions, results, closeDialog])
 
   const handleRecentSearchClick = (search: RecentSearch) => {
     setQuery(search.query)
@@ -110,9 +96,9 @@ export function SearchDialog() {
     setQuery(suggestion.text)
   }
 
-  const handleResultClick = (result: SearchResult) => {
+  const handleResultClick = (result: Fragment) => {
     console.log(result);
-    
+
     // onResultSelect(result);
     closeDialog(DialogType.SEARCH);
   }
@@ -217,7 +203,7 @@ export function SearchDialog() {
                       }`}
                     >
                       <div className="mt-0.5">
-                        {result.type === "file" ? (
+                        {result.originType === OriginType.FILES ? (
                           <File className="w-4 h-4 text-blue-500" />
                         ) : (
                           <Folder className="w-4 h-4 text-yellow-500" />
@@ -225,14 +211,14 @@ export function SearchDialog() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium text-sm">{highlightText(result.title, query)}</span>
-                          <span className="text-xs text-muted-foreground">{result.folder}</span>
+                          <span className="font-medium text-sm">{highlightText(result.content, query)}</span>
+                          {/* <span className="text-xs text-muted-foreground">{result.folder}</span> */}
                         </div>
-                        {result.matches.length > 0 && (
+                        {/* {result.matches.length > 0 && (
                           <div className="text-xs text-muted-foreground line-clamp-2">
                             {highlightText(result.matches[0].text, query)}
                           </div>
-                        )}
+                        )} */}
                       </div>
                     </button>
                   )

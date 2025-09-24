@@ -1,14 +1,16 @@
-import { LLMService } from '@/infra/llm/llm.service';
-import { VectorStore } from '@/infra/vector/vector-store.service';
-import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
-import { mergeBy } from '@/utils/array';
-import { Embeddings } from '@langchain/core/embeddings';
-import { Injectable } from '@nestjs/common';
+import { LLMService } from "@/infra/llm/llm.service";
+import { VectorStore } from "@/infra/vector/vector-store.service";
+import { PluginManagerService } from "@/plugin-registry/plugin-manager.service";
+import { mergeBy } from "@/utils/array";
+import { Embeddings } from "@langchain/core/embeddings";
+import { OriginType } from "@memora/schemas";
+import { Injectable } from "@nestjs/common";
 
-import { KnowledgeService } from '../knowledge/knowledge.service';
-import { PluginService } from '../plugin/plugin.service';
-import { Finder, FindOptions } from './find-options';
-import { Fragment, Fragments, OriginType } from './fragment';
+import { KnowledgeService } from "../knowledge/knowledge.service";
+import { PluginService } from "../plugin/plugin.service";
+
+import { Finder, FindOptions } from "./find-options";
+import { Fragments } from "./fragment";
 
 @Injectable()
 export class MemoryService {
@@ -46,12 +48,28 @@ export class MemoryService {
 
     for (const p of plugins) {
       const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, query);
-      fragments.push(new Fragment(OriginType.PLUGIN, p.id, pluginResponse, false, {}));
+      fragments.push({
+        id: p.id,
+        content: pluginResponse,
+        originType: OriginType.PLUGIN,
+        originId: p.id,
+        tenantId: knowledge.tenantId,
+        knowledgeId: knowledgeId,
+        cached: false,
+        metadata: {}
+      });
     }
 
     const queryEmbedding = await this.embeddings.embedQuery(query);
-    const chunks = await this.vectorStore.search(queryEmbedding, knowledgeId, {});
-    fragments.fromChunks(chunks);
-    return fragments;
+    const chunks = await this.vectorStore.searchByEmbeddings(knowledgeId, queryEmbedding);
+    return fragments.merge(Fragments.fromChunks(chunks));
+  }
+
+  async findByTerm(knowledgeId: string, userInput: string) {
+    return Fragments.fromChunks(await this.vectorStore.searchByTerm(knowledgeId, userInput));
+  }
+
+  async findRecent(knowledgeId: string, userInput: string) {
+
   }
 }
