@@ -1,23 +1,25 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useApiQuery } from "@/hooks/use-api-query";
-import { useToast } from "@/hooks/use-toast";
-import { Filter, Search, Settings } from "lucide-react";
-import { useState } from "react";
+import { Search } from 'lucide-react';
+import { useState } from 'react';
 
-import { PluginCard } from "./components/plugin-card";
-import { PluginDocumentationSheet } from "./components/plugin-documentation-sheet";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { useToast } from '@/hooks/use-toast';
 
-import type { PluginRegistry } from "@memora/schemas"
+import { PluginCard } from './components/plugin-card';
+import { PluginDocumentationSheet } from './components/plugin-documentation-sheet';
+
+import type { PluginRegistry } from "@memora/schemas";
+
 export default function PluginPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedType, setSelectedType] = useState<string | null>(null)
-  const [selectedPlugin, setSelectedPlugin] = useState<PluginRegistry | null>(null)
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
-  const { toast } = useToast()
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedPlugin, setSelectedPlugin] = useState<PluginRegistry | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const { toast } = useToast();
 
   const { data: plugins } = useApiQuery("/api/plugin-registry", { method: "GET" });
   const pluginTypes = Array.from(new Set(plugins?.map((plugin) => plugin.type)))
@@ -59,18 +61,6 @@ export default function PluginPage() {
             <div>
               <h1 className="text-2xl font-semibold text-foreground text-balance">Plugin Marketplace</h1>
               <p className="text-muted-foreground mt-1">Discover and install plugins to extend your application</p>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" asChild>
-                <a href="/manage">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Manage Plugins
-                </a>
-              </Button>
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Filters
-              </Button>
             </div>
           </div>
         </div>
@@ -131,7 +121,7 @@ export default function PluginPage() {
         {filteredPlugins && filteredPlugins?.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPlugins.map((plugin) => (
-              <PluginCard key={plugin.name} plugin={plugin} onCardClick={handleCardClick} onInstall={handleInstall} />
+              <PluginCard key={plugin.name} plugin={plugin} onCardClick={handleCardClick} />
             ))}
           </div>
         ) : (
@@ -150,7 +140,6 @@ export default function PluginPage() {
         plugin={selectedPlugin}
         isOpen={isSheetOpen}
         onClose={handleCloseSheet}
-        onInstall={handleInstall}
       />
     </div>
   )

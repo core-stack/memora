@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 
 export enum Tab {
   TREE_SOURCE,
-  EXTERNAL_SOURCE,
   ADD_SOURCE,
   NONE
 }

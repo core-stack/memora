@@ -1,56 +1,30 @@
-"use client"
+import { Download, ExternalLink } from 'lucide-react';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Download, ExternalLink, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { MarkdownViewer } from '@/components/markdown-viewer';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import {
+  Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle
+} from '@/components/ui/sheet';
+import { DialogType } from '@/dialogs';
+import { env } from '@/env';
+import { useDialog } from '@/hooks/use-dialog';
 
-import type { PluginRegistry } from "@memora/schemas"
-
+import type { PluginRegistry } from "@memora/schemas";
 interface PluginDocumentationSheetProps {
   plugin: PluginRegistry | null
   isOpen: boolean
   onClose: () => void
-  onInstall: (plugin: PluginRegistry) => void
 }
 
-export function PluginDocumentationSheet({ plugin, isOpen, onClose, onInstall }: PluginDocumentationSheetProps) {
-  const [documentation, setDocumentation] = useState<string>("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+export function PluginDocumentationSheet({ plugin, isOpen, onClose }: PluginDocumentationSheetProps) {
+  const url = `${env.STORAGE_URL}/plugins/${plugin?.name}/documentation.md`;
+  const { openDialog } = useDialog();
+  const handleInstall = () => openDialog({ type: DialogType.INSTALL_PLUGIN, props: { plugin } });
 
-  useEffect(() => {
-    if (plugin?.documentationPath && isOpen) {
-      setIsLoading(true)
-      setError(null)
-
-      fetch(plugin.documentationPath)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch documentation")
-          }
-          return response.text()
-        })
-        .then((text) => {
-          setDocumentation(text)
-        })
-        .catch((err) => {
-          setError("Failed to load documentation")
-          console.error("Error fetching documentation:", err)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
-    }
-  }, [plugin?.documentationPath, isOpen])
-
-  if (!plugin) return null
-
-  const handleInstall = () => {
-    onInstall(plugin)
-  }
+  if (!plugin) return null;
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -59,7 +33,7 @@ export function PluginDocumentationSheet({ plugin, isOpen, onClose, onInstall }:
           <div className="flex items-start gap-4">
             <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-muted/50 flex-shrink-0">
               <img
-                src={plugin.iconPath || "/placeholder.svg?height=48&width=48&query=plugin+icon"}
+                src={`${env.STORAGE_URL}/plugins/${plugin.name}/${plugin.iconPath ?? "icon.png"}`}
                 alt={`${plugin.displayName || plugin.name} icon`}
                 className="object-cover"
               />
@@ -101,59 +75,9 @@ export function PluginDocumentationSheet({ plugin, isOpen, onClose, onInstall }:
 
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Documentation</h3>
-
-          {isLoading && (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin mr-2" />
-              <span className="text-muted-foreground">Loading documentation...</span>
-            </div>
-          )}
-
-          {error && (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">{error}</p>
-            </div>
-          )}
-
-          {!isLoading && !error && documentation && (
-            <div className="prose prose-sm dark:prose-invert max-w-none">
-              {/* <ReactMarkdown
-                components={{
-                  h1: ({ children }) => <h1 className="text-xl font-bold mt-6 mb-4 text-foreground">{children}</h1>,
-                  h2: ({ children }) => <h2 className="text-lg font-semibold mt-5 mb-3 text-foreground">{children}</h2>,
-                  h3: ({ children }) => <h3 className="text-base font-medium mt-4 mb-2 text-foreground">{children}</h3>,
-                  p: ({ children }) => <p className="text-sm text-muted-foreground leading-relaxed mb-3">{children}</p>,
-                  code: ({ children }) => (
-                    <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">{children}</code>
-                  ),
-                  pre: ({ children }) => (
-                    <pre className="bg-muted p-3 rounded-lg overflow-x-auto text-xs">{children}</pre>
-                  ),
-                  ul: ({ children }) => (
-                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">{children}</ul>
-                  ),
-                  ol: ({ children }) => (
-                    <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">{children}</ol>
-                  ),
-                  li: ({ children }) => <li className="text-sm text-muted-foreground">{children}</li>,
-                }}
-              >
-                {documentation}
-              </ReactMarkdown> */}
-            </div>
-          )}
-
-          {!isLoading && !error && !documentation && plugin.documentationPath && (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No documentation content available.</p>
-            </div>
-          )}
-
-          {!plugin.documentationPath && (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No documentation available for this plugin.</p>
-            </div>
-          )}
+          <ScrollArea className="h-[calc(100vh-300px)]">
+            <MarkdownViewer url={url} />
+          </ScrollArea>
         </div>
       </SheetContent>
     </Sheet>

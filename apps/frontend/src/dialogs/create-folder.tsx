@@ -2,7 +2,9 @@ import { useForm } from 'react-hook-form';
 
 import { FormInput } from '@/components/form/input';
 import { Button } from '@/components/ui/button';
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
+} from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useApiMutation } from '@/hooks/use-api-mutation';
@@ -38,7 +40,7 @@ export const CreateKnowledgeFolderDialog = ({ folderId }: { folderId?: string })
   });
 
   return (
-    <div>
+    <DialogContent>
       <DialogHeader>
         <DialogTitle>Create folder</DialogTitle>
         <DialogDescription>Create a new folder</DialogDescription>
@@ -59,6 +61,6 @@ export const CreateKnowledgeFolderDialog = ({ folderId }: { folderId?: string })
           </DialogFooter>
         </form>
       </Form>
-    </div>
+    </DialogContent>
   )
 }

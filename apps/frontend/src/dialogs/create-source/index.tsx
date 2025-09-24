@@ -1,4 +1,6 @@
-import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  DialogContent, DialogDescription, DialogHeader, DialogTitle
+} from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsTrigger } from '@/components/ui/tabs';
 import { TabsList } from '@radix-ui/react-tabs';
 
@@ -7,7 +9,7 @@ import { CreateSourceLink } from './link';
 
 export const CreateSourceDialog = ({ folderId }: { folderId?: string; }) => {
   return (
-    <div>
+    <DialogContent>
       <DialogHeader>
         <DialogTitle>{"Create Source"}</DialogTitle>
         <DialogDescription>
@@ -26,6 +28,6 @@ export const CreateSourceDialog = ({ folderId }: { folderId?: string; }) => {
           <CreateSourceLink />
         </TabsContent>
       </Tabs>
-    </div>
+    </DialogContent>
   )
 }

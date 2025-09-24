@@ -4,7 +4,9 @@ import { useForm } from 'react-hook-form';
 import { FormInput } from '@/components/form/input';
 import { FormTextarea } from '@/components/form/textarea';
 import { Button } from '@/components/ui/button';
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
+} from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useApiMutation } from '@/hooks/use-api-mutation';
@@ -46,7 +48,7 @@ export const CreateKnowledgeDialog = () => {
   }, [watchName]);
 
   return (
-    <div>
+    <DialogContent>
       <DialogHeader>
         <DialogTitle>{"Create Knowledge"}</DialogTitle>
         <DialogDescription>
@@ -71,6 +73,6 @@ export const CreateKnowledgeDialog = () => {
           </DialogFooter>
         </form>
       </Form>
-    </div>
+    </DialogContent>
   )
 }

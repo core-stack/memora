@@ -1,5 +1,6 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import React, { createContext, useCallback, useState } from "react";
+import React, { createContext, useCallback, useState } from 'react';
+
+import { Dialog } from '@/components/ui/dialog';
 
 export type DialogComponents = Record<string, React.ComponentType<any>>;
 
@@ -46,9 +47,7 @@ export const DialogContainer = ({
             open
             onOpenChange={() => closeDialog(type)}
           >
-            <DialogContent>
-              <DialogComponent {...props} />
-            </DialogContent>
+            <DialogComponent {...props} />
           </Dialog>
         );
       })}

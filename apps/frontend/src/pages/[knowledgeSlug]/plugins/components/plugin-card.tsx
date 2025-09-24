@@ -2,28 +2,31 @@
 
 import type React from "react"
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Download } from "lucide-react";
+import { Download } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { DialogType } from '@/dialogs';
+import { env } from '@/env';
+import { useDialog } from '@/hooks/use-dialog';
 
 import type { PluginRegistry } from "@memora/schemas"
-
 interface PluginCardProps {
   plugin: PluginRegistry
   onCardClick: (plugin: PluginRegistry) => void
-  onInstall: (plugin: PluginRegistry) => void
 }
 
-export function PluginCard({ plugin, onCardClick, onInstall }: PluginCardProps) {
+export function PluginCard({ plugin, onCardClick }: PluginCardProps) {
   const truncateDescription = (text: string, maxLength = 80) => {
     if (text.length <= maxLength) return text
     return text.slice(0, maxLength) + "..."
   }
-
+  const { openDialog } = useDialog();
+  
   const handleInstall = (e: React.MouseEvent) => {
     e.stopPropagation()
-    onInstall(plugin)
+    openDialog({ type: DialogType.INSTALL_PLUGIN, props: { plugin } })
   }
 
   return (
@@ -34,9 +37,9 @@ export function PluginCard({ plugin, onCardClick, onInstall }: PluginCardProps) 
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative h-10 w-10 rounded-lg overflow-hidden bg-muted/50">
+            <div className="relative h-14 w-14 rounded-lg overflow-hidden">
               <img
-                src={plugin.iconPath || "/placeholder.svg?height=40&width=40&query=plugin+icon"}
+                src={`${env.STORAGE_URL}/plugins/${plugin.name}/${plugin.iconPath ?? "icon.png"}`}
                 alt={`${plugin.displayName || plugin.name} icon`}
                 className="object-cover"
               />

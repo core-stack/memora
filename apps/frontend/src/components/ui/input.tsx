@@ -6,11 +6,14 @@ import { cn } from '@/lib/utils';
 
 import { Button } from './button';
 
-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+export type Props = React.ComponentProps<"input"> & {
+  containerclassname?: string;
+}
+const Input = React.forwardRef<HTMLInputElement, Props>(
+  ({ className, containerclassname, type, ...props }, ref) => {
     const [realType, setRealType] = React.useState(type);
     return (
-      <div className='relative'>
+      <div className={cn('relative', containerclassname)}>
         <input
           type={realType}
           className={cn(

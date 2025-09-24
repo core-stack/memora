@@ -1,4 +1,4 @@
-import { Blocks, Database, ListTree } from 'lucide-react';
+import { Blocks, ListTree } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -23,9 +23,6 @@ export const TabSelector = () => {
     <div className='h-full w-min bg-background border-r flex flex-col'>
       <TabButton setTab={() => toggleTab(Tab.TREE_SOURCE)} active={tab === Tab.TREE_SOURCE}>
         <ListTree />
-      </TabButton>
-      <TabButton setTab={() => toggleTab(Tab.EXTERNAL_SOURCE)} active={tab === Tab.EXTERNAL_SOURCE}>
-        <Database />
       </TabButton>
       <TabButton setTab={() => toggleTab(Tab.ADD_SOURCE)} active={tab === Tab.ADD_SOURCE}>
         <Blocks />

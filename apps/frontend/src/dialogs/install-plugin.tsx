@@ -3,7 +3,9 @@ import { useForm } from 'react-hook-form';
 import { FormInput } from '@/components/form/input';
 import { FormSwitch } from '@/components/form/switch';
 import { Button } from '@/components/ui/button';
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
+} from '@/components/ui/dialog';
 import { Form, FormError } from '@/components/ui/form';
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
@@ -74,7 +76,7 @@ export const InstallPluginDialog = ({ plugin }: Props) => {
   const isLoading = form.formState.isSubmitting;
 
   return (
-    <div>
+    <DialogContent>
       <DialogHeader>
         <DialogTitle>Install Plugin</DialogTitle>
         <DialogDescription>Install the {plugin.name} plugin</DialogDescription>
@@ -121,6 +123,6 @@ export const InstallPluginDialog = ({ plugin }: Props) => {
           </DialogFooter>
         </form>
       </Form>
-    </div>
+    </DialogContent>
   )
 }
