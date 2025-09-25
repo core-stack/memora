@@ -1,6 +1,8 @@
-import { Chunk, Chunks } from "@/generics/chunk";
+import { Chunk, Chunks } from '@/generics/chunk';
 
-export type SearchByTermOptions = {}
+export type SearchByTermOptions = {
+  limit?: number;
+}
 export type SearchByEmbeddingOptions = {
   filters?: Record<string, string>;
 }

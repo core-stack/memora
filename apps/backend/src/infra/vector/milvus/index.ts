@@ -1,13 +1,15 @@
-import { env } from "@/env";
-import { Chunk, Chunks } from "@/generics/chunk";
-import { OnModuleInit } from "@nestjs/common";
-import { MilvusClient } from "@zilliz/milvus2-sdk-node";
+import { env } from '@/env';
+import { Chunk, Chunks } from '@/generics/chunk';
+import { Logger, OnModuleInit } from '@nestjs/common';
+import { MilvusClient } from '@zilliz/milvus2-sdk-node';
 
-import { SearchByEmbeddingOptions, SearchByTermOptions, VectorStore } from "../vector-store.service";
-
-import { schema } from "./schemas";
+import {
+  SearchByEmbeddingOptions, SearchByTermOptions, VectorStore
+} from '../vector-store.service';
+import { schema } from './schemas';
 
 export class MilvusService extends VectorStore implements OnModuleInit {
+  private readonly logger = new Logger(MilvusService.name);
   client: MilvusClient;
   collectionName = env.MILVUS_COLLECTION;
 
@@ -18,8 +20,11 @@ export class MilvusService extends VectorStore implements OnModuleInit {
 
   async onModuleInit() {
     await this.client.connectPromise;
-    if ((await this.client.hasCollection({ collection_name: this.collectionName })).value) {
-      return;
+    const existsCollection = (await this.client.hasCollection({ collection_name: this.collectionName })).value;
+    if (!env.MULVUS_RECREATE_COLLECTION && existsCollection) return;
+    if (env.MULVUS_RECREATE_COLLECTION && existsCollection) {
+      this.logger.warn("Env var MULVUS_RECREATE_COLLECTION is true, dropping collection");
+      await this.client.dropCollection({ collection_name: this.collectionName });
     }
 
     await this.client.createCollection({
@@ -110,22 +115,20 @@ export class MilvusService extends VectorStore implements OnModuleInit {
     return Chunks.fromChunkArray(result.results.map(r => Chunk.fromObject(r)));
   }
 
-  async searchByTerm(knowledgeId: string, term: string, opts?: SearchByTermOptions): Promise<Chunks> {
+  async searchByTerm(knowledgeId: string, term: string, opts: SearchByTermOptions = { limit: 10}): Promise<Chunks> {
     const exprParts: string[] = [];
     if (knowledgeId) exprParts.push(`knowledgeId == "${knowledgeId}"`);
     if (term) exprParts.push(`TEXT_MATCH(content, '${term}')`);
 
     const expr = exprParts.join(" && ");
-    console.log(expr);
-
-    const result = await this.client.search({
+    
+    const result = await this.client.query({
       collection_name: this.collectionName,
-      anns_field: "embedding",
       filter: expr,
-      params: { "nprobe": 10 },
-      limit: 10,
+      limit: opts.limit ?? 10,
       output_fields: ["seqId", "content", "knowledgeId", "sourceId", "tenantId", "createdAt", "updatedAt"],
     });
-    return Chunks.fromChunkArray(result.results.map(r => Chunk.fromObject(r)));
+    
+    return Chunks.fromChunkArray(result.data.map(r => Chunk.fromObject(r)));
   }
 }

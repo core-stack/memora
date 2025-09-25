@@ -62,6 +62,7 @@ const envSchema = z.object({
   // MILVUS
   MILVUS_URL: z.string().url().optional().default("localhost:19530"),
   MILVUS_COLLECTION: z.string().optional().default("default"),
+  MULVUS_RECREATE_COLLECTION: z.string().transform((s) => s === "true").optional(),
 }).transform((data) => {
   if (!data.API_URL) {
     return {

@@ -1,5 +1,5 @@
-import { env } from "@/env";
-import { DataType, FieldType } from "@zilliz/milvus2-sdk-node";
+import { env } from '@/env';
+import { DataType, FieldType } from '@zilliz/milvus2-sdk-node';
 
 export const schema: FieldType[] = [
   {
@@ -23,6 +23,10 @@ export const schema: FieldType[] = [
     max_length: 2048,
     enable_analyzer: true,
     enable_match: true,
+    analyzer_params: {
+      "tokenizer": "standard",
+      "filter": ["asciifolding"],
+    }
   },
   {
     name: "sourceId",

@@ -1,27 +1,31 @@
-import { LLMService } from "@/infra/llm/llm.service";
-import { VectorStore } from "@/infra/vector/vector-store.service";
-import { PluginManagerService } from "@/plugin-registry/plugin-manager.service";
-import { mergeBy } from "@/utils/array";
-import { Embeddings } from "@langchain/core/embeddings";
-import { OriginType } from "@memora/schemas";
-import { Injectable } from "@nestjs/common";
+import moment from 'moment';
 
-import { KnowledgeService } from "../knowledge/knowledge.service";
-import { PluginService } from "../plugin/plugin.service";
+import { CacheService } from '@/infra/cache/cache.service';
+import { LLMService } from '@/infra/llm/llm.service';
+import { VectorStore } from '@/infra/vector/vector-store.service';
+import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
+import { mergeBy } from '@/utils/array';
+import { Embeddings } from '@langchain/core/embeddings';
+import { OriginType } from '@memora/schemas';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { Finder, FindOptions } from "./find-options";
-import { Fragments } from "./fragment";
+import { KnowledgeService } from '../knowledge/knowledge.service';
+import { PluginService } from '../plugin/plugin.service';
+import { Finder, FindOptions } from './find-options';
+import { Fragments } from './fragment';
 
+import type { Fragment, Recent } from "@memora/schemas";
 @Injectable()
 export class MemoryService {
-
+  private readonly logger = new Logger(MemoryService.name);
   constructor(
-    private vectorStore: VectorStore,
-    private embeddings: Embeddings,
+    private vectorStore:      VectorStore,
+    private embeddings:       Embeddings,
     private knowledgeService: KnowledgeService,
-    private llmService: LLMService,
-    private pluginManager: PluginManagerService,
-    private pluginService: PluginService
+    private llmService:       LLMService,
+    private pluginManager:    PluginManagerService,
+    private pluginService:    PluginService,
+    private cacheService:     CacheService
   ) {}
 
   private buildFindOptions(knowledgeId: string, userInput: string, ...opts: Finder[]): FindOptions {
@@ -65,11 +69,46 @@ export class MemoryService {
     return fragments.merge(Fragments.fromChunks(chunks));
   }
 
-  async findByTerm(knowledgeId: string, userInput: string) {
-    return Fragments.fromChunks(await this.vectorStore.searchByTerm(knowledgeId, userInput));
+  private async findFragmentsInCache(knowledgeId: string, userInput: string) {
+    const key = encodeURIComponent(userInput.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase());
+    return this.cacheService.get<Fragment[]>(`fragments:${key}`, { namespace: knowledgeId });
   }
 
-  async findRecent(knowledgeId: string, userInput: string) {
+  private async saveFragmentsInCache(knowledgeId: string, userInput: string, fragments: Fragment[]) {
+    const key = encodeURIComponent(userInput.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase());
+    await this.cacheService.set<Fragment[]>(`fragments:${key}`, fragments, { namespace: knowledgeId, ttl: 60 * 5 }); // expires cache in 5 minutes
+  }
 
+  private async saveInputToRecents(knowledgeId: string, text: string) {
+    const recents = (await this.cacheService.get<Recent[]>("recent", { namespace: knowledgeId })) ?? [];
+    const index = recents.findIndex(p => p.text === text);
+    if (index !== -1) {
+      recents[index].count += 1;
+      recents[index].lastUsed = new Date();
+    } else {
+      recents.push({ text, count: 1, lastUsed: new Date() });
+    }
+    recents.sort((a, b) => moment(b.lastUsed).valueOf() - moment(a.lastUsed).valueOf());
+    while(recents.length > 5) recents.pop();
+    
+    await this.cacheService.set<Recent[]>("recent", recents, { namespace: knowledgeId });
+  }
+
+  async findByTerm(knowledgeId: string, userInput: string): Promise<Fragments> {
+    await this.saveInputToRecents(knowledgeId, userInput);
+
+    const cachedFragments = await this.findFragmentsInCache(knowledgeId, userInput);
+    if (cachedFragments) {
+      this.logger.verbose("Found fragments in cache");
+      return Fragments.fromFragmentArray(cachedFragments);
+    }
+
+    const fragments = Fragments.fromChunks(await this.vectorStore.searchByTerm(knowledgeId, userInput));
+    await this.saveFragmentsInCache(knowledgeId, userInput, fragments.toArray());
+    return fragments;
+  }
+
+  async findRecent(knowledgeId: string) {
+    return this.cacheService.get<string[]>("recent", { namespace: knowledgeId });
   }
 }

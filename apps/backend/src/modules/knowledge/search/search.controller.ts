@@ -1,7 +1,7 @@
-import { HttpContext } from "@/generics/http-context";
-import { Controller, Get, Req } from "@nestjs/common";
+import { HttpContext } from '@/generics/http-context';
+import { Controller, Get, Req } from '@nestjs/common';
 
-import { SearchService } from "./search.service";
+import { SearchService } from './search.service';
 
 import type { Request } from "express";
 
@@ -9,13 +9,13 @@ import type { Request } from "express";
 export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 
-  @Get("term")
+  @Get()
   async searchByTerm(@Req() req: Request) {
     return this.searchService.searchByTerm(new HttpContext(req));
   }
 
   @Get("recent")
   async searchRecent(@Req() req: Request) {
-    return this.searchService.searchRecent(new HttpContext(req));
+    return this.searchService.recent(new HttpContext(req));
   }
 }

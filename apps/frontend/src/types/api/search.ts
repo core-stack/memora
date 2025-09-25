@@ -1,10 +1,15 @@
-import type { Fragment } from "@memora/schemas"
+import type { Fragment, Recent } from "@memora/schemas"
 
 export interface SearchRoutes {
-  "/api/knowledge/:knowledgeSlug/search/term": {
+  "/api/knowledge/:knowledgeSlug/search": {
     GET: {
-      query: { query: string };
+      query: { text: string };
       response: Fragment[];
+    }
+  },
+  "/api/knowledge/:knowledgeSlug/search/recent": {
+    GET: {
+      response: Recent[];
     }
   },
 }

@@ -1,8 +1,8 @@
-import { HttpContext } from "@/generics/http-context";
-import { MemoryService } from "@/modules/memory/memory.service";
-import { Injectable } from "@nestjs/common";
+import { HttpContext } from '@/generics/http-context';
+import { MemoryService } from '@/modules/memory/memory.service';
+import { Injectable } from '@nestjs/common';
 
-import { KnowledgeService } from "../knowledge.service";
+import { KnowledgeService } from '../knowledge.service';
 
 @Injectable()
 export class SearchService {
@@ -13,8 +13,12 @@ export class SearchService {
 
   async searchByTerm(ctx: HttpContext) {
     const { id: knowledgeId } = await this.knowledgeService.loadFromSlug(ctx);
-    const query = ctx.query.shouldGetString("query");
-    return (await this.memoryService.findByTerm(knowledgeId, query)).toArray();
+    const text = ctx.query.shouldGetString("text");
+    return (await this.memoryService.findByTerm(knowledgeId, text)).toArray();
   }
 
+  async recent(ctx: HttpContext) {
+    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug(ctx);
+    return this.memoryService.findRecent(knowledgeId);
+  }
 }

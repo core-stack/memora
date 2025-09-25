@@ -72,10 +72,8 @@ export function useApiMutation<
 
       const res = await fetch(url, {
         method: options.method as string,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body ?? {}),
+        headers: { "Content-Type": "application/json" },
+        body: options.method === "GET" ? undefined : JSON.stringify(body ?? {}),
       });
 
       const [json, err] = await catchError<TData, TError>(res.json());
