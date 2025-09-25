@@ -1,17 +1,16 @@
-import { env } from '@/env';
-import { Chunk, Chunks } from '@/generics/chunk';
-import { Logger, OnModuleInit } from '@nestjs/common';
-import { MilvusClient } from '@zilliz/milvus2-sdk-node';
+import { env } from "@/env";
+import { Chunk, Chunks } from "@/generics/chunk";
+import { Logger, OnModuleInit } from "@nestjs/common";
+import { MilvusClient } from "@zilliz/milvus2-sdk-node";
 
-import {
-  SearchByEmbeddingOptions, SearchByTermOptions, VectorStore
-} from '../vector-store.service';
-import { schema } from './schemas';
+import { SearchByEmbeddingOptions, SearchByTermOptions, VectorStore } from "../vector-store.service";
+
+import { COLLECTION_NAME, indexSchema, schema } from "./schemas";
 
 export class MilvusService extends VectorStore implements OnModuleInit {
   private readonly logger = new Logger(MilvusService.name);
   client: MilvusClient;
-  collectionName = env.MILVUS_COLLECTION;
+  collectionName = COLLECTION_NAME;
 
   constructor() {
     super();
@@ -27,25 +26,12 @@ export class MilvusService extends VectorStore implements OnModuleInit {
       await this.client.dropCollection({ collection_name: this.collectionName });
     }
 
-    await this.client.createCollection({
-      collection_name: this.collectionName,
-      fields: schema
-    });
-
-    await this.client.createIndex({
-      collection_name: this.collectionName,
-      field_name: "embedding",
-      index_name: "embedding_idx",
-      extra_params: {
-        index_type: "IVF_FLAT",
-        metric_type: "IP",
-        params: JSON.stringify({ nlist: 128 }),
-      },
-    });
+    await this.client.createCollection({ collection_name: this.collectionName, fields: schema });
+    await this.client.createIndex(indexSchema);
     await this.client.loadCollectionAsync({ collection_name: this.collectionName });
   }
 
-  async addChunks(c: Chunk[] | Chunk | Chunks): Promise<void> {
+  async addFragments(c: Chunk[] | Chunk | Chunks): Promise<void> {
     const chunks = new Chunks();
 
     if (c instanceof Chunk) chunks.push(c);
@@ -74,7 +60,7 @@ export class MilvusService extends VectorStore implements OnModuleInit {
     await this.client.flushSync({ collection_names: [this.collectionName] });
   }
 
-  async deleteChunks(c: Chunk[] | Chunk | Chunks): Promise<void> {
+  async deleteFragments(c: Chunk[] | Chunk | Chunks): Promise<void> {
     const chunks = new Chunks();
 
     if (c instanceof Chunk) chunks.push(c);
@@ -109,26 +95,30 @@ export class MilvusService extends VectorStore implements OnModuleInit {
         metric_type: "IP",
         params: JSON.stringify({ nprobe: 10 }),
       },
-      output_fields: ["seqId", "content", "knowledgeId", "sourceId", "tenantId", "createdAt", "updatedAt"],
+      output_fields: ["seqId", "content", "knowledgeId", "sourceId", "tenantId", "createdAt", "updatedAt", "extra"],
     });
 
     return Chunks.fromChunkArray(result.results.map(r => Chunk.fromObject(r)));
   }
 
-  async searchByTerm(knowledgeId: string, term: string, opts: SearchByTermOptions = { limit: 10}): Promise<Chunks> {
+  async searchByTerm(
+    knowledgeId: string,
+    term: string,
+    opts: SearchByTermOptions = { limit: 10 }
+  ): Promise<Chunks> {
     const exprParts: string[] = [];
     if (knowledgeId) exprParts.push(`knowledgeId == "${knowledgeId}"`);
     if (term) exprParts.push(`TEXT_MATCH(content, '${term}')`);
 
     const expr = exprParts.join(" && ");
-    
+
     const result = await this.client.query({
       collection_name: this.collectionName,
       filter: expr,
       limit: opts.limit ?? 10,
-      output_fields: ["seqId", "content", "knowledgeId", "sourceId", "tenantId", "createdAt", "updatedAt"],
+      output_fields: ["seqId", "content", "knowledgeId", "sourceId", "tenantId", "createdAt", "updatedAt", "extra"],
     });
-    
+
     return Chunks.fromChunkArray(result.data.map(r => Chunk.fromObject(r)));
   }
 }

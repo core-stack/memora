@@ -1,23 +1,18 @@
 import { randomUUID } from "crypto";
 
 export class Chunk {
-  id: string;
-  seqId: number;
-  content: string;
-  knowledgeId: string;
-  sourceId: string;
-  tenantId: string;
-  embedding: number[];
-
-  constructor(seqId: number, content: string, knowledgeId: string, sourceId: string, tenantId: string, id: string = randomUUID(), embedding: number[] = []) {
-    this.id = id;
-    this.seqId = seqId;
-    this.content = content;
-    this.knowledgeId = knowledgeId;
-    this.sourceId = sourceId;
-    this.tenantId = tenantId;
-    this.embedding = embedding;
-  }
+  constructor(
+    public seqId: number,
+    public content: string,
+    public knowledgeId: string,
+    public sourceId: string,
+    public tenantId: string,
+    public embedding: number[] = [],
+    public metadata: any = {},
+    public createdAt: Date = new Date(),
+    public updatedAt: Date = new Date(),
+    public id: string = randomUUID(),
+  ) {}
 
   static fromObject(obj: any): Chunk {
     return new Chunk(
@@ -26,8 +21,11 @@ export class Chunk {
       obj.knowledgeId,
       obj.sourceId,
       obj.tenantId,
+      obj.embedding,
+      obj.metadata,
+      obj.createdAt ? new Date(obj.createdAt) : new Date(),
+      obj.updatedAt ? new Date(obj.updatedAt) : new Date(),
       obj.id,
-      obj.embedding
     );
   }
 

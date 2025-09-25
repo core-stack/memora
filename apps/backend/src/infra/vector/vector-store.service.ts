@@ -1,4 +1,4 @@
-import { Chunk, Chunks } from '@/generics/chunk';
+import { Fragment, Fragments } from "@/fragment";
 
 export type SearchByTermOptions = {
   limit?: number;
@@ -8,16 +8,16 @@ export type SearchByEmbeddingOptions = {
 }
 
 export abstract class VectorStore {
-  abstract addChunks(chunks: Chunk[] | Chunk | Chunks): Promise<void>;
-  abstract deleteChunks(chunks: Chunk[] | Chunk | Chunks): Promise<void>;
+  abstract addFragments(fragments: Fragment[] | Fragment | Fragments): Promise<void>;
+  abstract deleteFragments(fragments: Fragment[] | Fragment | Fragments): Promise<void>;
   abstract searchByEmbeddings(
     knowledgeId: string,
     queryEmbedding: number[],
     opts?: SearchByEmbeddingOptions
-  ): Promise<Chunks>;
+  ): Promise<Fragments>;
   abstract searchByTerm(
     knowledgeId: string,
     term: string,
     opts?: SearchByTermOptions
-  ): Promise<Chunks>;
+  ): Promise<Fragments>;
 }

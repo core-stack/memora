@@ -1,14 +1,14 @@
 import { env } from "@/env";
-import { Chunk, Chunks } from "@/generics/chunk";
+import { Fragment, Fragments } from "@/fragment";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { Source } from "@memora/schemas";
+import { FragmentFileMetadata, Source } from "@memora/schemas";
 import { Injectable } from "@nestjs/common";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
-import { IProcessor } from "./types";
+
 
 @Injectable()
-export class PDFProcessor implements IProcessor {
+export class PDFProcessor {
   private splitter = new RecursiveCharacterTextSplitter({
     chunkSize: 1000,
     chunkOverlap: 200
@@ -23,13 +23,21 @@ export class PDFProcessor implements IProcessor {
     return loader.load();
   }
 
-  async process(source: Source, pathOrBlob: string | Blob): Promise<Chunks> {
+  async process(
+    source: Source,
+    pathOrBlob: string | Blob,
+    fileMetadata: FragmentFileMetadata
+  ): Promise<Fragments> {
     const docs = await this.load(pathOrBlob);
     const docChunks = await this.splitter.splitDocuments(docs);
 
-    return Chunks.fromChunkArray(
-      docChunks.map((chunk, idx) => new Chunk(
-        idx, chunk.pageContent, source.knowledgeId, source.id, env.TENANT_ID
+    return Fragments.fromFragmentArray(
+      docChunks.map((chunk, idx) => new Fragment(
+        chunk.pageContent,
+        source.knowledgeId,
+        source.id,
+        env.TENANT_ID,
+        { ...fileMetadata, seqId: idx }
       ))
     );
   }

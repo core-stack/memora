@@ -1,5 +1,7 @@
-import { env } from '@/env';
-import { DataType, FieldType } from '@zilliz/milvus2-sdk-node';
+import { env } from "@/env";
+import { CreateIndexReq, DataType, FieldType } from "@zilliz/milvus2-sdk-node";
+
+export const COLLECTION_NAME = env.MILVUS_COLLECTION;
 
 export const schema: FieldType[] = [
   {
@@ -25,7 +27,7 @@ export const schema: FieldType[] = [
     enable_match: true,
     analyzer_params: {
       "tokenizer": "standard",
-      "filter": ["asciifolding"],
+      "filter": ["asciifolding", "lowercase"],
     }
   },
   {
@@ -49,6 +51,23 @@ export const schema: FieldType[] = [
   },
   {
     name: "updatedAt",
-    data_type: DataType.Int64
+    data_type: DataType.Int64,
+    nullable: true
+  },
+  {
+    name: "metadata",
+    data_type: DataType.JSON,
+    nullable: true
   }
 ];
+
+export const indexSchema: CreateIndexReq = {
+  collection_name: COLLECTION_NAME,
+  field_name: "embedding",
+  index_name: "embedding_idx",
+  extra_params: {
+    index_type: "IVF_FLAT",
+    metric_type: "IP",
+    params: JSON.stringify({ nlist: 128 }),
+  },
+}
