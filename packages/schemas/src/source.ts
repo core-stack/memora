@@ -1,8 +1,8 @@
 import z from 'zod';
 
 import { filterSchema, orderSchema } from './shared';
+import { sourceTypeSchema } from './source-type';
 
-export const sourceTypeSchema = z.enum(["TEXT", "IMAGE", "VIDEO", "AUDIO", "FILE", "LINK"]);
 export const indexStatusSchema = z.enum(["PENDING", "INDEXED", "INDEXING", "ERROR"]);
 
 export const baseSourceSchema = z.object({
@@ -12,10 +12,10 @@ export const baseSourceSchema = z.object({
   name: z.string().max(255),
   description: z.string().optional(),
 
-  originalName: z.string().optional(),
-  extension: z.string().optional(),
-  contentType: z.string().optional(),
-  size: z.number().int().optional(),
+  originalName: z.string(),
+  extension: z.string(),
+  contentType: z.string(),
+  size: z.number().int(),
   url: z.string().url().optional(),
   metadata: z.record(z.string(), z.any()).optional(),
   width: z.number().int().optional(),

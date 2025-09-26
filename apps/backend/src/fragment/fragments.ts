@@ -1,6 +1,9 @@
-import { mergeBy } from "@/utils/array";
+import { mergeBy } from '@/utils/array';
+import { Fragment as FragmentType } from '@memora/schemas';
 
-import { Fragment } from "./fragment";
+import { Fragment } from './fragment';
+
+const isFragment = (f: any): f is Fragment => f instanceof Fragment;
 
 export class Fragments {
   static fromFragmentArray(fragments: Fragment[]): Fragments {
@@ -9,9 +12,13 @@ export class Fragments {
 
   constructor(private fragments: Fragment[] = []) {}
 
-  push(...fragments: Fragment[]): this {
+  push(...fragments: FragmentType[] | Fragment[]): this {
     if (!fragments.length) return this;
-    this.fragments = mergeBy("id", this.fragments, fragments);
+    if (isFragment(fragments[0])) {
+      this.fragments = mergeBy("id", this.fragments, fragments as Fragment[]);
+    } else {
+      this.fragments = fragments.map((f: FragmentType) => new Fragment(f));
+    }
     return this;
   }
 
@@ -34,7 +41,7 @@ export class Fragments {
 
   setEmbeddings(embeddings: number[][]) {
     this.fragments.forEach((chunk, idx) => {
-      chunk.setEmbedding(embeddings[idx]);
+      chunk.setEmbeddings(embeddings[idx]);
     });
   }
 }

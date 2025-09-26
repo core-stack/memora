@@ -1,14 +1,16 @@
-import z from "zod";
+import z from 'zod';
+
+import { sourceTypeSchema } from './source-type';
 
 export enum OriginType {
   PLUGIN = "PLUGIN",
-  FILES = "FILES"
+  SOURCE = "SOURCE"
 }
 
 export const originTypeSchema = z.nativeEnum(OriginType);
 
 export const fragmentFileMetadataSchema = z.object({
-  type: z.literal(OriginType.FILES),
+  type: z.literal(OriginType.SOURCE),
 
   seqId: z.number().optional(), // sequential id
 
@@ -46,13 +48,13 @@ export type FragmentMetadata = z.infer<typeof fragmentMetadataSchema>;
 export const fragmentSchema = z.object({
   id: z.string().uuid(),
   content: z.string(),
-  cached: z.boolean(),
-  originType: originTypeSchema,
-  originId: z.string().uuid(),
-  tenantId: z.string().uuid(),
+  cached: z.boolean().optional(),
+  sourceType: sourceTypeSchema,
+  sourceId: z.string().uuid(),
   knowledgeId: z.string().uuid(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  tenantId: z.string().uuid(),
+  createdAt: z.string().transform(d => new Date(d)).or(z.date()),
+  updatedAt: z.string().transform(d => new Date(d)).or(z.date()),
   metadata: fragmentMetadataSchema
 });
 

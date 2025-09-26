@@ -11,3 +11,4 @@ export * from "./fragment";
 export * from "./plugin-registry";
 export * from "./search";
 export * from "./utils";
+export * from "./source-type";

@@ -1,5 +1,5 @@
-import { env } from "@/env";
-import { CreateIndexReq, DataType, FieldType } from "@zilliz/milvus2-sdk-node";
+import { env } from '@/env';
+import { CreateIndexReq, DataType, FieldType } from '@zilliz/milvus2-sdk-node';
 
 export const COLLECTION_NAME = env.MILVUS_COLLECTION;
 
@@ -27,11 +27,16 @@ export const schema: FieldType[] = [
     enable_match: true,
     analyzer_params: {
       "tokenizer": "standard",
-      "filter": ["asciifolding", "lowercase"],
+      "filter": ["asciifolding"],
     }
   },
   {
     name: "sourceId",
+    data_type: DataType.VarChar,
+    max_length: 36,
+  },
+  {
+    name: "sourceType",
     data_type: DataType.VarChar,
     max_length: 36,
   },

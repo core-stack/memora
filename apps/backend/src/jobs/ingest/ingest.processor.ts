@@ -1,14 +1,15 @@
-import { StorageService } from "@/infra/storage/storage.service";
-import { VectorStore } from "@/infra/vector/vector-store.service";
-import { SourceRepository } from "@/modules/knowledge/source/source.repository";
-import { Embeddings } from "@langchain/core/embeddings";
-import { Source } from "@memora/schemas";
-import { OnWorkerEvent, Processor, WorkerHost } from "@nestjs/bullmq";
-import { forwardRef, Inject } from "@nestjs/common";
-import { Job } from "bullmq";
-import streamToBlob from "stream-to-blob";
+import { Job } from 'bullmq';
+import streamToBlob from 'stream-to-blob';
 
-import { PDFProcessor } from "./processors/pdf.processor";
+import { StorageService } from '@/infra/storage/storage.service';
+import { VectorStore } from '@/infra/vector/vector-store.service';
+import { SourceRepository } from '@/modules/knowledge/source/source.repository';
+import { Embeddings } from '@langchain/core/embeddings';
+import { OriginType, Source } from '@memora/schemas';
+import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
+import { forwardRef, Inject } from '@nestjs/common';
+
+import { PDFProcessor } from './processors/pdf.processor';
 
 @Processor("ingest", { concurrency: 5 })
 export class IngestProcessor extends WorkerHost {
@@ -26,9 +27,22 @@ export class IngestProcessor extends WorkerHost {
     const obj = await this.storage.getObject(source.key);
     if (!obj) throw new Error("File not found");
 
-    const fragments = await this.pdfProcessor.process(source, await streamToBlob(obj));
+    const fragments = await this.pdfProcessor.process(
+      source,
+      await streamToBlob(obj),
+      {
+        contentType: source.contentType,
+        extension: source.extension,
+        name: source.originalName,
+        size: source.size,
+        type: OriginType.SOURCE,
+        path: source.key
+      }
+    );
     const embeddings = await this.embeddings.embedDocuments(fragments.map(c => c.content));
     fragments.setEmbeddings(embeddings);
+    console.log(embeddings.length);
+    
     await this.vectorStore.addFragments(fragments);
   }
 

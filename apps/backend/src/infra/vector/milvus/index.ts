@@ -1,11 +1,13 @@
-import { env } from "@/env";
-import { Chunk, Chunks } from "@/generics/chunk";
-import { Logger, OnModuleInit } from "@nestjs/common";
-import { MilvusClient } from "@zilliz/milvus2-sdk-node";
+import { env } from '@/env';
+import { Fragment, Fragments } from '@/fragment';
+import { OriginType } from '@memora/schemas';
+import { Logger, OnModuleInit } from '@nestjs/common';
+import { MilvusClient } from '@zilliz/milvus2-sdk-node';
 
-import { SearchByEmbeddingOptions, SearchByTermOptions, VectorStore } from "../vector-store.service";
-
-import { COLLECTION_NAME, indexSchema, schema } from "./schemas";
+import {
+  SearchByEmbeddingOptions, SearchByTermOptions, VectorStore
+} from '../vector-store.service';
+import { COLLECTION_NAME, indexSchema, schema } from './schemas';
 
 export class MilvusService extends VectorStore implements OnModuleInit {
   private readonly logger = new Logger(MilvusService.name);
@@ -31,56 +33,55 @@ export class MilvusService extends VectorStore implements OnModuleInit {
     await this.client.loadCollectionAsync({ collection_name: this.collectionName });
   }
 
-  async addFragments(c: Chunk[] | Chunk | Chunks): Promise<void> {
-    const chunks = new Chunks();
+  async addFragments(c: Fragment[] | Fragment | Fragments): Promise<void> {
+    const fragments = new Fragments();
 
-    if (c instanceof Chunk) chunks.push(c);
-    else if (c instanceof Chunks) chunks.import(c);
-    else chunks.push(...c);
+    if (c instanceof Fragment) fragments.push(c);
+    else if (c instanceof Fragments) fragments.import(c);
+    else fragments.push(...c);
 
-    const data = chunks.map(c => ({
+    const data = fragments.map(c => ({
       id: c.id,
-      seqId: c.seqId,
-      embedding: c.embedding,
+      seqId: c.metadata.type === OriginType.SOURCE ? c.metadata.seqId : undefined,
+      embedding: c.getEmbeddings(),
       content: c.content,
       sourceId: c.sourceId,
       knowledgeId: c.knowledgeId,
       tenantId: c.tenantId,
+      sourceType: c.sourceType,
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      metadata: c.metadata
     }));
 
-    if (data.some(d => !d.embedding)) throw new Error("Invalid chunk data");
+    if (data.some(d => !d.embedding)) throw new Error("Embedding is required");
 
-    const res = await this.client.insert({
-      collection_name: this.collectionName,
-      fields_data: data
-    });
-
+    const res = await this.client.insert({ collection_name: this.collectionName, fields_data: data });
+    this.logger.verbose(res);
     await this.client.flushSync({ collection_names: [this.collectionName] });
   }
 
-  async deleteFragments(c: Chunk[] | Chunk | Chunks): Promise<void> {
-    const chunks = new Chunks();
+  async deleteFragments(c: Fragment[] | Fragment | Fragments): Promise<void> {
+    const fragments = new Fragments();
 
-    if (c instanceof Chunk) chunks.push(c);
-    else if (c instanceof Chunks) chunks.import(c);
-    else chunks.push(...c);
-    const keys = chunks.map(c => `${c.knowledgeId}-${c.seqId}`);
+    if (c instanceof Fragment) fragments.push(c);
+    else if (c instanceof Fragments) fragments.import(c);
+    else fragments.push(...c);
+    const ids = fragments.map(c => c.id);
 
     await this.client.delete({
-      collection_name: "default",
-      filter: `key in [${keys.map(k => `"${k}"`).join(", ")}]`
+      collection_name: this.collectionName,
+      filter: `id in [${ids.map(id => `"${id}"`).join(", ")}]`
     });
 
-    await this.client.flushSync({ collection_names: ["default"] });
+    await this.client.flushSync({ collection_names: [this.collectionName] });
   }
 
   async searchByEmbeddings(
     knowledgeId: string,
     queryEmbedding: number[],
     opts?: SearchByEmbeddingOptions
-  ): Promise<Chunks> {
+  ): Promise<Fragments> {
     const exprParts: string[] = [];
     if (knowledgeId) exprParts.push(`knowledgeId == "${knowledgeId}"`);
     const expr = exprParts.join(" && ");
@@ -95,17 +96,16 @@ export class MilvusService extends VectorStore implements OnModuleInit {
         metric_type: "IP",
         params: JSON.stringify({ nprobe: 10 }),
       },
-      output_fields: ["seqId", "content", "knowledgeId", "sourceId", "tenantId", "createdAt", "updatedAt", "extra"],
     });
 
-    return Chunks.fromChunkArray(result.results.map(r => Chunk.fromObject(r)));
+    return Fragments.fromFragmentArray(result.results.map(r => Fragment.fromObject(r)));
   }
 
   async searchByTerm(
     knowledgeId: string,
     term: string,
     opts: SearchByTermOptions = { limit: 10 }
-  ): Promise<Chunks> {
+  ): Promise<Fragments> {
     const exprParts: string[] = [];
     if (knowledgeId) exprParts.push(`knowledgeId == "${knowledgeId}"`);
     if (term) exprParts.push(`TEXT_MATCH(content, '${term}')`);
@@ -116,9 +116,8 @@ export class MilvusService extends VectorStore implements OnModuleInit {
       collection_name: this.collectionName,
       filter: expr,
       limit: opts.limit ?? 10,
-      output_fields: ["seqId", "content", "knowledgeId", "sourceId", "tenantId", "createdAt", "updatedAt", "extra"],
     });
 
-    return Chunks.fromChunkArray(result.data.map(r => Chunk.fromObject(r)));
+    return Fragments.fromFragmentArray(result.data.map(r => Fragment.fromObject(r)));
   }
 }

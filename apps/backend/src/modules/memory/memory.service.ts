@@ -1,23 +1,24 @@
-import { Fragments } from "@/fragment";
-import { CacheService } from "@/infra/cache/cache.service";
-import { LLMService } from "@/infra/llm/llm.service";
-import { VectorStore } from "@/infra/vector/vector-store.service";
-import { PluginManagerService } from "@/plugin-registry/plugin-manager.service";
-import { mergeBy } from "@/utils/array";
-import { Embeddings } from "@langchain/core/embeddings";
-import { OriginType } from "@memora/schemas";
-import { Injectable, Logger } from "@nestjs/common";
-import moment from "moment";
+import moment from 'moment';
 
-import { KnowledgeService } from "../knowledge/knowledge.service";
-import { PluginService } from "../plugin/plugin.service";
+import { Fragment, Fragments } from '@/fragment';
+import { CacheService } from '@/infra/cache/cache.service';
+import { LLMService } from '@/infra/llm/llm.service';
+import { VectorStore } from '@/infra/vector/vector-store.service';
+import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
+import { mergeBy } from '@/utils/array';
+import { Embeddings } from '@langchain/core/embeddings';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { Finder, FindOptions } from "./find-options";
+import { KnowledgeService } from '../knowledge/knowledge.service';
+import { PluginService } from '../plugin/plugin.service';
+import { Finder, FindOptions } from './find-options';
 
-import type { Fragment, Recent } from "@memora/schemas";
+import type { Recent } from "@memora/schemas";
+
 @Injectable()
 export class MemoryService {
   private readonly logger = new Logger(MemoryService.name);
+
   constructor(
     private vectorStore:      VectorStore,
     private embeddings:       Embeddings,
@@ -52,23 +53,11 @@ export class MemoryService {
 
     for (const p of plugins) {
       const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, query);
-      fragments.push({
-        id: p.id,
-        content: pluginResponse,
-        originType: OriginType.PLUGIN,
-        originId: p.id,
-        tenantId: knowledge.tenantId,
-        knowledgeId: knowledgeId,
-        cached: false,
-        metadata: { type: OriginType.PLUGIN },
-        createdAt: p.createdAt,
-        updatedAt: p.updatedAt
-      });
+      this.logger.debug(`Plugin ${p.pluginRegistry} response: ${pluginResponse}`);
     }
 
     const queryEmbedding = await this.embeddings.embedQuery(query);
-    const chunks = await this.vectorStore.searchByEmbeddings(knowledgeId, queryEmbedding);
-    return fragments.merge(Fragments.fromChunks(chunks));
+    return fragments.merge(await this.vectorStore.searchByEmbeddings(knowledgeId, queryEmbedding));
   }
 
   private async findFragmentsInCache(knowledgeId: string, userInput: string): Promise<Fragment[] | null> {

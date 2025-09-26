@@ -1,5 +1,10 @@
-import { Fragment as FragmentType, FragmentMetadata, OriginType } from "@memora/schemas";
-import { randomUUID } from "crypto";
+
+
+import { randomUUID } from 'crypto';
+
+import {
+  Fragment as FragmentType, FragmentMetadata, fragmentSchema, SourceType
+} from '@memora/schemas';
 
 export interface IFragment extends FragmentType {};
 
@@ -7,51 +12,40 @@ export class Fragment implements IFragment {
   id: string;
   knowledgeId: string;
   tenantId: string;
+  sourceId: string;
+  sourceType: SourceType;
   createdAt: Date;
   updatedAt: Date;
   content: string;
   metadata: FragmentMetadata;
   cached: boolean;
-  originType: OriginType;
-  originId: string;
 
   private embeddings: number[] = [];
 
   constructor(
-    content: string,
-    knowledgeId: string,
-    sourceId: string,
-    tenantId: string,
-    metadata: FragmentMetadata = {} as FragmentMetadata,
-    id: string = randomUUID(),
-    createdAt: Date = new Date(),
-    updatedAt: Date = new Date(),
+    f: Omit<FragmentType, "id" | "createdAt" | "updatedAt" | "cached"> & { id?: string, createdAt?: Date, updatedAt?: Date, cached?: boolean }
   ) {
-    this.id = id;
-    this.content = content;
-    this.knowledgeId = knowledgeId;
-    this.originId = sourceId;
-    this.tenantId = tenantId;
-    this.metadata = metadata;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+    this.content = f.content;
+    this.knowledgeId = f.knowledgeId;
+    this.sourceType = f.sourceType;
+    this.tenantId = f.tenantId;
+    this.metadata = f.metadata;
+    this.sourceId = f.sourceId;
+    this.id = f.id || randomUUID();
+    this.createdAt = f.createdAt || new Date();
+    this.updatedAt = f.updatedAt || new Date();
+    this.cached = f.cached || false;
   }
 
   static fromObject(obj: any): Fragment {
-    return new Fragment(
-      obj.content,
-      obj.knowledgeId,
-      obj.sourceId,
-      obj.tenantId,
-      obj.metadata,
-      obj.id,
-      obj.createdAt ? new Date(obj.createdAt) : new Date(),
-      obj.updatedAt ? new Date(obj.updatedAt) : new Date(),
-    );
+    return new Fragment(fragmentSchema.parse(obj));
   }
 
-  setEmbedding(embeddings: number[]) {
+  setEmbeddings(embeddings: number[]) {
     if (!embeddings) return;
     this.embeddings = embeddings;
+  }
+  getEmbeddings() {
+    return this.embeddings;
   }
 }
