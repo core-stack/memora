@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { formatBytes } from '@/utils/bytes-format';
+import { formatBytes } from '@/utils/format';
 
 import { ScrollArea } from './ui/scroll-area';
 

@@ -27,6 +27,10 @@ export interface SourceRoutes {
     }
   },
   "/api/knowledge/:knowledgeSlug/source/:id": {
+    GET: {
+      params: { knowledgeSlug: string, id: string };
+      response: Source;
+    },
     PUT: {
       body: UpdateSource;
       params: { knowledgeSlug: string, id: string };

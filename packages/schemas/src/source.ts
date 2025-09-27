@@ -4,6 +4,7 @@ import { filterSchema, orderSchema } from './shared';
 import { sourceTypeSchema } from './source-type';
 
 export const indexStatusSchema = z.enum(["PENDING", "INDEXED", "INDEXING", "ERROR"]);
+export type IndexStatus = z.infer<typeof indexStatusSchema>;
 
 export const baseSourceSchema = z.object({
   id: z.string().uuid(),
