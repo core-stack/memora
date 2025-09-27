@@ -8,6 +8,7 @@ import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { getFileMetadata } from '@/lib/metadata';
+import { SourceType } from '@memora/schemas';
 
 import { DialogType } from '../';
 
@@ -30,13 +31,13 @@ export const CreateSourceFile = ({ folderId }: Props) => {
   const { mutate: createSource } = useApiMutation("/api/knowledge/:knowledgeSlug/source", { method: "POST" });
   const onUploadComplete = async (f: UploadedFile) => {
     const metadata = await getFileMetadata(f.file);
-    const sourceType = f.type.startsWith("image") ? "IMAGE" : f.type.startsWith("audio") ? "AUDIO" : f.type.startsWith("video") ? "VIDEO" : "FILE";
+    const sourceType: SourceType = f.type.startsWith("image") ? SourceType.IMAGE : f.type.startsWith("audio") ? SourceType.AUDIO : f.type.startsWith("video") ? SourceType.VIDEO : SourceType.FILE;
     const body: CreateSource = {
       ...metadata,
       metadata,
       contentType: f.type,
       sourceType,
-      extension: f.name.split('.').pop(),
+      extension: f.name.split('.').pop() || "",
       originalName: f.name,
       name: f.name,
       folderId,

@@ -1,6 +1,6 @@
 "use client"
 
-import { Clock, File, Folder, Search } from 'lucide-react';
+import { Clock, File, Search } from 'lucide-react';
 import { useEffect, useRef, useState, useTransition } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +14,6 @@ import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useDialog } from '@/hooks/use-dialog';
-import { OriginType } from '@memora/schemas';
 
 import { DialogType } from './';
 
@@ -196,11 +195,7 @@ export function SearchDialog() {
                       }`}
                     >
                       <div className="mt-0.5">
-                        {result.originType === OriginType.FILES ? (
-                          <File className="w-4 h-4 text-blue-500" />
-                        ) : (
-                          <Folder className="w-4 h-4 text-yellow-500" />
-                        )}
+                        <File className="w-4 h-4 text-blue-500" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
