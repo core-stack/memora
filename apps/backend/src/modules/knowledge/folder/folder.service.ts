@@ -34,14 +34,19 @@ export class FolderService extends TenantService<KnowledgeFolder> {
     return super.create(input, ctx);
   }
 
-  async getPathByFolderId(folderId: string) {
-    const folder = await this.repository.findById(folderId);
+  async getPathByFolderId(fileName: string, folderId?: string) {
+    if (!folderId) return "";
+    const folder = await this.repository.findByID(folderId);
+    if (!folder) throw new Error("Folder not found");
     const path = [folder.name];
-    let parent = await this.repository.findById(folder.parentId);
-    while (parent) {
-      path.unshift(parent.name);
-      parent = await this.repository.findById(parent.parentId);
+    if (folder.parentId) {
+      let parent = await this.repository.findByID(folder.parentId);
+      while (parent) {
+        path.unshift(parent.name);
+        if (!parent.parentId) break;
+        parent = await this.repository.findByID(parent.parentId);
+      }
     }
-    return path;
+    return path.join("/") + "/" + fileName;
   }
 }

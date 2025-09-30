@@ -39,10 +39,7 @@ export class SourceService extends TenantService<Source> {
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
     input.knowledgeId = knowledgeId;
     input.indexStatus = 'PENDING';
-    // generate path
-    if (!)
-    const folder = await this.folderService.findByID(input.folderId);
-
+    input.path = await this.folderService.getPathByFolderId(input.originalName ?? input.name!, input.folderId);
 
     try {
       input.key = await this.storageService.confirmTempUpload(input.key);
