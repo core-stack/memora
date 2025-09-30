@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:generate": "cd apps/backend && npx drizzle-kit generate",
+    "db:migrate": "cd apps/backend && npx drizzle-kit migrate"
   },
   "keywords": [],
   "author": "",

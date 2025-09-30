@@ -1,41 +1,23 @@
 import exifr from 'exifr';
 
-type BaseMetadata = {
-  name: string;
-  size: number;
-  type: string;
-  lastModified: number;
-};
+import { SourceType } from '@memora/schemas';
 
-type ImageMetadata = {
-  width: number;
-  height: number;
-  exif?: Record<string, any>;
-};
-
-type VideoMetadata = {
-  width: number;
-  height: number;
-  duration: number;
-};
-
-type AudioMetadata = {
-  duration: number;
-};
-
-export async function getFileMetadata(file: File): Promise<BaseMetadata & Partial<ImageMetadata & VideoMetadata & AudioMetadata>> {
-  const base: BaseMetadata = {
-    name: file.name,
+import type {
+  BaseFileMetadata, SourceAudioMetadata, SourceDocMetadata, SourceImageMetadata, SourceVideoMetadata
+} from '@memora/schemas';
+export async function getFileMetadata(file: File): Promise<SourceAudioMetadata | SourceVideoMetadata | SourceImageMetadata | SourceDocMetadata> {
+  const base: BaseFileMetadata = {
+    extension: file.name.split('.').pop() || "",
+    contentType: file.type,
     size: file.size,
-    type: file.type,
-    lastModified: file.lastModified,
+    lastModified: file.lastModified
   };
 
   if (file.type.startsWith("image/")) {
-    const imageMeta = await new Promise<ImageMetadata>((resolve, reject) => {
+    const imageMeta = await new Promise<SourceImageMetadata>((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
-        resolve({ width: img.width, height: img.height });
+        resolve({ ...base, width: img.width, height: img.height, type: SourceType.IMAGE });
         URL.revokeObjectURL(img.src);
       };
       img.onerror = reject;
@@ -48,18 +30,20 @@ export async function getFileMetadata(file: File): Promise<BaseMetadata & Partia
     } catch (e) {
     }
 
-    return { ...base, ...imageMeta, exif: exifData };
+    return { ...imageMeta, exif: exifData };
   }
 
   if (file.type.startsWith("video/")) {
-    const videoMeta = await new Promise<VideoMetadata>((resolve, reject) => {
+    const videoMeta = await new Promise<SourceVideoMetadata>((resolve, reject) => {
       const video = document.createElement("video");
       video.preload = "metadata";
       video.onloadedmetadata = () => {
         resolve({
+          ...base,
           width: video.videoWidth,
           height: video.videoHeight,
           duration: video.duration,
+          type: SourceType.VIDEO
         });
         URL.revokeObjectURL(video.src);
       };
@@ -67,23 +51,23 @@ export async function getFileMetadata(file: File): Promise<BaseMetadata & Partia
       video.src = URL.createObjectURL(file);
     });
 
-    return { ...base, ...videoMeta };
+    return {...videoMeta };
   }
 
   if (file.type.startsWith("audio/")) {
-    const audioMeta = await new Promise<AudioMetadata>((resolve, reject) => {
+    const audioMeta = await new Promise<SourceAudioMetadata>((resolve, reject) => {
       const audio = document.createElement("audio");
       audio.preload = "metadata";
       audio.onloadedmetadata = () => {
-        resolve({ duration: audio.duration });
+        resolve({ ...base, duration: audio.duration, type: SourceType.AUDIO });
         URL.revokeObjectURL(audio.src);
       };
       audio.onerror = reject;
       audio.src = URL.createObjectURL(file);
     });
 
-    return { ...base, ...audioMeta };
+    return { ...audioMeta };
   }
 
-  return base;
+  return { ...base, type: SourceType.DOC };
 }

@@ -37,7 +37,7 @@ export class PDFProcessor {
         knowledgeId: source.knowledgeId,
         tenantId: env.TENANT_ID,
         metadata: { ...fileMetadata, seqId: idx },
-        sourceType: SourceType.FILE,
+        sourceType: SourceType.DOC,
       }
       ))
     );

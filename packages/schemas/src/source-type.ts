@@ -5,7 +5,7 @@ export enum SourceType {
   IMAGE = "IMAGE",
   VIDEO = "VIDEO",
   AUDIO = "AUDIO",
-  FILE = "FILE",
+  DOC = "DOC",
   LINK = "LINK"
 }
 

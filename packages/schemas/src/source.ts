@@ -1,28 +1,71 @@
 import z from 'zod';
 
 import { filterSchema, orderSchema } from './shared';
-import { sourceTypeSchema } from './source-type';
+import { SourceType, sourceTypeSchema } from './source-type';
 
 export const indexStatusSchema = z.enum(["PENDING", "INDEXED", "INDEXING", "ERROR"]);
 export type IndexStatus = z.infer<typeof indexStatusSchema>;
 
-export const baseSourceSchema = z.object({
+export const baseFileMetadata = z.object({
+  extension: z.string(),
+  contentType: z.string(),
+  size: z.number().int(),
+  lastModified: z.number().int().optional(),
+  exif: z.record(z.any()).optional()
+});
+export type BaseFileMetadata = z.infer<typeof baseFileMetadata>;
+
+export const sourceDocMetadataSchema = baseFileMetadata.extend({
+  type: z.literal(SourceType.DOC)
+});
+export type SourceDocMetadata = z.infer<typeof sourceDocMetadataSchema>;
+
+export const sourceLinkMetadataSchema = z.object({
+  type: z.literal(SourceType.LINK),
+  url: z.string().url(),
+});
+export type SourceLinkMetadata = z.infer<typeof sourceLinkMetadataSchema>;
+
+export const sourceVideoMetadataSchema = baseFileMetadata.extend({
+  type: z.literal(SourceType.VIDEO),
+  width: z.number().int().optional(),
+  height: z.number().int().optional(),
+  duration: z.number().int().optional()
+});
+export type SourceVideoMetadata = z.infer<typeof sourceVideoMetadataSchema>;
+
+export const sourceAudioMetadataSchema = baseFileMetadata.extend({
+  type: z.literal(SourceType.AUDIO),
+  duration: z.number().int().optional()
+});
+export type SourceAudioMetadata = z.infer<typeof sourceAudioMetadataSchema>;
+
+export const sourceImageMetadataSchema = baseFileMetadata.extend({
+  type: z.literal(SourceType.IMAGE),
+  width: z.number().int().optional(),
+  height: z.number().int().optional(),
+});
+export type SourceImageMetadata = z.infer<typeof sourceImageMetadataSchema>;
+
+export const sourceSchema = z.object({
   id: z.string().uuid(),
 
-  key: z.string().max(255),
+  key: z.string(),
+  path: z.string().optional(),
   name: z.string().max(255),
   description: z.string().optional(),
 
   originalName: z.string(),
-  extension: z.string(),
-  contentType: z.string(),
-  size: z.number().int(),
-  url: z.string().url().optional(),
-  metadata: z.record(z.string(), z.any()).optional(),
-  width: z.number().int().optional(),
-  height: z.number().int().optional(),
+  metadata: z.discriminatedUnion("type", [
+    sourceDocMetadataSchema,
+    sourceLinkMetadataSchema,
+    sourceVideoMetadataSchema,
+    sourceAudioMetadataSchema,
+    sourceImageMetadataSchema
+  ]),
 
   sourceType: sourceTypeSchema,
+
   indexStatus: indexStatusSchema,
   indexError: z.string().optional(),
 
@@ -33,30 +76,6 @@ export const baseSourceSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date().optional(),
 });
-
-export const withSourceRefinements = <T extends z.ZodType>(schema: T): z.ZodEffects<T> =>
-  schema.superRefine((data: any, ctx) => {
-    if (!data.originalName && ["IMAGE", "VIDEO", "AUDIO", "FILE"].includes(data.sourceType)) {
-      ctx.addIssue({ code: "custom", message: "Original name is required" });
-    }
-    if (!data.extension && ["IMAGE", "VIDEO", "AUDIO", "FILE"].includes(data.sourceType)) {
-      ctx.addIssue({ code: "custom", message: "Extension is required" });
-    }
-    if (!data.contentType && ["IMAGE", "VIDEO", "AUDIO", "FILE"].includes(data.sourceType)) {
-      ctx.addIssue({ code: "custom", message: "Content type is required" });
-    }
-    if (!data.size && ["IMAGE", "VIDEO", "AUDIO", "FILE"].includes(data.sourceType)) {
-      ctx.addIssue({ code: "custom", message: "Size is required" });
-    }
-    if (!data.width && ["IMAGE", "VIDEO"].includes(data.sourceType)) {
-      ctx.addIssue({ code: "custom", message: "Width is required" });
-    }
-    if (!data.height && ["IMAGE", "VIDEO"].includes(data.sourceType)) {
-      ctx.addIssue({ code: "custom", message: "Height is required" });
-    }
-  });
-
-export const sourceSchema = withSourceRefinements(baseSourceSchema);
 
 export type Source = z.infer<typeof sourceSchema>;
 
@@ -80,7 +99,7 @@ export const sourceFilterSchema = filterSchema.extend({
 
 export type SourceFilter = z.infer<typeof sourceFilterSchema>;
 
-export const createSourceSchema = withSourceRefinements(baseSourceSchema.omit({
+export const createSourceSchema = sourceSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
@@ -90,16 +109,16 @@ export const createSourceSchema = withSourceRefinements(baseSourceSchema.omit({
   memoryId: true,
 }).extend({
   folderId: z.string().uuid().optional(),
-}));
+});
 export type CreateSource = z.infer<typeof createSourceSchema>;
 
-export const updateSourceSchema = withSourceRefinements(baseSourceSchema.omit({
+export const updateSourceSchema = sourceSchema.omit({
   createdAt: true,
   updatedAt: true,
   indexStatus: true,
   indexError: true,
   memoryId: true,
-}));
+});
 export type UpdateSource = z.infer<typeof updateSourceSchema>;
 
 export const getUploadUrlSchema = z.object({

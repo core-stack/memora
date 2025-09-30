@@ -1,25 +1,20 @@
-import { relations, sql } from "drizzle-orm";
-import { index, integer, jsonb, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { relations, sql } from 'drizzle-orm';
+import { index, jsonb, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
-import { indexStatusEnum, sourceTypeEnum } from "./enums";
-import { folder } from "./folder";
-import { knowledge } from "./knowledge";
-import { sourceTag } from "./source_tag";
+import { indexStatusEnum, sourceTypeEnum } from './enums';
+import { folder } from './folder';
+import { knowledge } from './knowledge';
+import { sourceTag } from './source_tag';
 
 export const source = pgTable("sources", {
   id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
 
-  key: varchar("key", { length: 255 }).notNull().default(""),
+  key: text().notNull(),
+  path: text().notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
 
   originalName: varchar("original_name", { length: 255 }),
-  extension: varchar("extension", { length: 20 }),
-  contentType: varchar("content_type", { length: 100 }),
-  size: integer("size"),
-  url: varchar("url", { length: 2048 }),
-  width: integer("width"),
-  height: integer("height"),
   metadata: jsonb("metadata"),
 
   sourceType: sourceTypeEnum("source_type").notNull(),
@@ -28,7 +23,6 @@ export const source = pgTable("sources", {
   indexError: text("index_error"),
 
   memoryId: varchar("memory_id", { length: 36 }),
-
   knowledgeId: varchar("knowledge_id", { length: 36 }).notNull(),
   folderId: varchar("folder_id", { length: 36 }),
 
