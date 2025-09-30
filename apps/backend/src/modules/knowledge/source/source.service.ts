@@ -10,6 +10,7 @@ import { GetUploadUrl, Source } from '@memora/schemas';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Injectable } from '@nestjs/common';
 
+import { FolderService } from '../folder/folder.service';
 import { KnowledgeService } from '../knowledge.service';
 import { SourceRepository } from './source.repository';
 
@@ -18,6 +19,7 @@ export class SourceService extends TenantService<Source> {
   constructor(
     protected readonly repository: SourceRepository,
     private readonly knowledgeService: KnowledgeService,
+    private readonly folderService: FolderService,
     private readonly storageService: StorageService,
     @InjectQueue("ingest") private readonly ingestQueue: Queue
   ) {
@@ -37,6 +39,10 @@ export class SourceService extends TenantService<Source> {
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
     input.knowledgeId = knowledgeId;
     input.indexStatus = 'PENDING';
+    // generate path
+    if (!)
+    const folder = await this.folderService.findByID(input.folderId);
+
 
     try {
       input.key = await this.storageService.confirmTempUpload(input.key);
