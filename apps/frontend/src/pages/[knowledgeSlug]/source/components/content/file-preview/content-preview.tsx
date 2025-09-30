@@ -44,8 +44,7 @@ export function ContentPreview({ isLoading, data }: Props) {
       )
     }
 
-    switch (data?.sourceType) {
-
+    switch (data?.metadata.type) {
       case SourceType.IMAGE:
         return (
           <div className="flex items-center justify-center p-8">
@@ -54,9 +53,7 @@ export function ContentPreview({ isLoading, data }: Props) {
               <div>
                 <p className="font-medium">{data.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {data.metadata?.dimensions
-                    ? `${data.metadata.dimensions.width} × ${data.metadata.dimensions.height}`
-                    : "Image file"}
+                  {`${data.metadata.width} × ${data.metadata.height}`}
                 </p>
               </div>
               <Button variant="outline" size="sm">
@@ -123,9 +120,9 @@ export function ContentPreview({ isLoading, data }: Props) {
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Badge variant="secondary" className="text-xs">
-            {data?.sourceType}
+            {data?.metadata.type}
           </Badge>
-          {data?.size && <span>{formatBytes(data?.size)}</span>}
+          {data?.metadata.type !== SourceType.LINK && <span>{formatBytes(data?.metadata.size)}</span>}
           <span>•</span>
           { data?.updatedAt && <span>{formatDate(data?.updatedAt, DateFormat.lll)}</span>}
         </div>

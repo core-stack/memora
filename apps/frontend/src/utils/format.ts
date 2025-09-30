@@ -1,4 +1,5 @@
-export const formatBytes = (bytes: number | string) => {
+export const formatBytes = (bytes: number | string | undefined) => {
+  if (bytes === undefined) return "0 B";
   const bytesNumber = typeof bytes === 'string' ? parseInt(bytes) : bytes;
   const k = 1024;
   if (bytesNumber < k) {
@@ -12,7 +13,8 @@ export const formatBytes = (bytes: number | string) => {
   }
 }
 
-export const formatDuration = (seconds: number): string => {
+export const formatDuration = (seconds: number | undefined): string => {
+  if (seconds === undefined) return "0:00"
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
   const secs = Math.floor(seconds % 60)
