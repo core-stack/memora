@@ -1,0 +1,124 @@
+services:
+  # Backend + frontend juntos
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    ports:
+      - "${APP_PORT:-3100}:3100"
+    environment:
+      # App settings
+      APP_PORT: ${APP_PORT:-3100}
+      TENANT_ID: ${TENANT_ID-cab0b6a7-749f-4ea4-9f94-485acebe57ed}
+
+      # Gemini API
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+
+      # Postgres
+      DATABASE_URL: ${DATABASE_URL-postgresql://postgres:postgres@db/postgres}
+
+      # Storage
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID-minio}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY-adminadmin}
+      AWS_REGION: ${AWS_REGION-us-east-1}
+      AWS_ENDPOINT: ${AWS_ENDPOINT-http://minio:9000}
+      AWS_PUBLIC_BUCKET_BASE_URL: ${AWS_PUBLIC_BUCKET_BASE_URL-http://minio:9000}
+      AWS_BUCKET: ${AWS_BUCKET-memora}
+      AWS_FORCE_PATH_STYLE: ${AWS_FORCE_PATH_STYLE-true}
+    depends_on:
+      - redis
+      - db
+      - minio
+    restart: unless-stopped
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  # Postgres
+  db:
+    image: postgres:15-alpine
+    container_name: db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-postgres}
+      POSTGRES_DB: ${POSTGRES_DB-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # MinIO (S3)
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID-minio}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY-adminadmin}
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console
+    volumes:
+      - minio-data:/data
+    restart: unless-stopped
+
+  etcd:
+    container_name: milvus-etcd
+    image: quay.io/coreos/etcd:v3.5.18
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - milvus-etcd-data:/etcd
+    command: etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+
+  standalone:
+    container_name: milvus-standalone
+    image: milvusdb/milvus:v2.6.0
+    command: ["milvus", "run", "standalone"]
+    security_opt:
+    - seccomp:unconfined
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+      MQ_TYPE: woodpecker
+      MINIO_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID-minio}
+      MINIO_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY-adminadmin}
+    volumes:
+      - milvus-data:/var/lib/milvus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      start_period: 90s
+      timeout: 20s
+      retries: 3
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    depends_on:
+      - "etcd"
+      - "minio"
+
+volumes:
+  redis-data:
+  postgres-data:
+  minio-data:
+  milvus-data:
+  milvus-etcd-data:

@@ -1,0 +1,16 @@
+{
+  "name": "postgres",
+  "displayName": "Postgres SQL",
+  "version": "0.0.1",
+  "description": "Do fugiat cillum sint dolore nostrud ullamco esse veniam non sint ad. Quis elit ea do consequat enim nostrud occaecat cillum non.",
+  "type": "source",
+  "inputSchema": {},
+  "configSchema": {
+    "host": { "type": "string", "required": true, "label": "Host" },
+    "port": { "type": "number", "required": true, "label": "Port" },
+    "schema": { "type": "string", "required": true, "label": "Schema", "default": "public" },
+    "database": { "type": "string", "required": true, "label": "Database" },
+    "user": { "type": "string", "required": true, "label": "User" },
+    "password": { "type": "secret-string", "required": true, "label": "Password" }
+  }
+}
