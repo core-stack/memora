@@ -16,7 +16,7 @@ import { createKnowledgeSchema } from '@memora/schemas';
 
 import { DialogType } from './';
 
-import type { CreateKnowledge } from '@memora/schemas';
+import type { CreateKnowledge, Knowledge } from '@memora/schemas';
 const generateSlug = (name: string) => {
   return name
     .toLowerCase()
@@ -25,47 +25,73 @@ const generateSlug = (name: string) => {
     .replace(/-+/g, "-")
 }
 
-export const CreateKnowledgeDialog = () => {
+export type CreateOrUpdateKnowledgeDialogProps = {
+  knowledge?: Knowledge
+}
+export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowledgeDialogProps) => {
   const { closeDialog } = useDialog();
 
-  const form = useForm<CreateKnowledge>({ resolver: zodResolver(createKnowledgeSchema) });
+  const isEditing = !!knowledge;
+  const defaultValues: CreateKnowledge = {
+    title: knowledge?.title || "",
+    description: knowledge?.description || "",
+    slug: knowledge?.slug || ""
+  }
+
+  const form = useForm<CreateKnowledge>({ resolver: zodResolver(createKnowledgeSchema), defaultValues });
   const isLoading = form.formState.isSubmitting;
   const invalidate = useApiInvalidate();
-  const { mutate } = useApiMutation("/api/knowledge", { method: "POST" });
+  const { mutate: createKnowledge } = useApiMutation("/api/knowledge", { method: "POST" });
+  const { mutate: updateKnowledge } = useApiMutation("/api/knowledge/:id", { method: "PUT" });
   const onSubmit = form.handleSubmit(async (body) => {
-    mutate({ body }, {
-      onSuccess: () => {
-        invalidate("/api/knowledge");
-        closeDialog(DialogType.CREATE_KNOWLEDGE);
-      }
-    });
+    if (isEditing) {
+      updateKnowledge({
+        body: {
+          description: body.description,
+          title: body.title,
+          id: knowledge!.id
+        }, params: { id: knowledge!.id }
+      }, {
+        onSuccess: () => {
+          invalidate("/api/knowledge");
+          closeDialog(DialogType.CREATE_OR_UPDATE_KNOWLEDGE);
+        }
+      })
+    } else {
+      createKnowledge({ body }, {
+        onSuccess: () => {
+          invalidate("/api/knowledge");
+          closeDialog(DialogType.CREATE_OR_UPDATE_KNOWLEDGE);
+        }
+      });
+    }
   });
 
   const watchName = form.watch("title");
 
   useEffect(() => {
-    if (watchName) form.setValue("slug", generateSlug(watchName))
+    if (watchName && !isEditing) form.setValue("slug", generateSlug(watchName))
   }, [watchName]);
 
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>{"Create Knowledge"}</DialogTitle>
+        <DialogTitle>{isEditing ? "Update Knowledge" : "Create Knowledge"}</DialogTitle>
         <DialogDescription>
-          {"Create a new knowledge"}
+          {isEditing ? "Update a knowledge" : "Create a new knowledge" }
         </DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-6">
           <FormInput name='title' placeholder='Title of knowledge' label='Title' />
-          <FormInput name='slug' placeholder='Slug of knowledge' label='Slug' />
+          <FormInput name='slug' placeholder='Slug of knowledge' label='Slug' disabled={isEditing} />
           <FormTextarea name='description' placeholder='Description of knowledge' label='Description' />
 
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
-              onClick={() => closeDialog(DialogType.CREATE_KNOWLEDGE)}
+              onClick={() => closeDialog(DialogType.CREATE_OR_UPDATE_KNOWLEDGE)}
             >Cancel</Button>
             <Button type="submit" isLoading={isLoading}>
               Create

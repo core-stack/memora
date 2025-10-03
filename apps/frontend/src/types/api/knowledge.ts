@@ -1,4 +1,4 @@
-import type { UpdateSource, KnowledgeFilter, CreateKnowledge, Knowledge } from "@memora/schemas"
+import type { KnowledgeFilter, CreateKnowledge, Knowledge, UpdateKnowledge } from "@memora/schemas"
 
 export interface KnowledgeRoutes {
   "/api/knowledge": {
@@ -13,7 +13,7 @@ export interface KnowledgeRoutes {
   },
   "/api/knowledge/:id": {
     PUT: {
-      body: UpdateSource;
+      body: UpdateKnowledge;
       params: { id: string };
       response: undefined;
     },
