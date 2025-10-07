@@ -40,7 +40,10 @@ export class SourceService extends CrudService<Source, CreateSource, UpdateSourc
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
     input.knowledgeId = knowledgeId;
     input.indexStatus = 'PENDING';
-    input.path = await this.folderService.getPathByFolderId(input.originalName ?? input.name!, input.folderId);
+    input.path = await this.folderService.getPathByFolderId(
+      input.originalName ?? input.name!,
+      input.folderId
+    );
 
     try {
       input.key = await this.storageService.confirmTempUpload(input.key);

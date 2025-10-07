@@ -9,9 +9,10 @@ import { forwardRef, Module } from '@nestjs/common';
 
 import { IngestProcessor } from './ingest.processor';
 import { PDFProcessor } from './processors/pdf.processor';
+import { ProcessorManager } from './processor-manager';
 
 @Module({
-  providers: [IngestProcessor, PDFProcessor],
+  providers: [IngestProcessor, PDFProcessor, ProcessorManager],
   imports: [
     VectorModule,
     StorageModule,

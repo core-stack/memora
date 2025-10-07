@@ -17,7 +17,8 @@ import { useDialog } from '@/hooks/use-dialog';
 
 import { DialogType } from './';
 
-import type { Fragment } from "@memora/schemas";
+import { OriginType, type Fragment } from "@memora/schemas";
+import { Highlight } from '@/components/highlight';
 
 export function SearchDialog() {
   const [query, setQuery] = useState("");
@@ -58,11 +59,10 @@ export function SearchDialog() {
           e.preventDefault()
           setSelectedIndex((prev) => (prev - 1 + Math.max(totalItems, 1)) % Math.max(totalItems, 1))
           break
-        case "Enter":          
+        case "Enter":
           e.preventDefault()
           // Handle result selection
           if (results[selectedIndex]) {
-            console.log(results[selectedIndex]);
             // onResultSelect(results[resultIndex]);
             closeDialog(DialogType.SEARCH);
           }
@@ -82,58 +82,9 @@ export function SearchDialog() {
   }
 
   const handleResultClick = (result: Fragment) => {
-    console.log(result);
-
     // onResultSelect(result);
     closeDialog(DialogType.SEARCH);
   }
-
-  const highlightText = (text: string, query: string) => {
-    if (!query.trim()) return [text];
-  
-    // Normaliza e separa as palavras da query
-    const normalizedWords = query
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .split(/\s+/)
-      .filter(Boolean);
-  
-    if (normalizedWords.length === 0) return [text];
-  
-    // Cria um regex único (todas as palavras)
-    const regex = new RegExp(`(${normalizedWords.join("|")})`, "gi");
-  
-    // Vamos percorrer o texto original, mas comparar com a versão normalizada
-    const normalizedText = text
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
-  
-    const parts: string[] = [];
-    let lastIndex = 0;
-  
-    // Executa os matches no texto normalizado
-    normalizedText.replace(regex, (match, _group, offset) => {
-      // Adiciona o trecho não destacado
-      if (lastIndex < offset) {
-        parts.push(text.slice(lastIndex, offset));
-      }
-      // Adiciona o trecho destacado (mantendo acento e case originais)
-      parts.push(text.slice(offset, offset + match.length));
-      lastIndex = offset + match.length;
-      return match;
-    });
-  
-    // Resto do texto
-    if (lastIndex < text.length) {
-      parts.push(text.slice(lastIndex));
-    }
-    console.log(parts);
-    
-    return parts;
-  };
-  
 
   return (
     <DialogContent className="max-w-2xl p-0 gap-0 bg-popover border-border">
@@ -195,18 +146,19 @@ export function SearchDialog() {
                       }`}
                     >
                       <div className="mt-0.5">
-                        <File className="w-4 h-4 text-blue-500" />
+                        <File className="w-4 h-4 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium text-sm">{highlightText(result.content, query)}</span>
-                          {/* <span className="text-xs text-muted-foreground">{result.folder}</span> */}
+                        <div className="flex flex-col gap-2 mb-1">
+                          <span className="font-medium text-sm">
+                            <Highlight text={result.content} query={query} />
+                          </span>
+                          {
+                            result.metadata.type === OriginType.FILE && (
+                              <span className="text-xs text-muted-foreground">{result.metadata.name}</span>
+                            )
+                          }
                         </div>
-                        {/* {result.matches.length > 0 && (
-                          <div className="text-xs text-muted-foreground line-clamp-2">
-                            {highlightText(result.matches[0].text, query)}
-                          </div>
-                        )} */}
                       </div>
                     </button>
                   )

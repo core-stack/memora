@@ -17,6 +17,7 @@ import { createKnowledgeSchema } from '@memora/schemas';
 import { DialogType } from './';
 
 import type { CreateKnowledge, Knowledge } from '@memora/schemas';
+import { useToast } from '@/hooks/use-toast';
 const generateSlug = (name: string) => {
   return name
     .toLowerCase()
@@ -37,38 +38,34 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
     description: knowledge?.description || "",
     slug: knowledge?.slug || "",
     instructions: knowledge?.instructions || "",
-    tags: [],
+    tags: knowledge?.tags.map(tag => tag.name) || [],
   }
 
   const form = useForm<CreateKnowledge>({ resolver: zodResolver(createKnowledgeSchema), defaultValues });
   const isLoading = form.formState.isSubmitting;
   const invalidate = useApiInvalidate();
-  
-  const { mutate: createKnowledge } = useApiMutation("/api/knowledge", { method: "POST" });
-  const { mutate: updateKnowledge } = useApiMutation("/api/knowledge/:id", { method: "PUT" });
-  
+  const { toast } = useToast();
+
+  const { mutateAsync: createKnowledge } = useApiMutation("/api/knowledge", { method: "POST" });
+  const { mutateAsync: updateKnowledge } = useApiMutation("/api/knowledge/:id", { method: "PUT" });
+
   const onSubmit = form.handleSubmit(async (body) => {
-    if (isEditing) {
-      updateKnowledge({
-        body: {
-          instructions: body.instructions,
-          description: body.description,
-          title: body.title,
-          id: knowledge!.id
-        }, params: { id: knowledge!.id }
-      }, {
-        onSuccess: () => {
-          invalidate("/api/knowledge");
-          closeDialog(DialogType.CREATE_OR_UPDATE_KNOWLEDGE);
-        }
+    try {
+      if (isEditing) {
+        await updateKnowledge({ body: { ...body, id: knowledge!.id }, params: { id: knowledge!.id } });
+      } else {
+        await createKnowledge({ body });
+      }
+
+      invalidate("/api/knowledge");
+      closeDialog(DialogType.CREATE_OR_UPDATE_KNOWLEDGE);
+      toast({
+        title: isEditing ? "Knowledge updated" : "Knowledge created",
+        description: isEditing ? "The knowledge has been updated successfully" : "The knowledge has been created successfully",
       })
-    } else {
-      createKnowledge({ body }, {
-        onSuccess: () => {
-          invalidate("/api/knowledge");
-          closeDialog(DialogType.CREATE_OR_UPDATE_KNOWLEDGE);
-        }
-      });
+    } catch (error) {
+      toast({ title:"Error", description: (error as Error).message, variant: "destructive" });
+      console.error(error);
     }
   });
 
@@ -76,7 +73,7 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
 
   useEffect(() => {
     if (watchName && !isEditing) form.setValue("slug", generateSlug(watchName))
-  }, [watchName]);
+  }, [form, isEditing, watchName]);
 
   return (
     <DialogContent>
@@ -100,7 +97,7 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
               onClick={() => closeDialog(DialogType.CREATE_OR_UPDATE_KNOWLEDGE)}
             >Cancel</Button>
             <Button type="submit" isLoading={isLoading}>
-              Create
+              {isEditing ? "Update" : "Create"}
             </Button>
           </DialogFooter>
         </form>

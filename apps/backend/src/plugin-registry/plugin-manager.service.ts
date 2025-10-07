@@ -17,7 +17,7 @@ export class PluginManagerService {
       if (typeof instance.execute !== 'function') {
         throw new Error(`Operation "execute" not found in plugin ${p.type}`);
       }
-    
+
       return instance.execute(data);
     } catch (error) {
       this.logger.error(`Plugin execution failed: ${error.message}`);
@@ -28,12 +28,11 @@ export class PluginManagerService {
   async testPlugin(p: Partial<Plugin>): Promise<boolean> {
     try {
       const instance = await this.pluginRegistry.createInstance(p, true);
-      console.log(instance);
-      
+
       if (typeof instance.test !== 'function') {
         throw new Error(`Operation "test" not found in plugin ${p.type}`);
       }
-    
+
       return instance.test();
     } catch (error) {
       this.logger.error(`Plugin execution failed: ${error.message}`);

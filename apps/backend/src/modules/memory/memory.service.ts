@@ -46,7 +46,7 @@ export class MemoryService {
 
     const forcedPlugins = opts.forceUsePlugins ? await this.pluginService.findByIDList(opts.forceUsePlugins) : [];
     const relevantPlugins = await this.pluginService.getRelevantPlugins(query, knowledgeId, knowledge.instructions);
- 
+
     const plugins = mergeBy("id", forcedPlugins, relevantPlugins).filter(p => !opts.excludePlugins?.includes(p.id));
     await this.pluginManager.preloadPlugins(plugins);
     const fragments = new Fragments();

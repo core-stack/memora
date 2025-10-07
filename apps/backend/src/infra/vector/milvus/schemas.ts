@@ -27,7 +27,7 @@ export const schema: FieldType[] = [
     enable_match: true,
     analyzer_params: {
       "tokenizer": "standard",
-      "filter": ["asciifolding"],
+      "filter": ["asciifolding", "lowercase"],
     }
   },
   {

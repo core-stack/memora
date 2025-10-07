@@ -42,7 +42,7 @@ export class MilvusService extends VectorStore implements OnModuleInit {
 
     const data = fragments.map(c => ({
       id: c.id,
-      seqId: c.metadata.type === OriginType.SOURCE ? c.metadata.seqId : undefined,
+      seqId: c.metadata.type === OriginType.FILE ? c.metadata.seqId : undefined,
       embedding: c.getEmbeddings(),
       content: c.content,
       sourceId: c.sourceId,
@@ -117,7 +117,6 @@ export class MilvusService extends VectorStore implements OnModuleInit {
       filter: expr,
       limit: opts.limit ?? 10,
     });
-
     return Fragments.fromFragmentArray(result.data.map(r => Fragment.fromObject(r)));
   }
 }

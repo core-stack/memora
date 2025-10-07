@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 
 import { knowledge } from '@/db/schema';
@@ -79,6 +79,33 @@ export class KnowledgeRepository extends DrizzleGenericRepository<typeof knowled
         } as KnowledgeTag)));
       }
       return createdKnowledge as Knowledge;
+    })
+  }
+
+  override async update(id: string, data: UpdateKnowledge): Promise<void> {
+    return await this.db.transaction(async (tx) => {
+      await tx.update(knowledge).set({
+        title: data.title,
+        tenantId: data.tenantId,
+        description: data.description,
+        instructions: data.instructions,
+      } as Knowledge).where(eq(knowledge.id, id));
+
+      const createdTags = await tx.select().from(knowledgeTag).where(eq(knowledgeTag.knowledgeId, id));
+      const tagsToDelete = createdTags.filter(tag => !data.tags?.includes(tag.name)).map(t => t.id);
+      const tagsToCreate = data.tags?.filter(tag => !createdTags.some(t => t.name === tag)) || [];
+
+      if (tagsToDelete.length > 0) {
+        await tx.delete(knowledgeTag).where(inArray(knowledgeTag.id, tagsToDelete));
+      }
+
+      if (tagsToCreate.length > 0) {
+        await tx.insert(knowledgeTag).values(tagsToCreate.map(tag => ({
+          knowledgeId: id,
+          name: tag,
+          tenantId: data.tenantId
+        } as KnowledgeTag)));
+      }
     })
   }
 }

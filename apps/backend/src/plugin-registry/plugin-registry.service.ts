@@ -174,10 +174,9 @@ export class PluginRegistryService implements OnModuleInit {
     }
   }
 
-  async createInstance(p: Plugin | Partial<Plugin>, temp: boolean = false): Promise<IPlugin> {    
+  async createInstance(p: Plugin | Partial<Plugin>, temp: boolean = false): Promise<IPlugin> {
     if (!p.pluginRegistry) throw new Error(`Plugin registry not provided`);
-    console.log(this.pluginModules);
-    
+
     const pluginModule = this.pluginModules.get(p.pluginRegistry);
     if (!pluginModule) throw new Error(`Plugin ${p.pluginRegistry} not loaded`);
 
@@ -189,7 +188,7 @@ export class PluginRegistryService implements OnModuleInit {
       if (temp) return instance;
 
       const instanceKey = this.getInstanceKey(p);
-      
+
       this.pluginInstances.set(instanceKey, { instance, lastUsed: new Date() });
 
       this.scheduleCleanup(instanceKey);

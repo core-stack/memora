@@ -4,13 +4,13 @@ import { sourceTypeSchema } from './source-type';
 
 export enum OriginType {
   PLUGIN = "PLUGIN",
-  SOURCE = "SOURCE"
+  FILE = "FILE"
 }
 
 export const originTypeSchema = z.nativeEnum(OriginType);
 
 export const fragmentFileMetadataSchema = z.object({
-  type: z.literal(OriginType.SOURCE),
+  type: z.literal(OriginType.FILE),
 
   seqId: z.number().optional(), // sequential id
 

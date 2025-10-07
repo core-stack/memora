@@ -15,7 +15,7 @@ export class KnowledgeService extends CrudService<Knowledge, CreateKnowledge, Up
   async findBySlug(slug: string): Promise<Knowledge | null> {
     return this.repository.findBySlug(slug);
   }
-  
+
   async loadFromSlug(context: HttpContext): Promise<Knowledge> {
     const knowledgeSlug = context.params.shouldGetString("knowledgeSlug");
     const knowledge = await this.findBySlug(knowledgeSlug);
@@ -24,6 +24,7 @@ export class KnowledgeService extends CrudService<Knowledge, CreateKnowledge, Up
   }
 
   override create(input: CreateKnowledge): Promise<Knowledge> {
+    input.tags = input.tags?.filter(Boolean);
     return this.repository.create({
       ...input,
       tenantId: env.TENANT_ID
@@ -31,6 +32,7 @@ export class KnowledgeService extends CrudService<Knowledge, CreateKnowledge, Up
   }
 
   override update(id: string, input: UpdateKnowledge): Promise<void> {
+    input.tags = input.tags?.filter(Boolean);
     return this.repository.update(id, {
       ...input,
       tenantId: env.TENANT_ID

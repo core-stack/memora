@@ -29,7 +29,6 @@ interface FileInfoPanelProps {
 
 export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, className }: FileInfoPanelProps) {
   const formatDate = useDateTimeFormat();
-  console.log(item);
 
   return (
     <Card className={cn("w-96 h-fit", className)}>
@@ -66,15 +65,13 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
             </Badge>
           </div>
 
-          {item?.metadata.type !== SourceType.LINK && (
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground flex items-center gap-2">
-                <HardDrive className="h-4 w-4" />
-                Size
-              </span>
-              <span className="text-sm font-mono text-end">{formatBytes(item?.metadata.size)}</span>
-            </div>
-          )}
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground flex items-center gap-2">
+              <HardDrive className="h-4 w-4" />
+              Size
+            </span>
+            <span className="text-sm font-mono text-end">{formatBytes(item?.metadata.size)}</span>
+          </div>
 
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground flex items-center gap-2">
@@ -104,12 +101,10 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
             <div className="space-y-3">
               <h4 className="text-sm font-medium">Metadata</h4>
 
-              {item?.metadata.type !== SourceType.LINK && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Content Type</span>
-                  <span className="text-sm font-mono text-end">{item?.metadata.contentType}</span>
-                </div>
-              )}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Content Type</span>
+                <span className="text-sm font-mono text-end">{item?.metadata.contentType}</span>
+              </div>
 
               {/* {item?.metadata.encoding && (
                 <div className="flex items-center justify-between">

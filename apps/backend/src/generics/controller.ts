@@ -42,16 +42,18 @@ export abstract class CrudController<TEntity, TCreateDto = Partial<TEntity>, TUp
   }
 
   @Put(":id")
-  async update(@Req() req: Request, @Param("id") id: string, @Body() data: TUpdateDto): Promise<void> {
+  async update(@Req() req: Request, @Param("id") id: string, @Body() data: TUpdateDto) {
     this.validateSchema(idSchema, id);
     this.validateSchema(this.updateDtoSchema, data);
-    return this.service.update(id, data, this.loadContext(req));
+    await this.service.update(id, data, this.loadContext(req));
+    return { message: "Update successful" };
   }
 
   @Delete(":id")
-  async delete(@Req() req: Request, @Param("id") id: string): Promise<void> {
+  async delete(@Req() req: Request, @Param("id") id: string) {
     this.validateSchema(idSchema, id);
-    return this.service.delete(id, this.loadContext(req));
+    await this.service.delete(id, this.loadContext(req));
+    return { message: "Delete successful" };
   }
 
   protected validateSchema<T>(schema: z.ZodType<T>, data: T): T {

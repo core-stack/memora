@@ -8,7 +8,6 @@ import { useDialog } from '@/hooks/use-dialog';
 import { DateFormat, formatBytes, formatDate } from '@/utils/format';
 
 import type { Knowledge } from "@memora/schemas";
-import type { ConfirmDialogProps } from '@/dialogs/confirm';
 import { Tooltip, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { Badge } from '@/components/ui/badge';
@@ -20,16 +19,16 @@ interface KnowledgeCardProps {
 export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
   const { openDialog } = useDialog();
 
-  const handleDelete = () => {
-    openDialog({
-      type: DialogType.CONFIRM,
-      props: {
-        title: "Delete knowledge base",
-        description: "Are you sure you want to delete this knowledge base?",
-        confirm: { text: "Yes, delete", action: () => console.log("delete") }
-      } as ConfirmDialogProps
-    })
-  }
+  // const handleDelete = () => {
+  //   openDialog({
+  //     type: DialogType.CONFIRM,
+  //     props: {
+  //       title: "Delete knowledge base",
+  //       description: "Are you sure you want to delete this knowledge base?",
+  //       confirm: { text: "Yes, delete", action: () => console.log("delete") }
+  //     } as ConfirmDialogProps
+  //   })
+  // }
 
   const handleEdit = () => {
     openDialog({
@@ -110,7 +109,7 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleDelete}
+            disabled
             className="text-destructive hover:text-destructive hover:bg-destructive/10"
             title="Delete knowledge base"
           >
