@@ -7,13 +7,13 @@ import { Input } from '@/components/ui/input';
 
 import { KnowledgeCard } from './knowledge-card';
 
-import type { Knowledge } from '@memora/schemas';
+import { useApiQuery } from '@/hooks/use-api-query';
 
-interface KnowledgeListProps {
-  knowledges: Knowledge[]
-}
-
-export function KnowledgeList({ knowledges }: KnowledgeListProps) {
+export function KnowledgeList() {
+  const { data: knowledges = [] } = useApiQuery(
+    "/api/knowledge",
+    { method: "GET", query: { include: [ "tags" ] } }
+  );
   const [searchQuery, setSearchQuery] = useState("")
 
   const sortedAndFilteredKnowledgeBases = useMemo(() => {
@@ -21,7 +21,10 @@ export function KnowledgeList({ knowledges }: KnowledgeListProps) {
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
-      filtered = knowledges.filter((kb) => kb.title.toLowerCase().includes(query) || kb.description.toLowerCase().includes(query))
+      filtered = knowledges.filter((kb) =>
+        kb.title.toLowerCase().includes(query) ||
+        kb.description?.toLowerCase().includes(query)
+      )
     }
 
     return filtered;

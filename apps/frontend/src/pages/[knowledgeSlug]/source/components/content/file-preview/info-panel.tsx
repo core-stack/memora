@@ -29,9 +29,10 @@ interface FileInfoPanelProps {
 
 export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, className }: FileInfoPanelProps) {
   const formatDate = useDateTimeFormat();
+  console.log(item);
 
   return (
-    <Card className={cn("w-80 h-fit", className)}>
+    <Card className={cn("w-96 h-fit", className)}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -52,7 +53,7 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
             <h3 className="font-medium truncate flex-1">{item?.name}</h3>
             <IndexStatusBadge status={item?.indexStatus} />
           </div>
-          {/* <p className="text-sm text-muted-foreground truncate">{item.path}</p> */}
+          <p className="text-sm text-muted-foreground truncate">{item?.path}</p>
         </div>
 
         <Separator />
@@ -71,7 +72,7 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
                 <HardDrive className="h-4 w-4" />
                 Size
               </span>
-              <span className="text-sm font-mono">{formatBytes(item?.metadata.size)}</span>
+              <span className="text-sm font-mono text-end">{formatBytes(item?.metadata.size)}</span>
             </div>
           )}
 
@@ -80,7 +81,7 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
               <Calendar className="h-4 w-4" />
               Modified
             </span>
-            <span className="text-sm">{formatDate(item?.updatedAt, DateFormat.lll)}</span>
+            <span className="text-sm text-end">{formatDate(item?.updatedAt, DateFormat.lll)}</span>
           </div>
 
           <div className="flex items-center justify-between">
@@ -106,7 +107,7 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
               {item?.metadata.type !== SourceType.LINK && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Content Type</span>
-                  <span className="text-sm font-mono">{item?.metadata.contentType}</span>
+                  <span className="text-sm font-mono text-end">{item?.metadata.contentType}</span>
                 </div>
               )}
 

@@ -90,7 +90,7 @@ export function FileTreeItem({
     }
   }
   const handleRetryIndexing = () => {
-    
+
   }
 
   return (
@@ -115,8 +115,10 @@ export function FileTreeItem({
           )}
 
           <div className="flex items-center gap-1">
-            <Icon className="h-4 w-4 flex-shrink-0" />
-            {isIndexing && <Spinner />}
+            { isIndexing &&
+              <Spinner className="fill-yellow-500" size="sm" /> ||
+              <Icon className="h-4 w-4 flex-shrink-0" />
+            }
           </div>
 
           <Tooltip>
@@ -131,7 +133,7 @@ export function FileTreeItem({
                   <p className="text-xs text-muted-foreground">{item.path}</p>
                 }
                 {
-                  !isFolder && item.metadata.type !== "LINK" && 
+                  !isFolder && item.metadata.type !== "LINK" &&
                   <p className="text-xs text-muted-foreground">{formatBytes(item.metadata.size)}</p>
                 }
               </div>

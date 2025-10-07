@@ -1,14 +1,18 @@
-import { Calendar, Database, Edit, Trash2 } from 'lucide-react';
+import { Calendar, ChartPie, Database, Edit, File, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Link } from '@/components/ui/link';
 import { DialogType } from '@/dialogs';
 import { useDialog } from '@/hooks/use-dialog';
-import { DateFormat, formatDate } from '@/utils/format';
+import { DateFormat, formatBytes, formatDate } from '@/utils/format';
 
 import type { Knowledge } from "@memora/schemas";
 import type { ConfirmDialogProps } from '@/dialogs/confirm';
+import { Tooltip, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
+import { TooltipTrigger } from '@radix-ui/react-tooltip';
+import { Badge } from '@/components/ui/badge';
+
 interface KnowledgeCardProps {
   knowledge: Knowledge;
 }
@@ -50,10 +54,51 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
             <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{knowledge.description}</p>
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>Created at {formatDate(knowledge.createdAt, DateFormat.LLL)}</span>
-              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-1">
+                      <File className="h-4 w-4" />
+                      <span>{knowledge.files}</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{knowledge.files} files</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-1">
+                      <ChartPie className="h-4 w-4" />
+                      <span>{formatBytes(knowledge.storage)}</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{formatBytes(knowledge.storage)} used</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>{formatDate(knowledge.createdAt, DateFormat.DATE)}</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Created At: {formatDate(knowledge.createdAt, DateFormat.DATE)}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
+            <div>
+              {
+                knowledge.tags?.map((tag) => (
+                  <Badge key={tag.id} variant="outline" className="mr-2">
+                    {tag.name}
+                  </Badge>
+                ))
+              }
             </div>
           </div>
         </div>

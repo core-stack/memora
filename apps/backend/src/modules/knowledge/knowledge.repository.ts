@@ -24,7 +24,7 @@ export class KnowledgeRepository extends DrizzleGenericRepository<typeof knowled
   override async find(opts: FilterOptions<Knowledge>): Promise<Knowledge[]> {
     if (!opts.limit) opts.limit = 1000;
     if (!opts.offset) opts.offset = 0;
-  
+
     const { filter, order } = this.buildFilter(opts);
     const query = this.db.select().from(this.table as PgTable)
       .where(and(...filter))
@@ -37,20 +37,28 @@ export class KnowledgeRepository extends DrizzleGenericRepository<typeof knowled
         query.leftJoin(knowledgeTag, eq(knowledge.id, knowledgeTag.knowledgeId));
       }
     }
+
     const rows = await query;
-    const result = rows.reduce((acc, row) => {
-      const knowledge = row.knowledge as Knowledge;
-      const tag = row.knowledge_tag as KnowledgeTag;
-      const index = acc.findIndex(p => p.id === knowledge.id);
-      if (index === -1) {
-        if (tag) acc.push({...knowledge, tags: [tag] as KnowledgeTag[]});
-        else acc.push({...knowledge, tags: [] });
-      } else {
-        if (tag) acc[index].tags.push(tag);
-      }
-      
-      return [];
-    }, [] as Knowledge[]);
+    let result = [] as Knowledge[];
+
+    if (!!rows.at(0)?.knowledge) {
+      result = rows.reduce((acc, row) => {
+        const kn = row.knowledge as Knowledge;
+        const tag = row.knowledge_tag as KnowledgeTag;
+
+        const index = acc.findIndex(p => p.id === kn.id);
+        if (index === -1) {
+          if (tag) acc.push({...kn, tags: [tag] as KnowledgeTag[]});
+          else acc.push({...kn, tags: [] });
+        } else {
+          if (tag) acc[index].tags.push(tag);
+        }
+        return acc;
+      }, [] as Knowledge[]);
+    } else {
+      result = rows as Knowledge[];
+    }
+
     return result;
   }
 

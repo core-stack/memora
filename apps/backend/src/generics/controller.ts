@@ -64,8 +64,6 @@ export abstract class CrudController<TEntity, TCreateDto = Partial<TEntity>, TUp
 }
 
 export const queryToFilter = <TEntity>(allParams: Record<string, unknown>): FilterOptions<TEntity> => {
-  console.log(allParams);
-  
   const result: FilterOptions<TEntity> = {};
   for (const [key, value] of Object.entries(allParams)) {
     if (key === "limit" || key === "offset") {

@@ -2,14 +2,13 @@ import { Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { DialogType } from '@/dialogs';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useDialog } from '@/hooks/use-dialog';
 
 import { KnowledgeList } from './components/knowledge-list';
 
 export default function Home() {
-  const { data: knowledges = [] } = useApiQuery("/api/knowledge", { method: "GET" });
   const { openDialog } = useDialog();
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4 max-w-6xl">
@@ -24,7 +23,7 @@ export default function Home() {
           </Button>
         </div>
 
-        <KnowledgeList knowledges={knowledges} />
+        <KnowledgeList />
       </div>
     </div>
   )

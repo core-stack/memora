@@ -16,7 +16,7 @@ export function FileContentViewer() {
     { method: "GET", params: { id: selectedFileId ?? "" }, enabled: !!selectedFileId }
   );
   return (
-    <div className='flex gap-4 p-2 h-full'>
+    <div className='flex gap-2 p-2 h-full'>
       <ContentPreview isLoading={isLoading} data={data} />
       <FileInfoPanel item={data} isLoading={isLoading} />
     </div>
