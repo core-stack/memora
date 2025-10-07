@@ -1,6 +1,7 @@
 export * from "./knowledge";
 export * from "./knowledge-folder";
 export * from "./knowledge-plugin";
+export * from "./knowledge-tag";
 export * from "./source";
 export * from "./shared";
 export * from "./tag";

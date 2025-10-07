@@ -42,11 +42,11 @@ export class MemoryService {
     const knowledge = await this.knowledgeService.findByID(knowledgeId);
     if (!knowledge) throw new Error("Knowledge not found");
 
-    const query = await this.llmService.improveQuery(opts.userInput, knowledge.description);
+    const query = await this.llmService.improveQuery(opts.userInput, knowledge.instructions);
 
     const forcedPlugins = opts.forceUsePlugins ? await this.pluginService.findByIDList(opts.forceUsePlugins) : [];
-    const relevantPlugins = await this.pluginService.getRelevantPlugins(query, knowledgeId, knowledge.description);
-
+    const relevantPlugins = await this.pluginService.getRelevantPlugins(query, knowledgeId, knowledge.instructions);
+ 
     const plugins = mergeBy("id", forcedPlugins, relevantPlugins).filter(p => !opts.excludePlugins?.includes(p.id));
     await this.pluginManager.preloadPlugins(plugins);
     const fragments = new Fragments();

@@ -10,12 +10,12 @@ import { improveQueryPrompt } from './prompts/improve-query';
 export class LLMService {
   constructor(@Inject(BaseChatModel) private llm: BaseChatModel) {}
 
-  async improveQuery(query: string, knowledgeBaseDescription: string): Promise<string> {
-    const { text } = await this.llm.invoke(await improveQueryPrompt.format({ knowledgeBaseDescription, query }));
+  async improveQuery(query: string, knowledgeInstructions?: string): Promise<string> {
+    const { text } = await this.llm.invoke(await improveQueryPrompt.format({ knowledgeInstructions, query }));
     return text;
   }
 
-  async decidePluginsToUse(query: string, knowledgeBaseDescription: string, plugins: Plugin[]): Promise<Plugin[]> {
+  async decidePluginsToUse(query: string, knowledgeBaseDescription?: string, plugins: Plugin[] = []): Promise<Plugin[]> {
     const prompt = await decidePluginsToUsePrompt.format({ knowledgeBaseDescription, plugins, query });
     const idSchema = z.array(z.string().uuid())
     const structuredLLM = this.llm.withStructuredOutput<z.infer<typeof idSchema>>(idSchema);

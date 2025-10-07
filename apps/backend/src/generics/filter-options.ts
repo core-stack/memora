@@ -4,4 +4,5 @@ export type FilterOptions<TEntity> = {
   offset?: number;
   filter?: PartialNullable<TEntity>;
   order?: Partial<Record<keyof TEntity, 'ASC' | 'DESC'>>;
+  include?: string[]
 }

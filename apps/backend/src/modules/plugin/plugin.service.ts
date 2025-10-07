@@ -31,10 +31,10 @@ export class PluginService extends TenantService<Plugin> {
   async getRelevantPlugins(
     query: string,
     knowledgeId: string,
-    knowledgeDescription: string
+    knowledgeInstructions?: string
   ): Promise<Plugin[]> {
     const plugins = await this.knowledgePluginRepository.findPluginByKnowledgeId(knowledgeId);
-    return this.llmService.decidePluginsToUse(query, knowledgeDescription, plugins);
+    return this.llmService.decidePluginsToUse(query, knowledgeInstructions, plugins);
   }
 
   async findRegistry(input: Partial<Plugin>): Promise<PluginRegistryWithInput> {

@@ -1,18 +1,21 @@
-import { idSchema } from "@memora/schemas";
-import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
-import z from "zod";
+import z from 'zod';
 
-import { HttpContext } from "./http-context";
-import { ICrudService } from "./service.interface";
+import { idSchema } from '@memora/schemas';
+import {
+  BadRequestException, Body, Delete, Get, Param, Post, Put, Query, Req
+} from '@nestjs/common';
+
+import { HttpContext } from './http-context';
+import { ICrudService } from './service.interface';
 
 import type { FilterOptions } from './filter-options';
 import type { Request } from 'express';
-export abstract class CrudController<TEntity> {
+export abstract class CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDto = Partial<TEntity>> {
   constructor(
-    protected readonly service: ICrudService<TEntity>,
+    protected readonly service: ICrudService<TEntity, TCreateDto, TUpdateDto>,
     protected readonly filterSchema: z.ZodType<FilterOptions<TEntity>>,
-    protected readonly createDtoSchema: z.ZodType<Partial<TEntity>>,
-    protected readonly updateDtoSchema: z.ZodType<Partial<TEntity>>,
+    protected readonly createDtoSchema: z.ZodType<TCreateDto>,
+    protected readonly updateDtoSchema: z.ZodType<TUpdateDto>,
   ) {}
 
   protected loadContext(req: Request) {
@@ -33,13 +36,13 @@ export abstract class CrudController<TEntity> {
   }
 
   @Post()
-  async create(@Req() req: Request, @Body() data: Partial<TEntity>): Promise<TEntity> {
+  async create(@Req() req: Request, @Body() data: TCreateDto): Promise<TEntity> {
     this.validateSchema(this.createDtoSchema, data);
     return this.service.create(data, this.loadContext(req));
   }
 
   @Put(":id")
-  async update(@Req() req: Request, @Param("id") id: string, @Body() data: Partial<TEntity>): Promise<void> {
+  async update(@Req() req: Request, @Param("id") id: string, @Body() data: TUpdateDto): Promise<void> {
     this.validateSchema(idSchema, id);
     this.validateSchema(this.updateDtoSchema, data);
     return this.service.update(id, data, this.loadContext(req));
@@ -61,27 +64,32 @@ export abstract class CrudController<TEntity> {
 }
 
 export const queryToFilter = <TEntity>(allParams: Record<string, unknown>): FilterOptions<TEntity> => {
-    const result: FilterOptions<TEntity> = {};
-    for (const [key, value] of Object.entries(allParams)) {
-      if (key === "limit" || key === "offset") {
-        result[key] = parseInt(value as string);
-        continue;
-      }
-      const filterMatch = key.match(/^filter\[(.+)\]$/);
-      if (filterMatch) {
-        result.filter = result.filter || {};
-        result.filter[filterMatch[1]] = value === "null" ? null : value;
-      }
+  console.log(allParams);
+  
+  const result: FilterOptions<TEntity> = {};
+  for (const [key, value] of Object.entries(allParams)) {
+    if (key === "limit" || key === "offset") {
+      result[key] = parseInt(value as string);
+      continue;
     }
-
-    if (allParams.sort) {
-      const fields = (allParams.sort as string).split(",");
-      result.order = fields.reduce((acc, f) => {
-        if (f.startsWith("-")) {
-          return {...acc, [f.substring(1)]: "DESC"};
-        }
-        return {...acc, [f]: "ASC"}
-      }, {} as Record<keyof TEntity, 'ASC' | 'DESC'>);
+    const filterMatch = key.match(/^filter\[(.+)\]$/);
+    if (filterMatch) {
+      result.filter = result.filter || {};
+      result.filter[filterMatch[1]] = value === "null" ? null : value;
     }
-    return result;
   }
+
+  if (allParams.sort) {
+    const fields = (allParams.sort as string).split(",");
+    result.order = fields.reduce((acc, f) => {
+      if (f.startsWith("-")) {
+        return {...acc, [f.substring(1)]: "DESC"};
+      }
+      return {...acc, [f]: "ASC"}
+    }, {} as Record<keyof TEntity, 'ASC' | 'DESC'>);
+  }
+  if (allParams.include) {
+    result.include = (allParams.include as string).split(",");
+  }
+  return result;
+}

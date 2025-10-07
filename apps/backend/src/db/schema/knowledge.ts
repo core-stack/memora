@@ -1,8 +1,11 @@
 import { relations, sql } from 'drizzle-orm';
-import { index, pgTable, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+import {
+  bigint, index, integer, pgTable, text, timestamp, uniqueIndex, varchar
+} from 'drizzle-orm/pg-core';
 
 import { chat } from './chat';
 import { folder } from './folder';
+import { knowledgeTag } from './knowledge_tag';
 import { plugin } from './plugin';
 import { source } from './source';
 
@@ -12,6 +15,10 @@ export const knowledge = pgTable("knowledge", {
   slug: varchar("slug", { length: 255 }).notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
+  instructions: text("instructions"),
+
+  files: integer("file_count").default(0),
+  storage: bigint({ mode: "number" }).default(0),
 
   tenantId: varchar("tenant_id", { length: 36 }).notNull(),
 
@@ -27,4 +34,5 @@ export const knowledgeRelations = relations(knowledge, ({ many }) => ({
   sources: many(source),
   plugins: many(plugin),
   chats: many(chat),
+  tags: many(knowledgeTag),
 }));

@@ -35,18 +35,23 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
   const defaultValues: CreateKnowledge = {
     title: knowledge?.title || "",
     description: knowledge?.description || "",
-    slug: knowledge?.slug || ""
+    slug: knowledge?.slug || "",
+    instructions: knowledge?.instructions || "",
+    tags: [],
   }
 
   const form = useForm<CreateKnowledge>({ resolver: zodResolver(createKnowledgeSchema), defaultValues });
   const isLoading = form.formState.isSubmitting;
   const invalidate = useApiInvalidate();
+  
   const { mutate: createKnowledge } = useApiMutation("/api/knowledge", { method: "POST" });
   const { mutate: updateKnowledge } = useApiMutation("/api/knowledge/:id", { method: "PUT" });
+  
   const onSubmit = form.handleSubmit(async (body) => {
     if (isEditing) {
       updateKnowledge({
         body: {
+          instructions: body.instructions,
           description: body.description,
           title: body.title,
           id: knowledge!.id
@@ -86,7 +91,8 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
           <FormInput name='title' placeholder='Title of knowledge' label='Title' />
           <FormInput name='slug' placeholder='Slug of knowledge' label='Slug' disabled={isEditing} />
           <FormTextarea name='description' placeholder='Description of knowledge' label='Description' />
-
+          <FormTextarea name='instructions' placeholder='Instructions of knowledge' label='Instructions' />
+          <FormInput name='tags' placeholder='eg: tag1,tag2' label='Tags (comma separated)' split />
           <DialogFooter>
             <Button
               type="button"
