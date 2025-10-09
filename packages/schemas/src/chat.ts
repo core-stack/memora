@@ -38,3 +38,9 @@ export const updateChatSchema = chatSchema.pick({
   name: true
 })
 export type UpdateChat = z.infer<typeof updateChatSchema>;
+
+
+export const createChatWithInitialMessage = z.object({
+  initialMessage: z.string().min(1),
+});
+export type CreateChatWithInitialMessage = z.infer<typeof createChatWithInitialMessage>;

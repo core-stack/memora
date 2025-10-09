@@ -1,4 +1,4 @@
-import type { Chat, ChatFilter, CreateChat, UpdateChat } from "@memora/schemas";
+import type { Chat, ChatFilter, CreateChat, CreateChatWithInitialMessage, UpdateChat } from "@memora/schemas";
 
 export interface ChatRoutes {
   "/api/knowledge/:knowledgeSlug/chat": {
@@ -13,6 +13,13 @@ export interface ChatRoutes {
       response: Chat;
     }
   },
+  "/api/knowledge/:knowledgeSlug/chat/with-message": {
+    POST: {
+      body: CreateChatWithInitialMessage;
+      params: { knowledgeSlug: string };
+      response: Chat;
+    }
+  },
   "/api/knowledge/:knowledgeSlug/chat/:id": {
     GET: {
       params: { knowledgeSlug: string, id: string };
@@ -23,7 +30,7 @@ export interface ChatRoutes {
       params: { knowledgeSlug: string, id: string };
       response: undefined;
     },
-    DELETE: { 
+    DELETE: {
       params: { knowledgeSlug: string, id: string };
       response: undefined;
     }

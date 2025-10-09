@@ -9,24 +9,26 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useParams } from '@/hooks/use-params';
 import { DateFormat, formatDate } from '@/utils/format';
 
-import type { Chat } from "@memora/schemas";
-export function ChatSidebar() {
-  const { chatId } = useParams<{ chatId?: string }>();
-  
-  const [searchQuery, setSearchQuery] = useState("")
-  const [chats] = useState<Chat[]>([])
+import { useApiQuery } from '@/hooks/use-api-query';
+import { useRouter } from '@/hooks/use-router';
 
-  // Filter chats based on search
+export function ChatSidebar() {
+  const { knowledgeSlug, chatId } = useParams<{ knowledgeSlug: string, chatId?: string }>();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("")
+  const { data: chats = [] } = useApiQuery("/api/knowledge/:knowledgeSlug/chat", { method: "GET" });
+
   const filteredChats = chats.filter((chat) => {
     const matchesSearch = chat.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
   });
 
   const onNewChat = () => {
-
+    router.replace(`/${knowledgeSlug}/chat`);
   }
-  const onSelectChat = () => {
 
+  const onSelectChat = (chatId: string) => {
+    router.push(`/${knowledgeSlug}/chat/${chatId}`);
   }
 
   return (
@@ -64,7 +66,7 @@ export function ChatSidebar() {
                 className={`p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent/50 ${
                   isSelected ? "bg-accent border border-accent-foreground/20" : "bg-card/50 hover:bg-accent/30"
                 }`}
-                onClick={onSelectChat}
+                onClick={() => onSelectChat(chat.id)}
               >
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="font-medium text-sm text-foreground truncate flex-1 mr-2">{chat.name}</h3>
