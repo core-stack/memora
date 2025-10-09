@@ -14,6 +14,10 @@ export interface ChatRoutes {
     }
   },
   "/api/knowledge/:knowledgeSlug/chat/:id": {
+    GET: {
+      params: { knowledgeSlug: string, id: string };
+      response: Chat;
+    },
     PUT: {
       body: UpdateChat;
       params: { knowledgeSlug: string, id: string };

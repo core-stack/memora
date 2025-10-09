@@ -2,12 +2,11 @@ import { env } from '@/env';
 import { Fragment, Fragments } from '@/fragment';
 import { OriginType } from '@memora/schemas';
 import { Logger, OnModuleInit } from '@nestjs/common';
-import { MilvusClient } from '@zilliz/milvus2-sdk-node';
+import { HybridSearchSingleReq, MilvusClient, RRFRanker } from '@zilliz/milvus2-sdk-node';
 
-import {
-  SearchByEmbeddingOptions, SearchByTermOptions, VectorStore
-} from '../vector-store.service';
-import { COLLECTION_NAME, indexSchema, schema } from './schemas';
+import { buildSearchOptions, SearchByTermOptions, WithSearchOptions } from '../search-optons';
+import { VectorStore } from '../vector-store.service';
+import { COLLECTION_NAME, fields, functions, indexSchema } from './schemas';
 
 export class MilvusService extends VectorStore implements OnModuleInit {
   private readonly logger = new Logger(MilvusService.name);
@@ -28,7 +27,7 @@ export class MilvusService extends VectorStore implements OnModuleInit {
       await this.client.dropCollection({ collection_name: this.collectionName });
     }
 
-    await this.client.createCollection({ collection_name: this.collectionName, fields: schema });
+    await this.client.createCollection({ collection_name: this.collectionName, fields, functions });
     await this.client.createIndex(indexSchema);
     await this.client.loadCollectionAsync({ collection_name: this.collectionName });
   }
@@ -43,7 +42,7 @@ export class MilvusService extends VectorStore implements OnModuleInit {
     const data = fragments.map(c => ({
       id: c.id,
       seqId: c.metadata.type === OriginType.FILE ? c.metadata.seqId : undefined,
-      embedding: c.getEmbeddings(),
+      dense: c.getEmbeddings(),
       content: c.content,
       sourceId: c.sourceId,
       knowledgeId: c.knowledgeId,
@@ -54,7 +53,7 @@ export class MilvusService extends VectorStore implements OnModuleInit {
       metadata: c.metadata
     }));
 
-    if (data.some(d => !d.embedding)) throw new Error("Embedding is required");
+    if (data.some(d => !d.dense)) throw new Error("Embedding is required");
 
     const res = await this.client.insert({ collection_name: this.collectionName, fields_data: data });
     this.logger.verbose(res);
@@ -77,25 +76,55 @@ export class MilvusService extends VectorStore implements OnModuleInit {
     await this.client.flushSync({ collection_names: [this.collectionName] });
   }
 
-  async searchByEmbeddings(
-    knowledgeId: string,
-    queryEmbedding: number[],
-    opts?: SearchByEmbeddingOptions
-  ): Promise<Fragments> {
-    const exprParts: string[] = [];
-    if (knowledgeId) exprParts.push(`knowledgeId == "${knowledgeId}"`);
-    const expr = exprParts.join(" && ");
+  async search(...opts: WithSearchOptions[]): Promise<Fragments> {
+    const options = buildSearchOptions(...opts);
 
+    // filter
+    const exprParts: string[] = [];
+    Object.entries(options.filters ?? {}).map(([key, value]) => {
+      switch(typeof value) {
+        case "string":
+          exprParts.push(`${key} == "${value}"`);
+          break;
+        case "number":
+        case "boolean":
+          exprParts.push(`${key} == ${value}`);
+          break;
+        default:
+          break;
+      }
+    })
+    const filter = exprParts.join(" && ");
+
+    const data: HybridSearchSingleReq[] = [];
+    if (options.dense) {
+      let topK = options.topK;
+      if (!Array.isArray(options.dense) && options.dense.topK) topK = options.dense.topK
+      
+      data.push({
+        anns_field: "dense",
+        data: Array.isArray(options.dense) ? options.dense : options.dense.vector,
+        limit: topK,
+        param: {nprobe: 10},
+      } as HybridSearchSingleReq);
+    }
+    if (options.sparse) {
+      let topK = options.topK;
+      if (typeof options.sparse !== "string" && options.sparse.topK) topK = options.sparse.topK;
+      data.push({
+        anns_field: "sparse",
+        data: typeof options.sparse === "string" ? options.sparse : options.sparse.query,
+        limit: topK,
+        param: { drop_ratio_search: 0.2 },
+      } as HybridSearchSingleReq);
+    }
+    
     const result = await this.client.search({
       collection_name: this.collectionName,
-      filter: expr,
-      vectors: [queryEmbedding],
-      search_params: {
-        anns_field: "embedding",
-        topk: 5,
-        metric_type: "IP",
-        params: JSON.stringify({ nprobe: 10 }),
-      },
+      filter,
+      data,
+      topk: options.topK,
+      rerank: options.dense && options.sparse ? RRFRanker(100) : undefined
     });
 
     return Fragments.fromFragmentArray(result.results.map(r => Fragment.fromObject(r)));

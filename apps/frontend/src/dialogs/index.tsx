@@ -6,6 +6,7 @@ import { CreateOrUpdateKnowledgeDialog } from './create-or-update-knowledge';
 import { CreateSourceDialog } from './create-source';
 import { InstallPluginDialog } from './install-plugin';
 import { SearchDialog } from './search';
+import { EnhancedSourceDialog } from './source-plugin-select';
 
 export enum DialogType {
   CREATE_SOURCE = "create-source",
@@ -14,6 +15,7 @@ export enum DialogType {
   INSTALL_PLUGIN = "install-plugin",
   SEARCH = "search",
   CONFIRM = "confirm",
+  SOURCE_PLUGIN_SELECT = "source-plugin-select",
 }
 
 export const dialogs = {
@@ -23,4 +25,5 @@ export const dialogs = {
   [DialogType.INSTALL_PLUGIN]: (props: any) => <InstallPluginDialog {...props} />,
   [DialogType.SEARCH]: (props: any) => <SearchDialog {...props} />,
   [DialogType.CONFIRM]: (props: any) => <ConfirmDialog {...props} />,
+  [DialogType.SOURCE_PLUGIN_SELECT]: (props: any) => <EnhancedSourceDialog {...props} />
 }

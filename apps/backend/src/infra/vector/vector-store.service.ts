@@ -1,20 +1,11 @@
-import { Fragment, Fragments } from "@/fragment";
+import { Fragment, Fragments } from '@/fragment';
 
-export type SearchByTermOptions = {
-  limit?: number;
-}
-export type SearchByEmbeddingOptions = {
-  filters?: Record<string, string>;
-}
+import { SearchByTermOptions, WithSearchOptions } from './search-optons';
 
 export abstract class VectorStore {
   abstract addFragments(fragments: Fragment[] | Fragment | Fragments): Promise<void>;
   abstract deleteFragments(fragments: Fragment[] | Fragment | Fragments): Promise<void>;
-  abstract searchByEmbeddings(
-    knowledgeId: string,
-    queryEmbedding: number[],
-    opts?: SearchByEmbeddingOptions
-  ): Promise<Fragments>;
+  abstract search(...options: WithSearchOptions[]): Promise<Fragments>;
   abstract searchByTerm(
     knowledgeId: string,
     term: string,

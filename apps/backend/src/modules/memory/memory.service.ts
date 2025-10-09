@@ -3,18 +3,18 @@ import moment from 'moment';
 import { Fragment, Fragments } from '@/fragment';
 import { CacheService } from '@/infra/cache/cache.service';
 import { LLMService } from '@/infra/llm/llm.service';
+import { withDense, withKnowledgeId, withSparse, withTopK } from '@/infra/vector/search-optons';
 import { VectorStore } from '@/infra/vector/vector-store.service';
 import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
 import { mergeBy } from '@/utils/array';
 import { Embeddings } from '@langchain/core/embeddings';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { KnowledgeService } from '../knowledge/knowledge.service';
 import { PluginService } from '../plugin/plugin.service';
 import { Finder, FindOptions } from './find-options';
 
 import type { Recent } from "@memora/schemas";
-
 @Injectable()
 export class MemoryService {
   private readonly logger = new Logger(MemoryService.name);
@@ -39,25 +39,33 @@ export class MemoryService {
 
   async find(knowledgeId: string, userInput: string, ...options: Finder[]): Promise<Fragments> {
     const opts = this.buildFindOptions(knowledgeId, userInput, ...options);
+    // get knowledge
     const knowledge = await this.knowledgeService.findByID(knowledgeId);
-    if (!knowledge) throw new Error("Knowledge not found");
+    if (!knowledge) throw new NotFoundException("Knowledge not found");
 
-    const query = await this.llmService.improveQuery(opts.userInput, knowledge.instructions);
+    // improve query with LLM prompt
+    const improvedQuery = await this.llmService.improveQuery(opts.userInput, knowledge.instructions);
 
+    // heat up plugins
     const forcedPlugins = opts.forceUsePlugins ? await this.pluginService.findByIDList(opts.forceUsePlugins) : [];
-    const relevantPlugins = await this.pluginService.getRelevantPlugins(query, knowledgeId, knowledge.instructions);
-
+    const relevantPlugins = await this.pluginService.getRelevantPlugins(improvedQuery, knowledgeId, knowledge.instructions);
     const plugins = mergeBy("id", forcedPlugins, relevantPlugins).filter(p => !opts.excludePlugins?.includes(p.id));
     await this.pluginManager.preloadPlugins(plugins);
+
     const fragments = new Fragments();
 
     for (const p of plugins) {
-      const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, query);
+      const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, improvedQuery);
       this.logger.debug(`Plugin ${p.pluginRegistry} response: ${pluginResponse}`);
     }
 
-    const queryEmbedding = await this.embeddings.embedQuery(query);
-    return fragments.merge(await this.vectorStore.searchByEmbeddings(knowledgeId, queryEmbedding));
+    const queryEmbedding = await this.embeddings.embedQuery(improvedQuery);
+    return fragments.merge(await this.vectorStore.search(
+      withKnowledgeId(knowledgeId),
+      withDense({ vector: queryEmbedding, topK: 100 }),
+      withSparse({ query: improvedQuery, topK: 100 }),
+      withTopK(10),
+    ));
   }
 
   private async findFragmentsInCache(knowledgeId: string, userInput: string): Promise<Fragment[] | null> {

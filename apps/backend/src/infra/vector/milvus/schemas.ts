@@ -1,9 +1,11 @@
 import { env } from '@/env';
-import { CreateIndexReq, DataType, FieldType } from '@zilliz/milvus2-sdk-node';
+import {
+  CreateIndexesReq, DataType, FieldType, FunctionType, IndexType, MetricType
+} from '@zilliz/milvus2-sdk-node';
 
 export const COLLECTION_NAME = env.MILVUS_COLLECTION;
 
-export const schema: FieldType[] = [
+export const fields: FieldType[] = [
   {
     name: "id",
     data_type: DataType.VarChar,
@@ -15,9 +17,13 @@ export const schema: FieldType[] = [
     data_type: DataType.Int32
   },
   {
-    name: "embedding",
+    name: "dense",
     data_type: DataType.FloatVector,
     dim: env.EMBEDDING_DIMENSION
+  },
+  {
+    name: "sparse",
+    data_type: DataType.SparseFloatVector,
   },
   {
     name: "content",
@@ -66,13 +72,36 @@ export const schema: FieldType[] = [
   }
 ];
 
-export const indexSchema: CreateIndexReq = {
-  collection_name: COLLECTION_NAME,
-  field_name: "embedding",
-  index_name: "embedding_idx",
-  extra_params: {
-    index_type: "IVF_FLAT",
-    metric_type: "IP",
-    params: JSON.stringify({ nlist: 128 }),
+export const indexSchema: CreateIndexesReq = [
+  {
+    collection_name: COLLECTION_NAME,
+    field_name: "dense",
+    index_name: "dense_idx",
+    extra_params: {
+      index_type: "IVF_FLAT",
+      metric_type: MetricType.IP,
+      params: JSON.stringify({ nlist: 128 }),
+    },
   },
-}
+  {
+    collection_name: COLLECTION_NAME,
+    field_name: "sparse",
+    metric_type: MetricType.BM25,
+    index_type: IndexType.SPARSE_INVERTED_INDEX,
+    params: {
+      "inverted_index_algo": "DAAT_MAXSCORE",
+    }
+  },
+]
+
+export const functions = [
+  {
+    name: 'bm25_emb',
+    description: 'bm25 function',
+    type: FunctionType.BM25,
+    input_field_names: ['content'],
+    output_field_names: ['sparse'],
+    params: {},
+  },
+]
+
