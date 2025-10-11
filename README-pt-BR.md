@@ -12,7 +12,7 @@
 <p align="center">
   <a href="/README.md" target="_blank">🇺🇸 English</a>
   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="[ISSUE_TEMPLATE_URL]" target="_blank">🐛 Reportar Bug</a>
+  <a href="https://github.com/core-stack/snipet/issues/new?template=bug_report.md&title=%5BBUG%5D%20" target="_blank">🐛 Report Bug</a>
   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="[LINKEDIN_URL]" target="_blank">💼 LinkedIn</a>
 </p>
