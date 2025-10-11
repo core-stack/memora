@@ -82,12 +82,12 @@ git push origin feature/your-contribution-name
 
 ## 📋 Code Standards
 
-### [PROJECT_TYPE] Standards
+### TypeScript / Node.js Standards
 
-- **Follow [CODING_STYLE]** guidelines
+- **Follow ESLint and Prettier** configurations in the project
 - **Write clear comments** for complex code
 - **Use meaningful variable names**
-- **Keep functions small and focused**
+- **Keep functions small, pure, and modular**
 
 ### Commit Messages
 
@@ -102,42 +102,42 @@ style: improve [STYLING_ELEMENT] formatting
 
 ### Naming Conventions
 
-- **Files**: Use descriptive names (e.g., `user-authentication.js`)
+- **Files**: `user-auth.ts`, `vector-search.service.ts`
 - **Branches**: `feature/description`, `fix/description`, `docs/description`
-- **Variables**: Use camelCase or snake_case consistently
+- **Variables**: `camelCase` for JS/TS, `PascalCase` for classes
 
 ## 🧪 Testing Your Changes
 
 Before submitting, test your changes:
 
-1. **Run existing tests**: `[TEST_COMMAND]`
-2. **Test your new features** thoroughly
-3. **Check for regressions** in existing functionality
-4. **Verify documentation** is accurate
-5. **Test on different [PLATFORMS/ENVIRONMENTS]**
+1. **Run existing tests**: pnpm test
+2. **Add new tests** for new features or bug fixes
+3. **Verify build works**: pnpm build
+4. **Check formatting**: pnpm lint
+5. **Ensure functionality** across supported environments (Node 22+, web app)
 
 ## 📝 Types of Contributions
 
 ### 🆕 New Features
 
-- [FEATURE_CATEGORY_1] improvements
-- [FEATURE_CATEGORY_2] additions
-- [FEATURE_CATEGORY_3] enhancements
+- Knowledge management improvements
+- AI memory enhancements
+- Plugin SDK extensions
 - Performance optimizations
 
 ### 🔧 Bug Fixes
 
-- Fix [BUG_TYPE_1] issues
-- Resolve [BUG_TYPE_2] problems
-- Address [BUG_TYPE_3] concerns
-- Security improvements
+- Search index synchronization
+- Plugin loading issues
+- Memory retrieval errors
+- Security vulnerabilities
 
 ### 📚 Documentation
 
-- Usage guides
-- API documentation
-- Code comments
-- Translation improvements
+- Usage guides and examples
+- API reference updates
+- Developer setup instructions
+- Translations and localization
 
 ### 🎨 Design
 
@@ -150,17 +150,18 @@ Before submitting, test your changes:
 
 ### Upcoming Features
 
-- [ ] [UPCOMING_FEATURE_1]
-- [ ] [UPCOMING_FEATURE_2]
-- [ ] [UPCOMING_FEATURE_3]
-- [ ] [UPCOMING_FEATURE_4]
+- [ ] Multi-tenant workspace support
+- [ ] Plugin marketplace integration
+- [ ] Offline/local-first sync mode
+- [ ] Smart semantic search
+
 
 ### Priority Contributions
 
-1. **[PRIORITY_1]**
-2. **[PRIORITY_2]**
-3. **[PRIORITY_3]**
-4. **[PRIORITY_4]**
+1. **Improve plugin SDK stability**
+2. **Enhance AI memory performance**
+3. **Add more developer documentation**
+4. **Refine self-host setup experience**
 
 ## ❓ Questions?
 
@@ -168,7 +169,7 @@ If you have questions about contributing:
 
 1. **Open an issue** with the `question` tag
 2. **Check existing issues** for similar questions
-3. **Contact maintainers** via [CONTACT_METHOD]
+3. **Contact maintainers** via [GitHub Discussions](https://github.com/core-stack/snipet/discussions)
 
 ## 🏆 Recognition
 
@@ -176,12 +177,11 @@ Contributors will be recognized:
 
 - In the contributors section of README
 - In the CHANGELOG.md file
-- In project releases
-- On the project website (if applicable)
+- On the project website (when available)
 
 ## 📄 License
 
-By contributing, you agree that your contributions will be licensed under the [LICENSE_TYPE] License.
+By contributing, you agree that your contributions will be licensed under the **Snipet License (based on Apache 2.0).**.
 
 ---
 
@@ -193,7 +193,7 @@ Every contribution, no matter how small, makes a difference for the community.
 
 ### 🎨 Development Tips
 
-1. **Read the codebase** - Understand the project structure first
+1. **Read the codebase** - understand modules like memory, search, and plugins.
 2. **Start small** - Begin with documentation or small bug fixes
 3. **Ask questions** - Don't hesitate to ask for clarification
 4. **Test thoroughly** - Make sure your changes work as expected

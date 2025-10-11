@@ -5,16 +5,12 @@
 <h1 align="center">Snipet</h1>
 
 <p align="center">
-  <strong>[PROJECT_DESCRIPTION]</strong><br>
-  <em>[PROJECT_TAGLINE]</em>
+  <strong>Open-source AI-powered knowledge management platform</strong><br>
+  <em>Organize, remember, and expand your digital knowledge — intelligently.</em>
 </p>
 
 <p align="center">
   <a href="/README.pt.md" target="_blank">🇧🇷 Português</a>
-  &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="[RELEASES_URL]" target="_blank">📦 Downloads</a>
-  &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="[ORIGINAL_VERSION_URL]" target="_blank">📚 Original Version</a>
   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="[ISSUE_TEMPLATE_URL]" target="_blank">🐛 Report Bug</a>
   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
@@ -31,79 +27,64 @@
   <a href="https://github.com/core-stack/snipet/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/core-stack/snipet" alt="License">
   </a>
-  <a href="https://github.com/core-stack/snipet/releases">
-    <img src="https://img.shields.io/github/v/release/core-stack/snipet" alt="Latest Release">
-  </a>
 </p>
 
 ---
 
 <p align="center">
-  <img src="[SHOWCASE_IMAGE_URL]" alt="Snipet Showcase"/>
+<img src="https://raw.githubusercontent.com/core-stack/snipet/main/.github/assets/showcase.png" alt="Snipet Showcase"/>
 </p>
 
-**Snipet** [DETAILED_DESCRIPTION]
+**Snipet** is an open-source platform that merges AI memory, vector search, and knowledge management into one environment.
+It helps teams and individuals store, organize, and query information intelligently, making memory a first-class concept in your workflow.
 
-> 📚 **Project Evolution**: [PROJECT_EVOLUTION_DESCRIPTION]
+> 📚 **Project Evolution**: Snipet is designed with modular architecture, plugin extensibility, and hybrid self-host + managed options.
 
 ## 🎓 Main Features
 
-* **[FEATURE_1]**: [FEATURE_1_DESCRIPTION]
-* **[FEATURE_2]**: [FEATURE_2_DESCRIPTION]
-* **[FEATURE_3]**: [FEATURE_3_DESCRIPTION]
-* **[FEATURE_4]**: [FEATURE_4_DESCRIPTION]
+- **AI Memory Engine** – Semantic storage and retrieval using embeddings
+- **Plugin** – Add sources with your own integrations
+- **Vector Search** – Hybrid search (semantic + keyword) powered by milvus
+- **Multi-tenant Workspaces (comming soon)** – Separate environments for teams or users
+- **Modern Web UI** – Responsive, intuitive, and built with React
 
 ## 🛠️ Technologies Used
 
-* **Framework**: [FRAMEWORK]
-* **Language**: [LANGUAGE]
-* **[ADDITIONAL_TECH_1]**: [ADDITIONAL_TECH_1_DESCRIPTION]
-* **[ADDITIONAL_TECH_2]**: [ADDITIONAL_TECH_2_DESCRIPTION]
-* **[ADDITIONAL_TECH_3]**: [ADDITIONAL_TECH_3_DESCRIPTION]
-* **Libraries**: [LIBRARIES_LIST]
+* **Framework**: NestJS + React Router
+* **Language**: Typescript
+* **Database**: PostgreSQL 
+* **Storage**: S3 compatible
+* **AI**: Gemini (Ollama and OpenAI comming soon)
+* **Containerization**: Docker & PNPM Workspaces
 
 ## 🚀 Quick Start
 
 ### 📥 Installation
+1. Clone the repository
+```bash
+git clone https://github.com/core-stack/snipet.git
+cd snipet
+```
+2. Install dependencies
+```bash
+pnpm install
+```
+3. Setup environment
 
-1. **Download**: Go to the **[Releases page]([RELEASES_URL])** and download the latest version for your OS
-2. **Install**: [INSTALLATION_INSTRUCTIONS]
-3. **[SETUP_STEP_1]**: [SETUP_STEP_1_DESCRIPTION]
-4. **[SETUP_STEP_2]**: [SETUP_STEP_2_DESCRIPTION]
+```bash
+cp .env.example .env.local
+```
+4. Run in development mode
+```bash
+pnpm dev
+```
 
 ### ⚡ First Steps
 
-- **[FIRST_STEP_1]**: [FIRST_STEP_1_DESCRIPTION]
-- **[FIRST_STEP_2]**: [FIRST_STEP_2_DESCRIPTION]
-- **[FIRST_STEP_3]**: [FIRST_STEP_3_DESCRIPTION]
-- **[FIRST_STEP_4]**: [FIRST_STEP_4_DESCRIPTION]
-
-## 🌐 [CUSTOMIZATION_SECTION_TITLE]
-
-Snipet allows you to [CUSTOMIZATION_DESCRIPTION]:
-
-### Method 1: [METHOD_1_TITLE]
-
-1. [METHOD_1_STEP_1]
-2. [METHOD_1_STEP_2]
-3. [METHOD_1_STEP_3]
-4. [METHOD_1_STEP_4]
-5. [METHOD_1_STEP_5]
-6. [METHOD_1_STEP_6]
-
-### Method 2: [METHOD_2_TITLE]
-
-1. [METHOD_2_STEP_1]
-2. [METHOD_2_STEP_2]
-3. [METHOD_2_STEP_3]
-4. [METHOD_2_STEP_4]
-
-### Supported [CUSTOMIZATION_TYPE]:
-- [SUPPORTED_TYPE_1]
-- [SUPPORTED_TYPE_2]
-- [SUPPORTED_TYPE_3]
-- [SUPPORTED_TYPE_4]
-- [SUPPORTED_TYPE_5]
+- Access http://localhost:3000
+- Create your first knowledge
+- Add a file or install a plugin
+- Try the **AI memory search chat** to query your knowledge
 
 ## 💻 For Developers
 
@@ -123,23 +104,22 @@ npm install
 npm start
 ```
 
-## 📚 Perfect for [TARGET_AUDIENCE]
+## 📚 Perfect for
 
-- **[USE_CASE_1]**: [USE_CASE_1_DESCRIPTION]
-- **[USE_CASE_2]**: [USE_CASE_2_DESCRIPTION]
-- **[USE_CASE_3]**: [USE_CASE_3_DESCRIPTION]
-- **[USE_CASE_4]**: [USE_CASE_4_DESCRIPTION]
+- **AI Researchers** – testing vector search and LLM integrations
+- **Developers** – building custom knowledge apps or plugins
+- **Teams** – sharing memory across collaborative workspaces
+- **Individuals** – organizing personal knowledge efficiently
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions from everyone!<br>
+Check out our [Contributing Guide](./CONTRIBUTING.md) and join the project.
 
 ## 📄 License
-
-This project is licensed under the [LICENSE_TYPE] License.
+This project is licensed under the Snipet License (based on Apache 2.0).
+See the [LICENSE](./LICENSE) file for details.
 
 ---
 
-<p align="center">
-  Made with ❤️ by <a href="[GITHUB_PROFILE_URL]" target="_blank">[AUTHOR_NAME]</a>
-</p>
+<p align="center"> Made with ❤️ by <a href="https://github.com/mayron1806" target="_blank">Mayron Fernandes</a> </p>
