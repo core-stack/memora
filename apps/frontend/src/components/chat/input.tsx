@@ -1,38 +1,92 @@
-import React, { useRef } from "react";
+import { Paperclip, Send } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
-interface ChatInputProps {
-  placeholder?: string;
-  onSubmit?: (value: string) => void;
-}
+import { Button } from '@/components/ui/button';
+import { useLocalStorage } from '@/hooks/use-local-storage';
+import { cn } from '@/lib/utils';
 
-export const ChatInput = ({ placeholder, onSubmit }: ChatInputProps) => {
-  const divRef = useRef<HTMLDivElement | null>(null);
+import { useChat } from './context';
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      if (!divRef.current) return;
+export const ChatInput = () => {
+  const { chat, createChat, sendMessage } = useChat();
+  const divRef = useRef<HTMLDivElement>(null);
+  const [isEmpty, setIsEmpty] = useState(true);
+  const [chatMessage, setChatMessage] = useLocalStorage(`${chat?.id ?? "new"}-chat-message`, "");
 
-      const text = divRef.current.innerText.trim();
-      if (text && onSubmit) {
-        onSubmit(text);
-      }
+  const getText = () => divRef.current?.innerText || "";
 
-      divRef.current.innerText = "";
-    }
+  const onOpenSourceSelector = () => {
+
+  }
+
+  const handleSend = async () => {
+    await (chat?.id ? sendMessage(getText()) : createChat(getText()));
+    if (divRef.current?.innerText) divRef.current.innerText = "";
+    setChatMessage(null);
+  }
+
+  const handleInput = () => {
+    const text = getText();
+    setIsEmpty(text.trim().length === 0);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && e.shiftKey) return;
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const text = getText().trim();
+      if (text) {
+        handleSend()
+        if (divRef.current) divRef.current.innerText = "";
+        setIsEmpty(true);
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (chatMessage && divRef.current) {
+      divRef.current.innerText = chatMessage;
+      setIsEmpty(false);
+    }
+
+    const onBeforeUnload = () => setChatMessage(getText());
+
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [chatMessage, setChatMessage]);
+
   return (
-    <div className="flex items-end gap-2 rounded-2xl border px-3 py-2 m-auto max-w-[800px]">
-      <div
-        ref={divRef}
-        contentEditable
-        role="textbox"
-        aria-multiline="true"
-        data-placeholder={placeholder}
-        onKeyDown={handleKeyDown}
-        className="max-h-48 w-full overflow-y-auto whitespace-pre-wrap break-words outline-none empty:before:text-gray-400 empty:before:content-[attr(data-placeholder)]"
-      />
+    <div className="flex items-center flex-col">
+      { !chat?.id && <div><h3>What would you like to ask?</h3></div> }
+      <div className='flex gap-2 max-w-5xl items-center w-full p-5'>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onOpenSourceSelector}
+          className="flex-shrink-0 bg-card/50 border-border/50 hover:bg-accent/50"
+        >
+          <Paperclip className="h-4 w-4" />
+        </Button>
+
+        <div className="flex-1 relative flex items-center gap-2">
+          <div
+            contentEditable
+            className={cn(
+              "w-full resize-none p-2 rounded-md  bg-card/50 outline-none border border-border focus:bg-card/70",
+            )}
+            ref={divRef}
+            onInput={handleInput}
+            onKeyDown={handleKeyDown}
+          />
+          { isEmpty && <span className='absolute p-2 text-md text-muted-foreground'>Type a message...</span> }
+          <Button
+            onClick={handleSend}
+            disabled={isEmpty}
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
     </div>
-  );
-};
+  )
+}

@@ -1,6 +1,6 @@
-import z from "zod";
+import z from 'zod';
 
-import { filterSchema, idSchema, orderSchema } from "./shared";
+import { filterSchema, idSchema, orderSchema } from './shared';
 
 export const chatSchema = z.object({
   id: idSchema,

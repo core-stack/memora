@@ -10,6 +10,8 @@ import { ICrudService } from './service.interface';
 
 import type { FilterOptions } from './filter-options';
 import type { Request } from 'express';
+import { param } from 'drizzle-orm';
+import { kMaxLength } from 'buffer';
 export abstract class CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDto = Partial<TEntity>> {
   constructor(
     protected readonly service: ICrudService<TEntity, TCreateDto, TUpdateDto>,
@@ -29,8 +31,15 @@ export abstract class CrudController<TEntity, TCreateDto = Partial<TEntity>, TUp
   }
 
   @Get()
-  async findMany(@Req() req: Request, @Query() allParams: Record<string, unknown>): Promise<TEntity[]> {
-    const opts = queryToFilter(allParams);
+  async findMany(
+    @Req() req: Request,
+    @Query() allParams: Record<string, unknown>,
+    @Param() params: Record<string, unknown>
+  ): Promise<TEntity[]> {
+    let opts = queryToFilter(allParams);
+    const filterKeys = Object.keys((this.filterSchema._def as any).shape().filter._def.innerType._def.shape());
+    const filteredParams = Object.fromEntries(Object.entries(params).filter(([k]) => filterKeys.some(f => f === k)));
+    opts = { ...opts, filter: { ...filteredParams, ...opts.filter } };
     this.validateSchema(this.filterSchema, opts);
     return this.service.find(opts, this.loadContext(req));
   }
@@ -64,10 +73,9 @@ export abstract class CrudController<TEntity, TCreateDto = Partial<TEntity>, TUp
     throw new BadRequestException(result.error.format());
   }
 }
-
-export const queryToFilter = <TEntity>(allParams: Record<string, unknown>): FilterOptions<TEntity> => {
-  const result: FilterOptions<TEntity> = {};
-  for (const [key, value] of Object.entries(allParams)) {
+export const queryToFilter = <TEntity>(allQueryParams: Record<string, unknown>): FilterOptions<TEntity> => {
+  const result: FilterOptions<TEntity> = { filter: {} };
+  for (const [key, value] of Object.entries(allQueryParams)) {
     if (key === "limit" || key === "offset") {
       result[key] = parseInt(value as string);
       continue;
@@ -79,8 +87,8 @@ export const queryToFilter = <TEntity>(allParams: Record<string, unknown>): Filt
     }
   }
 
-  if (allParams.sort) {
-    const fields = (allParams.sort as string).split(",");
+  if (allQueryParams.sort) {
+    const fields = (allQueryParams.sort as string).split(",");
     result.order = fields.reduce((acc, f) => {
       if (f.startsWith("-")) {
         return {...acc, [f.substring(1)]: "DESC"};
@@ -88,8 +96,8 @@ export const queryToFilter = <TEntity>(allParams: Record<string, unknown>): Filt
       return {...acc, [f]: "ASC"}
     }, {} as Record<keyof TEntity, 'ASC' | 'DESC'>);
   }
-  if (allParams.include) {
-    result.include = (allParams.include as string).split(",");
+  if (allQueryParams.include) {
+    result.include = (allQueryParams.include as string).split(",");
   }
   return result;
 }

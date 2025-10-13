@@ -11,8 +11,7 @@ export abstract class CrudService<TEntity, TCreateDto = Partial<TEntity>, TUpdat
   ) { }
 
   async find(opts: FilterOptions<TEntity>, ctx?: HttpContext): Promise<TEntity[]> {
-    let res = await this.repository.find(opts);
-    return res;
+    return this.repository.find(opts);
   }
 
   async findByID(id: string, ctx?: HttpContext): Promise<TEntity | null> {

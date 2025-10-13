@@ -1,7 +1,7 @@
+import { Chat } from '@/components/chat';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { useParams } from '@/hooks/use-params';
 
-import { Chat } from './components/chat';
 import { ChatSidebar } from './components/sidebar';
 
 export default function ChatPage() {

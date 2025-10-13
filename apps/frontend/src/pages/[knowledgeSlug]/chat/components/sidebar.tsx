@@ -3,20 +3,23 @@
 import { Calendar, MessageSquare, Plus, Search } from 'lucide-react';
 import { useState } from 'react';
 
+import { If } from '@/components/if';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useParams } from '@/hooks/use-params';
-import { DateFormat, formatDate } from '@/utils/format';
-
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useApiQuery } from '@/hooks/use-api-query';
+import { useParams } from '@/hooks/use-params';
 import { useRouter } from '@/hooks/use-router';
+import { cn } from '@/lib/utils';
+import { DateFormat, formatDate } from '@/utils/format';
 
 export function ChatSidebar() {
   const { knowledgeSlug, chatId } = useParams<{ knowledgeSlug: string, chatId?: string }>();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("")
-  const { data: chats = [] } = useApiQuery("/api/knowledge/:knowledgeSlug/chat", { method: "GET" });
+  const { data: chats = [], isLoading } = useApiQuery("/api/knowledge/:knowledgeSlug/chat", { method: "GET" });
 
   const filteredChats = chats.filter((chat) => {
     const matchesSearch = chat.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -32,7 +35,7 @@ export function ChatSidebar() {
   }
 
   return (
-    <div className="w-full bg-card/30 flex flex-col h-full">
+    <div className="w-full overflow-hidden bg-card/30 flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
@@ -55,45 +58,62 @@ export function ChatSidebar() {
       </div>
 
       {/* Chat List */}
-      <ScrollArea className="flex-1">
-        <div className="p-2 space-y-1">
+      <ScrollArea className="p-2 space-y-1 h-full">
+        <If condition={isLoading}>
+          <div>
+            {
+              Array.from({ length: 16 }).map((_, index) => (
+                <Skeleton key={index} className='h-10 w-full mb-2'/>
+              ))
+            }
+          </div>
+        </If>
+        <If condition={!isLoading}>
           {filteredChats.map((chat) => {
             const isSelected = chatId === chat.id
 
             return (
-              <div
-                key={chat.id}
-                className={`p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent/50 ${
-                  isSelected ? "bg-accent border border-accent-foreground/20" : "bg-card/50 hover:bg-accent/30"
-                }`}
-                onClick={() => onSelectChat(chat.id)}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-medium text-sm text-foreground truncate flex-1 mr-2">{chat.name}</h3>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
-                    <Calendar className="h-3 w-3" />
-                    {formatDate(chat.updatedAt, DateFormat.lll)}
-                  </div>
-                </div>
-              </div>
+              <TooltipProvider key={chat.id}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div
+                      key={chat.id}
+                      className={cn(
+                        "flex items-center justify-between w-full p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent/50",
+                        isSelected && "bg-accent border border-accent-foreground/20"
+                      )}
+                      onClick={() => onSelectChat(chat.id)}
+                    >
+                      <h3 className="font-medium text-sm text-foreground truncate overflow-hidden whitespace-nowrap flex-1 min-w-0">
+                        {chat.name}
+                      </h3>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <span className="font-medium text-sm text-foreground flex-1 mr-2">{chat.name}</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(chat.updatedAt, DateFormat.lll)}
+                      </div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )
           })}
-
-          {filteredChats.length === 0 && (
-            <div className="text-center py-8">
-              <MessageSquare className="h-8 w-8 mx-auto mb-2 text-muted-foreground opacity-50" />
-              <p className="text-sm text-muted-foreground">{searchQuery ? "No chats found" : "No chats yet"}</p>
-              {!searchQuery && (
-                <Button variant="ghost" size="sm" onClick={onNewChat} className="mt-2 text-xs">
-                  Create your first chat
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
+        </If>
+        <If condition={!isLoading && filteredChats.length === 0}>
+          <div className="text-center py-8">
+            <MessageSquare className="h-8 w-8 mx-auto mb-2 text-muted-foreground opacity-50" />
+            <p className="text-sm text-muted-foreground">{searchQuery ? "No chats found" : "No chats yet"}</p>
+            {!searchQuery && (
+              <Button variant="ghost" size="sm" onClick={onNewChat} className="mt-2 text-xs">
+                Create your first chat
+              </Button>
+            )}
+          </div>
+        </If>
       </ScrollArea>
     </div>
   )
