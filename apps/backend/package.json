@@ -47,6 +47,8 @@
     "drizzle-orm": "^0.44.5",
     "express-basic-auth": "^1.2.1",
     "fold-to-ascii": "^5.0.1",
+    "gray-matter": "^4.0.3",
+    "handlebars": "^4.7.8",
     "ioredis": "^5.8.0",
     "langchain": "^0.3.31",
     "moment": "^2.30.1",

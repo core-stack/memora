@@ -1,0 +1,21 @@
+---
+vars:
+  query: string
+  knowledgeInstructions?: string
+  plugins: any[]
+---
+
+You are a helpful assistant that decides which plugins to use to answer a user query.
+The user query is: {{query}}
+The instructions of the knowledge base is: {{knowledgeInstructions}}
+{{#each plugins}}
+  - Plugin name: {{this.name}}
+  {{#if this.decription}}
+  - Plugin description: {{this.description}}
+  {{/if}}
+  {{#if this.whenUse}}
+  - When to use this plugin: {{this.whenUse}}
+  {{/if}}
+{{/each}}
+The plugins are: {{plugins}}
+Return the ids of the plugins to use.

@@ -1,32 +1,31 @@
 import moment from 'moment';
 
-import { Fragment, Fragments } from '@/fragment';
+import { Fragments, SourceFragment } from '@/fragment';
 import { CacheService } from '@/infra/cache/cache.service';
 import { LLMService } from '@/infra/llm/llm.service';
-import { withDense, withKnowledgeId, withSparse, withTopK } from '@/infra/vector/search-optons';
-import { VectorStore } from '@/infra/vector/vector-store.service';
+import { PromptService } from '@/infra/prompt/prompt.service';
+import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
+import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
+import { PluginService } from '@/modules/plugin/plugin.service';
 import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
 import { mergeBy } from '@/utils/array';
-import { Embeddings } from '@langchain/core/embeddings';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import { KnowledgeService } from '../knowledge/knowledge.service';
-import { PluginService } from '../plugin/plugin.service';
 import { Finder, FindOptions } from './find-options';
 
 import type { Recent } from "@memora/schemas";
 @Injectable()
-export class MemoryService {
-  private readonly logger = new Logger(MemoryService.name);
+export class SourceMemoryService {
+  private readonly logger = new Logger(SourceMemoryService.name);
 
   constructor(
-    private vectorStore:      VectorStore,
-    private embeddings:       Embeddings,
-    private knowledgeService: KnowledgeService,
-    private llmService:       LLMService,
-    private pluginManager:    PluginManagerService,
-    private pluginService:    PluginService,
-    private cacheService:     CacheService
+    private readonly vectorStore:      SourceVectorStoreService,
+    private readonly knowledgeService: KnowledgeService,
+    private readonly llmService:       LLMService,
+    private readonly pluginManager:    PluginManagerService,
+    private readonly pluginService:    PluginService,
+    private readonly cacheService:     CacheService,
+    private readonly promptService: PromptService
   ) {}
 
   private buildFindOptions(knowledgeId: string, userInput: string, ...opts: Finder[]): FindOptions {
@@ -37,14 +36,17 @@ export class MemoryService {
     return findOpts;
   }
 
-  async find(knowledgeId: string, userInput: string, ...options: Finder[]): Promise<Fragments> {
+  async find(knowledgeId: string, userInput: string, ...options: Finder[]): Promise<Fragments<SourceFragment>> {
     const opts = this.buildFindOptions(knowledgeId, userInput, ...options);
     // get knowledge
     const knowledge = await this.knowledgeService.findByID(knowledgeId);
     if (!knowledge) throw new NotFoundException("Knowledge not found");
 
     // improve query with LLM prompt
-    const improvedQuery = await this.llmService.improveQuery(opts.userInput, knowledge.instructions);
+
+    const improvedQuery = await this.llmService.query(
+      this.promptService.getTemplate("ImproveQuery").build({ query: userInput, knowledgeInstructions: knowledge.instructions })
+    );
 
     // heat up plugins
     const forcedPlugins = opts.forceUsePlugins ? await this.pluginService.findByIDList(opts.forceUsePlugins) : [];
@@ -52,30 +54,29 @@ export class MemoryService {
     const plugins = mergeBy("id", forcedPlugins, relevantPlugins).filter(p => !opts.excludePlugins?.includes(p.id));
     await this.pluginManager.preloadPlugins(plugins);
 
-    const fragments = new Fragments();
+    const fragments = new Fragments<SourceFragment>();
 
     for (const p of plugins) {
       const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, improvedQuery);
       this.logger.debug(`Plugin ${p.pluginRegistry} response: ${pluginResponse}`);
     }
 
-    const queryEmbedding = await this.embeddings.embedQuery(improvedQuery);
     return fragments.merge(await this.vectorStore.search(
-      withKnowledgeId(knowledgeId),
-      withDense({ vector: queryEmbedding, topK: 100 }),
-      withSparse({ query: improvedQuery, topK: 100 }),
-      withTopK(10),
+      SourceVectorStoreService.withFilters({ knowledgeId }),
+      SourceVectorStoreService.withDense({ query: improvedQuery, topK: 100 }),
+      SourceVectorStoreService.withSparse({ query: improvedQuery, topK: 100 }),
+      SourceVectorStoreService.withTopK(10),
     ));
   }
 
-  private async findFragmentsInCache(knowledgeId: string, userInput: string): Promise<Fragment[] | null> {
+  private async findFragmentsInCache(knowledgeId: string, userInput: string): Promise<SourceFragment[] | null> {
     const key = encodeURIComponent(userInput.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase());
-    return this.cacheService.get<Fragment[]>(`fragments:${key}`, { namespace: knowledgeId });
+    return this.cacheService.get<SourceFragment[]>(`fragments:${key}`, { namespace: knowledgeId });
   }
 
-  private async saveFragmentsInCache(knowledgeId: string, userInput: string, fragments: Fragment[]) {
+  private async saveFragmentsInCache(knowledgeId: string, userInput: string, fragments: SourceFragment[]) {
     const key = encodeURIComponent(userInput.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase());
-    await this.cacheService.set<Fragment[]>(
+    await this.cacheService.set<SourceFragment[]>(
       `fragments:${key}`,
       fragments,
       { namespace: knowledgeId, ttl: 60 * 5 } // expires cache in 5 minutes
@@ -97,7 +98,7 @@ export class MemoryService {
     await this.cacheService.set<Recent[]>("recent", recents, { namespace: knowledgeId });
   }
 
-  async findByTerm(knowledgeId: string, userInput: string): Promise<Fragments> {
+  async findByTerm(knowledgeId: string, userInput: string): Promise<Fragments<SourceFragment>> {
     await this.saveInputToRecents(knowledgeId, userInput);
 
     const cachedFragments = await this.findFragmentsInCache(knowledgeId, userInput);
@@ -106,7 +107,10 @@ export class MemoryService {
       return Fragments.fromFragmentArray(cachedFragments);
     }
 
-    const fragments = await this.vectorStore.searchByTerm(knowledgeId, userInput);
+    const fragments = await this.vectorStore.search(
+      SourceVectorStoreService.withFilters({ knowledgeId }),
+      SourceVectorStoreService.withTerm(userInput),
+    );
     await this.saveFragmentsInCache(knowledgeId, userInput, fragments.toArray());
     return fragments;
   }

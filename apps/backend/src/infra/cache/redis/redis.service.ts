@@ -1,11 +1,19 @@
-import { env } from "@/env";
-import { OnModuleInit } from "@nestjs/common";
-import { Redis } from "ioredis";
+import { Redis } from 'ioredis';
 
-import { CacheService, GetCacheOptions, SetCacheOptions } from "../cache.service";
+import { env } from '@/env';
+import { Inject, OnModuleInit } from '@nestjs/common';
+
+import { CACHE_PREFIX_KEY } from '../cache.module';
+import { CacheService, GetCacheOptions, SetCacheOptions } from '../cache.service';
 
 export class RedisService extends CacheService implements OnModuleInit {
   client: Redis;
+
+  constructor(
+    @Inject(CACHE_PREFIX_KEY) private readonly prefix: string
+  ) {
+    super();
+  }
 
   async onModuleInit() {
     this.client = new Redis({
@@ -18,7 +26,7 @@ export class RedisService extends CacheService implements OnModuleInit {
   }
 
   private buildKey(key: string, opts?: { namespace?: string }): string {
-    return opts?.namespace ? `${opts.namespace}:${key}` : key;
+    return opts?.namespace ? `${this.prefix}:${opts.namespace}:${key}` : `${this.prefix}:${key}`;
   }
 
   async get<T = string>(key: string, opts?: GetCacheOptions): Promise<T | null> {

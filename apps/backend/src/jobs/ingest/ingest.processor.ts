@@ -2,10 +2,9 @@ import { Job } from 'bullmq';
 import streamToBlob from 'stream-to-blob';
 
 import { StorageService } from '@/infra/storage/storage.service';
-import { VectorStore } from '@/infra/vector/vector-store.service';
+import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
 import { SourceRepository } from '@/modules/knowledge/source/source.repository';
-import { Embeddings } from '@langchain/core/embeddings';
-import { OriginType, Source, SourceType } from '@memora/schemas';
+import { Source } from '@memora/schemas';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject } from '@nestjs/common';
 
@@ -14,8 +13,7 @@ import { ProcessorManager } from './processor-manager';
 @Processor("ingest", { concurrency: 5 })
 export class IngestProcessor extends WorkerHost {
   @Inject() private readonly processor!: ProcessorManager;
-  @Inject() private readonly vectorStore!: VectorStore;
-  @Inject() private readonly embeddings!: Embeddings;
+  @Inject() private readonly vectorStore!: SourceVectorStoreService;
   @Inject() private readonly storage!: StorageService;
 
   constructor(
@@ -28,11 +26,9 @@ export class IngestProcessor extends WorkerHost {
     const obj = await this.storage.getObject(source.key);
     if (!obj) throw new Error("File not found");
 
-    const fragments = await this.processor.process(source, await streamToBlob(obj));
-    const embeddings = await this.embeddings.embedDocuments(fragments.map(c => c.content));
-    fragments.setEmbeddings(embeddings);
-
-    await this.vectorStore.addFragments(fragments);
+    await this.vectorStore.addFragments(
+      await this.processor.process(source, await streamToBlob(obj))
+    );
   }
 
   @OnWorkerEvent("active")

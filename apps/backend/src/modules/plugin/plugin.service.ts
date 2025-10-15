@@ -1,6 +1,7 @@
 import { HttpContext } from '@/generics/http-context';
 import { TenantService } from '@/generics/tenant.service';
 import { LLMService } from '@/infra/llm/llm.service';
+import { PromptService } from '@/infra/prompt/prompt.service';
 import { SecurityService } from '@/infra/security/security.service';
 import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
 import { PluginRegistryWithInput } from '@/plugin-registry/plugin-registry';
@@ -15,11 +16,12 @@ import { PluginRepository } from './plugin.repository';
 export class PluginService extends TenantService<Plugin> {
   constructor(
     protected repository: PluginRepository,
-    private knowledgePluginRepository: KnowledgePluginRepository,
-    private llmService: LLMService,
-    private pluginRegistryService: PluginRegistryService,
-    private pluginManagerService: PluginManagerService,
-    private securityService: SecurityService
+    private readonly knowledgePluginRepository: KnowledgePluginRepository,
+    private readonly llmService: LLMService,
+    private readonly pluginRegistryService: PluginRegistryService,
+    private readonly pluginManagerService: PluginManagerService,
+    private readonly securityService: SecurityService,
+    private readonly promptService: PromptService
   ) {
     super(repository);
   }
@@ -34,7 +36,12 @@ export class PluginService extends TenantService<Plugin> {
     knowledgeInstructions?: string
   ): Promise<Plugin[]> {
     const plugins = await this.knowledgePluginRepository.findPluginByKnowledgeId(knowledgeId);
-    return this.llmService.decidePluginsToUse(query, knowledgeInstructions, plugins);
+    const prompt = this.promptService.getTemplate("DecidePluginsToUse").build({ 
+      plugins,
+      query,
+      knowledgeInstructions
+    })
+    return this.llmService.query(prompt);
   }
 
   async findRegistry(input: Partial<Plugin>): Promise<PluginRegistryWithInput> {

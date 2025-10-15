@@ -3,9 +3,7 @@ import {
   CreateIndexesReq, DataType, FieldType, FunctionType, IndexType, MetricType
 } from '@zilliz/milvus2-sdk-node';
 
-export const COLLECTION_NAME = env.MILVUS_COLLECTION;
-
-export const fields: FieldType[] = [
+export const chatFields: FieldType[] = [
   {
     name: "id",
     data_type: DataType.VarChar,
@@ -28,7 +26,7 @@ export const fields: FieldType[] = [
   {
     name: "content",
     data_type: DataType.VarChar,
-    max_length: 2048,
+    max_length: 65535,
     enable_analyzer: true,
     enable_match: true,
     analyzer_params: {
@@ -37,14 +35,14 @@ export const fields: FieldType[] = [
     }
   },
   {
-    name: "sourceId",
+    name: "role",
     data_type: DataType.VarChar,
-    max_length: 36,
+    max_length: 10
   },
   {
-    name: "sourceType",
+    name: "chatId",
     data_type: DataType.VarChar,
-    max_length: 36,
+    max_length: 36
   },
   {
     name: "knowledgeId",
@@ -72,29 +70,39 @@ export const fields: FieldType[] = [
   }
 ];
 
-export const indexSchema: CreateIndexesReq = [
-  {
-    collection_name: COLLECTION_NAME,
-    field_name: "dense",
-    index_name: "dense_idx",
-    extra_params: {
-      index_type: "IVF_FLAT",
-      metric_type: MetricType.IP,
-      params: JSON.stringify({ nlist: 128 }),
+export const chatIndexSchema = (collection_name: string): CreateIndexesReq => {
+  return [
+    {
+      collection_name,
+      field_name: "dense",
+      index_name: "dense_idx",
+      extra_params: {
+        index_type: "IVF_FLAT",
+        metric_type: MetricType.IP,
+        params: JSON.stringify({ nlist: 128 }),
+      },
     },
-  },
-  {
-    collection_name: COLLECTION_NAME,
-    field_name: "sparse",
-    metric_type: MetricType.BM25,
-    index_type: IndexType.SPARSE_INVERTED_INDEX,
-    params: {
-      "inverted_index_algo": "DAAT_MAXSCORE",
-    }
-  },
-]
+    {
+      collection_name,
+      field_name: "sparse",
+      metric_type: MetricType.BM25,
+      index_type: IndexType.SPARSE_INVERTED_INDEX,
+      params: {
+        "inverted_index_algo": "DAAT_MAXSCORE",
+      }
+    },
+    {
+      collection_name,
+      field_name: "seqId",
+      index_name: 'seqid_index',
+      index_type: 'STL_SORT',
+      metric_type: 'L2',
+      params: {},
+    },
+  ]
+}
 
-export const functions = [
+export const chatFunctions = [
   {
     name: 'bm25_emb',
     description: 'bm25 function',

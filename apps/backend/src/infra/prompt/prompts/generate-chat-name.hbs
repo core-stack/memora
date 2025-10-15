@@ -1,6 +1,7 @@
-import { PromptTemplate } from '@langchain/core/prompts';
-
-export const generateChatNamePrompt = PromptTemplate.fromTemplate(`
+---
+vars:
+  query: string
+---
 You are an assistant that generates short, descriptive chat titles based on the user’s first message.
 
 Instructions:
@@ -18,5 +19,4 @@ Examples:
 
 Your task:
 Given the user’s first message, output only the final chat title in the detected language.
-The user message is: {query}
-  `)
+The user message is: {{query}}

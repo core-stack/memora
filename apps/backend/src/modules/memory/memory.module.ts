@@ -7,10 +7,10 @@ import { Module } from '@nestjs/common';
 
 import { KnowledgeModule } from '../knowledge/knowledge.module';
 import { PluginModule } from '../plugin/plugin.module';
-import { MemoryService } from './memory.service';
+import { ChatMemoryModule } from './chat-memory/chat-memory.module';
+import { SourceMemoryModule } from './source-memory/source-memory.module';
 
 @Module({
-  providers: [MemoryService],
   imports: [
     VectorModule,
     EmbeddingsModule,
@@ -18,8 +18,13 @@ import { MemoryService } from './memory.service';
     LLMModule,
     PluginModule,
     PluginRegistryModule,
-    CacheModule
+    CacheModule,
+    ChatMemoryModule,
+    SourceMemoryModule
   ],
-  exports: [MemoryService]
+  exports: [
+    ChatMemoryModule,
+    SourceMemoryModule
+  ]
 })
 export class MemoryModule {}

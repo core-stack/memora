@@ -8,8 +8,8 @@ import { BullModule } from '@nestjs/bullmq';
 import { forwardRef, Module } from '@nestjs/common';
 
 import { IngestProcessor } from './ingest.processor';
-import { PDFProcessor } from './processors/pdf.processor';
 import { ProcessorManager } from './processor-manager';
+import { PDFProcessor } from './processors/pdf.processor';
 
 @Module({
   providers: [IngestProcessor, PDFProcessor, ProcessorManager],

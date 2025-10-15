@@ -1,6 +1,7 @@
 import z from 'zod';
 
-import { sourceTypeSchema } from './source-type';
+import { sourceTypeSchema } from '../source-type';
+import { baseFragmentSchema } from './base';
 
 export enum OriginType {
   PLUGIN = "PLUGIN",
@@ -11,8 +12,6 @@ export const originTypeSchema = z.nativeEnum(OriginType);
 
 export const fragmentFileMetadataSchema = z.object({
   type: z.literal(OriginType.FILE),
-
-  seqId: z.number().optional(), // sequential id
 
   size: z.number(),
   name: z.string(),
@@ -38,24 +37,20 @@ export const fragmentPluginMetadata = z.object({
 });
 export type FragmentPluginMetadata = z.infer<typeof fragmentPluginMetadata>;
 
-export const fragmentMetadataSchema = z.discriminatedUnion("type", [
+export const sourceFragmentMetadataSchema = z.discriminatedUnion("type", [
   fragmentFileMetadataSchema,
   fragmentPluginMetadata
 ]);
 
-export type FragmentMetadata = z.infer<typeof fragmentMetadataSchema>;
+export type SourceFragmentMetadata = z.infer<typeof sourceFragmentMetadataSchema>;
 
-export const fragmentSchema = z.object({
-  id: z.string().uuid(),
-  content: z.string(),
-  cached: z.boolean().optional(),
+export const sourceFragmentSchema = baseFragmentSchema.extend({
   sourceType: sourceTypeSchema,
+  seqId: z.number().optional(),
   sourceId: z.string().uuid(),
   knowledgeId: z.string().uuid(),
   tenantId: z.string().uuid(),
-  createdAt: z.string().transform(d => new Date(d)).or(z.date()),
-  updatedAt: z.string().transform(d => new Date(d)).or(z.date()),
-  metadata: fragmentMetadataSchema
+  metadata: sourceFragmentMetadataSchema
 });
 
-export type Fragment = z.infer<typeof fragmentSchema>;
+export type SourceFragment = z.infer<typeof sourceFragmentSchema>;

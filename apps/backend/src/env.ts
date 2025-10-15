@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import z from 'zod';
 
+import { __root } from './root';
+
 dotenv.config({
   path: [".env", "../../.env", "../../.env.local"],
 });
@@ -61,8 +63,11 @@ const envSchema = z.object({
   VECTOR_ENGINE: z.enum(['milvus']).default('milvus'),
   // MILVUS
   MILVUS_URL: z.string().url().optional().default("localhost:19530"),
-  MILVUS_COLLECTION: z.string().optional().default("default"),
+  MILVUS_COLLECTION_PREFIX: z.string().optional().default("snipet"),
   MULVUS_RECREATE_COLLECTION: z.string().transform((s) => s === "true").optional(),
+
+  // PROMPT
+  PROMPT_TEMPLATES_DIR: z.string().optional().default(path.join(__root, "prompts")),
 }).transform((data) => {
   if (!data.API_URL) {
     return {

@@ -24,6 +24,7 @@ import { MemoryModule } from './modules/memory/memory.module';
 import { PluginModule } from './modules/plugin/plugin.module';
 import { TagModule } from './modules/tag/tag.module';
 import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
+import { PromptModule } from './infra/prompt/prompt.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
     PluginRegistryModule.forRoot(env.PLUGINS_DIR),
     MemoryModule,
     CacheModule,
+    PromptModule,
   ],
 })
 export class AppModule {}

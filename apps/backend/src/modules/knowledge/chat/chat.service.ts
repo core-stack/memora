@@ -4,7 +4,7 @@ import { env } from '@/env';
 import { HttpContext } from '@/generics/http-context';
 import { TenantService } from '@/generics/tenant.service';
 import { LLMService } from '@/infra/llm/llm.service';
-import { Prompt, prompts } from '@/infra/llm/prompts';
+import { PromptService } from '@/infra/prompt/prompt.service';
 import { Chat, CreateChatWithInitialMessage } from '@memora/schemas';
 import { Injectable } from '@nestjs/common';
 
@@ -17,14 +17,14 @@ export class ChatService extends TenantService<Chat> {
     protected readonly repository: ChatRepository,
     private readonly llmService: LLMService,
     private readonly knowledgeService: KnowledgeService,
+    private readonly promptService: PromptService
   ) {
     super(repository);
   }
 
   async createWithMessage({ initialMessage }: CreateChatWithInitialMessage, ctx: HttpContext) {
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
-
-    const prompt = await prompts[Prompt.GENERATE_CHAT_NAME].format({ query: initialMessage });
+    const prompt = this.promptService.getTemplate("GenerateChatName").build({ query: initialMessage });
     const res = await this.llmService.withStructuredOutput(prompt, z.object({ name: z.string() }));
 
     return await this.repository.createWithInitialMessage({
