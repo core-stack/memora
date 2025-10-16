@@ -39,7 +39,7 @@ export class PluginRegistryService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.loadPluginModule();
+    if (!env.IGNORE_PLUGINS) this.loadPluginModule();
   }
 
   async getByName(name: string): Promise<PluginRegistryWithInput | undefined> {
