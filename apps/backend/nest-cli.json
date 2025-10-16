@@ -4,14 +4,7 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "watchAssets": true,
-    "assets": [
-      { "include": "**/*.hbs", "outDir": "dist" },
-      {
-        "include": "./@generated",
-        "outDir": "dist",
-        "watchAssets": true
-      }
-    ]
+    "watchAssets": true
+
   }
 }

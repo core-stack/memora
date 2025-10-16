@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState, useTransition } from 'react';
 import Markdown from 'react-markdown';
@@ -17,7 +18,7 @@ type Props = TextProps | UrlProps;
 
 export function MarkdownViewer(props: Props) {
   const [markdown, setMarkdown] = useState<string>(() => props.type === "text" ? props.text : "");
-  const [error, setError] = useState<string | null>(null); 
+  const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export function MarkdownViewer(props: Props) {
     <>
       {!isPending && !error && markdown && (
         <div className="prose prose-sm dark:prose-invert max-w-none">
-          <Markdown 
+          <Markdown
             remarkPlugins={[remarkGfm]}
             components={{
               h1: ({ node, ...props }) => <h1 className="text-2xl font-bold mt-6 mb-4" {...props} />,
@@ -71,7 +72,7 @@ export function MarkdownViewer(props: Props) {
                   </code>
                 )
               }
-            }}          
+            }}
           >
             {markdown}
           </Markdown>

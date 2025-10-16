@@ -5,10 +5,14 @@
   "main": "index.js",
   "scripts": {
     "db:generate": "cd apps/backend && npx drizzle-kit generate",
-    "db:migrate": "cd apps/backend && npx drizzle-kit migrate"
+    "db:migrate": "cd apps/backend && npx drizzle-kit migrate",
+    "start:docker": "cd backend && npm start"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.15.1"
+  "packageManager": "pnpm@10.15.1",
+  "devDependencies": {
+    "turbo": "^2.5.8"
+  }
 }

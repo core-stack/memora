@@ -17,7 +17,7 @@ import { useDialog } from '@/hooks/use-dialog';
 
 import { DialogType } from './';
 
-import { OriginType, type Fragment } from "@memora/schemas";
+import { OriginType, type SourceFragment } from "@memora/schemas";
 import { Highlight } from '@/components/highlight';
 
 export function SearchDialog() {
@@ -81,8 +81,10 @@ export function SearchDialog() {
     setQuery(text)
   }
 
-  const handleResultClick = (result: Fragment) => {
+  const handleResultClick = (frag: SourceFragment) => {
     // onResultSelect(result);
+    console.log(frag);
+
     closeDialog(DialogType.SEARCH);
   }
 

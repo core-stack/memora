@@ -21,7 +21,7 @@ type Props = {
   isLoading: boolean;
 }
 export function ContentPreview({ isLoading, data }: Props) {
-  
+
   const formatDate = useDateTimeFormat();
 
   const renderPreview = () => {
@@ -122,7 +122,7 @@ export function ContentPreview({ isLoading, data }: Props) {
           <Badge variant="secondary" className="text-xs">
             {data?.metadata.type}
           </Badge>
-          {data?.metadata.type !== SourceType.LINK && <span>{formatBytes(data?.metadata.size)}</span>}
+          <span>{formatBytes(data?.metadata.size)}</span>
           <span>•</span>
           { data?.updatedAt && <span>{formatDate(data?.updatedAt, DateFormat.lll)}</span>}
         </div>

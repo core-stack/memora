@@ -1,34 +1,42 @@
-FROM node:20-alpine AS builder
+# ==============================
+# Base
+# ==============================
+FROM node:20-alpine AS base
+
+ENV NODE_ENV=production
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+RUN apk update
+RUN apk add --no-cache libc6-compat
+# ==============================
+# Builder
+# ==============================
+FROM base AS builder
 
 WORKDIR /app
 
-COPY package.json pnpm-workspace.yaml ./
-COPY pnpm-lock.yaml ./
-COPY apps/backend/package.json apps/backend/
-COPY apps/frontend/package.json apps/frontend/
-COPY packages/*/package.json packages/*/
-
-RUN npm install -g pnpm
-
-# TODO - use pnpm with frozen lockfile
-RUN pnpm install
-
+RUN pnpm add -g turbo@2.5.8
 COPY . .
 
-RUN pnpm --filter schemas build
+RUN turbo prune @memora/backend --docker
 
-RUN pnpm --filter frontend build
-
-RUN pnpm --filter backend build
-
-FROM node:20-alpine
+FROM base AS installer
 
 WORKDIR /app
 
-COPY --from=builder /app/apps/backend/dist ./backend/dist
-COPY --from=builder /app/apps/backend/package.json ./backend/
-COPY --from=builder /app/apps/frontend/dist ./frontend
+COPY --from=builder /app/out/json/ .
 
-EXPOSE 3000
+RUN pnpm install --frozen-lockfile
 
-CMD ["node", "backend/dist/main.js"]
+COPY --from=builder /app/out/full/ .
+RUN yarn turbo run build
+
+FROM base AS runner
+WORKDIR /app
+
+COPY --from=installer /app/apps/frontend/dist ./public
+
+COPY --from=installer /app/apps/backend/dist ./dist
+
+CMD ["node", "dist/src/main"]

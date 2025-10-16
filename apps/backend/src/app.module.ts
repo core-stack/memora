@@ -28,10 +28,9 @@ import { PromptModule } from './infra/prompt/prompt.module';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../../frontend'),
-      exclude: ['/api*'],
-    }),
+    ...(env.SERVE_STATIC ? [
+      ServeStaticModule.forRoot({ rootPath: env.SERVE_STATIC, exclude: ['/api*'], })
+    ] : []),
     IngestModule,
     SearchModule,
     DatabaseModule,

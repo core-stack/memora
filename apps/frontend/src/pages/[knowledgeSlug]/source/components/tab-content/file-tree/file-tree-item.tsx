@@ -1,7 +1,7 @@
 "use client"
 
 import {
-  ChevronDown, ChevronRight, File, FileText, Folder, Globe, ImageIcon, Info, Music, RotateCcw, Video
+  ChevronDown, ChevronRight, File, FileText, Folder, ImageIcon, Info, Music, RotateCcw, Video
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -36,8 +36,6 @@ const getFileIcon = (item: Source | KnowledgeFolder) => {
         return Music;
       case SourceType.DOC:
         return File;
-      case SourceType.LINK:
-        return Globe;
     }
   } else {
     return Folder;
@@ -133,7 +131,7 @@ export function FileTreeItem({
                   <p className="text-xs text-muted-foreground">{item.path}</p>
                 }
                 {
-                  !isFolder && item.metadata.type !== "LINK" &&
+                  !isFolder &&
                   <p className="text-xs text-muted-foreground">{formatBytes(item.metadata.size)}</p>
                 }
               </div>

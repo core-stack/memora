@@ -1,5 +1,4 @@
 services:
-  # Backend + frontend juntos
   app:
     build:
       context: .
@@ -30,6 +29,8 @@ services:
       - redis
       - db
       - minio
+      - etcd
+      - standalone
     restart: unless-stopped
 
   # Redis

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { ConfirmDialog } from './confirm';
@@ -6,7 +7,6 @@ import { CreateOrUpdateKnowledgeDialog } from './create-or-update-knowledge';
 import { CreateSourceDialog } from './create-source';
 import { InstallPluginDialog } from './install-plugin';
 import { SearchDialog } from './search';
-import { EnhancedSourceDialog } from './source-plugin-select';
 
 export enum DialogType {
   CREATE_SOURCE = "create-source",
@@ -25,5 +25,4 @@ export const dialogs = {
   [DialogType.INSTALL_PLUGIN]: (props: any) => <InstallPluginDialog {...props} />,
   [DialogType.SEARCH]: (props: any) => <SearchDialog {...props} />,
   [DialogType.CONFIRM]: (props: any) => <ConfirmDialog {...props} />,
-  [DialogType.SOURCE_PLUGIN_SELECT]: (props: any) => <EnhancedSourceDialog {...props} />
 }

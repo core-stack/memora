@@ -76,7 +76,7 @@ export function PluginDocumentationSheet({ plugin, isOpen, onClose }: PluginDocu
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Documentation</h3>
           <ScrollArea className="h-[calc(100vh-300px)]">
-            <MarkdownViewer url={url} />
+            <MarkdownViewer url={url} type='url' />
           </ScrollArea>
         </div>
       </SheetContent>
