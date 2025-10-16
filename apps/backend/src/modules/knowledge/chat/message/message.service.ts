@@ -55,29 +55,23 @@ export class MessageService extends TenantService<Message> {
     const userMessage = await this.repository.create({ content, chatId, messageRole: "USER", tenantId: env.TENANT_ID, knowledgeId });
     await this.chatMemoryService.add(userMessage);
     //#endregion
-
-
-    //#region improve query
-    const improveQueryPrompt = this.promptService.getTemplate("ImproveQuery").build({ query: content });
-    const improvedQuery = await this.llmService.query(improveQueryPrompt);
-    //#endregion
     
     //#region get relevant fragments to answer
     const chatSearchResult = await this.chatMemoryService.search(
       chatId,
-      ChatMemoryService.withSearchQuery(improvedQuery),
+      ChatMemoryService.withSearchQuery(content),
       // ChatMemoryService.withLastNMessages(10),
     );
     const sourceSearchResult = await this.sourceMemoryService.find(
       knowledgeId,
-      improvedQuery
+      content
     )
     //#endregion
 
 
     //#region build prompt to get answer
     const answerPrompt = this.promptService.getTemplate("AnwserQuestion").build({
-      question: improvedQuery,
+      question: content,
       recentMessages: [], // lastNMessages.map(f => ({ role: f.role, content: f.content })),
       relevantMessages: chatSearchResult.searchQuery.map(f => ({ content: f.content, role: f.role })),
       retrievedFragments: sourceSearchResult.map(f => f.content),

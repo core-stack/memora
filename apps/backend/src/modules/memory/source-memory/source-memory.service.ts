@@ -8,6 +8,7 @@ import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.ser
 import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
 import { PluginService } from '@/modules/plugin/plugin.service';
 import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
+import { mergeBy } from '@/utils/array';
 import { buildOptions } from '@/utils/build-options';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
@@ -48,29 +49,24 @@ export class SourceMemoryService {
     const knowledge = await this.knowledgeService.findByID(knowledgeId);
     if (!knowledge) throw new NotFoundException("Knowledge not found");
 
-    // improve query with LLM prompt
-
-    const improvedQuery = await this.llmService.query(
-      this.promptService.getTemplate("ImproveQuery").build({ query: userInput, knowledgeInstructions: knowledge.instructions })
-    );
 
     // heat up plugins
-    // const forcedPlugins = opts.forceUsePlugins ? await this.pluginService.findByIDList(opts.forceUsePlugins) : [];
-    // const relevantPlugins = await this.pluginService.getRelevantPlugins(improvedQuery, knowledgeId, knowledge.instructions);
-    // const plugins = mergeBy("id", forcedPlugins, relevantPlugins).filter(p => !opts.excludePlugins?.includes(p.id));
-    // await this.pluginManager.preloadPlugins(plugins);
+    const forcedPlugins = opts.forceUsePlugins ? await this.pluginService.findByIDList(opts.forceUsePlugins) : [];
+    const relevantPlugins = await this.pluginService.getRelevantPlugins(userInput, knowledgeId, knowledge.instructions);
+    const plugins = mergeBy("id", forcedPlugins, relevantPlugins).filter(p => !opts.excludePlugins?.includes(p.id));
+    await this.pluginManager.preloadPlugins(plugins);
 
     const fragments = new Fragments<SourceFragment>();
 
-    // for (const p of plugins) {
-    //   const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, improvedQuery);
-    //   this.logger.debug(`Plugin ${p.pluginRegistry} response: ${pluginResponse}`);
-    // }
+    for (const p of plugins) {
+      const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, userInput);
+      this.logger.debug(`Plugin ${p.pluginRegistry} response: ${pluginResponse}`);
+    }
     
     return fragments.merge(await this.vectorStore.search(
       SourceVectorStoreService.withFilters({ knowledgeId, ...opts.metadata }),
-      SourceVectorStoreService.withDense({ query: improvedQuery, topK: 100 }),
-      SourceVectorStoreService.withSparse({ query: improvedQuery, topK: 100 }),
+      SourceVectorStoreService.withDense({ query: userInput, topK: 100 }),
+      SourceVectorStoreService.withSparse({ query: userInput, topK: 100 }),
       SourceVectorStoreService.withTopK(10),
     ));
   }
@@ -105,18 +101,21 @@ export class SourceMemoryService {
   }
 
   async findByTerm(knowledgeId: string, userInput: string): Promise<Fragments<SourceFragment>> {
+    this.logger.verbose("Finding fragments by term");
     await this.saveInputToRecents(knowledgeId, userInput);
-
-    const cachedFragments = await this.findFragmentsInCache(knowledgeId, userInput);
-    if (cachedFragments) {
-      this.logger.verbose("Found fragments in cache");
-      return Fragments.fromFragmentArray(cachedFragments);
-    }
+    
+    // const cachedFragments = await this.findFragmentsInCache(knowledgeId, userInput);
+    // if (cachedFragments) {
+    //   this.logger.verbose("Found fragments in cache");
+    //   return Fragments.fromFragmentArray(cachedFragments);
+    // }
 
     const fragments = await this.vectorStore.search(
       SourceVectorStoreService.withFilters({ knowledgeId }),
+      SourceVectorStoreService.withSparse(userInput),
       SourceVectorStoreService.withTerm(userInput),
     );
+    this.logger.verbose(fragments);
     await this.saveFragmentsInCache(knowledgeId, userInput, fragments.toArray());
     return fragments;
   }

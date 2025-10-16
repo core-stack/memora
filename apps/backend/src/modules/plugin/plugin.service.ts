@@ -36,6 +36,7 @@ export class PluginService extends TenantService<Plugin> {
     knowledgeInstructions?: string
   ): Promise<Plugin[]> {
     const plugins = await this.knowledgePluginRepository.findPluginByKnowledgeId(knowledgeId);
+    if (!plugins.length) return [];
     const prompt = this.promptService.getTemplate("DecidePluginsToUse").build({ 
       plugins,
       query,

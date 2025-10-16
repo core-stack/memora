@@ -14,7 +14,8 @@ export class KnowledgePluginRepository extends DrizzleGenericRepository<typeof k
       .from(knowledgePlugin)
       .where(eq(knowledgePlugin.knowledgeId, knowledgeId))
       .leftJoin(plugin, eq(knowledgePlugin.pluginId, plugin.id));
-    
+
+    if (res.length === 0) return [];
     return res.map((item) => item.plugin as Plugin);
   }
 }

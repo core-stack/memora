@@ -8,7 +8,8 @@ import {
   RowData, RRFRanker, SearchResultData
 } from '@zilliz/milvus2-sdk-node';
 
-import { VectorStoreError } from '../errors';
+import { InvalidVectorFiltersError } from '../errors/invalid-vector-filters';
+import { VectorMutationError } from '../errors/vector-mutation';
 import { VectorStore, WithSearchOptions } from '../vector-store.service';
 
 export abstract class MilvusService<T extends BaseFragment> extends VectorStore<T> implements OnModuleInit {
@@ -69,7 +70,7 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
       chunks[i].dense = embeddings[i];
     }
     const res = await this.client.insert({ collection_name: this.collectionName, fields_data: chunks });
-    if (res.err_index.length > 0) throw new VectorStoreError(res, "Error adding fragments");
+    if (res.err_index.length > 0) throw new VectorMutationError("Error adding fragments", res);
     await this.client.flushSync({ collection_names: [this.collectionName] });
   }
 
@@ -81,7 +82,7 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
       collection_name: this.collectionName,
       filter: `id in [${ids.map(id => `"${id}"`).join(", ")}]`
     });
-    if (res.err_index.length > 0) throw new VectorStoreError(res, "Error deleting fragments");
+    if (res.err_index.length > 0) throw new VectorMutationError("Error deleting fragments", res);
     await this.client.flushSync({ collection_names: [this.collectionName] });
   }
 
@@ -104,7 +105,7 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
       }
     })
     if (options.term) exprParts.push(`TEXT_MATCH(content, '${options.term}')`);
-
+    
     const filter = exprParts.join(" && ");
     //#endregion
 
@@ -134,15 +135,17 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
       } as HybridSearchSingleReq);
     }
     //#endregion
+    if (!data) throw new InvalidVectorFiltersError("No search data");
     
     const result = await this.client.search({
       collection_name: this.collectionName,
       filter,
-      data,
+      data: data,
       topk: options.topK,
       rerank: options.dense && options.sparse ? this.reranker : undefined
-    }); 
-
+    });
+    console.log(result);
+    
     return this.searchResultToFragment(result.results);
   }
 }

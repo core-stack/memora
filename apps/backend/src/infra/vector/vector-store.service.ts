@@ -1,6 +1,8 @@
 import { BaseFragment, Fragments } from '@/fragment';
 import { buildOptions } from '@/utils/build-options';
 
+import { InvalidVectorFiltersError } from './errors/invalid-vector-filters';
+
 export type SearchOptions = {
   filters?: Record<string, string | number | boolean>;
   topK: number;
@@ -46,6 +48,8 @@ export abstract class VectorStore<T extends BaseFragment> {
     }
   }
   protected buildSearchOptions(...opts: WithSearchOptions[]): SearchOptions {
-    return buildOptions<WithSearchOptions, SearchOptions>({ topK: 5 }, opts);
+    const options = buildOptions<WithSearchOptions, SearchOptions>({ topK: 5 }, opts);
+    if (!options.dense && !options.sparse) throw new InvalidVectorFiltersError("Dense or sparse query must be provided");
+    return options;
   }
 }

@@ -78,7 +78,7 @@ export const ChatInput = () => {
             onInput={handleInput}
             onKeyDown={handleKeyDown}
           />
-          { isEmpty && <span className='absolute p-2 text-md text-muted-foreground'>Type a message...</span> }
+          { isEmpty && <span className='absolute p-2 text-md text-muted-foreground pointer-events-none'>Type a message...</span> }
           <Button
             onClick={handleSend}
             disabled={isEmpty}
