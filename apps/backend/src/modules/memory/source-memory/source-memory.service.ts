@@ -104,11 +104,11 @@ export class SourceMemoryService {
     this.logger.verbose("Finding fragments by term");
     await this.saveInputToRecents(knowledgeId, userInput);
     
-    // const cachedFragments = await this.findFragmentsInCache(knowledgeId, userInput);
-    // if (cachedFragments) {
-    //   this.logger.verbose("Found fragments in cache");
-    //   return Fragments.fromFragmentArray(cachedFragments);
-    // }
+    const cachedFragments = await this.findFragmentsInCache(knowledgeId, userInput);
+    if (cachedFragments) {
+      this.logger.verbose("Found fragments in cache");
+      return Fragments.fromFragmentArray(cachedFragments);
+    }
 
     const fragments = await this.vectorStore.search(
       SourceVectorStoreService.withFilters({ knowledgeId }),
