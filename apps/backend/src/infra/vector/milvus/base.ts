@@ -10,6 +10,7 @@ import {
 
 import { InvalidVectorFiltersError } from '../errors/invalid-vector-filters';
 import { VectorMutationError } from '../errors/vector-mutation';
+import { VectorSearchError } from '../errors/vector-search';
 import { VectorStore, WithSearchOptions } from '../vector-store.service';
 
 export abstract class MilvusService<T extends BaseFragment> extends VectorStore<T> implements OnModuleInit {
@@ -135,6 +136,7 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
       } as HybridSearchSingleReq);
     }
     //#endregion
+    
     if (!data) throw new InvalidVectorFiltersError("No search data");
     
     const result = await this.client.search({
@@ -144,7 +146,7 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
       topk: options.topK,
       rerank: options.dense && options.sparse ? this.reranker : undefined
     });
-    console.log(result);
+    if (result.status.error_code !== "Success") throw new VectorSearchError("Error searching fragments");
     
     return this.searchResultToFragment(result.results);
   }
