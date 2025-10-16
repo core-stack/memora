@@ -25,10 +25,9 @@ export class IngestProcessor extends WorkerHost {
 
     const obj = await this.storage.getObject(source.key);
     if (!obj) throw new Error("File not found");
-
-    await this.vectorStore.addFragments(
-      await this.processor.process(source, await streamToBlob(obj))
-    );
+    const fragments = await this.processor.process(source, await streamToBlob(obj));
+    
+    await this.vectorStore.addFragments(fragments);
   }
 
   @OnWorkerEvent("active")

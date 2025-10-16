@@ -7,6 +7,7 @@ import { MemoryModule } from '@/modules/memory/memory.module';
 import { forwardRef, Module } from '@nestjs/common';
 
 import { KnowledgeModule } from '../../knowledge.module';
+import { ChatModule } from '../chat.module';
 import { MessageController } from './message.controller';
 import { MessageRepository } from './message.repository';
 import { MessageService } from './message.service';
@@ -21,7 +22,8 @@ import { MessageService } from './message.service';
     forwardRef(() => IngestModule),
     LLMModule,
     MemoryModule,
-    PromptModule
+    PromptModule,
+    ChatModule
   ],
   exports: [MessageService, MessageRepository],
 })

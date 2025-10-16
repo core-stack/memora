@@ -3,7 +3,6 @@ import { chatFragmentSchema } from '@memora/schemas';
 import { BaseFragment } from './fragment';
 
 export class ChatFragment extends BaseFragment {
-  seqId?: number;
   role: string;
   chatId: string;
   knowledgeId: string;
@@ -16,7 +15,6 @@ export class ChatFragment extends BaseFragment {
     this.knowledgeId = f.knowledgeId;
     this.chatId = f.chatId;
     this.role = f.role;
-    this.seqId = f.seqId;
     this.tenantId = f.tenantId;
     this.metadata = f.metadata;
     chatFragmentSchema.parse(this);

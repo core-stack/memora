@@ -8,10 +8,11 @@ import {
   RowData, RRFRanker, SearchResultData
 } from '@zilliz/milvus2-sdk-node';
 
+import { VectorStoreError } from '../errors';
 import { VectorStore, WithSearchOptions } from '../vector-store.service';
 
 export abstract class MilvusService<T extends BaseFragment> extends VectorStore<T> implements OnModuleInit {
-  private readonly logger = new Logger(MilvusService.name);
+  protected abstract readonly logger: Logger;
   client: MilvusClient;
 
   @Inject() private readonly embeddings: Embeddings;
@@ -68,8 +69,7 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
       chunks[i].dense = embeddings[i];
     }
     const res = await this.client.insert({ collection_name: this.collectionName, fields_data: chunks });
-
-    this.logger.verbose(res);
+    if (res.err_index.length > 0) throw new VectorStoreError(res, "Error adding fragments");
     await this.client.flushSync({ collection_names: [this.collectionName] });
   }
 
@@ -77,11 +77,11 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
     const ids = this.toFragments(c).map((f: any) => f.id);
     if (!ids.length) return;
 
-    await this.client.delete({
+    const res = await this.client.delete({
       collection_name: this.collectionName,
       filter: `id in [${ids.map(id => `"${id}"`).join(", ")}]`
     });
-
+    if (res.err_index.length > 0) throw new VectorStoreError(res, "Error deleting fragments");
     await this.client.flushSync({ collection_names: [this.collectionName] });
   }
 

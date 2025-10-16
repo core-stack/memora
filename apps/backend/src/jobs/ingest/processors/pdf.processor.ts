@@ -39,8 +39,7 @@ export class PDFProcessor {
         seqId,
         metadata,
         sourceType: SourceType.DOC,
-      }
-      ))
+      }))
     );
   }
 }

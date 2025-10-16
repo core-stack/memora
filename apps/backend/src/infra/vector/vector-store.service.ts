@@ -1,4 +1,5 @@
 import { BaseFragment, Fragments } from '@/fragment';
+import { buildOptions } from '@/utils/build-options';
 
 export type SearchOptions = {
   filters?: Record<string, string | number | boolean>;
@@ -45,15 +46,6 @@ export abstract class VectorStore<T extends BaseFragment> {
     }
   }
   protected buildSearchOptions(...opts: WithSearchOptions[]): SearchOptions {
-    let searchOpts: SearchOptions = { topK: 5 };
-    for (const opt of opts) {
-      searchOpts = { ...searchOpts, ...opt(searchOpts) };
-    }
-  
-    if (!searchOpts.dense || !searchOpts.sparse) throw new Error("dense or sparse is required");
-  
-    return searchOpts;
+    return buildOptions<WithSearchOptions, SearchOptions>({ topK: 5 }, opts);
   }
-  
-
 }

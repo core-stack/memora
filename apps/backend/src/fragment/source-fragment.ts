@@ -19,6 +19,7 @@ export class SourceFragment extends BaseFragment {
     this.tenantId = f.tenantId;
     this.metadata = f.metadata;
     this.sourceId = f.sourceId;
+    this.seqId = f.seqId;
     sourceFragmentSchema.parse(this);
   }
 
