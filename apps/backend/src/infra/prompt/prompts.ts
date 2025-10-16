@@ -2,6 +2,23 @@
 import { PromptTemplate } from './prompt-template';
 
 
+export interface AnwserQuestionVars {
+  question: string;
+  recentMessages: {
+    role: string;
+    content: string;
+  }[];
+  relevantMessages: {
+    content: string;
+    role: string;
+  }[];
+  retrievedFragments: string[];
+}
+
+export const AnwserQuestion = new PromptTemplate<AnwserQuestionVars>(
+  "\nYou are a helpful and knowledgeable assistant.\n\nBelow are details you should use to answer the user's question:\n\n\n**User Question:**\n{{question}}\n\n{{#if (gt recentMessages.length 0)}}\n**Recent Conversation (up to 20 messages):**\n{{#each recentMessages}}\n- {{this.role}}: {{this.content}}\n{{/each}}\n{{/if}}\n\n{{#if (gt relevantMessages.length 0)}}\n**Relevant Messages Retrieved from the Knowledge Base:**\n{{#each relevantMessages}}\n- {{this.role}}: {{this.content}}\n{{/each}}\n{{/if}}\n\n\n{{#if (gt retrievedFragments.length 0)}}\n**Relevant Contents Retrieved from the Knowledge Base:**\n{{#each retrievedFragments}}\n- {{this}}\n{{/each}}\n{{/if}}\n\n**Instructions:**\n1. Always respond in the **same language** the question was asked.\n2. Use the provided messages as context to build an accurate and helpful answer.\n3. **Do not make up information** — if the answer is unclear or unavailable, say that you don't have enough information.\n4. Be clear, concise, and natural in your tone.\n"
+);
+
 export interface DecidePluginsToUseVars {
   query: string;
   knowledgeInstructions?: string;
@@ -38,4 +55,4 @@ export const RunQuery = new PromptTemplate<RunQueryVars>(
 );
 
 
-export const PromptTemplates = { DecidePluginsToUse, GenerateChatName, ImproveQuery, RunQuery } as const;
+export const PromptTemplates = { AnwserQuestion, DecidePluginsToUse, GenerateChatName, ImproveQuery, RunQuery } as const;

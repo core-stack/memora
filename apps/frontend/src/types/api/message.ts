@@ -16,7 +16,7 @@ export interface MessageRoutes {
   "/api/knowledge/:knowledgeSlug/chat/:chatId/message/new": {
     POST: {
       body: CreateMessage;
-      params: { knowledgeSlug: string, chatId: string };
+      params: Partial<{ knowledgeSlug: string, chatId: string }>;
       response: { userMessage: Message; aiMessage: Message; };
     }
   },

@@ -1,11 +1,15 @@
+import moment from 'moment';
+
 import { Fragments, SourceFragment } from '@/fragment';
 import { OriginType } from '@memora/schemas';
+import { Logger } from '@nestjs/common';
 import { RowData, SearchResultData } from '@zilliz/milvus2-sdk-node';
 
 import { MilvusService } from '../base';
 import { sourceFields, sourceFunctions, sourceIndexSchema } from './source-schemas';
 
 export class MilvusSourceVectorStoreService extends MilvusService<SourceFragment> {
+  protected override logger = new Logger(MilvusSourceVectorStoreService.name);
   constructor() {
     super(SourceFragment, "source", sourceFields, sourceFunctions, sourceIndexSchema)
   }
@@ -21,8 +25,8 @@ export class MilvusSourceVectorStoreService extends MilvusService<SourceFragment
       knowledgeId: c.knowledgeId,
       tenantId: c.tenantId,
       sourceType: c.sourceType,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+      createdAt: c.createdAt.getTime() ?? Date.now(),
+      updatedAt: c.updatedAt.getTime() ?? Date.now(),
       metadata: c.metadata
     }));
   }
@@ -32,13 +36,14 @@ export class MilvusSourceVectorStoreService extends MilvusService<SourceFragment
       data.map(c => new SourceFragment({
         content: c.content,
         id: c.id,
+        seqId: c.seqId,
         sourceId: c.sourceId,
         knowledgeId: c.knowledgeId,
         metadata: c.metadata,
         sourceType: c.sourceType,
         tenantId: c.tenantId,
-        createdAt: new Date(c.createdAt),
-        updatedAt: new Date(c.updatedAt),
+        createdAt: moment(Number(c.createdAt)).toDate(),
+        updatedAt: moment(Number(c.updatedAt)).toDate(),
       }))
     );
   }

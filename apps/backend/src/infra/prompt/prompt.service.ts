@@ -2,17 +2,16 @@ import { readdir, readFile, writeFile } from 'fs/promises';
 import matter from 'gray-matter';
 import { join, resolve } from 'path';
 
+import { env } from '@/env';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 import { PromptTemplate } from './prompt-template';
-
-export const TEMPLATES_DIR = resolve(process.cwd(), 'src/infra/prompt/prompts');
 
 @Injectable()
 export class PromptService implements OnModuleInit {
   private readonly logger = new Logger(PromptService.name);
 
-  private templatesDir = TEMPLATES_DIR;
+  private templatesDir = env.PROMPT_TEMPLATES_DIR;
 
   private templates = new Map<string, PromptTemplate<any>>();
 
@@ -38,9 +37,10 @@ export class PromptService implements OnModuleInit {
 
         const name = file.replace(/\..+$/, '');
         const interfaceName = this.camelToPascal(name) + 'Vars';
-        const vars = Object.entries(data.vars || {})
-          .map(([k, v]) => `  ${k}: ${v};`)
-          .join('\n');
+        // const vars = Object.entries(data.vars || {})
+        //   .map(([k, v]) => `  ${k}: ${v};`)
+        //   .join('\n');
+        const vars = this.stringifyVars(data.vars || {}, 2);
 
         decls.push(`export interface ${interfaceName} {\n${vars}\n}\n`);
 
@@ -63,6 +63,27 @@ export class PromptService implements OnModuleInit {
     await writeFile(outputPath, decls.join('\n'), { encoding: 'utf-8' });
 
     this.logger.log(`Prompt types and instances generated at: ${outputPath}`);
+  }
+
+  private stringifyVars(obj: any, indent = 0): string {
+    const pad = ' '.repeat(indent);
+    return Object.entries(obj)
+      .map(([key, value]) => {
+        if (typeof value === 'string') return `${pad}${key}: ${value};`;
+        if (Array.isArray(value)) {
+          if (value.length === 0) return `${pad}${key}: any[];`;
+          const first = value[0];
+          if (typeof first === 'string') return `${pad}${key}: ${first}[];`;
+          if (typeof first === 'object') {
+            return `${pad}${key}: {\n${this.stringifyVars(first, indent + 2)}\n${pad}}[];`;
+          }
+        }
+        if (typeof value === 'object') {
+          return `${pad}${key}: {\n${this.stringifyVars(value, indent + 2)}\n${pad}};`;
+        }
+        return `${pad}${key}: any;`;
+      })
+      .join('\n');
   }
 
   // @ts-ignore

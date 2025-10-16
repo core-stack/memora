@@ -61,13 +61,10 @@ export function useApiMutation<
       if (options.passParams === undefined) options.passParams = true;
       if (options.passQuery === undefined) options.passQuery = true;
       
-      const params = p ?? (options.passParams ? routeParams : {});
-      
-      const searchParams: Record<string, string> = {};
-      for (const [key, value] of routeSearchParams.entries()) {
-        searchParams[key] = value;
-      }
-      const query = q ?? (options.passQuery ? searchParams : {});            
+      const params = { ...(options.passParams ? routeParams : {}), ...p ?? {} };
+      const query = { ...(options.passQuery ? Object.fromEntries(routeSearchParams.entries()) : {}), ...q ?? {} };
+
+      // const query = q ?? (options.passQuery ? searchParams : {});            
       const url = buildUrl(key, params, query);
 
       const res = await fetch(url, {

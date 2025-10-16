@@ -11,10 +11,6 @@ export const chatFields: FieldType[] = [
     is_primary_key: true,
   },
   {
-    name: "seqId",
-    data_type: DataType.Int32
-  },
-  {
     name: "dense",
     data_type: DataType.FloatVector,
     dim: env.EMBEDDING_DIMENSION

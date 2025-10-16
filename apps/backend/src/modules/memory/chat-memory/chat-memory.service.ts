@@ -1,10 +1,11 @@
 import { ChatFragment, Fragments } from '@/fragment';
 import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
+import { buildOptions } from '@/utils/build-options';
 import { Message } from '@memora/schemas';
 import { Injectable, Logger } from '@nestjs/common';
 
 export type ChatSearchOptions = {
-  lastNMessages?: number;
+  // lastNMessages?: number;
   searchQuery?: string | { topK?: number, query: string };
   filters?: Record<string, string | number | boolean>;
 }
@@ -21,10 +22,6 @@ export class ChatMemoryService {
   ) {}
   
   private async messageToFragment(message: Message): Promise<ChatFragment> {
-    const fragments = await this.chatVectorStore.search(
-      ChatVectorStoreService.withChatId(message.chatId)
-    );
-
     return ChatFragment.fromObject({
       id: message.id,
       chatId: message.chatId,
@@ -33,7 +30,6 @@ export class ChatMemoryService {
       knowledgeId: message.knowledgeId,
       role: message.messageRole,
       tenantId: message.tenantId,
-      seqId: fragments.length,
       metadata: {},
       updatedAt: message.updatedAt
     });
@@ -53,16 +49,16 @@ export class ChatMemoryService {
       lastNMessages: Fragments.fromFragmentArray([]),
       searchQuery: Fragments.fromFragmentArray([]),
     }
-    if (options.lastNMessages) {
-      response.lastNMessages = await this.chatVectorStore.searchLastNMessages(chatId, options.lastNMessages);
-    }
+    // if (options.lastNMessages) {
+    //   response.lastNMessages = await this.chatVectorStore.searchLastNMessages(chatId, options.lastNMessages);
+    // }
     if (options.searchQuery) {
-      const withQuery = await this.chatVectorStore.search(
+      const searchQuery = await this.chatVectorStore.search(
         ChatVectorStoreService.withChatId(chatId),
         ChatVectorStoreService.withQuery(options.searchQuery),
         options.filters && ChatVectorStoreService.withFilters(options.filters)
       )
-      response.searchQuery = withQuery;
+      response.searchQuery = searchQuery;
     }
     return response;
   }
@@ -75,11 +71,11 @@ export class ChatMemoryService {
     }
   }
 
-  static withLastNMessages(lastNMessages: number): WithChatSearchOptions {
-    return (currentOpts: Partial<ChatSearchOptions>) => {
-      return { ...currentOpts, lastNMessages };
-    }
-  }
+  // static withLastNMessages(lastNMessages: number): WithChatSearchOptions {
+  //   return (currentOpts: Partial<ChatSearchOptions>) => {
+  //     return { ...currentOpts, lastNMessages };
+  //   }
+  // }
 
   static withSearchQuery(searchQuery: string): WithChatSearchOptions {
     return (currentOpts: Partial<ChatSearchOptions>) => {
@@ -88,11 +84,6 @@ export class ChatMemoryService {
   }
 
   protected buildChatSearchOptions(...opts: WithChatSearchOptions[]) {
-    let searchOpts: ChatSearchOptions = { };
-    for (const opt of opts) {
-      searchOpts = { ...searchOpts, ...opt(searchOpts) };
-    }
-
-    return searchOpts;
+    return buildOptions<WithChatSearchOptions, ChatSearchOptions>({}, opts);
   }
 }

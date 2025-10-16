@@ -8,12 +8,22 @@ import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.ser
 import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
 import { PluginService } from '@/modules/plugin/plugin.service';
 import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
-import { mergeBy } from '@/utils/array';
+import { buildOptions } from '@/utils/build-options';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import { Finder, FindOptions } from './find-options';
-
 import type { Recent } from "@memora/schemas";
+export type FindOptions = {
+  knowledgeId: string;
+  userInput: string;
+  chatId?: string;
+  metadata?: Record<string, any>;
+  forceUsePlugins?: string[]; // list of plugin ids
+  excludePlugins?: string[]; // list of plugin ids
+}
+
+export type Finder = (...args: any[]) => Partial<FindOptions>;
+
+
 @Injectable()
 export class SourceMemoryService {
   private readonly logger = new Logger(SourceMemoryService.name);
@@ -29,11 +39,7 @@ export class SourceMemoryService {
   ) {}
 
   private buildFindOptions(knowledgeId: string, userInput: string, ...opts: Finder[]): FindOptions {
-    let findOpts: FindOptions = { knowledgeId, userInput }
-    for (const opt of opts) {
-      findOpts = { ...findOpts, ...opt(findOpts) };
-    }
-    return findOpts;
+    return buildOptions({ knowledgeId, userInput }, opts);
   }
 
   async find(knowledgeId: string, userInput: string, ...options: Finder[]): Promise<Fragments<SourceFragment>> {
@@ -49,20 +55,20 @@ export class SourceMemoryService {
     );
 
     // heat up plugins
-    const forcedPlugins = opts.forceUsePlugins ? await this.pluginService.findByIDList(opts.forceUsePlugins) : [];
-    const relevantPlugins = await this.pluginService.getRelevantPlugins(improvedQuery, knowledgeId, knowledge.instructions);
-    const plugins = mergeBy("id", forcedPlugins, relevantPlugins).filter(p => !opts.excludePlugins?.includes(p.id));
-    await this.pluginManager.preloadPlugins(plugins);
+    // const forcedPlugins = opts.forceUsePlugins ? await this.pluginService.findByIDList(opts.forceUsePlugins) : [];
+    // const relevantPlugins = await this.pluginService.getRelevantPlugins(improvedQuery, knowledgeId, knowledge.instructions);
+    // const plugins = mergeBy("id", forcedPlugins, relevantPlugins).filter(p => !opts.excludePlugins?.includes(p.id));
+    // await this.pluginManager.preloadPlugins(plugins);
 
     const fragments = new Fragments<SourceFragment>();
 
-    for (const p of plugins) {
-      const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, improvedQuery);
-      this.logger.debug(`Plugin ${p.pluginRegistry} response: ${pluginResponse}`);
-    }
-
+    // for (const p of plugins) {
+    //   const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, improvedQuery);
+    //   this.logger.debug(`Plugin ${p.pluginRegistry} response: ${pluginResponse}`);
+    // }
+    
     return fragments.merge(await this.vectorStore.search(
-      SourceVectorStoreService.withFilters({ knowledgeId }),
+      SourceVectorStoreService.withFilters({ knowledgeId, ...opts.metadata }),
       SourceVectorStoreService.withDense({ query: improvedQuery, topK: 100 }),
       SourceVectorStoreService.withSparse({ query: improvedQuery, topK: 100 }),
       SourceVectorStoreService.withTopK(10),
@@ -117,5 +123,15 @@ export class SourceMemoryService {
 
   async findRecent(knowledgeId: string) {
     return this.cacheService.get<string[]>("recent", { namespace: knowledgeId });
+  }
+
+  static withMetadata(metadata: Record<string, any>): Finder {
+    return prev => ({ ...prev, metadata });
+  }
+  static withExcludePlugins(plugins: string[]): Finder {
+    return prev => ({ ...prev, excludePlugins: plugins });
+  }
+  static withForceUsePlugins(plugins: string[]): Finder {
+    return prev => ({ ...prev, forceUsePlugins: plugins });
   }
 }

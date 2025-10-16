@@ -2,8 +2,7 @@ import z from 'zod';
 
 import { BaseFragment, Fragments } from '@/fragment';
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
-
-import { PromptService } from '../prompt/prompt.service';
+import { Inject } from '@nestjs/common';
 
 export type QueryOptions<T extends BaseFragment> = {
   knowledgeInstructions?: string;
@@ -13,26 +12,7 @@ export type QueryOptions<T extends BaseFragment> = {
 export type WithQueryOptions<T extends BaseFragment> = (currentOpts: QueryOptions<T>) => QueryOptions<T>;
 
 export class LLMService {
-  constructor(
-    private readonly llm: BaseChatModel,
-    private readonly promptService: PromptService,
-  ) {}
-
-  // async improveQuery(query: string, knowledgeInstructions?: string): Promise<string> {
-  //   const { text } = await this.llm.invoke(
-  //     this.promptService.getTemplate("ImproveQuery").build({ knowledgeInstructions, query })
-  //   );
-  //   return text;
-  // }
-
-  // async decidePluginsToUse(query: string, knowledgeInstructions?: string, plugins: Plugin[] = []): Promise<Plugin[]> {
-  //   const idSchema = z.array(z.string().uuid()).describe("Plugin ids");
-  //   const structuredLLM = this.llm.withStructuredOutput<z.infer<typeof idSchema>>(idSchema);
-  //   const ids = await structuredLLM.invoke(
-  //     this.promptService.getTemplate("DecidePluginsToUse").build({ plugins, query, knowledgeInstructions })
-  //   );
-  //   return plugins.filter(p => ids.includes(p.id));
-  // }
+  constructor(@Inject(BaseChatModel) private readonly llm: BaseChatModel) {}
 
   async query(query: string): Promise<any> {
     const res = await this.llm.generate([[{ content: query, role: "user" }]]);

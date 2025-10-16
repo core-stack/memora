@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import moment from 'moment';
 
 import { BaseFragment as FragmentType, baseFragmentSchema } from '@memora/schemas';
 
@@ -16,9 +17,10 @@ export abstract class BaseFragment implements IFragment {
   ) {
     this.content = f.content;
     this.id = f.id || randomUUID();
-    this.createdAt = f.createdAt || new Date();
-    this.updatedAt = f.updatedAt || new Date();
+    this.createdAt = moment(f.createdAt).toDate();
+    this.updatedAt = moment(f.updatedAt).toDate();
     this.metadata = f.metadata;
+    
     baseFragmentSchema.parse(this);
   }
 }

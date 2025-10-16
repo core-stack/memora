@@ -39,32 +39,24 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
     { method: "GET", params: { id: chatId ?? "" }, enabled: !!chatId }
   );
 
-  const { mutate: createChatWithMessage } = useApiMutation(
-    "/api/knowledge/:knowledgeSlug/chat/with-message",
+  const { mutate: createChatMutation } = useApiMutation(
+    "/api/knowledge/:knowledgeSlug/chat",
     { method: "POST" }
   );
   const { mutate: sendChatMessage } = useApiMutation(
     "/api/knowledge/:knowledgeSlug/chat/:chatId/message/new",
     { method: "POST" }
   )
-  const createChat = async (initialMessage: string) => {
-    createChatWithMessage(
-      { body: { initialMessage } },
-      {
-        onSuccess: (data) => {
-          router.replace(`/${knowledgeSlug}/chat/${data.id}`)
-          invalidate('/api/knowledge/:knowledgeSlug/chat');
-        }
-      }
-    )
-  }
 
-  const sendMessage = async (message: string) => {
+  const sendMessage = async (message: string, chatId?: string) => {
+    console.log(chatId);
+    
     optimisticUpdate((prev) => {
+      if (!prev) return [];
       return [
         ...prev,
         {
-          chatId: chat?.id ?? "",
+          chatId: chatId ?? chat?.id ?? "",
           content: message,
           knowledgeId: chat?.knowledgeId ?? "",
           tenantId: chat?.tenantId ?? "",
@@ -75,7 +67,7 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
         },
         {
           streaming: true,
-          chatId: chat?.id ?? "",
+          chatId: chatId ?? chat?.id ?? "",
           content: "",
           knowledgeId: chat?.knowledgeId ?? "",
           tenantId: chat?.tenantId ?? "",
@@ -87,11 +79,23 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
       ]
     });
 
-    sendChatMessage({ body: { content: message } }, {
+    sendChatMessage({ body: { content: message }, params: chatId ? { chatId } : undefined }, {
       onSuccess: () => {
         invalidate("/api/knowledge/:knowledgeSlug/chat/:chatId/message");
       }
     });
+  }
+
+  const createChat = async (initialMessage: string) => {
+    createChatMutation({ body: { name: "" } },
+      {
+        onSuccess: (data) => {
+          router.replace(`/${knowledgeSlug}/chat/${data.id}`);
+          invalidate('/api/knowledge/:knowledgeSlug/chat');
+          sendMessage(initialMessage, data.id);
+        }
+      }
+    )
   }
 
   return (
