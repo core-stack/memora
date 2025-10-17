@@ -4,54 +4,41 @@
 FROM node:20-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+
 RUN corepack enable
 RUN apk update
 RUN apk add --no-cache libc6-compat
+RUN pnpm add -g turbo@2.5.8
 
 # ==============================
 # Builder
 # ==============================
 FROM base AS builder
-
 WORKDIR /app
 
-RUN pnpm add -g turbo@2.5.8
 COPY . .
 
-RUN turbo prune @snipet/backend --docker
+RUN pnpm install --frozen-lockfile
+RUN pnpm build
 
-FROM base AS installer
-
-WORKDIR /app
-ENV NODE_ENV=development
-
-COPY --from=builder /app/out/json/ .
-
-RUN pnpm add -g turbo@2.5.8
-RUN pnpm install
-
-COPY --from=builder /app/out/full/ ./full
-
-WORKDIR /app/full
-
-RUN pnpm add -g bunchee@6.4.0
-
-RUN pnpm install -g @nestjs/cli
-
-RUN pnpm install
-
-RUN pnpm turbo run build
-
+# ==============================
+# Runner
+# ==============================
 FROM base AS runner
 ENV NODE_ENV=production
-
+ENV SERVE_STATIC=/app/apps/frontend/dist
 WORKDIR /app
 
-# COPY --from=installer /app/full/apps/frontend/dist ./public
-COPY --from=installer /app/full/apps/backend/dist ./dist
-COPY --from=installer /app/full/apps/backend/node_modules ./node_modules
-COPY --from=installer /app/full/apps/backend/package.json ./package.json
-COPY --from=installer /app/full/apps/backend/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
+COPY --from=builder /app/apps/backend/node_modules ./apps/backend/node_modules
+COPY --from=builder /app/apps/backend/package.json ./apps/backend/package.json
 
+COPY --from=builder /app/apps/frontend/dist ./apps/frontend/dist
+COPY --from=builder /app/apps/frontend/node_modules ./apps/frontend/node_modules
+COPY --from=builder /app/apps/frontend/package.json ./apps/frontend/package.json
 
-CMD ["node", "dist/src/main"]
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/turbo.json ./turbo.json
+
+CMD ["npm", "start:docker"]
