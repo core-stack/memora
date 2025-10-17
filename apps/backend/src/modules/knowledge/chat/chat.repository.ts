@@ -2,7 +2,7 @@ import { eq, sql } from 'drizzle-orm';
 
 import { chat, message } from '@/db/schema';
 import { DrizzleGenericRepository } from '@/generics';
-import { Chat } from '@memora/schemas';
+import { Chat } from '@snipet/schemas';
 
 export class ChatRepository extends DrizzleGenericRepository<typeof chat, Chat> {
   constructor() {

@@ -1,4 +1,4 @@
-import type { SourceFragment, Recent } from "@memora/schemas"
+import type { SourceFragment, Recent } from "@snipet/schemas"
 
 export interface SearchRoutes {
   "/api/knowledge/:knowledgeSlug/search": {

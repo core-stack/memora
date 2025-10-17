@@ -18,7 +18,7 @@ WORKDIR /app
 RUN pnpm add -g turbo@2.5.8
 COPY . .
 
-RUN turbo prune @memora/backend --docker
+RUN turbo prune @snipet/backend --docker
 
 FROM base AS installer
 

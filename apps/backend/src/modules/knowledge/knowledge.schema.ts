@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import { createKnowledgeSchema, knowledgeSchema, updateKnowledgeSchema } from '@memora/schemas';
+import { createKnowledgeSchema, knowledgeSchema, updateKnowledgeSchema } from '@snipet/schemas';
 
 export const knowledge = knowledgeSchema.extend({
   tenantId: z.string().uuid()

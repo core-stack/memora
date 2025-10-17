@@ -1,8 +1,8 @@
 import { env } from '@/env';
 import { CrudService } from '@/generics';
 import { HttpContext } from '@/generics/http-context';
-import { CreateKnowledge, Knowledge, UpdateKnowledge } from '@memora/schemas';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { CreateKnowledge, Knowledge, UpdateKnowledge } from '@snipet/schemas';
 
 import { KnowledgeRepository } from './knowledge.repository';
 

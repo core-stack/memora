@@ -1,4 +1,4 @@
-import type { PluginFilter, CreatePlugin, UpdatePlugin, Plugin } from "@memora/schemas"
+import type { PluginFilter, CreatePlugin, UpdatePlugin, Plugin } from "@snipet/schemas"
 
 export interface PluginRoutes {
   "/api/plugin": {

@@ -6,7 +6,7 @@ import { DateFormat, formatDate } from '@/utils/format';
 
 import { Skeleton } from '../ui/skeleton';
 
-import type { Message } from '@memora/schemas';
+import type { Message } from '@snipet/schemas';
 
 type Props = Message & {
   streaming?: boolean

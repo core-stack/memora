@@ -1,8 +1,8 @@
 import { ChatFragment, Fragments } from '@/fragment';
 import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
 import { buildOptions } from '@/utils/build-options';
-import { Message } from '@memora/schemas';
 import { Injectable, Logger } from '@nestjs/common';
+import { Message } from '@snipet/schemas';
 
 export type ChatSearchOptions = {
   // lastNMessages?: number;

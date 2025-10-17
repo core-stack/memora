@@ -1,9 +1,9 @@
 import { CrudController } from '@/generics';
+import { Controller } from '@nestjs/common';
 import {
   createKnowledgeFolderSchema, KnowledgeFolder, knowledgeFolderFilterSchema,
   updateKnowledgeFolderSchema
-} from '@memora/schemas';
-import { Controller } from '@nestjs/common';
+} from '@snipet/schemas';
 
 import { FolderService } from './folder.service';
 

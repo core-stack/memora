@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import moment from 'moment';
 
-import { BaseFragment as FragmentType, baseFragmentSchema } from '@memora/schemas';
+import { BaseFragment as FragmentType, baseFragmentSchema } from '@snipet/schemas';
 
 export interface IFragment extends FragmentType {};
 

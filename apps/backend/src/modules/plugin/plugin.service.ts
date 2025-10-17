@@ -6,8 +6,8 @@ import { SecurityService } from '@/infra/security/security.service';
 import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
 import { PluginRegistryWithInput } from '@/plugin-registry/plugin-registry';
 import { PluginRegistryService } from '@/plugin-registry/plugin-registry.service';
-import { buildConfigObjectSchema, Plugin } from '@memora/schemas';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { buildConfigObjectSchema, Plugin } from '@snipet/schemas';
 
 import { KnowledgePluginRepository } from './knowledge-plugin.repository';
 import { PluginRepository } from './plugin.repository';

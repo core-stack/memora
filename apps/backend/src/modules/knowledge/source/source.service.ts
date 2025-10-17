@@ -6,9 +6,9 @@ import { CrudService } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
 import { HttpContext } from '@/generics/http-context';
 import { StorageService } from '@/infra/storage/storage.service';
-import { GetUploadUrl, Source } from '@memora/schemas';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { GetUploadUrl, Source } from '@snipet/schemas';
 
 import { FolderService } from '../folder/folder.service';
 import { KnowledgeService } from '../knowledge.service';

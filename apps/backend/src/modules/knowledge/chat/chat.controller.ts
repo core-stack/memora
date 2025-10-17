@@ -1,6 +1,6 @@
 import { CrudController } from '@/generics';
-import { Chat, chatFilterSchema, createChatSchema, updateChatSchema } from '@memora/schemas';
 import { Controller } from '@nestjs/common';
+import { Chat, chatFilterSchema, createChatSchema, updateChatSchema } from '@snipet/schemas';
 
 import { ChatService } from './chat.service';
 

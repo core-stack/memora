@@ -1,4 +1,4 @@
-import { SourceFragmentMetadata, sourceFragmentSchema, SourceType } from '@memora/schemas';
+import { SourceFragmentMetadata, sourceFragmentSchema, SourceType } from '@snipet/schemas';
 
 import { BaseFragment } from './fragment';
 

@@ -6,7 +6,7 @@ import { useApiQuery } from '@/hooks/use-api-query';
 import { useParams } from '@/hooks/use-params';
 import { useRouter } from '@/hooks/use-router';
 
-import type { Chat, Message } from '@memora/schemas';
+import type { Chat, Message } from '@snipet/schemas';
 type ChatContextType = {
   chat?: Chat;
   loadingChat: boolean;

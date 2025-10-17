@@ -1,10 +1,10 @@
-import { ZodQuery } from "@/shared/decorators/zod-query";
-import { pluginRegistryFilterSchema } from "@memora/schemas";
-import { Controller, Get } from "@nestjs/common";
+import { ZodQuery } from '@/shared/decorators/zod-query';
+import { Controller, Get } from '@nestjs/common';
+import { pluginRegistryFilterSchema } from '@snipet/schemas';
 
-import { PluginRegistryService } from "./plugin-registry.service";
+import { PluginRegistryService } from './plugin-registry.service';
 
-import type { PluginRegistryFilter } from "@memora/schemas";
+import type { PluginRegistryFilter } from "@snipet/schemas";
 
 @Controller("plugin-registry")
 export class PluginRegistryController {

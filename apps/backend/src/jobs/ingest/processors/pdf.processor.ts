@@ -3,8 +3,8 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { env } from '@/env';
 import { Fragments, SourceFragment } from '@/fragment';
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
-import { FragmentFileMetadata, Source, SourceType } from '@memora/schemas';
 import { Injectable } from '@nestjs/common';
+import { FragmentFileMetadata, Source, SourceType } from '@snipet/schemas';
 
 @Injectable()
 export class PDFProcessor {

@@ -1,4 +1,4 @@
-import type { Chat, ChatFilter, CreateChat, UpdateChat } from "@memora/schemas";
+import type { Chat, ChatFilter, CreateChat, UpdateChat } from "@snipet/schemas";
 
 export interface ChatRoutes {
   "/api/knowledge/:knowledgeSlug/chat": {

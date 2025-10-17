@@ -1,8 +1,8 @@
 import moment from 'moment';
 
 import { Fragments, SourceFragment } from '@/fragment';
-import { OriginType } from '@memora/schemas';
 import { Logger } from '@nestjs/common';
+import { OriginType } from '@snipet/schemas';
 import { RowData, SearchResultData } from '@zilliz/milvus2-sdk-node';
 
 import { MilvusService } from '../base';

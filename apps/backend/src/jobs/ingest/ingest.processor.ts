@@ -4,13 +4,13 @@ import streamToBlob from 'stream-to-blob';
 import { StorageService } from '@/infra/storage/storage.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
 import { SourceRepository } from '@/modules/knowledge/source/source.repository';
-import { Source } from '@memora/schemas';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject } from '@nestjs/common';
+import { Source } from '@snipet/schemas';
 
 import { ProcessorManager } from './processor-manager';
 
-@Processor("ingest", { concurrency: 5 })
+@Processor("ingest", { concurrency: 1 })
 export class IngestProcessor extends WorkerHost {
   @Inject() private readonly processor!: ProcessorManager;
   @Inject() private readonly vectorStore!: SourceVectorStoreService;

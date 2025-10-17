@@ -1,4 +1,4 @@
-import type { KnowledgeFilter, CreateKnowledge, Knowledge, UpdateKnowledge } from "@memora/schemas"
+import type { KnowledgeFilter, CreateKnowledge, Knowledge, UpdateKnowledge } from "@snipet/schemas"
 
 export interface KnowledgeRoutes {
   "/api/knowledge": {

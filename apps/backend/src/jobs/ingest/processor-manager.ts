@@ -1,6 +1,6 @@
 import { Fragments, SourceFragment } from '@/fragment';
-import { OriginType, Source, SourceType } from '@memora/schemas';
 import { Inject, Injectable } from '@nestjs/common';
+import { OriginType, Source, SourceType } from '@snipet/schemas';
 
 import { PDFProcessor } from './processors/pdf.processor';
 

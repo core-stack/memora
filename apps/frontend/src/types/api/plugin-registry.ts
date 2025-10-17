@@ -1,4 +1,4 @@
-import type { PluginRegistry, PluginRegistryFilter } from "@memora/schemas"
+import type { PluginRegistry, PluginRegistryFilter } from "@snipet/schemas"
 
 export interface PluginRegistryRoutes {
   "/api/plugin-registry": {

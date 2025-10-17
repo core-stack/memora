@@ -1,7 +1,7 @@
 import { HttpContext } from '@/generics/http-context';
 import { TenantService } from '@/generics/tenant.service';
-import { Chat } from '@memora/schemas';
 import { Injectable } from '@nestjs/common';
+import { Chat } from '@snipet/schemas';
 
 import { KnowledgeService } from '../knowledge.service';
 import { ChatRepository } from './chat.repository';

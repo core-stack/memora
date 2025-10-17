@@ -4,18 +4,18 @@ import {
   AlertCircle, Download, ExternalLink, Eye, ImageIcon, Loader2, Music, Video
 } from 'lucide-react';
 
+import { FileViewer } from '@/components/file-viewer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { DateFormat, useDateTimeFormat } from '@/hooks/use-date-time-format';
 import { formatBytes } from '@/utils/format';
-import { SourceType } from '@memora/schemas';
+import { SourceType } from '@snipet/schemas';
 
 import { IndexStatusBadge } from './index-status-badge';
 
-import type { Source } from "@memora/schemas";
-
+import type { Source } from "@snipet/schemas";
 type Props = {
   data?: Source;
   isLoading: boolean;
@@ -131,6 +131,7 @@ export function ContentPreview({ isLoading, data }: Props) {
       <Separator />
 
       <CardContent className="flex-1 p-0">
+        <FileViewer />
         {renderPreview()}
       </CardContent>
     </Card>

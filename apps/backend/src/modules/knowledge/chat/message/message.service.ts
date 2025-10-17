@@ -6,8 +6,8 @@ import { LLMService } from '@/infra/llm/llm.service';
 import { PromptService } from '@/infra/prompt/prompt.service';
 import { ChatMemoryService } from '@/modules/memory/chat-memory/chat-memory.service';
 import { SourceMemoryService } from '@/modules/memory/source-memory/source-memory.service';
-import { Message } from '@memora/schemas';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Message } from '@snipet/schemas';
 
 import { KnowledgeService } from '../../knowledge.service';
 import { ChatService } from '../chat.service';

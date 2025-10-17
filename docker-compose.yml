@@ -23,7 +23,7 @@ services:
       AWS_REGION: ${AWS_REGION-us-east-1}
       AWS_ENDPOINT: ${AWS_ENDPOINT-http://minio:9000}
       AWS_PUBLIC_BUCKET_BASE_URL: ${AWS_PUBLIC_BUCKET_BASE_URL-http://minio:9000}
-      AWS_BUCKET: ${AWS_BUCKET-memora}
+      AWS_BUCKET: ${AWS_BUCKET-snipet}
       AWS_FORCE_PATH_STYLE: ${AWS_FORCE_PATH_STYLE-true}
     depends_on:
       - redis

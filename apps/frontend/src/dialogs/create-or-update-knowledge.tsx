@@ -11,13 +11,13 @@ import { Form } from '@/components/ui/form';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
+import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createKnowledgeSchema } from '@memora/schemas';
+import { createKnowledgeSchema } from '@snipet/schemas';
 
 import { DialogType } from './';
 
-import type { CreateKnowledge, Knowledge } from '@memora/schemas';
-import { useToast } from '@/hooks/use-toast';
+import type { CreateKnowledge, Knowledge } from '@snipet/schemas';
 const generateSlug = (name: string) => {
   return name
     .toLowerCase()

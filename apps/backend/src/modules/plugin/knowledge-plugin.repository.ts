@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 
 import { knowledgePlugin, plugin } from '@/db/schema';
 import { DrizzleGenericRepository } from '@/generics';
-import { KnowledgePlugin, Plugin } from '@memora/schemas';
+import { KnowledgePlugin, Plugin } from '@snipet/schemas';
 
 export class KnowledgePluginRepository extends DrizzleGenericRepository<typeof knowledgePlugin, KnowledgePlugin> {
   constructor() {

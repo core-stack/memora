@@ -5,8 +5,8 @@ import { knowledge } from '@/db/schema';
 import { knowledgeTag } from '@/db/schema/knowledge_tag';
 import { DrizzleGenericRepository } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
-import { KnowledgeTag } from '@memora/schemas';
 import { Injectable } from '@nestjs/common';
+import { KnowledgeTag } from '@snipet/schemas';
 
 import { CreateKnowledge, Knowledge, UpdateKnowledge } from './knowledge.schema';
 

@@ -11,11 +11,11 @@ import { Separator } from '@/components/ui/separator';
 import { DateFormat, useDateTimeFormat } from '@/hooks/use-date-time-format';
 import { cn } from '@/lib/utils';
 import { formatBytes, formatDuration } from '@/utils/format';
-import { SourceType } from '@memora/schemas';
+import { SourceType } from '@snipet/schemas';
 
 import { IndexStatusBadge } from './index-status-badge';
 
-import type { Source } from '@memora/schemas';
+import type { Source } from '@snipet/schemas';
 
 interface FileInfoPanelProps {
   item?: Source;

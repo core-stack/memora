@@ -12,7 +12,7 @@ import { mergeBy } from '@/utils/array';
 import { buildOptions } from '@/utils/build-options';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import type { Recent } from "@memora/schemas";
+import type { Recent } from "@snipet/schemas";
 export type FindOptions = {
   knowledgeId: string;
   userInput: string;

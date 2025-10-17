@@ -1,6 +1,6 @@
-import { tag } from "@/db/schema";
-import { DrizzleGenericRepository } from "@/generics";
-import { Tag } from "@memora/schemas";
+import { tag } from '@/db/schema';
+import { DrizzleGenericRepository } from '@/generics';
+import { Tag } from '@snipet/schemas';
 
 export class TagRepository extends DrizzleGenericRepository<typeof tag, Tag> {
   constructor() {

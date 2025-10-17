@@ -1,4 +1,4 @@
-import { chatFragmentSchema } from '@memora/schemas';
+import { chatFragmentSchema } from '@snipet/schemas';
 
 import { BaseFragment } from './fragment';
 

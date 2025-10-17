@@ -3,8 +3,8 @@ import * as path from 'path';
 
 import { env } from '@/env';
 import { StorageService } from '@/infra/storage/storage.service';
-import { Plugin } from '@memora/schemas';
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Plugin } from '@snipet/schemas';
 
 import { PluginProviderRegistry } from './plugin-provider.service';
 import { PluginRegistryWithInput, pluginRegistryWithInputSchema } from './plugin-registry';
@@ -79,8 +79,8 @@ export class PluginRegistryService implements OnModuleInit {
 
       let newPlugin = false;
       let pluginJson: PluginRegistryWithInput | undefined;
-      // Check for memora-plugin.json
-      const pluginJsonPath = path.join(pluginPath, 'memora-plugin.json');
+      // Check for snipet-plugin.json
+      const pluginJsonPath = path.join(pluginPath, 'snipet-plugin.json');
       if (fs.existsSync(pluginJsonPath)) {
         try {
           pluginJson = pluginRegistryWithInputSchema.parse(JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8')));

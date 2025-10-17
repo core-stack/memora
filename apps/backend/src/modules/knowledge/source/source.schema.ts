@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import { createSourceSchema, indexStatusSchema, updateSourceSchema } from '@memora/schemas';
+import { createSourceSchema, indexStatusSchema, updateSourceSchema } from '@snipet/schemas';
 
 export const createSource = createSourceSchema.extend({
   tenantId: z.string().uuid(),

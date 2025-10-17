@@ -1,4 +1,4 @@
-import type { PluginRegistry } from '@memora/schemas';
+import type { PluginRegistry } from '@snipet/schemas';
 import React, { useState } from 'react';
 
 export enum Tab {

@@ -1,4 +1,4 @@
-import type { TagFilter, CreateTag, UpdateTag, Tag } from "@memora/schemas"
+import type { TagFilter, CreateTag, UpdateTag, Tag } from "@snipet/schemas"
 
 export interface TagRoutes {
   "/api/tag": {

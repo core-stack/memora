@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const PREFIX = '@memora/';
+const PREFIX = '@snipet/';
 
 export const useLocalStorage = <T = string>(key: string, defaultValue?: T | null) => {
   const k = PREFIX + key;

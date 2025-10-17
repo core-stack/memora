@@ -1,17 +1,16 @@
 import { Calendar, ChartPie, Database, Edit, File, Trash2 } from 'lucide-react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Link } from '@/components/ui/link';
+import { Tooltip, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { DialogType } from '@/dialogs';
 import { useDialog } from '@/hooks/use-dialog';
 import { DateFormat, formatBytes, formatDate } from '@/utils/format';
-
-import type { Knowledge } from "@memora/schemas";
-import { Tooltip, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
-import { Badge } from '@/components/ui/badge';
 
+import type { Knowledge } from "@snipet/schemas";
 interface KnowledgeCardProps {
   knowledge: Knowledge;
 }

@@ -3,6 +3,7 @@
 import { Clock, File, Search } from 'lucide-react';
 import { useEffect, useRef, useState, useTransition } from 'react';
 
+import { Highlight } from '@/components/highlight';
 import { Badge } from '@/components/ui/badge';
 import {
   DialogContent, DialogDescription, DialogHeader, DialogTitle
@@ -14,12 +15,11 @@ import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useDialog } from '@/hooks/use-dialog';
+import { OriginType } from '@snipet/schemas';
 
 import { DialogType } from './';
 
-import { OriginType, type SourceFragment } from "@memora/schemas";
-import { Highlight } from '@/components/highlight';
-
+import type { SourceFragment } from '@snipet/schemas';
 export function SearchDialog() {
   const [query, setQuery] = useState("");
   const { mutateAsync: search, data: results = [] } = useApiMutation("/api/knowledge/:knowledgeSlug/search", { method: "GET" });

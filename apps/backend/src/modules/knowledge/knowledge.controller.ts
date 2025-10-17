@@ -1,9 +1,9 @@
 import { CrudController } from '@/generics';
+import { Controller } from '@nestjs/common';
 import {
   CreateKnowledge, createKnowledgeSchema, Knowledge, knowledgeFilterSchema, UpdateKnowledge,
   updateKnowledgeSchema
-} from '@memora/schemas';
-import { Controller } from '@nestjs/common';
+} from '@snipet/schemas';
 
 import { KnowledgeService } from './knowledge.service';
 

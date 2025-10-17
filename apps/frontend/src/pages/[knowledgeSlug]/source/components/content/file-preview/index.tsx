@@ -1,7 +1,5 @@
 "use client"
 
-
-
 import { useApiQuery } from '@/hooks/use-api-query';
 
 import { useSource } from '../../../hooks/use-source';
@@ -15,6 +13,7 @@ export function FileContentViewer() {
     "/api/knowledge/:knowledgeSlug/source/:id",
     { method: "GET", params: { id: selectedFileId ?? "" }, enabled: !!selectedFileId }
   );
+
   return (
     <div className='flex gap-2 p-2 h-full'>
       <ContentPreview isLoading={isLoading} data={data} />

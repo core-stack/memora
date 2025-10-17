@@ -10,12 +10,12 @@ import { Spinner } from '@/components/ui/spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { formatBytes } from '@/utils/format';
-import { SourceType } from '@memora/schemas';
+import { SourceType } from '@snipet/schemas';
 
 import { useExplorer } from '../../../hooks/use-explorer';
 import { useSource } from '../../../hooks/use-source';
 
-import type { KnowledgeFolder, Source } from '@memora/schemas';
+import type { KnowledgeFolder, Source } from '@snipet/schemas';
 interface FileTreeItemProps {
   item: Source | KnowledgeFolder
   level: number

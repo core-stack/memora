@@ -1,4 +1,4 @@
-import type { Message, MessageFilter, CreateMessage, UpdateMessage, StreamMessage } from "@memora/schemas";
+import type { Message, MessageFilter, CreateMessage, UpdateMessage, StreamMessage } from "@snipet/schemas";
 
 export interface MessageRoutes {
   "/api/knowledge/:knowledgeSlug/chat/:chatId/message": {

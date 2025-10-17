@@ -12,7 +12,7 @@ import { useApiQuery } from '@/hooks/use-api-query';
 import { useDialog } from '@/hooks/use-dialog';
 import { useKnowledge } from '@/hooks/use-knowledge';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createKnowledgeFolderSchema } from '@memora/schemas';
+import { createKnowledgeFolderSchema } from '@snipet/schemas';
 
 import { DialogType } from './';
 

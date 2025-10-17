@@ -2,14 +2,14 @@ import type { Request, Response } from 'express';
 
 import { CrudController } from '@/generics';
 import { ZodBody } from '@/shared/decorators/zod-body';
+import { Controller, Post, Req } from '@nestjs/common';
 import {
   createMessageSchema, Message, messageFilterSchema, updateMessageSchema
-} from '@memora/schemas';
-import { Controller, Post, Req } from '@nestjs/common';
+} from '@snipet/schemas';
 
 import { MessageService } from './message.service';
 
-import type { CreateMessage, StreamMessage } from "@memora/schemas";
+import type { CreateMessage, StreamMessage } from "@snipet/schemas";
 @Controller('knowledge/:knowledgeSlug/chat/:chatId/message')
 export class MessageController extends CrudController<Message> {
   constructor(protected readonly service: MessageService) {

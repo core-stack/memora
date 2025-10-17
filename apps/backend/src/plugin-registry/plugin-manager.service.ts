@@ -1,6 +1,6 @@
 import { LLMService } from '@/infra/llm/llm.service';
-import { Plugin } from '@memora/schemas';
 import { Injectable, Logger } from '@nestjs/common';
+import { Plugin } from '@snipet/schemas';
 
 import { PluginRegistryService } from './plugin-registry.service';
 import { buildInputObjectSchema } from './utils/plugin-schema-builder';

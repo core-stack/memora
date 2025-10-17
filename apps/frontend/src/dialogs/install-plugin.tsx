@@ -11,11 +11,11 @@ import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { buildConfigObjectSchema, createPluginSchema } from '@memora/schemas';
+import { buildConfigObjectSchema, createPluginSchema } from '@snipet/schemas';
 
 import { DialogType } from './';
 
-import type  { CreatePlugin, PluginRegistry } from "@memora/schemas";
+import type  { CreatePlugin, PluginRegistry } from "@snipet/schemas";
 import type z from 'zod';
 
 type Props = {

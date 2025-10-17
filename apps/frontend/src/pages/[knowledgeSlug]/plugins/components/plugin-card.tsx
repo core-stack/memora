@@ -11,7 +11,7 @@ import { DialogType } from '@/dialogs';
 import { env } from '@/env';
 import { useDialog } from '@/hooks/use-dialog';
 
-import type { PluginRegistry } from "@memora/schemas"
+import type { PluginRegistry } from "@snipet/schemas"
 interface PluginCardProps {
   plugin: PluginRegistry
   onCardClick: (plugin: PluginRegistry) => void

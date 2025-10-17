@@ -1,17 +1,15 @@
 import z from 'zod';
 
-import { idSchema } from '@memora/schemas';
 import {
   BadRequestException, Body, Delete, Get, Param, Post, Put, Query, Req
 } from '@nestjs/common';
+import { idSchema } from '@snipet/schemas';
 
 import { HttpContext } from './http-context';
 import { ICrudService } from './service.interface';
 
 import type { FilterOptions } from './filter-options';
 import type { Request } from 'express';
-import { param } from 'drizzle-orm';
-import { kMaxLength } from 'buffer';
 export abstract class CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDto = Partial<TEntity>> {
   constructor(
     protected readonly service: ICrudService<TEntity, TCreateDto, TUpdateDto>,

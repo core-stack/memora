@@ -3,8 +3,8 @@
 import { FilterOptions } from '@/generics/filter-options';
 import { HttpContext } from '@/generics/http-context';
 import { TenantService } from '@/generics/tenant.service';
-import { KnowledgeFolder } from '@memora/schemas';
 import { Injectable } from '@nestjs/common';
+import { KnowledgeFolder } from '@snipet/schemas';
 
 import { KnowledgeService } from '../knowledge.service';
 import { FolderRepository } from './folder.repository';
