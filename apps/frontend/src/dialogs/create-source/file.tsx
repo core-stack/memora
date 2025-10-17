@@ -11,7 +11,7 @@ import { getFileMetadata } from '@/lib/metadata';
 
 import { DialogType } from '../';
 
-import type { CreateSource, GetFileUrlResponse, SourceType } from '@memora/schemas';
+import type { CreateSource, GetFileUrlResponse } from '@snipet/schemas';
 
 type Props = { folderId?: string; }
 

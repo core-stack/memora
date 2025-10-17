@@ -20,12 +20,6 @@ export const sourceDocMetadataSchema = baseFileMetadata.extend({
 });
 export type SourceDocMetadata = z.infer<typeof sourceDocMetadataSchema>;
 
-export const sourceLinkMetadataSchema = z.object({
-  type: z.literal(SourceType.LINK),
-  url: z.string().url(),
-});
-export type SourceLinkMetadata = z.infer<typeof sourceLinkMetadataSchema>;
-
 export const sourceVideoMetadataSchema = baseFileMetadata.extend({
   type: z.literal(SourceType.VIDEO),
   width: z.number().int().optional(),
@@ -58,7 +52,6 @@ export const sourceSchema = z.object({
   originalName: z.string(),
   metadata: z.discriminatedUnion("type", [
     sourceDocMetadataSchema,
-    sourceLinkMetadataSchema,
     sourceVideoMetadataSchema,
     sourceAudioMetadataSchema,
     sourceImageMetadataSchema

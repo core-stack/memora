@@ -1,7 +1,7 @@
 "use client"
 
 import {
-  ChevronDown, ChevronRight, File, FileText, Folder, Globe, ImageIcon, Info, Music, RotateCcw, Video
+  ChevronDown, ChevronRight, File, FileText, Folder, ImageIcon, Info, Music, RotateCcw, Video
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -9,13 +9,13 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { SourceType } from '@memora/schemas';
+import { formatBytes } from '@/utils/format';
+import { SourceType } from '@snipet/schemas';
 
 import { useExplorer } from '../../../hooks/use-explorer';
 import { useSource } from '../../../hooks/use-source';
 
-import type { KnowledgeFolder, Source } from '@memora/schemas';
-
+import type { KnowledgeFolder, Source } from '@snipet/schemas';
 interface FileTreeItemProps {
   item: Source | KnowledgeFolder
   level: number
@@ -34,10 +34,8 @@ const getFileIcon = (item: Source | KnowledgeFolder) => {
         return Video;
       case SourceType.AUDIO:
         return Music;
-      case SourceType.FILE:
+      case SourceType.DOC:
         return File;
-      case SourceType.LINK:
-        return Globe;
     }
   } else {
     return Folder;
@@ -90,7 +88,7 @@ export function FileTreeItem({
     }
   }
   const handleRetryIndexing = () => {
-    
+
   }
 
   return (
@@ -115,8 +113,10 @@ export function FileTreeItem({
           )}
 
           <div className="flex items-center gap-1">
-            <Icon className="h-4 w-4 flex-shrink-0" />
-            {isIndexing && <Spinner />}
+            { isIndexing &&
+              <Spinner className="fill-yellow-500" size="sm" /> ||
+              <Icon className="h-4 w-4 flex-shrink-0" />
+            }
           </div>
 
           <Tooltip>
@@ -126,8 +126,14 @@ export function FileTreeItem({
             <TooltipContent side="right">
               <div className="space-y-1">
                 <p className="font-medium w-full">{item.name}</p>
-                {/* <p className="text-xs text-muted-foreground">{item.path}</p> */}
-                {/* {item.size && <p className="text-xs text-muted-foreground">{formatFileSize(item.size)}</p>} */}
+                {
+                  !isFolder && item.path &&
+                  <p className="text-xs text-muted-foreground">{item.path}</p>
+                }
+                {
+                  !isFolder &&
+                  <p className="text-xs text-muted-foreground">{formatBytes(item.metadata.size)}</p>
+                }
               </div>
             </TooltipContent>
           </Tooltip>
@@ -190,11 +196,3 @@ export function FileTreeItem({
     </TooltipProvider>
   )
 }
-
-// function formatFileSize(bytes: number): string {
-//   if (bytes === 0) return "0 B"
-//   const k = 1024
-//   const sizes = ["B", "KB", "MB", "GB"]
-//   const i = Math.floor(Math.log(bytes) / Math.log(k))
-//   return `${Number.parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
-// }

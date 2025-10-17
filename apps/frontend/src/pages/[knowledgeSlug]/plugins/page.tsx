@@ -1,16 +1,17 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useApiQuery } from "@/hooks/use-api-query";
-import { Search } from "lucide-react";
-import { useState } from "react";
+import { Search } from 'lucide-react';
+import { useState } from 'react';
 
-import { PluginCard } from "./components/plugin-card";
-import { PluginDocumentationSheet } from "./components/plugin-documentation-sheet";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useApiQuery } from '@/hooks/use-api-query';
 
-import type { PluginRegistry } from "@memora/schemas";
+import { PluginCard } from './components/plugin-card';
+import { PluginDocumentationSheet } from './components/plugin-documentation-sheet';
+
+import type { PluginRegistry } from "@snipet/schemas";
 
 export default function PluginPage() {
   const [searchQuery, setSearchQuery] = useState("");

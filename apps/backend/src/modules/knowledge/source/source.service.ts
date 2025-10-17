@@ -2,22 +2,25 @@ import { Queue } from 'bullmq';
 import { randomUUID } from 'crypto';
 
 import { env } from '@/env';
+import { CrudService } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
 import { HttpContext } from '@/generics/http-context';
-import { TenantService } from '@/generics/tenant.service';
 import { StorageService } from '@/infra/storage/storage.service';
-import { GetUploadUrl, Source } from '@memora/schemas';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { GetUploadUrl, Source } from '@snipet/schemas';
 
+import { FolderService } from '../folder/folder.service';
 import { KnowledgeService } from '../knowledge.service';
 import { SourceRepository } from './source.repository';
+import { CreateSource, UpdateSource } from './source.schema';
 
 @Injectable()
-export class SourceService extends TenantService<Source> {
+export class SourceService extends CrudService<Source, CreateSource, UpdateSource> {
   constructor(
     protected readonly repository: SourceRepository,
     private readonly knowledgeService: KnowledgeService,
+    private readonly folderService: FolderService,
     private readonly storageService: StorageService,
     @InjectQueue("ingest") private readonly ingestQueue: Queue
   ) {
@@ -31,12 +34,16 @@ export class SourceService extends TenantService<Source> {
     return super.find(opts, ctx);
   }
 
-  override async create(input: Partial<Source>, ctx: HttpContext) {
+  override async create(input: CreateSource, ctx: HttpContext) {
     if (!input.key) throw new BadRequestException("Key is required");
 
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
     input.knowledgeId = knowledgeId;
     input.indexStatus = 'PENDING';
+    input.path = await this.folderService.getPathByFolderId(
+      input.originalName ?? input.name!,
+      input.folderId
+    );
 
     try {
       input.key = await this.storageService.confirmTempUpload(input.key);

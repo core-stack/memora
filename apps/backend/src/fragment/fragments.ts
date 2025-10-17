@@ -1,47 +1,39 @@
 import { mergeBy } from '@/utils/array';
-import { Fragment as FragmentType } from '@memora/schemas';
 
-import { Fragment } from './fragment';
+import { BaseFragment } from './fragment';
 
-const isFragment = (f: any): f is Fragment => f instanceof Fragment;
+export class Fragments<T extends BaseFragment> {
+  get length(): number { return this.fragments.length; }
+  get items(): readonly T[] { return this.fragments; }
 
-export class Fragments {
-  static fromFragmentArray(fragments: Fragment[]): Fragments {
-    return new Fragments(fragments);
+  metadata: Record<string, string> = {};
+
+  static fromFragmentArray<T extends BaseFragment>(fragments: T[]): Fragments<T> {
+    return new Fragments<T>(fragments);
   }
 
-  constructor(private fragments: Fragment[] = []) {}
+  constructor(private fragments: T[] = []) {}
 
-  push(...fragments: FragmentType[] | Fragment[]): this {
+  push(...fragments: T[]): this {
     if (!fragments.length) return this;
-    if (isFragment(fragments[0])) {
-      this.fragments = mergeBy("id", this.fragments, fragments as Fragment[]);
-    } else {
-      this.fragments = fragments.map((f: FragmentType) => new Fragment(f));
-    }
+    this.fragments = mergeBy("id", this.fragments, fragments as T[]);
     return this;
   }
 
-  import(fragments: Fragments) {
+  import(fragments: Fragments<T>) {
     this.fragments = this.fragments.concat(fragments.fragments);
   }
 
-  merge(fragments: Fragments): this {
+  merge(fragments: Fragments<T>): this {
     this.push(...fragments.fragments);
     return this;
   }
-
-  toArray(): Fragment[] {
+ 
+  toArray(): T[] {
     return this.fragments;
   }
 
-  map<T>(fn: (chunk: Fragment) => T) {
-    return this.fragments.map<T>(fn);
-  }
-
-  setEmbeddings(embeddings: number[][]) {
-    this.fragments.forEach((chunk, idx) => {
-      chunk.setEmbeddings(embeddings[idx]);
-    });
+  map<U>(fn: (chunk: T) => U): U[] {
+    return this.fragments.map(fn);
   }
 }

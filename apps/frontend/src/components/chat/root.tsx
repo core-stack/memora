@@ -1,9 +1,18 @@
-import type React from "react";
 
-export const ChatRoot = ({ children }: { children: React.ReactNode }) => {
+
+import { cn } from '@/lib/utils';
+
+import { useChat } from './context';
+import { ChatInput } from './input';
+import { ChatMessagesArea } from './messages-area';
+
+export const ChatRoot = () => {
+  const { chat } = useChat();
+  
   return (
-    <div className="max-h-[calc(100vh-65px)] h-full flex flex-col">
-      {children}
+    <div className={cn("flex-1 h-full flex flex-col bg-background", !chat && "justify-center")}>
+      { chat && <ChatMessagesArea /> }
+      <ChatInput />
     </div>
-  );
+  )
 }

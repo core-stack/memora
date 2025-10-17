@@ -1,34 +1,57 @@
-FROM node:20-alpine AS builder
+# ==============================
+# Base
+# ==============================
+FROM node:20-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+RUN apk update
+RUN apk add --no-cache libc6-compat
+
+# ==============================
+# Builder
+# ==============================
+FROM base AS builder
 
 WORKDIR /app
 
-COPY package.json pnpm-workspace.yaml ./
-COPY pnpm-lock.yaml ./
-COPY apps/backend/package.json apps/backend/
-COPY apps/frontend/package.json apps/frontend/
-COPY packages/*/package.json packages/*/
-
-RUN npm install -g pnpm
-
-# TODO - use pnpm with frozen lockfile
-RUN pnpm install
-
+RUN pnpm add -g turbo@2.5.8
 COPY . .
 
-RUN pnpm --filter schemas build
+RUN turbo prune @snipet/backend --docker
 
-RUN pnpm --filter frontend build
+FROM base AS installer
 
-RUN pnpm --filter backend build
+WORKDIR /app
+ENV NODE_ENV=development
 
-FROM node:20-alpine
+COPY --from=builder /app/out/json/ .
+
+RUN pnpm add -g turbo@2.5.8
+RUN pnpm install
+
+COPY --from=builder /app/out/full/ ./full
+
+WORKDIR /app/full
+
+RUN pnpm add -g bunchee@6.4.0
+
+RUN pnpm install -g @nestjs/cli
+
+RUN pnpm install
+
+RUN pnpm turbo run build
+
+FROM base AS runner
+ENV NODE_ENV=production
 
 WORKDIR /app
 
-COPY --from=builder /app/apps/backend/dist ./backend/dist
-COPY --from=builder /app/apps/backend/package.json ./backend/
-COPY --from=builder /app/apps/frontend/dist ./frontend
+# COPY --from=installer /app/full/apps/frontend/dist ./public
+COPY --from=installer /app/full/apps/backend/dist ./dist
+COPY --from=installer /app/full/apps/backend/node_modules ./node_modules
+COPY --from=installer /app/full/apps/backend/package.json ./package.json
+COPY --from=installer /app/full/apps/backend/pnpm-lock.yaml ./pnpm-lock.yaml
 
-EXPOSE 3000
 
-CMD ["node", "backend/dist/main.js"]
+CMD ["node", "dist/src/main"]

@@ -3,7 +3,7 @@ import { CheckCircle, Clock, Loader2, XCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-import type { IndexStatus } from "@memora/schemas";
+import type { IndexStatus } from "@snipet/schemas";
 
 interface IndexingStatusBadgeProps {
   status?: IndexStatus;

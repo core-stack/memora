@@ -1,4 +1,4 @@
-import type { KnowledgeFolderFilter, CreateKnowledgeFolder, UpdateKnowledgeFolder, KnowledgeFolder } from "@memora/schemas";
+import type { KnowledgeFolderFilter, CreateKnowledgeFolder, UpdateKnowledgeFolder, KnowledgeFolder } from "@snipet/schemas";
 
 export interface FolderRoutes {
   "/api/knowledge/:knowledgeSlug/folder": {

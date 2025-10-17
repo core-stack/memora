@@ -1,9 +1,15 @@
-import { CrudController } from "@/generics";
-import { createMessageSchema, Message, messageFilterSchema, updateMessageSchema } from "@memora/schemas";
-import { Controller } from "@nestjs/common";
+import type { Request, Response } from 'express';
 
-import { MessageService } from "./message.service";
+import { CrudController } from '@/generics';
+import { ZodBody } from '@/shared/decorators/zod-body';
+import { Controller, Post, Req } from '@nestjs/common';
+import {
+  createMessageSchema, Message, messageFilterSchema, updateMessageSchema
+} from '@snipet/schemas';
 
+import { MessageService } from './message.service';
+
+import type { CreateMessage, StreamMessage } from "@snipet/schemas";
 @Controller('knowledge/:knowledgeSlug/chat/:chatId/message')
 export class MessageController extends CrudController<Message> {
   constructor(protected readonly service: MessageService) {
@@ -13,5 +19,13 @@ export class MessageController extends CrudController<Message> {
       createMessageSchema,
       updateMessageSchema
     );
+  }
+
+  @Post("new")
+  async newMessage(
+    @Req() req: Request,
+    @ZodBody(createMessageSchema) body: CreateMessage,
+  ) {
+    return this.service.sendMessage(body.content, this.loadContext(req));
   }
 }

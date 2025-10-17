@@ -1,6 +1,6 @@
 import { TenantService } from '@/generics/tenant.service';
-import { Tag } from '@memora/schemas';
 import { Injectable } from '@nestjs/common';
+import { Tag } from '@snipet/schemas';
 
 import { TagRepository } from './tag.repository';
 

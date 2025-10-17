@@ -1,4 +1,4 @@
-import type { GetUploadUrl, SourceFilter, CreateSource, UpdateSource, Source, GetFileUrlResponse,  } from "@memora/schemas"
+import type { GetUploadUrl, SourceFilter, CreateSource, UpdateSource, Source, GetFileUrlResponse,  } from "@snipet/schemas"
 
 export interface SourceRoutes {
   "/api/knowledge/:knowledgeSlug/source/:sourceId/view": {

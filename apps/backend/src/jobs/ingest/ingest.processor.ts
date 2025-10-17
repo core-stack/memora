@@ -2,20 +2,18 @@ import { Job } from 'bullmq';
 import streamToBlob from 'stream-to-blob';
 
 import { StorageService } from '@/infra/storage/storage.service';
-import { VectorStore } from '@/infra/vector/vector-store.service';
+import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
 import { SourceRepository } from '@/modules/knowledge/source/source.repository';
-import { Embeddings } from '@langchain/core/embeddings';
-import { OriginType, Source, SourceType } from '@memora/schemas';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject } from '@nestjs/common';
+import { Source } from '@snipet/schemas';
 
-import { PDFProcessor } from './processors/pdf.processor';
+import { ProcessorManager } from './processor-manager';
 
-@Processor("ingest", { concurrency: 5 })
+@Processor("ingest", { concurrency: 1 })
 export class IngestProcessor extends WorkerHost {
-  @Inject() private readonly pdfProcessor!: PDFProcessor;
-  @Inject() private readonly vectorStore!: VectorStore;
-  @Inject() private readonly embeddings!: Embeddings;
+  @Inject() private readonly processor!: ProcessorManager;
+  @Inject() private readonly vectorStore!: SourceVectorStoreService;
   @Inject() private readonly storage!: StorageService;
 
   constructor(
@@ -24,27 +22,12 @@ export class IngestProcessor extends WorkerHost {
 
   async process(job: Job<Source>): Promise<any> {
     const source = job.data;
+
     const obj = await this.storage.getObject(source.key);
     if (!obj) throw new Error("File not found");
-    if (source.metadata.type !== SourceType.LINK) {
-      const fragments = await this.pdfProcessor.process(
-        source,
-        await streamToBlob(obj),
-        {
-          contentType: source.metadata.contentType,
-          extension: source.metadata.extension,
-          name: source.originalName,
-          size: source.metadata.size,
-          type: OriginType.SOURCE,
-          path: source.key
-        }
-      );
-      const embeddings = await this.embeddings.embedDocuments(fragments.map(c => c.content));
-      fragments.setEmbeddings(embeddings);
-      console.log(embeddings.length);
-      
-      await this.vectorStore.addFragments(fragments);
-    }
+    const fragments = await this.processor.process(source, await streamToBlob(obj));
+    
+    await this.vectorStore.addFragments(fragments);
   }
 
   @OnWorkerEvent("active")

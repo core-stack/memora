@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { pluginRegistrySchema } from '@memora/schemas';
+import { pluginRegistrySchema } from '@snipet/schemas';
 
 export const inputSchema: z.ZodType<IInputSchema> = z.lazy((): z.ZodType<IInputSchema> => z.object({
   type: z.enum(["string", "number", "boolean", "object", "array"]),

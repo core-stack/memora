@@ -1,5 +1,5 @@
 {
-  "name": "@memora/schemas",
+  "name": "@snipet/schemas",
   "version": "1.0.0",
   "type": "module",
   "private": true,

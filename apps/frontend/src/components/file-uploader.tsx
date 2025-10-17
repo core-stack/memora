@@ -47,7 +47,7 @@ interface FileUploadProps {
   className?: string
 }
 
-export function 
+export function
 FileUploader({
   generateUploadUrl,
   multiple = false,
@@ -61,7 +61,7 @@ FileUploader({
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast();
-  
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files)
@@ -98,8 +98,7 @@ FileUploader({
   }
 
   const retryProcessing = async (fileId: string) => {
-    console.log("retryProcessing", fileId);
-    
+
     const file = files.find((file) => file.id === fileId)
     if (file && onUploadComplete) {
       onUploadComplete(file).then(() => {
@@ -109,7 +108,7 @@ FileUploader({
       })
     }
   }
-  
+
 
   const processFiles = (selectedFiles: File[]) => {
     const newFiles = selectedFiles.map((file) => ({
@@ -156,7 +155,7 @@ FileUploader({
             }).catch(() => {
               updateFileStatus(fileInfo.id, FileStatus.PROCESSING_ERROR);
             })
-            
+
           } else {
             updateFileStatus(fileInfo.id, FileStatus.SUCCESS, url);
           }

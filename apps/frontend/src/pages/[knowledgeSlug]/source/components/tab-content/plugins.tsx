@@ -15,7 +15,7 @@ import { truncateText } from '@/lib/string';
 
 import { useSource } from '../../hooks/use-source';
 
-import type { PluginRegistry } from '@memora/schemas';
+import type { PluginRegistry } from '@snipet/schemas';
 export const Plugins = () => {
   const { data: plugins = [] } = useApiQuery("/api/plugin-registry", { method: "GET", query: { filter: { type: "source" } } });
   const { data: installedPlugins = [] } = useApiQuery("/api/plugin", { method: "GET" });

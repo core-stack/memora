@@ -1,7 +1,7 @@
 "use client"
 
 import {
-  Calendar, Clock, Copy, Edit3, FileText, HardDrive, Hash, Share, Tag, Trash2, User, X
+  Calendar, Clock, Copy, Edit3, FileText, HardDrive, Hash, Share, Trash2, X
 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -11,10 +11,11 @@ import { Separator } from '@/components/ui/separator';
 import { DateFormat, useDateTimeFormat } from '@/hooks/use-date-time-format';
 import { cn } from '@/lib/utils';
 import { formatBytes, formatDuration } from '@/utils/format';
+import { SourceType } from '@snipet/schemas';
 
 import { IndexStatusBadge } from './index-status-badge';
 
-import type { Source } from "@memora/schemas";
+import type { Source } from '@snipet/schemas';
 
 interface FileInfoPanelProps {
   item?: Source;
@@ -30,7 +31,7 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
   const formatDate = useDateTimeFormat();
 
   return (
-    <Card className={cn("w-80 h-fit", className)}>
+    <Card className={cn("w-96 h-fit", className)}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -51,7 +52,7 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
             <h3 className="font-medium truncate flex-1">{item?.name}</h3>
             <IndexStatusBadge status={item?.indexStatus} />
           </div>
-          {/* <p className="text-sm text-muted-foreground truncate">{item.path}</p> */}
+          <p className="text-sm text-muted-foreground truncate">{item?.path}</p>
         </div>
 
         <Separator />
@@ -64,22 +65,20 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
             </Badge>
           </div>
 
-          {item?.size && (
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground flex items-center gap-2">
-                <HardDrive className="h-4 w-4" />
-                Size
-              </span>
-              <span className="text-sm font-mono">{formatBytes(item?.size)}</span>
-            </div>
-          )}
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground flex items-center gap-2">
+              <HardDrive className="h-4 w-4" />
+              Size
+            </span>
+            <span className="text-sm font-mono text-end">{formatBytes(item?.metadata.size)}</span>
+          </div>
 
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Modified
             </span>
-            <span className="text-sm">{formatDate(item?.updatedAt, DateFormat.lll)}</span>
+            <span className="text-sm text-end">{formatDate(item?.updatedAt, DateFormat.lll)}</span>
           </div>
 
           <div className="flex items-center justify-between">
@@ -102,30 +101,28 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
             <div className="space-y-3">
               <h4 className="text-sm font-medium">Metadata</h4>
 
-              {item?.metadata.mimeType && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">MIME Type</span>
-                  <span className="text-sm font-mono">{item?.metadata.mimeType}</span>
-                </div>
-              )}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Content Type</span>
+                <span className="text-sm font-mono text-end">{item?.metadata.contentType}</span>
+              </div>
 
-              {item?.metadata.encoding && (
+              {/* {item?.metadata.encoding && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Encoding</span>
                   <span className="text-sm font-mono">{item?.metadata.encoding}</span>
                 </div>
-              )}
+              )} */}
 
-              {item?.metadata.dimensions && (
+              {item?.metadata.type === SourceType.IMAGE && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Dimensions</span>
                   <span className="text-sm">
-                    {item?.metadata.dimensions.width} × {item?.metadata.dimensions.height}
+                    {item?.metadata.width} × {item?.metadata.height}
                   </span>
                 </div>
               )}
 
-              {item?.metadata.duration && (
+              {item?.metadata.type === SourceType.VIDEO && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground flex items-center gap-2">
                     <Clock className="h-4 w-4" />
@@ -135,7 +132,7 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
                 </div>
               )}
 
-              {item?.metadata.author && (
+              {/* {item?.metadata.author && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground flex items-center gap-2">
                     <User className="h-4 w-4" />
@@ -143,7 +140,7 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
                   </span>
                   <span className="text-sm">{item?.metadata.author}</span>
                 </div>
-              )}
+              )} */}
 
               {item?.description && (
                 <div className="space-y-1">
@@ -152,7 +149,7 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
                 </div>
               )}
 
-              {item?.metadata.tags && item?.metadata.tags.length > 0 && (
+              {/* {item?.metadata.tags && item?.metadata.tags.length > 0 && (
                 <div className="space-y-2">
                   <span className="text-sm text-muted-foreground flex items-center gap-2">
                     <Tag className="h-4 w-4" />
@@ -166,7 +163,7 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
           </>
         )}

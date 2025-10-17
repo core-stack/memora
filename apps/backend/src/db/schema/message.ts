@@ -1,16 +1,16 @@
-import { relations, sql } from "drizzle-orm";
-import { index, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
+import { relations, sql } from 'drizzle-orm';
+import { index, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
-import { chat } from "./chat";
-import { messageRoleEnum } from "./enums";
-import { knowledge } from "./knowledge";
+import { chat } from './chat';
+import { messageRoleEnum } from './enums';
+import { knowledge } from './knowledge';
 
 export const message = pgTable("message", {
   id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
 
   messageRole: messageRoleEnum("message_role").notNull(),
 
-  content: varchar("content", { length: 50 }).notNull(),
+  content: text().notNull(),
 
   chatId: varchar("chat_id", { length: 36 }).notNull(),
   knowledgeId: varchar("knowledge_id", { length: 36 }).notNull(),

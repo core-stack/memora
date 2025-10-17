@@ -1,4 +1,4 @@
-import type { Chat, ChatFilter, CreateChat, UpdateChat } from "@memora/schemas";
+import type { Chat, ChatFilter, CreateChat, UpdateChat } from "@snipet/schemas";
 
 export interface ChatRoutes {
   "/api/knowledge/:knowledgeSlug/chat": {
@@ -14,12 +14,16 @@ export interface ChatRoutes {
     }
   },
   "/api/knowledge/:knowledgeSlug/chat/:id": {
+    GET: {
+      params: { knowledgeSlug: string, id: string };
+      response: Chat;
+    },
     PUT: {
       body: UpdateChat;
       params: { knowledgeSlug: string, id: string };
       response: undefined;
     },
-    DELETE: { 
+    DELETE: {
       params: { knowledgeSlug: string, id: string };
       response: undefined;
     }

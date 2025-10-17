@@ -6,7 +6,6 @@ export enum SourceType {
   VIDEO = "VIDEO",
   AUDIO = "AUDIO",
   DOC = "DOC",
-  LINK = "LINK"
 }
 
 export const sourceTypeSchema = z.nativeEnum(SourceType);

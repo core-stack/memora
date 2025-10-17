@@ -1,122 +1,125 @@
-# 🧠 Memora
+<p align="center">
+  <img src="[LOGO_PATH]" alt="Snipet Logo" width="200"/>
+</p>
 
-**Memora** is an open-source AI-powered knowledge management platform, built to help individuals and teams organize, query, and expand their information intelligently.
-It combines **LLMs**, **vector search**, **customizable plugins**, and a modern interface to simplify how we handle data and digital memories.
+<h1 align="center">Snipet</h1>
+
+<p align="center">
+  <strong>Open-source AI-powered knowledge management platform</strong><br>
+  <em>Organize, remember, and expand your digital knowledge — intelligently.</em>
+</p>
+
+<p align="center">
+  <a href="/README.pt.md" target="_blank">🇧🇷 Português</a>
+  &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/core-stack/snipet/issues/new?template=bug_report.md&title=%5BBUG%5D%20" target="_blank">🐛 Report Bug</a>
+  &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="[LINKEDIN_URL]" target="_blank">💼 LinkedIn</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/core-stack/snipet/stargazers">
+    <img src="https://img.shields.io/github/stars/core-stack/snipet?style=social" alt="GitHub stars">
+  </a>
+  <a href="https://github.com/core-stack/snipet/issues">
+    <img src="https://img.shields.io/github/issues/core-stack/snipet" alt="GitHub issues">
+  </a>
+  <a href="https://github.com/core-stack/snipet/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/core-stack/snipet" alt="License">
+  </a>
+</p>
 
 ---
 
-## 🚀 Key Technologies
+<p align="center">
+<img src="https://raw.githubusercontent.com/core-stack/snipet/main/.github/assets/showcase.png" alt="Snipet Showcase"/>
+</p>
 
-Memora is a full-stack project that uses a modern tech stack:
+**Snipet** is an open-source platform that merges AI memory, vector search, and knowledge management into one environment.
+It helps teams and individuals store, organize, and query information intelligently, making memory a first-class concept in your workflow.
 
-* **TypeScript** – Main language.
-* **NestJS** – Modular and scalable backend framework.
-* **React + React Router** – Reactive web interface with advanced routing.
-* **Drizzle ORM** – Relational database migrations and access.
-* **Postgres** – Relational database.
-* **Milvus** – Vector database for embeddings.
-* **Redis** – Cache and job queue.
-* **MinIO (S3)** – File storage.
-* **Docker Compose** – Local service orchestration.
-* **pnpm** – Monorepo package manager.
+> 📚 **Project Evolution**: Snipet is designed with modular architecture, plugin extensibility, and hybrid self-host + managed options.
 
----
+## 🎓 Main Features
 
-## 📂 Project Structure
+- **AI Memory Engine** – Semantic storage and retrieval using embeddings
+- **Plugin** – Add sources with your own integrations
+- **Vector Search** – Hybrid search (semantic + keyword) powered by milvus
+- **Multi-tenant Workspaces (comming soon)** – Separate environments for teams or users
+- **Modern Web UI** – Responsive, intuitive, and built with React
 
+## 🛠️ Technologies Used
+
+* **Framework**: NestJS + React Router
+* **Language**: Typescript
+* **Database**: PostgreSQL 
+* **Storage**: S3 compatible
+* **AI**: Gemini (Ollama and OpenAI comming soon)
+* **Containerization**: Docker & PNPM Workspaces
+
+## 🚀 Quick Start
+
+### 📥 Installation
+1. Clone the repository
+```bash
+git clone https://github.com/core-stack/snipet.git
+cd snipet
 ```
-├── apps
-│   ├── backend        # NestJS API and services
-│   └── frontend       # React interface with Vite
-├── packages
-│   └── schemas        # Shared schemas (Zod/TypeScript)
-├── docker-compose.yml # Local orchestration (Postgres, Redis, Milvus, MinIO, etc.)
-├── Dockerfile         # Application build
-├── pnpm-workspace.yaml
-└── README.md
+2. Install dependencies
+```bash
+pnpm install
+```
+3. Setup environment
+
+```bash
+cp .env.example .env.local
+```
+4. Run in development mode
+```bash
+pnpm dev
 ```
 
-* **apps/backend** → Knowledge modules, plugins, document ingestion, cache, vector search, and security.
-* **apps/frontend** → File uploads, chat, document viewer, plugin installation.
-* **packages/schemas** → Shared types and contracts between backend and frontend.
+### ⚡ First Steps
 
----
+- Access http://localhost:3000
+- Create your first knowledge
+- Add a file or install a plugin
+- Try the **AI memory search chat** to query your knowledge
 
-## 🔌 Plugins
+## 💻 For Developers
 
-Memora supports **plugins** to expand its features — new data sources, pre- and post-processing pipelines, or external integrations.
-Each plugin includes:
+If you want to clone the repository and run the project locally:
 
-* `memora-plugin.json` → Plugin metadata.
-* `src/index.ts` → Entry point.
-* `documentation.md` → Usage documentation.
+```bash
+# 1. Clone the repository
+git clone https://github.com/core-stack/snipet.git
 
----
+# 2. Navigate to the project folder
+cd snipet
 
-## ⚙️ Running Locally
+# 3. Install dependencies
+npm install
 
-### Requirements
+# 4. Run in development mode
+npm start
+```
 
-* [Node.js](https://nodejs.org/) (>= 18)
-* [pnpm](https://pnpm.io/)
-* [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/)
+## 📚 Perfect for
 
-### Steps
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/core-stack/memora.git
-   cd memora
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   pnpm install
-   ```
-
-3. Start essential services:
-
-   ```bash
-   docker compose up -d
-   ```
-
-4. Start the backend:
-
-   ```bash
-   pnpm --filter @memora/backend dev
-   ```
-
-5. Start the frontend:
-
-   ```bash
-   pnpm --filter @memora/frontend dev
-   ```
-
----
-
-## 🛠️ Development
-
-* **Migrations** are managed with **Drizzle** under `apps/backend/drizzle`.
-* **Ingestion jobs** process documents and generate embeddings for semantic search.
-* **LLM module** integrates prompts and plugin decision services.
-* **Frontend** uses **Tailwind** and **shadcn/ui** for reactive and consistent components.
-
----
+- **AI Researchers** – testing vector search and LLM integrations
+- **Developers** – building custom knowledge apps or plugins
+- **Teams** – sharing memory across collaborative workspaces
+- **Individuals** – organizing personal knowledge efficiently
 
 ## 🤝 Contributing
 
-Want to help build **Memora**?
+We welcome contributions from everyone!<br>
+Check out our [Contributing Guide](./CONTRIBUTING.md) and join the project.
 
-* Open **issues** with ideas, bugs, or improvements.
-* Submit **pull requests** for new features or fixes.
-* Explore the `apps/backend/plugins` folder and build your own plugin.
-
----
-
-## 📜 License
-
-This project is open-source under the **MIT License**.
+## 📄 License
+This project is licensed under the Snipet License (based on Apache 2.0).
+See the [LICENSE](./LICENSE) file for details.
 
 ---
+
+<p align="center"> Made with ❤️ by <a href="https://github.com/mayron1806" target="_blank">Mayron Fernandes</a> </p>

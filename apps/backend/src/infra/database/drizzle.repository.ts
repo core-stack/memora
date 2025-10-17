@@ -12,7 +12,9 @@ import { ICrudRepository } from '../../generics/repository.interface';
 export abstract class DrizzleGenericRepository<
   TTable extends PgTable,
   TEntity extends PgUpdateSetSource<TTable> = PgUpdateSetSource<TTable>,
-> implements ICrudRepository<TEntity> {
+  TCreateDto = Partial<TEntity>,
+  TUpdateDto = Partial<TEntity>,
+> implements ICrudRepository<TEntity, TCreateDto, TUpdateDto> {
   @Inject(DrizzleAsyncProvider) protected readonly db: NodePgDatabase<typeof schema>;
 
   private readonly columns: TTable["_"]["columns"];
@@ -21,8 +23,8 @@ export abstract class DrizzleGenericRepository<
     this.columns = getTableColumns(table);
   }
 
-  async create(data: Partial<TEntity>): Promise<TEntity> {
-    const [created] = await this.db.insert(this.table).values(data as TEntity).returning();
+  async create(data: TCreateDto): Promise<TEntity> {
+    const [created] = await this.db.insert(this.table).values(data as unknown as TEntity).returning();
     return created as TEntity;
   }
 
@@ -74,7 +76,7 @@ export abstract class DrizzleGenericRepository<
     return (result as TEntity) || null;
   }
 
-  async update(id: string, data: Partial<TEntity>): Promise<void> {
+  async update(id: string, data: TUpdateDto): Promise<void> {
     await this.db.update(this.table).set(data).where(eq(this.columns.id, id))
   }
 

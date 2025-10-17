@@ -3,8 +3,8 @@ import * as path from 'path';
 
 import { env } from '@/env';
 import { StorageService } from '@/infra/storage/storage.service';
-import { Plugin } from '@memora/schemas';
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Plugin } from '@snipet/schemas';
 
 import { PluginProviderRegistry } from './plugin-provider.service';
 import { PluginRegistryWithInput, pluginRegistryWithInputSchema } from './plugin-registry';
@@ -39,7 +39,7 @@ export class PluginRegistryService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.loadPluginModule();
+    if (!env.IGNORE_PLUGINS) this.loadPluginModule();
   }
 
   async getByName(name: string): Promise<PluginRegistryWithInput | undefined> {
@@ -79,8 +79,8 @@ export class PluginRegistryService implements OnModuleInit {
 
       let newPlugin = false;
       let pluginJson: PluginRegistryWithInput | undefined;
-      // Check for memora-plugin.json
-      const pluginJsonPath = path.join(pluginPath, 'memora-plugin.json');
+      // Check for snipet-plugin.json
+      const pluginJsonPath = path.join(pluginPath, 'snipet-plugin.json');
       if (fs.existsSync(pluginJsonPath)) {
         try {
           pluginJson = pluginRegistryWithInputSchema.parse(JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8')));
@@ -174,10 +174,9 @@ export class PluginRegistryService implements OnModuleInit {
     }
   }
 
-  async createInstance(p: Plugin | Partial<Plugin>, temp: boolean = false): Promise<IPlugin> {    
+  async createInstance(p: Plugin | Partial<Plugin>, temp: boolean = false): Promise<IPlugin> {
     if (!p.pluginRegistry) throw new Error(`Plugin registry not provided`);
-    console.log(this.pluginModules);
-    
+
     const pluginModule = this.pluginModules.get(p.pluginRegistry);
     if (!pluginModule) throw new Error(`Plugin ${p.pluginRegistry} not loaded`);
 
@@ -189,7 +188,7 @@ export class PluginRegistryService implements OnModuleInit {
       if (temp) return instance;
 
       const instanceKey = this.getInstanceKey(p);
-      
+
       this.pluginInstances.set(instanceKey, { instance, lastUsed: new Date() });
 
       this.scheduleCleanup(instanceKey);

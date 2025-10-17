@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import z from 'zod';
 
+import { __root } from './root';
+
 dotenv.config({
   path: [".env", "../../.env", "../../.env.local"],
 });
@@ -10,6 +12,7 @@ const envSchema = z.object({
   // APP
   APP_PORT: z.coerce.number().default(3000),
   API_URL: z.string().url().optional().default("http://localhost:3000/api"),
+  SERVE_STATIC: z.string().optional(),
 
   // PLUGIN
   PLUGINS_DIR: z.string().optional().default(path.join(__dirname, "..", "..", "plugins")),
@@ -25,7 +28,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
 
   TENANT_ID: z.string().uuid(),
-  
+
   // STORAGE
   STORAGE_TYPE: z.enum(['s3']).default('s3'),
   // S3
@@ -36,7 +39,7 @@ const envSchema = z.object({
   AWS_PUBLIC_BUCKET_BASE_URL: z.string().optional(),
   AWS_BUCKET: z.string().optional(),
   AWS_FORCE_PATH_STYLE: z.coerce.boolean().optional().default(false),
-  
+
   // REDIS
   REDIS_HOST: z.string().optional().default("localhost"),
   REDIS_PORT: z.coerce.number().optional().default(6379),
@@ -55,14 +58,20 @@ const envSchema = z.object({
 
   // GEMINI
   GEMINI_API_KEY: z.string(),
-  GEMINI_MODEL: z.string().optional().default("gemini-1.5-flash"),
-  
+  GEMINI_MODEL: z.string().optional().default("gemini-2.5-flash"),
+
   // VECTOR
   VECTOR_ENGINE: z.enum(['milvus']).default('milvus'),
   // MILVUS
   MILVUS_URL: z.string().url().optional().default("localhost:19530"),
-  MILVUS_COLLECTION: z.string().optional().default("default"),
+  MILVUS_COLLECTION_PREFIX: z.string().optional().default("snipet"),
   MULVUS_RECREATE_COLLECTION: z.string().transform((s) => s === "true").optional(),
+
+  // PROMPT
+  PROMPT_TEMPLATES_DIR: z.string().optional().default(path.join(__root, "prompts")),
+  DEBUG_PROMPTS: z.coerce.boolean().optional().default(false),
+
+  IGNORE_PLUGINS: z.coerce.boolean().optional().default(false),
 }).transform((data) => {
   if (!data.API_URL) {
     return {

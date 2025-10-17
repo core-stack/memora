@@ -19,7 +19,7 @@ export function PluginDocs() {
 
   const { data: installedPlugins = [] } = useApiQuery("/api/plugin", { method: "GET" });
   const isInstalled = installedPlugins.some((installedPlugin) => installedPlugin.pluginRegistry === plugin?.name);
-  
+
   const handleInstall = () => openDialog({ type: DialogType.INSTALL_PLUGIN, props: { plugin } });
   const handleUninstall = () => openDialog({ type: DialogType.INSTALL_PLUGIN, props: { plugin } });
 
@@ -91,7 +91,7 @@ export function PluginDocs() {
         </div>
 
         <ScrollArea className="h-[calc(100vh-400px)]">
-          <MarkdownViewer url={url} />
+          <MarkdownViewer url={url} type='url' />
         </ScrollArea>
       </div>
     </div>

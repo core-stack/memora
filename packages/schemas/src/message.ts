@@ -1,6 +1,6 @@
-import z from "zod";
+import z from 'zod';
 
-import { filterSchema, orderSchema } from "./shared";
+import { filterSchema, orderSchema } from './shared';
 
 export const messageRoleSchema = z.enum(["USER", "AI"]);
 export type MessageRole = z.infer<typeof messageRoleSchema>;
@@ -10,7 +10,7 @@ export const messageSchema = z.object({
 
   messageRole: messageRoleSchema,
 
-  content: z.string().max(50),
+  content: z.string(),
 
   chatId: z.string().uuid(),
   knowledgeId: z.string().uuid(),
@@ -27,6 +27,8 @@ export const messageFilterSchema = filterSchema.extend({
     id: z.string().uuid().optional(),
     name: z.string().optional(),
     knowledgeId: z.string().uuid().optional(),
+    chatId: z.string().uuid().optional(),
+    tenantId: z.string().uuid().optional(),
   }).strict().optional(),
   order: z.object({
     createdAt: orderSchema,
@@ -40,3 +42,10 @@ export type CreateMessage = z.infer<typeof createMessageSchema>;
 
 export const updateMessageSchema = messageSchema.pick({ content: true });
 export type UpdateMessage = z.infer<typeof updateMessageSchema>;
+
+
+export const streamMessageSchema = z.object({
+  userMessageId: z.string().uuid(),
+  aiMessageId: z.string().uuid(),
+});
+export type StreamMessage = z.infer<typeof streamMessageSchema>;

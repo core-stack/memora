@@ -1,8 +1,8 @@
-import { CrudController } from "@/generics";
-import { Chat, chatFilterSchema, createChatSchema, updateChatSchema } from "@memora/schemas";
-import { Controller } from "@nestjs/common";
+import { CrudController } from '@/generics';
+import { Controller } from '@nestjs/common';
+import { Chat, chatFilterSchema, createChatSchema, updateChatSchema } from '@snipet/schemas';
 
-import { ChatService } from "./chat.service";
+import { ChatService } from './chat.service';
 
 @Controller('knowledge/:knowledgeSlug/chat')
 export class ChatController extends CrudController<Chat> {

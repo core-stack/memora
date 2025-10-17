@@ -1,14 +1,37 @@
 {
-  "name": "memora",
+  "name": "snipet",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "db:generate": "cd apps/backend && npx drizzle-kit generate",
-    "db:migrate": "cd apps/backend && npx drizzle-kit migrate"
+    "db:migrate": "cd apps/backend && npx drizzle-kit migrate",
+
+    "start": "turbo run start",
+    "start:frontend": "turbo run start --filter=@snipet/frontend",
+    "start:backend": "turbo run start --filter=@snipet/backend",
+    "start:docker": "cd backend && npm start",
+    
+    "dev": "turbo dev",
+    "dev:frontend": "turbo run dev --filter=@snipet/frontend",
+    "dev:backend": "turbo run dev --filter=@snipet/backend",
+    "dev:schemas": "turbo run dev --filter=@snipet/schemas",
+    
+    "build": "turbo run build",
+    "build:frontend": "turbo run build --filter=@snipet/frontend",
+    "build:backend": "turbo run build --filter=@snipet/backend",
+    "build:schemas": "turbo run build --filter=@snipet/schemas",
+    
+    "check-types": "turbo run check-types",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "clean": "turbo run clean"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.15.1"
+  "packageManager": "pnpm@10.15.1",
+  "devDependencies": {
+    "turbo": "^2.5.8"
+  }
 }

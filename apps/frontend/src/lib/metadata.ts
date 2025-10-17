@@ -1,10 +1,10 @@
 import exifr from 'exifr';
 
-import { SourceType } from '@memora/schemas';
+import { SourceType } from '@snipet/schemas';
 
 import type {
   BaseFileMetadata, SourceAudioMetadata, SourceDocMetadata, SourceImageMetadata, SourceVideoMetadata
-} from '@memora/schemas';
+} from '@snipet/schemas';
 export async function getFileMetadata(file: File): Promise<SourceAudioMetadata | SourceVideoMetadata | SourceImageMetadata | SourceDocMetadata> {
   const base: BaseFileMetadata = {
     extension: file.name.split('.').pop() || "",

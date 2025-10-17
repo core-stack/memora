@@ -1,8 +1,8 @@
-import { CrudController } from "@/generics";
-import { createTagSchema, Tag, tagFilterSchema, updateTagSchema } from "@memora/schemas";
-import { Controller } from "@nestjs/common";
+import { CrudController } from '@/generics';
+import { Controller } from '@nestjs/common';
+import { createTagSchema, Tag, tagFilterSchema, updateTagSchema } from '@snipet/schemas';
 
-import { TagService } from "./tag.service";
+import { TagService } from './tag.service';
 
 @Controller('tag')
 export class TagController extends CrudController<Tag> {

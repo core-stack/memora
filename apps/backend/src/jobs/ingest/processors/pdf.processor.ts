@@ -1,10 +1,10 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
 import { env } from '@/env';
-import { Fragment, Fragments } from '@/fragment';
+import { Fragments, SourceFragment } from '@/fragment';
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
-import { FragmentFileMetadata, Source, SourceType } from '@memora/schemas';
 import { Injectable } from '@nestjs/common';
+import { FragmentFileMetadata, Source, SourceType } from '@snipet/schemas';
 
 @Injectable()
 export class PDFProcessor {
@@ -25,21 +25,21 @@ export class PDFProcessor {
   async process(
     source: Source,
     pathOrBlob: string | Blob,
-    fileMetadata: Omit<FragmentFileMetadata, "seqId">
-  ): Promise<Fragments> {
+    metadata: FragmentFileMetadata
+  ): Promise<Fragments<SourceFragment>> {
     const docs = await this.load(pathOrBlob);
     const docChunks = await this.splitter.splitDocuments(docs);
 
     return Fragments.fromFragmentArray(
-      docChunks.map((chunk, idx) => new Fragment({
+      docChunks.map((chunk, seqId) => new SourceFragment({
         content: chunk.pageContent,
         sourceId: source.id,
         knowledgeId: source.knowledgeId,
         tenantId: env.TENANT_ID,
-        metadata: { ...fileMetadata, seqId: idx },
+        seqId,
+        metadata,
         sourceType: SourceType.DOC,
-      }
-      ))
+      }))
     );
   }
 }

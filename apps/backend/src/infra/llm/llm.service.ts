@@ -1,30 +1,53 @@
 import z from 'zod';
 
+import { BaseFragment, Fragments } from '@/fragment';
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { Plugin } from '@memora/schemas';
 import { Inject } from '@nestjs/common';
 
-import { decidePluginsToUsePrompt } from './prompts/decide-plugin-to-use';
-import { improveQueryPrompt } from './prompts/improve-query';
+export type QueryOptions<T extends BaseFragment> = {
+  knowledgeInstructions?: string;
+  fragments?: Fragments<T>[];
+}
+
+export type WithQueryOptions<T extends BaseFragment> = (currentOpts: QueryOptions<T>) => QueryOptions<T>;
 
 export class LLMService {
-  constructor(@Inject(BaseChatModel) private llm: BaseChatModel) {}
+  constructor(@Inject(BaseChatModel) private readonly llm: BaseChatModel) {}
 
-  async improveQuery(query: string, knowledgeBaseDescription: string): Promise<string> {
-    const { text } = await this.llm.invoke(await improveQueryPrompt.format({ knowledgeBaseDescription, query }));
-    return text;
+  async query(query: string): Promise<any> {
+    const res = await this.llm.generate([[{ content: query, role: "user" }]]);
+    return res.generations[0][0].text;
   }
 
-  async decidePluginsToUse(query: string, knowledgeBaseDescription: string, plugins: Plugin[]): Promise<Plugin[]> {
-    const prompt = await decidePluginsToUsePrompt.format({ knowledgeBaseDescription, plugins, query });
-    const idSchema = z.array(z.string().uuid())
-    const structuredLLM = this.llm.withStructuredOutput<z.infer<typeof idSchema>>(idSchema);
-    const ids = await structuredLLM.invoke(prompt);
-    return plugins.filter(p => ids.includes(p.id));
+  async *stream(query: string): AsyncIterable<string> {
+    const stream = await this.llm.stream(query);
+    for await (const chunk of stream) {
+      yield chunk.text;
+    }
   }
 
-  async withStructuredOutput<T extends Record<string, any> = Record<string, any>>(query: string, schema: z.ZodType): Promise<T> {
-    const structuredLLM = this.llm.withStructuredOutput<T>(schema);
-    return structuredLLM.invoke(query);
+  async withStructuredOutput<S extends z.ZodTypeAny>(query: string, schema: S): Promise<z.infer<S>> {
+    const structuredLLM = this.llm.withStructuredOutput<z.infer<S>>(schema);
+    return (await structuredLLM.invoke(query));
+  }
+
+  static withKnowledgeInstructions<T extends BaseFragment>(instructions: string): WithQueryOptions<T> {
+    return (opts: Partial<QueryOptions<T>>) => {
+      return { ...opts, knowledgeInstructions: instructions };
+    }
+  }
+
+  static withFragments<T extends BaseFragment>(fragments: Fragments<T>[]): WithQueryOptions<T> {
+    return (opts: Partial<QueryOptions<T>>) => {
+      return { ...opts, fragments };
+    }
+  }
+
+  protected buildQueryOptions(...opts: WithQueryOptions<BaseFragment>[]): QueryOptions<BaseFragment> {
+    let queryOpts: QueryOptions<BaseFragment> = {};
+    for (const opt of opts) {
+      queryOpts = { ...queryOpts, ...opt(queryOpts) };
+    }
+    return queryOpts;
   }
 }

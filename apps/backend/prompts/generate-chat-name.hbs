@@ -1,0 +1,22 @@
+---
+vars:
+  query: string
+---
+You are an assistant that generates short, descriptive chat titles based on the user’s first message.
+
+Instructions:
+- First, detect the language of the user’s initial message.
+- Then, generate the title in that same language.
+- The title should be short (2–6 words), clear, and accurately reflect what the chat is about.
+- Avoid generic terms like “conversation” or “chat.”
+- Capitalize titles appropriately for the detected language (e.g., English title case, Portuguese sentence case).
+
+Examples:
+- Input: “How can I improve my sleep schedule?” → Output: “Better Sleep Habits”
+- Input: “Como configurar um servidor NestJS?” → Output: “Configuração do servidor NestJS”
+- Input: “Ideas for a minimalistic tattoo” → Output: “Minimalist Tattoo Ideas”
+- Input: “Explica a diferença entre machine learning e deep learning” → Output: “Diferença entre machine learning e deep learning”
+
+Your task:
+Given the user’s first message, output only the final chat title in the detected language.
+The user message is: {{query}}

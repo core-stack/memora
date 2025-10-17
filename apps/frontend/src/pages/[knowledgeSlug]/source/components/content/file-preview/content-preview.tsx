@@ -4,24 +4,24 @@ import {
   AlertCircle, Download, ExternalLink, Eye, ImageIcon, Loader2, Music, Video
 } from 'lucide-react';
 
+import { FileViewer } from '@/components/file-viewer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { DateFormat, useDateTimeFormat } from '@/hooks/use-date-time-format';
 import { formatBytes } from '@/utils/format';
-import { SourceType } from '@memora/schemas';
+import { SourceType } from '@snipet/schemas';
 
 import { IndexStatusBadge } from './index-status-badge';
 
-import type { Source } from "@memora/schemas";
-
+import type { Source } from "@snipet/schemas";
 type Props = {
   data?: Source;
   isLoading: boolean;
 }
 export function ContentPreview({ isLoading, data }: Props) {
-  
+
   const formatDate = useDateTimeFormat();
 
   const renderPreview = () => {
@@ -44,8 +44,7 @@ export function ContentPreview({ isLoading, data }: Props) {
       )
     }
 
-    switch (data?.sourceType) {
-
+    switch (data?.metadata.type) {
       case SourceType.IMAGE:
         return (
           <div className="flex items-center justify-center p-8">
@@ -54,9 +53,7 @@ export function ContentPreview({ isLoading, data }: Props) {
               <div>
                 <p className="font-medium">{data.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {data.metadata?.dimensions
-                    ? `${data.metadata.dimensions.width} × ${data.metadata.dimensions.height}`
-                    : "Image file"}
+                  {`${data.metadata.width} × ${data.metadata.height}`}
                 </p>
               </div>
               <Button variant="outline" size="sm">
@@ -123,9 +120,9 @@ export function ContentPreview({ isLoading, data }: Props) {
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Badge variant="secondary" className="text-xs">
-            {data?.sourceType}
+            {data?.metadata.type}
           </Badge>
-          {data?.size && <span>{formatBytes(data?.size)}</span>}
+          <span>{formatBytes(data?.metadata.size)}</span>
           <span>•</span>
           { data?.updatedAt && <span>{formatDate(data?.updatedAt, DateFormat.lll)}</span>}
         </div>
@@ -134,6 +131,7 @@ export function ContentPreview({ isLoading, data }: Props) {
       <Separator />
 
       <CardContent className="flex-1 p-0">
+        <FileViewer />
         {renderPreview()}
       </CardContent>
     </Card>

@@ -9,6 +9,7 @@ export type Order = z.infer<typeof orderSchema>;
 export const filterSchema = z.object({
   limit: z.number().int().min(1).max(2000).default(100).optional(),
   offset: z.number().int().min(0).default(0).optional(),
+  include: z.array(z.string()).default([]).optional(),
 });
 
 export const getFileUrlResponseSchema = z.object({

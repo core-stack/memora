@@ -1,5 +1,5 @@
 import { HttpContext } from '@/generics/http-context';
-import { MemoryService } from '@/modules/memory/memory.service';
+import { SourceMemoryService } from '@/modules/memory/source-memory/source-memory.service';
 import { Injectable } from '@nestjs/common';
 
 import { KnowledgeService } from '../knowledge.service';
@@ -8,7 +8,7 @@ import { KnowledgeService } from '../knowledge.service';
 export class SearchService {
   constructor(
     private knowledgeService: KnowledgeService,
-    private memoryService: MemoryService,
+    private memoryService: SourceMemoryService,
   ) {}
 
   async searchByTerm(ctx: HttpContext) {

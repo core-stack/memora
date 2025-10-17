@@ -1,18 +1,25 @@
-import z from "zod";
+import z from 'zod';
 
-import { filterSchema, orderSchema } from "./shared";
+import { knowledgeTagSchema } from './knowledge-tag';
+import { filterSchema, orderSchema } from './shared';
 
 export const knowledgeSchema = z.object({
   id: z.string().uuid(),
 
-  slug: z.string().trim(),
-  title: z.string().trim(),
-  description: z.string().trim(),
+  slug: z.string().trim().min(3),
+  title: z.string().trim().min(3),
+  description: z.string().trim().optional(),
+  instructions: z.string().trim().optional(),
+
+  files: z.number(),
+  storage: z.number(),
 
   tenantId: z.string().uuid(),
 
   createdAt: z.date(),
   updatedAt: z.date(),
+
+  tags: z.array(knowledgeTagSchema),
 });
 
 export type Knowledge = z.infer<typeof knowledgeSchema>;
@@ -22,6 +29,7 @@ export const knowledgeFilterSchema = filterSchema.extend({
     id: z.string().uuid().optional(),
     slug: z.string().optional(),
     title: z.string().optional(),
+    tag: z.string().optional(),
   }).strict().optional(),
   order: z.object({
     slug: orderSchema,
@@ -38,6 +46,10 @@ export const createKnowledgeSchema = knowledgeSchema.omit({
   tenantId: true,
   createdAt: true,
   updatedAt: true,
+  files: true,
+  storage: true,
+}).extend({
+  tags: z.array(z.string()).optional()
 });
 export type CreateKnowledge = z.infer<typeof createKnowledgeSchema>;
 
@@ -46,5 +58,9 @@ export const updateKnowledgeSchema = knowledgeSchema.omit({
   tenantId: true,
   createdAt: true,
   updatedAt: true,
+  files: true,
+  storage: true,
+}).extend({
+  tags: z.array(z.string()).optional()
 });
 export type UpdateKnowledge = z.infer<typeof updateKnowledgeSchema>;

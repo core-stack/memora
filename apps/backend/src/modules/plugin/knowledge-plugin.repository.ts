@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 
 import { knowledgePlugin, plugin } from '@/db/schema';
 import { DrizzleGenericRepository } from '@/generics';
-import { KnowledgePlugin, Plugin } from '@memora/schemas';
+import { KnowledgePlugin, Plugin } from '@snipet/schemas';
 
 export class KnowledgePluginRepository extends DrizzleGenericRepository<typeof knowledgePlugin, KnowledgePlugin> {
   constructor() {
@@ -14,7 +14,8 @@ export class KnowledgePluginRepository extends DrizzleGenericRepository<typeof k
       .from(knowledgePlugin)
       .where(eq(knowledgePlugin.knowledgeId, knowledgeId))
       .leftJoin(plugin, eq(knowledgePlugin.pluginId, plugin.id));
-    
+
+    if (res.length === 0) return [];
     return res.map((item) => item.plugin as Plugin);
   }
 }

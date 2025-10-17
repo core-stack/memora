@@ -124,19 +124,19 @@
 }
 
 .markdown h1 {
-  @apply text-xl font-bold mt-6 mb-4 text-foreground;
+  @apply text-2xl font-bold mt-6 mb-4;
 }
 
 .markdown h2 {
-  @apply text-lg font-semibold mt-5 mb-3 text-foreground;
+  @apply text-xl font-semibold mt-5 mb-3;
 }
 
 .markdown h3 {
-  @apply text-base font-medium mt-4 mb-2 text-foreground;
+  @apply text-lg font-medium mt-4 mb-2;
 }
 
 .markdown p {
-  @apply text-sm text-muted-foreground leading-relaxed mb-3;
+  @apply text-base leading-relaxed mb-3;
 }
 
 .markdown a {
@@ -144,15 +144,15 @@
 }
 
 .markdown ul {
-  @apply list-disc list-inside space-y-1 text-sm text-muted-foreground;
+  @apply list-disc list-inside space-y-1 text-base;
 }
 
 .markdown ol {
-  @apply list-decimal list-inside space-y-1 text-sm text-muted-foreground;
+  @apply list-decimal list-inside space-y-1 text-base;
 }
 
 .markdown li {
-  @apply text-sm text-muted-foreground;
+  @apply text-base;
 }
 
 .markdown blockquote {
@@ -172,7 +172,7 @@
 }
 
 .markdown table {
-  @apply w-full border border-gray-300 my-6 text-sm;
+  @apply w-full border border-gray-300 my-6 text-base;
 }
 
 .markdown th {

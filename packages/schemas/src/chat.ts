@@ -1,6 +1,6 @@
-import z from "zod";
+import z from 'zod';
 
-import { filterSchema, idSchema, orderSchema } from "./shared";
+import { filterSchema, idSchema, orderSchema } from './shared';
 
 export const chatSchema = z.object({
   id: idSchema,
@@ -30,7 +30,7 @@ export type ChatFilter = z.infer<typeof chatFilterSchema>;
 
 export const createChatSchema = chatSchema.pick({
   name: true
-})
+});
 export type CreateChat = z.infer<typeof createChatSchema>;
 
 export const updateChatSchema = chatSchema.pick({
