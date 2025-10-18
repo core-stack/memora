@@ -1,5 +1,4 @@
 import basicAuth from 'express-basic-auth';
-import { join } from 'path';
 
 import { ExpressAdapter } from '@bull-board/express';
 import { BullBoardModule } from '@bull-board/nestjs';
@@ -10,6 +9,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { env } from './env';
 import { CacheModule } from './infra/cache/cache.module';
 import { DatabaseModule } from './infra/database/database.module';
+import { PromptModule } from './infra/prompt/prompt.module';
 import { SecurityModule } from './infra/security/security.module';
 import { StorageModule } from './infra/storage/storage.module';
 import { VectorModule } from './infra/vector/vector.module';
@@ -24,12 +24,11 @@ import { MemoryModule } from './modules/memory/memory.module';
 import { PluginModule } from './modules/plugin/plugin.module';
 import { TagModule } from './modules/tag/tag.module';
 import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
-import { PromptModule } from './infra/prompt/prompt.module';
 
 @Module({
   imports: [
     ...(env.SERVE_STATIC ? [
-      ServeStaticModule.forRoot({ rootPath: env.SERVE_STATIC, exclude: ['/api*'], })
+      ServeStaticModule.forRoot({ rootPath: env.SERVE_STATIC, exclude: ['/api/*'], })
     ] : []),
     IngestModule,
     SearchModule,
