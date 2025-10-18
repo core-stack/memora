@@ -71,7 +71,7 @@ export class KnowledgeRepository extends DrizzleGenericRepository<typeof knowled
         description: data.description,
         instructions: data.instructions,
       } as Knowledge).returning();
-      if (data.tags) {
+      if (data.tags && data.tags.length > 0) {
         await tx.insert(knowledgeTag).values(data.tags.map(tag => ({
           knowledgeId: createdKnowledge.id,
           name: tag,
