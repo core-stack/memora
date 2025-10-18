@@ -28,10 +28,7 @@ export class MessageService extends TenantService<Message> {
     super(repository);
   }
 
-  async sendMessage(content: string, ctx: HttpContext): Promise<{
-    userMessage: Message;
-    aiMessage: Message;
-  }> {
+  async sendMessage(content: string, ctx: HttpContext): Promise<{ userMessage: Message; aiMessage: Message; }> {
     const { id: knowledgeId } = await this.knowledgeService.loadFromSlug(ctx);
 
     //#region get chat
@@ -49,7 +46,6 @@ export class MessageService extends TenantService<Message> {
       await this.chatService.update(chatId, { name: chatName }, ctx);
     }
     //#endregion
-
 
     //#region add user message to memory and database
     const userMessage = await this.repository.create({ content, chatId, messageRole: "USER", tenantId: env.TENANT_ID, knowledgeId });

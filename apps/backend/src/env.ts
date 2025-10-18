@@ -26,6 +26,7 @@ const envSchema = z.object({
 
   // DATABASE
   DATABASE_URL: z.string(),
+  CREATE_DATABASE: z.coerce.boolean().optional().default(false),
 
   TENANT_ID: z.string().uuid(),
 
