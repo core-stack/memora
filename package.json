@@ -6,21 +6,22 @@
   "scripts": {
     "db:generate": "cd apps/backend && npx drizzle-kit generate",
     "db:migrate": "cd apps/backend && npx drizzle-kit migrate",
+    "db:migrate:prod": "cd apps/backend && npm run migrate:prod",
 
     "start:frontend": "turbo run start --filter=@snipet/frontend",
     "start:backend": "turbo run start --filter=@snipet/backend",
-    "start:docker": "cd backend && npm start:prod",
-
+    "start:prod": "cd apps/backend && npm run start:prod",
+    
     "dev": "turbo dev",
     "dev:frontend": "turbo run dev --filter=@snipet/frontend",
     "dev:backend": "turbo run dev --filter=@snipet/backend",
     "dev:schemas": "turbo run dev --filter=@snipet/schemas",
-
+    
     "build": "turbo run build",
     "build:frontend": "turbo run build --filter=@snipet/frontend",
     "build:backend": "turbo run build --filter=@snipet/backend",
     "build:schemas": "turbo run build --filter=@snipet/schemas",
-
+    
     "check-types": "turbo run check-types",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
