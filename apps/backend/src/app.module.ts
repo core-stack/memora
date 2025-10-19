@@ -63,7 +63,7 @@ import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
     CacheModule,
     PromptModule,
     ...(env.SERVE_STATIC ? [
-      ServeStaticModule.forRoot({ rootPath: env.SERVE_STATIC, exclude: ['/api*', '/api/*'], })
+      ServeStaticModule.forRoot({ rootPath: env.SERVE_STATIC })
     ] : []),
   ],
 })
