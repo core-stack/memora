@@ -27,9 +27,6 @@ import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
 
 @Module({
   imports: [
-    ...(env.SERVE_STATIC ? [
-      ServeStaticModule.forRoot({ rootPath: env.SERVE_STATIC, exclude: ['/api/*'], })
-    ] : []),
     IngestModule,
     SearchModule,
     DatabaseModule,
@@ -65,6 +62,9 @@ import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
     MemoryModule,
     CacheModule,
     PromptModule,
+    ...(env.SERVE_STATIC ? [
+      ServeStaticModule.forRoot({ rootPath: env.SERVE_STATIC, exclude: ['/api*', '/api/*'], })
+    ] : []),
   ],
 })
 export class AppModule {}
