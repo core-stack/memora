@@ -8,6 +8,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useApiInvalidate } from '@/hooks/use-api-invalidate';
+import { useApiMutation } from '@/hooks/use-api-mutation';
+import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { formatBytes } from '@/utils/format';
 import { SourceType } from '@snipet/schemas';
@@ -62,6 +65,7 @@ export function FileTreeItem({
   level,
 }: FileTreeItemProps) {
   const [open, setOpen] = useState(false);
+  const { toast } = useToast();
   const { setSelectedFolderId, setSelectedFileId, selectedFileId, selectedFolderId } = useSource();
   const [isHovered, setIsHovered] = useState(false);
   const Icon = getFileIcon(item);
@@ -70,7 +74,8 @@ export function FileTreeItem({
   const indexError = isSource(item) && item.indexStatus === 'ERROR';
   const isSelected = isFolder ? selectedFolderId === item.id : selectedFileId === item.id;
   const { data: childs } = useExplorer(item.id, isFolder);
-
+  const invalidate = useApiInvalidate();
+  const { mutateAsync: retryIndexing } = useApiMutation("/api/knowledge/:knowledgeSlug/source/:id/retry")
   const handleClick = () => {
     if (isFolder) {
       setOpen(!open);
@@ -87,8 +92,16 @@ export function FileTreeItem({
       setSelectedFileId(item.id);
     }
   }
-  const handleRetryIndexing = () => {
-
+  const handleRetryIndexing = async () => {
+    await retryIndexing({ params: { id: item.id } });
+    console.log("retry indexing");
+    
+    invalidate("/api/knowledge/:knowledgeSlug/source");
+    invalidate("/api/knowledge/:knowledgeSlug/folder");
+    toast({
+      title: "Indexing retried",
+      description: "The indexing process has been retried.",
+    })
   }
 
   return (

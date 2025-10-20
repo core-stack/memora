@@ -64,6 +64,13 @@
       "when": 1760043789392,
       "tag": "0008_thankful_ma_gnuci",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1760973563036,
+      "tag": "0009_last_goliath",
+      "breakpoints": true
     }
   ]
 }

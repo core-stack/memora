@@ -7,6 +7,7 @@ import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { forwardRef, Module } from '@nestjs/common';
 
+import { JobType } from '../types';
 import { IngestProcessor } from './ingest.processor';
 import { ProcessorManager } from './processor-manager';
 import { PDFProcessor } from './processors/pdf.processor';
@@ -18,8 +19,8 @@ import { PDFProcessor } from './processors/pdf.processor';
     StorageModule,
     EmbeddingsModule,
     forwardRef(() => SourceModule),
-    BullModule.registerQueue({ name: "ingest" }),
-    BullBoardModule.forFeature({ name: "ingest", adapter: BullMQAdapter }),
+    BullModule.registerQueue({ name: JobType.INGEST }),
+    BullBoardModule.forFeature({ name: JobType.INGEST, adapter: BullMQAdapter }),
   ],
   exports: [ BullModule ]
 })

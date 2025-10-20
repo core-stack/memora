@@ -13,6 +13,7 @@ import { PromptModule } from './infra/prompt/prompt.module';
 import { SecurityModule } from './infra/security/security.module';
 import { StorageModule } from './infra/storage/storage.module';
 import { VectorModule } from './infra/vector/vector.module';
+import { DeleteKnowledgeModule } from './jobs/delete-knowledge/delete-knowledge.module';
 import { IngestModule } from './jobs/ingest/ingest.module';
 import { ChatModule } from './modules/knowledge/chat/chat.module';
 import { MessageModule } from './modules/knowledge/chat/message/message.module';
@@ -28,6 +29,7 @@ import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
 @Module({
   imports: [
     IngestModule,
+    DeleteKnowledgeModule,
     SearchModule,
     DatabaseModule,
     StorageModule,

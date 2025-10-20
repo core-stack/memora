@@ -7,12 +7,12 @@ import { source } from './source';
 export const folder = pgTable("folder", {
   id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
 
-  knowledgeId: varchar("knowledge_id", { length: 36 }).notNull(),
+  knowledgeId: varchar("knowledge_id", { length: 36 }).notNull().references(() => knowledge.id, { onDelete: "cascade" }),
 
   name: varchar("name", { length: 100 }).notNull(),
   root: boolean("root"),
 
-  parentId: varchar("parent_id", { length: 36 }),
+  parentId: varchar("parent_id", { length: 36 }).references(() => folder.id, { onDelete: "cascade" }),
 
   tenantId: varchar("tenant_id", { length: 36 }).notNull(),
 

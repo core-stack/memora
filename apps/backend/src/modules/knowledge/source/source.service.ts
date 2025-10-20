@@ -6,6 +6,7 @@ import { CrudService } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
 import { HttpContext } from '@/generics/http-context';
 import { StorageService } from '@/infra/storage/storage.service';
+import { JobType } from '@/jobs/types';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { GetUploadUrl, Source } from '@snipet/schemas';
@@ -22,7 +23,7 @@ export class SourceService extends CrudService<Source, CreateSource, UpdateSourc
     private readonly knowledgeService: KnowledgeService,
     private readonly folderService: FolderService,
     private readonly storageService: StorageService,
-    @InjectQueue("ingest") private readonly ingestQueue: Queue
+    @InjectQueue(JobType.INGEST) private readonly ingestQueue: Queue
   ) {
     super(repository);
   }
@@ -52,7 +53,7 @@ export class SourceService extends CrudService<Source, CreateSource, UpdateSourc
     }
 
     const cratedSource = await super.create(input, ctx);
-    this.ingestQueue.add("ingest", cratedSource);
+    this.ingestQueue.add(JobType.INGEST, cratedSource, { jobId: cratedSource.id });
     return cratedSource;
   }
 
@@ -66,5 +67,16 @@ export class SourceService extends CrudService<Source, CreateSource, UpdateSourc
     const source = (await this.repository.find({ filter: { id: sourceId } }))[0];
     if (!source) throw new BadRequestException("Source not found");
     return this.storageService.getVisualizationUrl(source.key);
+  }
+
+  async retryIndex(sourceId: string) {
+    const source = (await this.repository.find({ filter: { id: sourceId } }))[0];
+    if (!source) throw new BadRequestException("Source not found");
+    await this.repository.update(source.id, { indexStatus: 'PENDING' });
+    const failedJob = await this.ingestQueue.getJob(source.id);
+    if (failedJob && await failedJob.isFailed()) {
+      await failedJob.retry();
+    }
+    return source;
   }
 }

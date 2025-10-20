@@ -12,8 +12,8 @@ export const message = pgTable("message", {
 
   content: text().notNull(),
 
-  chatId: varchar("chat_id", { length: 36 }).notNull(),
-  knowledgeId: varchar("knowledge_id", { length: 36 }).notNull(),
+  chatId: varchar("chat_id", { length: 36 }).notNull().references(() => chat.id, { onDelete: "cascade" }),
+  knowledgeId: varchar("knowledge_id", { length: 36 }).notNull().references(() => knowledge.id, { onDelete: "cascade" }),
   tenantId: varchar("tenant_id", { length: 36 }).notNull(),
 
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
