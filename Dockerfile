@@ -23,6 +23,7 @@ RUN pnpm install --frozen-lockfile
 
 RUN pnpm install bunchee@^6.4.0 --filter @snipet/schemas
 
+RUN pnpm generate:prompts
 RUN pnpm build
 
 FROM base AS runner
