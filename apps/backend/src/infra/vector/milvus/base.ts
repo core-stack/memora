@@ -8,6 +8,7 @@ import {
   RowData, RRFRanker, SearchResultData
 } from '@zilliz/milvus2-sdk-node';
 
+import { VectorDeleteError } from '../errors/delete-error';
 import { InvalidVectorFiltersError } from '../errors/invalid-vector-filters';
 import { VectorMutationError } from '../errors/vector-mutation';
 import { VectorSearchError } from '../errors/vector-search';
@@ -90,25 +91,8 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
   async search(...opts: WithSearchOptions[]): Promise<Fragments<T>> {
     const options = this.buildSearchOptions(...opts);
 
-    //#region filter
-    const exprParts: string[] = [];
-    Object.entries(options.filters ?? {}).map(([key, value]) => {
-      switch(typeof value) {
-        case "string":
-          exprParts.push(`${key} == "${value}"`);
-          break;
-        case "number":
-        case "boolean":
-          exprParts.push(`${key} == ${value}`);
-          break;
-        default:
-          break;
-      }
-    })
-    if (options.term) exprParts.push(`TEXT_MATCH(content, '${options.term}')`);
-    
-    const filter = exprParts.join(" && ");
-    //#endregion
+    let filter = this.buildFilters(options.filters);
+    if (options.term) filter += ` && TEXT_MATCH(content, '${options.term}')`;
 
     //#region search
     const data: HybridSearchSingleReq[] = [];
@@ -149,5 +133,35 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
     if (result.status.error_code !== "Success") throw new VectorSearchError("Error searching fragments");
     
     return this.searchResultToFragment(result.results);
+  }
+
+  async delete(filter: Record<string, string | number | boolean>): Promise<void> {
+    const res = await this.client.delete({
+      collection_name: this.collectionName,
+      filter: this.buildFilters(filter),
+    });
+    if (res.err_index.length > 0) {
+      this.logger.error("Error deleting fragments", res);
+      throw new VectorDeleteError("Error deleting fragments");
+    }
+  }
+
+  private buildFilters(filters?: Record<string, string | number | boolean>): string {
+    const exprParts: string[] = [];
+    Object.entries(filters ?? {}).map(([key, value]) => {
+      switch(typeof value) {
+        case "string":
+          exprParts.push(`${key} == "${value}"`);
+          break;
+        case "number":
+        case "boolean":
+          exprParts.push(`${key} == ${value}`);
+          break;
+        default:
+          break;
+      }
+    })
+  
+    return exprParts.join(" && ");
   }
 }

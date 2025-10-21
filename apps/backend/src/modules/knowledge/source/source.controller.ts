@@ -30,4 +30,9 @@ export class SourceController extends CrudController<Source> {
   async upload(@Req() req: Request, @ZodBody(getUploadUrlSchema) body: GetUploadUrl) {
     return this.service.getUploadUrl(body, this.loadContext(req));
   }
+
+  @Post(":source_id/retry")
+  async retry(@ZodParam("source_id", idSchema) sourceId: string) {
+    return this.service.retryIndex(sourceId);
+  }
 }

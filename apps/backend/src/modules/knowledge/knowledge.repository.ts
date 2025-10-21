@@ -5,6 +5,7 @@ import { knowledge } from '@/db/schema';
 import { knowledgeTag } from '@/db/schema/knowledge_tag';
 import { DrizzleGenericRepository } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
+import { increment } from '@/infra/database/utils';
 import { Injectable } from '@nestjs/common';
 import { KnowledgeTag } from '@snipet/schemas';
 
@@ -71,7 +72,7 @@ export class KnowledgeRepository extends DrizzleGenericRepository<typeof knowled
         description: data.description,
         instructions: data.instructions,
       } as Knowledge).returning();
-      if (data.tags) {
+      if (data.tags && data.tags.length > 0) {
         await tx.insert(knowledgeTag).values(data.tags.map(tag => ({
           knowledgeId: createdKnowledge.id,
           name: tag,
@@ -107,5 +108,11 @@ export class KnowledgeRepository extends DrizzleGenericRepository<typeof knowled
         } as KnowledgeTag)));
       }
     })
+  }
+
+  async increment(id: string, field: keyof Knowledge, count: number = 1): Promise<void> {
+    await this.db.update(knowledge)
+      .set({ [field]: increment(knowledge[field], count) })
+      .where(eq(knowledge.id, id));
   }
 }

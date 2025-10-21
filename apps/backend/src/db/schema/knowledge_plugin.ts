@@ -5,8 +5,8 @@ import { knowledge } from './knowledge';
 import { plugin } from './plugin';
 
 export const knowledgePlugin = pgTable("knowledge_plugin", {
-  knowledgeId: varchar("knowledge_id", { length: 36 }).notNull(),
-  pluginId: varchar("plugin_id", { length: 36 }).notNull(),
+  knowledgeId: varchar("knowledge_id", { length: 36 }).notNull().references(() => knowledge.id, { onDelete: "cascade" }),
+  pluginId: varchar("plugin_id", { length: 36 }).notNull().references(() => plugin.id, { onDelete: "cascade" }),
 }, (table) => [
   uniqueIndex("knowledge_plugin_unique").on(table.knowledgeId, table.pluginId),
 ]);

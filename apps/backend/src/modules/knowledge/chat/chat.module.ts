@@ -2,8 +2,7 @@ import { DatabaseModule } from '@/infra/database/database.module';
 import { LLMModule } from '@/infra/llm/llm.module';
 import { PromptModule } from '@/infra/prompt/prompt.module';
 import { StorageModule } from '@/infra/storage/storage.module';
-import { IngestModule } from '@/jobs/ingest/ingest.module';
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { KnowledgeModule } from '../knowledge.module';
 import { ChatController } from './chat.controller';
@@ -17,7 +16,6 @@ import { ChatService } from './chat.service';
     DatabaseModule,
     KnowledgeModule,
     StorageModule.register(),
-    forwardRef(() => IngestModule),
     LLMModule,
     PromptModule
   ],

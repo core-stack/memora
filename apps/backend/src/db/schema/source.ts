@@ -23,8 +23,8 @@ export const source = pgTable("sources", {
   indexError: text("index_error"),
 
   memoryId: varchar("memory_id", { length: 36 }),
-  knowledgeId: varchar("knowledge_id", { length: 36 }).notNull(),
-  folderId: varchar("folder_id", { length: 36 }),
+  knowledgeId: varchar("knowledge_id", { length: 36 }).notNull().references(() => knowledge.id, { onDelete: "cascade" }),
+  folderId: varchar("folder_id", { length: 36 }).references(() => folder.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),

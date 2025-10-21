@@ -27,7 +27,7 @@ export const CreateSourceFile = ({ folderId }: Props) => {
   }
 
   const invalidate = useApiInvalidate();
-  const { mutate: createSource } = useApiMutation("/api/knowledge/:knowledgeSlug/source", { method: "POST" });
+  const { mutateAsync: createSource } = useApiMutation("/api/knowledge/:knowledgeSlug/source", { method: "POST" });
   const onUploadComplete = async (f: UploadedFile) => {
     const metadata = await getFileMetadata(f.file);
     const body: CreateSource = {
@@ -38,7 +38,7 @@ export const CreateSourceFile = ({ folderId }: Props) => {
       folderId,
       key: f.key,
     }
-    createSource({ body }, {
+    await createSource({ body }, {
       onError(error) {
         toast({ title:"Error processing source", description: error.message, variant: "destructive" });
       }

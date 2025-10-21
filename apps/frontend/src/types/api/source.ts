@@ -41,4 +41,9 @@ export interface SourceRoutes {
       response: undefined;
     }
   },
+  "/api/knowledge/:knowledgeSlug/source/:id/retry": {
+    POST: {
+      params: { knowledgeSlug?: string, id: string };
+    }
+  }
 }

@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "generate:prompts": "cd apps/backend && npm run generate:prompts",
+
     "db:generate": "cd apps/backend && npx drizzle-kit generate",
     "db:migrate": "cd apps/backend && npx drizzle-kit migrate",
     "db:migrate:prod": "cd apps/backend && npm run migrate:prod",

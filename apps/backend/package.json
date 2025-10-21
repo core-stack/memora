@@ -22,6 +22,8 @@
 
     "predev": "npm run generate:prompts",
     "dev": "nest start --watch",
+    "predev:development": "npm run generate:prompts",
+    "dev:development": "ENV_FILE=.env.development.local nest start --watch",
     
     "migrate:prod": "npx tsx drizzle/migrate.ts",
 

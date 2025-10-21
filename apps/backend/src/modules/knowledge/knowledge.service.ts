@@ -1,14 +1,21 @@
+import { Queue } from 'bullmq';
+
 import { env } from '@/env';
 import { CrudService } from '@/generics';
 import { HttpContext } from '@/generics/http-context';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { JobType } from '@/jobs/types';
+import { InjectQueue } from '@nestjs/bullmq';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateKnowledge, Knowledge, UpdateKnowledge } from '@snipet/schemas';
 
 import { KnowledgeRepository } from './knowledge.repository';
 
 @Injectable()
 export class KnowledgeService extends CrudService<Knowledge, CreateKnowledge, UpdateKnowledge> {
-  constructor(protected readonly repository: KnowledgeRepository) {
+  constructor(
+    protected readonly repository: KnowledgeRepository,
+    @InjectQueue(JobType.DELETE_KNOWLEDGE) private readonly deleteKnowledgeQueue: Queue    
+  ) {
     super(repository);
   }
 
@@ -37,5 +44,19 @@ export class KnowledgeService extends CrudService<Knowledge, CreateKnowledge, Up
       ...input,
       tenantId: env.TENANT_ID
     });
+  }
+
+  override async delete(id: string): Promise<void> {
+    const knowledge = await this.repository.findByID(id);
+    if (!knowledge) throw new NotFoundException("Knowledge not found");
+    await this.deleteKnowledgeQueue.add(JobType.DELETE_KNOWLEDGE, knowledge, { backoff: { type: "exponential", delay: 1000 } });
+  }
+
+  increaseFileCount(knowledgeId: string, count: number = 1) {
+    return this.repository.increment(knowledgeId, "files", count);
+  }
+
+  increaseStorageCount(knowledgeId: string, count: number = 1) {
+    return this.repository.increment(knowledgeId, "storage", count);
   }
 }

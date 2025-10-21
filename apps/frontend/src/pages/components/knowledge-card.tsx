@@ -6,28 +6,47 @@ import { Card } from '@/components/ui/card';
 import { Link } from '@/components/ui/link';
 import { Tooltip, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { DialogType } from '@/dialogs';
+import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
+import { useToast } from '@/hooks/use-toast';
 import { DateFormat, formatBytes, formatDate } from '@/utils/format';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
 
 import type { Knowledge } from "@snipet/schemas";
+import type { ConfirmDialogProps } from '@/dialogs/confirm';
 interface KnowledgeCardProps {
   knowledge: Knowledge;
 }
 
 export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
-  const { openDialog } = useDialog();
+  const { openDialog, closeDialog } = useDialog();
 
-  // const handleDelete = () => {
-  //   openDialog({
-  //     type: DialogType.CONFIRM,
-  //     props: {
-  //       title: "Delete knowledge base",
-  //       description: "Are you sure you want to delete this knowledge base?",
-  //       confirm: { text: "Yes, delete", action: () => console.log("delete") }
-  //     } as ConfirmDialogProps
-  //   })
-  // }
+  const { mutate: deleteKnowledge } = useApiMutation("/api/knowledge/:id", { method: "DELETE" });
+  const { toast } = useToast();
+  const handleDelete = () => {
+    openDialog({
+      type: DialogType.CONFIRM,
+      props: {
+        title: "Delete knowledge base",
+        description: "Are you sure you want to delete this knowledge base?",
+        confirm: {
+          text: "Yes", action: () => {
+            deleteKnowledge({
+              params: { id: knowledge.id }
+            }, {
+              onSuccess: () => {
+                toast({
+                  title: "Delete knowledge base",
+                  description: "The knowledge base has been added to deletion queue, and will be deleted soon."
+                })
+                closeDialog(DialogType.CONFIRM)
+              }
+            })
+          }
+        }
+      } as ConfirmDialogProps
+    })
+  }
 
   const handleEdit = () => {
     openDialog({
@@ -108,7 +127,7 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
           <Button
             variant="ghost"
             size="icon"
-            disabled
+            onClick={handleDelete}
             className="text-destructive hover:text-destructive hover:bg-destructive/10"
             title="Delete knowledge base"
           >

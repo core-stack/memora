@@ -64,7 +64,6 @@ export function useApiMutation<
       const params = { ...(options.passParams ? routeParams : {}), ...p ?? {} };
       const query = { ...(options.passQuery ? Object.fromEntries(routeSearchParams.entries()) : {}), ...q ?? {} };
 
-      // const query = q ?? (options.passQuery ? searchParams : {});            
       const url = buildUrl(key, params, query);
 
       const res = await fetch(url, {

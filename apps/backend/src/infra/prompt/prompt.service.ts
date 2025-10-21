@@ -36,10 +36,10 @@ export class PromptService implements OnModuleInit {
   }
 
   // @ts-ignore
-  getTemplate<K extends keyof typeof import('@generated/prompts/prompts').PromptTemplates>(
+  getTemplate<K extends keyof typeof import('../../@generated/prompts/prompts').PromptTemplates>(
     name: K
-  ): (typeof import('@generated/prompts/prompts').PromptTemplates)[K] {
+  ): (typeof import('../../@generated/prompts/prompts').PromptTemplates)[K] {
     // @ts-ignore
-    return require('@generated/prompts/prompts').PromptTemplates[name];
+    return require('../../@generated/prompts/prompts').PromptTemplates[name];
   }
 }
