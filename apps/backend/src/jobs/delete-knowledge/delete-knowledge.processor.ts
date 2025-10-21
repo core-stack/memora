@@ -1,5 +1,6 @@
 import { Job } from 'bullmq';
 
+import { StorageDeleteError } from '@/infra/storage/errors/delete-error';
 import { StorageService } from '@/infra/storage/storage.service';
 import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
@@ -33,8 +34,15 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
     job.updateProgress(50);
   
     // delete files in storage
-    await this.storageService.delete(`source/${tenantId}/${knowledgeId}`, true);
-    job.updateProgress(90);  
+    try {
+      await this.storageService.delete(`source/${tenantId}/${knowledgeId}`, true);
+      job.updateProgress(90);
+    } catch (error) {
+      if (error instanceof StorageDeleteError) {
+        console.error(error);  
+      }
+      throw error;
+    }
   
     // delete knowledge in database
     await this.knowledgeRepository.delete(knowledgeId);

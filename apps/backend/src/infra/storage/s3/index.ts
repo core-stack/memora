@@ -120,10 +120,11 @@ export class S3Service extends StorageService {
       Bucket: this.defaultBucket,
       Prefix: isFolder ? key.endsWith("/") ? key : `${key}/` : key
     }));
+    if (!listOfObjects.Contents || listOfObjects.Contents.length === 0) return;
     
     const objectsToDelete: Delete = { Objects: [] };
     listOfObjects.Contents?.forEach((object) => objectsToDelete.Objects?.push({ Key: object.Key }));
-    
+  
     const deleteResult = await this.s3.send(new DeleteObjectsCommand({
       Bucket: this.defaultBucket,
       Delete: objectsToDelete,

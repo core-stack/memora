@@ -4,8 +4,17 @@ import z from 'zod';
 
 import { __root } from './root';
 
+const envFile = process.env.ENV_FILE;
+
+const buildEnvPaths = (envFile?: string) => {
+  if (envFile) {
+    return [envFile, `../../${envFile}`];
+  }
+  return [".env", "../../.env", "../../.env.local"];
+}
+
 dotenv.config({
-  path: [".env", "../../.env", "../../.env.local"],
+  path: buildEnvPaths(envFile),
 });
 
 const envSchema = z.object({

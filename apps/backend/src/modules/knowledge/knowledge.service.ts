@@ -49,6 +49,6 @@ export class KnowledgeService extends CrudService<Knowledge, CreateKnowledge, Up
   override async delete(id: string): Promise<void> {
     const knowledge = await this.repository.findByID(id);
     if (!knowledge) throw new NotFoundException("Knowledge not found");
-    await this.deleteKnowledgeQueue.add(JobType.DELETE_KNOWLEDGE, knowledge);
+    await this.deleteKnowledgeQueue.add(JobType.DELETE_KNOWLEDGE, knowledge, { backoff: { type: "exponential", delay: 1000 } });
   }
 }
