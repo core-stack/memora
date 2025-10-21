@@ -13,6 +13,8 @@ export const createKnowledge = createKnowledgeSchema.extend({
 export type CreateKnowledge = z.infer<typeof createKnowledge>;
 
 export const updateKnowledge = updateKnowledgeSchema.extend({
-  tenantId: z.string().uuid()
+  tenantId: z.string().uuid(),
+  storage: z.number().optional(),
+  files: z.number().optional()
 });
 export type UpdateKnowledge = z.infer<typeof updateKnowledge>;

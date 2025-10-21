@@ -52,9 +52,12 @@ export class SourceService extends CrudService<Source, CreateSource, UpdateSourc
       throw new BadRequestException("Invalid key");
     }
 
-    const cratedSource = await super.create(input, ctx);
-    this.ingestQueue.add(JobType.INGEST, cratedSource, { jobId: cratedSource.id });
-    return cratedSource;
+    const createdSource = await super.create(input, ctx);
+    
+    await this.knowledgeService.increaseFileCount(knowledgeId);
+    await this.knowledgeService.increaseStorageCount(knowledgeId, createdSource.metadata.size);
+    await this.ingestQueue.add(JobType.INGEST, createdSource, { jobId: createdSource.id });
+    return createdSource;
   }
 
   async getUploadUrl(input: GetUploadUrl, ctx: HttpContext) {

@@ -51,4 +51,12 @@ export class KnowledgeService extends CrudService<Knowledge, CreateKnowledge, Up
     if (!knowledge) throw new NotFoundException("Knowledge not found");
     await this.deleteKnowledgeQueue.add(JobType.DELETE_KNOWLEDGE, knowledge, { backoff: { type: "exponential", delay: 1000 } });
   }
+
+  increaseFileCount(knowledgeId: string, count: number = 1) {
+    return this.repository.increment(knowledgeId, "files", count);
+  }
+
+  increaseStorageCount(knowledgeId: string, count: number = 1) {
+    return this.repository.increment(knowledgeId, "storage", count);
+  }
 }
