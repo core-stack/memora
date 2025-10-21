@@ -41,5 +41,5 @@ jobs:
           context: .
           file: ./Dockerfile
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/nome-da-imagem:${{ steps.vars.outputs.tag }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/nome-da-imagem:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/snipet:${{ steps.vars.outputs.tag }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/snipet:latest
