@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import React, { createContext, useEffect } from 'react';
 
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useApiMutation } from '@/hooks/use-api-mutation';
@@ -31,7 +31,7 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
   const router = useRouter();
   const { data: messages = [], isLoading: loadingMessages, optimisticUpdate } = useApiQuery(
     "/api/knowledge/:knowledgeSlug/chat/:chatId/message",
-    { method: "GET", enabled: !!chatId }
+    { method: "GET", enabled: !!chatId, params: { chatId: chatId ?? "" } }
   );
 
   const { data: chat, isLoading: loadingChat } = useApiQuery(
@@ -48,18 +48,22 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
     { method: "POST" }
   )
 
-  const sendMessage = async (message: string, chatId?: string) => {
-    console.log(chatId);
-    
+  const sendMessage = async (message: string, newChat?: Chat) => {
+    const c = newChat ?? chat;
+    if (!c) {
+      console.warn("Missing chat");
+      return;
+    }
+
     optimisticUpdate((prev) => {
-      if (!prev) return [];
+      if (!prev) prev = [];
       return [
         ...prev,
         {
-          chatId: chatId ?? chat?.id ?? "",
+          chatId: c.id,
           content: message,
-          knowledgeId: chat?.knowledgeId ?? "",
-          tenantId: chat?.tenantId ?? "",
+          knowledgeId: c.knowledgeId,
+          tenantId: c.tenantId,
           messageRole: "USER",
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -67,21 +71,22 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
         },
         {
           streaming: true,
-          chatId: chatId ?? chat?.id ?? "",
+          chatId: c.id,
           content: "",
-          knowledgeId: chat?.knowledgeId ?? "",
-          tenantId: chat?.tenantId ?? "",
+          knowledgeId: c.knowledgeId,
+          tenantId: c.tenantId,
           messageRole: "AI",
           createdAt: new Date(),
           updatedAt: new Date(),
           id: crypto.randomUUID(),
         }
-      ]
+      ];
     });
 
     sendChatMessage({ body: { content: message }, params: chatId ? { chatId } : undefined }, {
       onSuccess: () => {
         invalidate("/api/knowledge/:knowledgeSlug/chat/:chatId/message");
+        invalidate("/api/knowledge/:knowledgeSlug/chat");
       }
     });
   }
@@ -89,14 +94,18 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
   const createChat = async (initialMessage: string) => {
     createChatMutation({ body: { name: "" } },
       {
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
           router.replace(`/${knowledgeSlug}/chat/${data.id}`);
-          invalidate('/api/knowledge/:knowledgeSlug/chat');
-          sendMessage(initialMessage, data.id);
+          await invalidate('/api/knowledge/:knowledgeSlug/chat');
+          sendMessage(initialMessage, data);
         }
       }
     )
   }
+
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
 
   return (
     <ChatContext.Provider value={{
