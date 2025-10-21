@@ -1,3 +1,8 @@
+export function extractParamNames(path: string): string[] {
+  const matches = path.match(/:([^/]+)/g);
+  return matches ? matches.map(m => m.slice(1)) : [];
+}
+
 export function buildUrl(
   path: string,
   params?: Record<string, any>,

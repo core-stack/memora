@@ -1,4 +1,4 @@
-import React, { createContext, useEffect } from 'react';
+import React, { createContext } from 'react';
 
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useApiMutation } from '@/hooks/use-api-mutation';
@@ -102,10 +102,6 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
       }
     )
   }
-
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
 
   return (
     <ChatContext.Provider value={{

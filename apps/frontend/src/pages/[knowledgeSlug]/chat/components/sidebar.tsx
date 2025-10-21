@@ -21,7 +21,7 @@ export function ChatSidebar() {
   const [searchQuery, setSearchQuery] = useState("")
   const { data: chats = [], isLoading } = useApiQuery(
     "/api/knowledge/:knowledgeSlug/chat",
-    { method: "GET", query: { order: { createdAt: "DESC" }} }
+    { method: "GET", query: { order: { createdAt: "DESC" } } }
   );
 
   const filteredChats = chats.filter((chat) => {
