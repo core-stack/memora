@@ -83,14 +83,10 @@ export class KnowledgeRepository extends DrizzleGenericRepository<typeof knowled
     })
   }
 
-  override async update(id: string, data: UpdateKnowledge): Promise<void> {
+  override async update(id: string, data: Partial<UpdateKnowledge>): Promise<void> {
     return await this.db.transaction(async (tx) => {
-      await tx.update(knowledge).set({
-        title: data.title,
-        tenantId: data.tenantId,
-        description: data.description,
-        instructions: data.instructions,
-      } as Knowledge).where(eq(knowledge.id, id));
+      
+      await tx.update(knowledge).set(data as unknown as Knowledge).where(eq(knowledge.id, id));
 
       const createdTags = await tx.select().from(knowledgeTag).where(eq(knowledgeTag.knowledgeId, id));
       const tagsToDelete = createdTags.filter(tag => !data.tags?.includes(tag.name)).map(t => t.id);
