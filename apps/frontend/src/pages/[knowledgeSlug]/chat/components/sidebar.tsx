@@ -19,7 +19,10 @@ export function ChatSidebar() {
   const { knowledgeSlug, chatId } = useParams<{ knowledgeSlug: string, chatId?: string }>();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("")
-  const { data: chats = [], isLoading } = useApiQuery("/api/knowledge/:knowledgeSlug/chat", { method: "GET" });
+  const { data: chats = [], isLoading } = useApiQuery(
+    "/api/knowledge/:knowledgeSlug/chat",
+    { method: "GET", query: { order: { createdAt: "DESC" } } }
+  );
 
   const filteredChats = chats.filter((chat) => {
     const matchesSearch = chat.name.toLowerCase().includes(searchQuery.toLowerCase());

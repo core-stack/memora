@@ -4,15 +4,17 @@ import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
+import { useApiQuery } from '@/hooks/use-api-query';
 
 import { KnowledgeCard } from './knowledge-card';
-
-import { useApiQuery } from '@/hooks/use-api-query';
 
 export function KnowledgeList() {
   const { data: knowledges = [] } = useApiQuery(
     "/api/knowledge",
-    { method: "GET", query: { include: [ "tags" ] } }
+    { 
+      method: "GET", query: { include: [ "tags" ] },
+      refetchInterval: (query) =>  query.state.data?.some((s) => ["DELETING"].includes(s.status)) ? 5000 : false,
+    }
   );
   const [searchQuery, setSearchQuery] = useState("")
 

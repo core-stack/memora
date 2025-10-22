@@ -20,3 +20,9 @@ export const messageRoleEnum = pgEnum("message_role", [
   "USER",
   "AI"
 ]);
+
+export const knowledgeStatusEnum = pgEnum("knowledge_status", [
+  "DELETING",
+  "DELETE_ERROR",
+  "OK"
+])

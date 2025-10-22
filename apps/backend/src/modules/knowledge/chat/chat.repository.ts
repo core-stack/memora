@@ -18,7 +18,7 @@ export class ChatRepository extends DrizzleGenericRepository<typeof chat, Chat> 
         tenantId: chat.tenantId,
         createdAt: chat.createdAt,
         updatedAt: chat.updatedAt,
-        messageCount: sql<number>`COUNT(${message.id})`.as('messageCount'),
+        messageCount: sql<number>`COUNT(${message.id})`.mapWith(Number).as('messageCount'),
       })
       .from(chat)
       .leftJoin(message, eq(chat.id, message.chatId))

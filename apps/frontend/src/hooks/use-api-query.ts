@@ -1,5 +1,5 @@
 import { ApiError } from '@/utils/api-error';
-import { buildUrl } from '@/utils/build-url';
+import { buildUrl, extractParamNames } from '@/utils/build-url';
 import { catchError } from '@/utils/catch-error';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -44,18 +44,18 @@ export function useApiQuery<
   const routeParams = useParams();
   const [routeSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
+  const params = Object.fromEntries(Object.entries(routeParams).filter(([k]) => extractParamNames(path).includes(k)));
+  const key = [path, opts?.params, opts?.query, params] as unknown as TQueryKey;
 
   const optimisticUpdate = (merge: (oldValue: TData) => TData) => {
-    const key = [path, opts?.params, opts?.query, routeParams] as unknown as TQueryKey;
     const prevData = queryClient.getQueryData<TData, TQueryKey>(key)
     queryClient.setQueryData<TData>(key, merge(prevData as TData));
   }
 
-
-  return { 
+  return {
     ...useQuery<TData, TError, TData, TQueryKey>({
       ...opts,
-      queryKey: [path, opts?.params, opts?.query, routeParams] as unknown as TQueryKey,
+      queryKey: key,
       enabled: opts?.enabled,
       queryFn: async (): Promise<TData> => {
         if (opts.passParams === undefined) opts.passParams = true;

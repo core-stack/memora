@@ -6,9 +6,11 @@ import { Card } from '@/components/ui/card';
 import { Link } from '@/components/ui/link';
 import { Tooltip, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { DialogType } from '@/dialogs';
+import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import { DateFormat, formatBytes, formatDate } from '@/utils/format';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
 
@@ -23,6 +25,7 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
 
   const { mutate: deleteKnowledge } = useApiMutation("/api/knowledge/:id", { method: "DELETE" });
   const { toast } = useToast();
+  const invalidate = useApiInvalidate();
   const handleDelete = () => {
     openDialog({
       type: DialogType.CONFIRM,
@@ -34,11 +37,12 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
             deleteKnowledge({
               params: { id: knowledge.id }
             }, {
-              onSuccess: () => {
+              onSuccess: async () => {
                 toast({
                   title: "Delete knowledge base",
                   description: "The knowledge base has been added to deletion queue, and will be deleted soon."
                 })
+                await invalidate("/api/knowledge");
                 closeDialog(DialogType.CONFIRM)
               }
             })
@@ -56,7 +60,7 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
   }
 
   return (
-    <Card className="p-6 hover:border-accent transition-colors">
+    <Card className={cn("p-6 hover:border-accent transition-colors", knowledge.status === "DELETING" && "opacity-30 pointer-events-none")}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4 flex-1 min-w-0">
           <div className="h-12 w-12 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
@@ -64,8 +68,10 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex flex-col mb-1">
               <Link href={`/${knowledge.slug}`} className="font-semibold text-lg truncate hover:underline">{knowledge.title}</Link>
+              { knowledge.status === "DELETING" && <p>Deleting...</p> }
+              { knowledge.status === "DELETE_ERROR" && <p className="text-destructive">{knowledge.deleteError}</p> }
             </div>
 
             <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{knowledge.description}</p>
