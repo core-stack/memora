@@ -4,9 +4,7 @@ import {
   createKnowledgeSchema, knowledgeSchema, knowledgeStatusEnum, updateKnowledgeSchema
 } from '@snipet/schemas';
 
-export const knowledge = knowledgeSchema.extend({
-  tenantId: z.string().uuid()
-});
+export const knowledge = knowledgeSchema
 export type Knowledge = z.infer<typeof knowledge>;
 
 export const createKnowledge = createKnowledgeSchema.extend({

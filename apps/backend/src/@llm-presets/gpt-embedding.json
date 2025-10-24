@@ -1,0 +1,47 @@
+[
+  {
+    "name": "OpenAI Embedding (text-embedding-3-large)",
+    "description": "Modelo de embedding de alta precisão da OpenAI, ideal para busca semântica e classificação.",
+    "iconPath": "gpt.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "required": ["apiKey"],
+    "config": {
+      "type": "EMBEDDING",
+      "model": "text-embedding-3-large",
+      "baseUrl": "https://api.openai.com/v1/embeddings",
+      "dimension": 3072
+    }
+  },
+  {
+    "name": "OpenAI Embedding (text-embedding-3-small)",
+    "description": "Modelo leve e rápido para embeddings, com custo reduzido e boa performance semântica.",
+    "iconPath": "gpt.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "required": ["apiKey"],
+    "config": {
+      "type": "EMBEDDING",
+      "model": "text-embedding-3-small",
+      "baseUrl": "https://api.openai.com/v1/embeddings",
+      "dimension": 1536
+    }
+  },
+  {
+    "name": "OpenAI Embedding (text-embedding-ada-002)",
+    "description": "Modelo clássico de embedding da OpenAI, amplamente suportado e estável.",
+    "iconPath": "gpt.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "required": ["apiKey"],
+    "config": {
+      "type": "EMBEDDING",
+      "model": "text-embedding-ada-002",
+      "baseUrl": "https://api.openai.com/v1/embeddings",
+      "dimension": 1536
+    }
+  }
+]

@@ -2,16 +2,20 @@ import React, { createContext, useCallback, useState } from 'react';
 
 import { Dialog } from '@/components/ui/dialog';
 
+import type { dialogs, DialogType } from '@/dialogs';
+
+export type DialogComponentProps<T extends DialogType> = React.ComponentProps<typeof dialogs[T]>;
+
 export type DialogComponents = Record<string, React.ComponentType<any>>;
 
-type OpenDialogOptions = {
-  type: string;
-  props?: React.ComponentProps<any>;
+export type OpenDialogOptions<T extends DialogType = DialogType> = {
+  type: T;
+  props?: DialogComponentProps<T>;
   onClose?: () => void;
 }
 
 export type DialogState = {
-  openDialog: (opts: OpenDialogOptions) => void;
+  openDialog: <T extends DialogType>(opts: OpenDialogOptions<T>) => void;
   closeDialog: (type?: string) => void;
   closeAllDialogs: () => void;
 };
@@ -47,7 +51,7 @@ export const DialogContainer = ({
             open
             onOpenChange={() => closeDialog(type)}
           >
-            <DialogComponent {...props} />
+            <DialogComponent {...props ?? {}} />
           </Dialog>
         );
       })}

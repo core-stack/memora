@@ -1,7 +1,7 @@
 import { Job } from 'bullmq';
 
 import { StorageDeleteError } from '@/infra/storage/errors/delete-error';
-import { StorageService } from '@/infra/storage/storage.service';
+import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
 import { KnowledgeRepository } from '@/modules/knowledge/knowledge.repository';
@@ -20,7 +20,7 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
     @Inject(forwardRef(() => KnowledgeRepository)) private readonly knowledgeRepository: KnowledgeRepository,
     private readonly sourceVectorStore: SourceVectorStoreService,
     private readonly chatVectorStore: ChatVectorStoreService,
-    private readonly storageService: StorageService
+    private readonly storageService: PrivateStorageService
   ) { super(); }
 
   async process(job: Job<Knowledge>) {

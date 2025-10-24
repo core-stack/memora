@@ -21,6 +21,7 @@ import { FolderModule } from './modules/knowledge/folder/folder.module';
 import { KnowledgeModule } from './modules/knowledge/knowledge.module';
 import { SearchModule } from './modules/knowledge/search/search.module';
 import { SourceModule } from './modules/knowledge/source/source.module';
+import { LLMModule } from './modules/llm/llm.module';
 import { MemoryModule } from './modules/memory/memory.module';
 import { PluginModule } from './modules/plugin/plugin.module';
 import { TagModule } from './modules/tag/tag.module';
@@ -28,6 +29,7 @@ import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
 
 @Module({
   imports: [
+    LLMModule,
     IngestModule,
     DeleteKnowledgeModule,
     SearchModule,

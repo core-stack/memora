@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { env } from '@/env';
-import { StorageService } from '@/infra/storage/storage.service';
+import { PublicStorageService } from '@/infra/storage/public-storage.service';
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Plugin } from '@snipet/schemas';
 
@@ -35,7 +35,7 @@ export class PluginRegistryService implements OnModuleInit {
   constructor(
     @Inject(PLUGINS_DIR) private readonly pluginsDir: string,
     private providerRegistry: PluginProviderRegistry,
-    private storage: StorageService
+    private storage: PublicStorageService
   ) {}
 
   onModuleInit() {
@@ -100,12 +100,7 @@ export class PluginRegistryService implements OnModuleInit {
           const ext = pluginJson.iconPath.split('.').pop();
           const iconPath = path.join(pluginPath, pluginJson.iconPath);
           if (fs.existsSync(iconPath)) {
-            await this.storage.putObject(
-              `${pluginJson.name}/icon.${ext}`,
-              fs.readFileSync(iconPath),
-              `image/${ext}`,
-              { bucket: env.PLUGINS_BUCKET }
-            );
+            await this.storage.putObject(`${pluginJson.name}/icon.${ext}`, fs.readFileSync(iconPath), `image/${ext}`);
             loadIcon = true;
             continue;
           }
@@ -113,12 +108,7 @@ export class PluginRegistryService implements OnModuleInit {
         for (const ext of extensions) {
           const iconPath = path.join(pluginPath, `icon.${ext}`);
           if (fs.existsSync(iconPath)) {
-            await this.storage.putObject(
-              `${pluginJson.name}/icon.${ext}`,
-              fs.readFileSync(iconPath),
-              `image/${ext}`,
-              { bucket: env.PLUGINS_BUCKET }
-            );
+            await this.storage.putObject(`${pluginJson.name}/icon.${ext}`, fs.readFileSync(iconPath), `image/${ext}`);
             loadIcon = true;
             break;
           }
@@ -130,12 +120,7 @@ export class PluginRegistryService implements OnModuleInit {
         if (pluginJson.documentationPath) {
           const documentationPath = path.join(pluginPath, pluginJson.documentationPath);
           if (fs.existsSync(documentationPath)) {
-            await this.storage.putObject(
-              `${pluginJson.name}/documentation.md`,
-              fs.readFileSync(documentationPath),
-              'text/markdown',
-              { bucket: env.PLUGINS_BUCKET }
-            );
+            await this.storage.putObject(`${pluginJson.name}/documentation.md`, fs.readFileSync(documentationPath), 'text/markdown');
             loadDocumentation = true;
             continue;
           }
@@ -144,12 +129,7 @@ export class PluginRegistryService implements OnModuleInit {
         for (const docName of docNames) {
           const iconPath = path.join(pluginPath, docName);
           if (fs.existsSync(iconPath)) {
-            await this.storage.putObject(
-              `${pluginJson.name}/${docName}`,
-              fs.readFileSync(iconPath),
-              `text/markdown`,
-              { bucket: env.PLUGINS_BUCKET }
-            );
+            await this.storage.putObject(`${pluginJson.name}/${docName}`, fs.readFileSync(iconPath), `text/markdown`);
             loadDocumentation = true;
             break;
           }

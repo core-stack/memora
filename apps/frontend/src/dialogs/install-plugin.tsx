@@ -18,10 +18,10 @@ import { DialogType } from './';
 import type  { CreatePlugin, PluginRegistry } from "@snipet/schemas";
 import type z from 'zod';
 
-type Props = {
+export type InstallPluginProps = {
   plugin: PluginRegistry;
 }
-export const InstallPluginDialog = ({ plugin }: Props) => {
+export const InstallPluginDialog = ({ plugin }: InstallPluginProps) => {
   const defaultValues: CreatePlugin = {
     name: plugin.name,
     type: plugin.type,

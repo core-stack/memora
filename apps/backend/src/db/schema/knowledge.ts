@@ -6,6 +6,7 @@ import {
 import { chat } from './chat';
 import { knowledgeStatusEnum } from './enums';
 import { folder } from './folder';
+import { knowledgeLLM } from './knowledge_llm';
 import { knowledgeTag } from './knowledge_tag';
 import { plugin } from './plugin';
 import { source } from './source';
@@ -39,4 +40,5 @@ export const knowledgeRelations = relations(knowledge, ({ many }) => ({
   plugins: many(plugin),
   chats: many(chat),
   tags: many(knowledgeTag),
+  llms: many(knowledgeLLM),
 }));

@@ -16,7 +16,10 @@ import { createKnowledgeFolderSchema } from '@snipet/schemas';
 
 import { DialogType } from './';
 
-export const CreateKnowledgeFolderDialog = ({ folderId }: { folderId?: string }) => {
+export type CreateKnowledgeFolderDialogProps = {
+  folderId?: string
+}
+export const CreateKnowledgeFolderDialog = ({ folderId }: CreateKnowledgeFolderDialogProps) => {
   const { closeDialog } = useDialog();
   const { slug } = useKnowledge();
   const form = useForm({ resolver: zodResolver(createKnowledgeFolderSchema) });

@@ -44,11 +44,12 @@ const envSchema = z.object({
   // S3
   AWS_ACCESS_KEY_ID: z.string().optional(),
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
-  AWS_REGION: z.string().optional(),
+  AWS_REGION: z.string().default("us-east-1"),
   AWS_ENDPOINT: z.string().optional(),
-  AWS_PUBLIC_BUCKET_BASE_URL: z.string().optional(),
-  AWS_BUCKET: z.string().optional(),
+  AWS_BUCKET: z.string().default("default"),
+  AWS_PUBLIC_BUCKET: z.string().default("public"),
   AWS_FORCE_PATH_STYLE: z.coerce.boolean().optional().default(false),
+  AWS_PUBLIC_BASE_URL: z.string().default("http://localhost:9000/public"),
 
   // REDIS
   REDIS_HOST: z.string().optional().default("localhost"),
@@ -92,14 +93,9 @@ const envSchema = z.object({
   return data;
 }).superRefine((data, ctx) => {
   if (data.STORAGE_TYPE === 's3') {
-    if (!data.AWS_ACCESS_KEY_ID &&
-      !data.AWS_SECRET_ACCESS_KEY &&
-      !data.AWS_REGION &&
-      !data.AWS_ENDPOINT &&
-      !data.AWS_PUBLIC_BUCKET_BASE_URL &&
-      !data.AWS_BUCKET) {
-        ctx.addIssue({ code: "custom", message: "AWS storage is not configured" });
-      }
+    if (!data.AWS_ACCESS_KEY_ID && !data.AWS_SECRET_ACCESS_KEY) {
+      ctx.addIssue({ code: "custom", message: "AWS storage is not configured" });
+    }
   }
 });
 

@@ -26,3 +26,8 @@ export const knowledgeStatusEnum = pgEnum("knowledge_status", [
   "DELETE_ERROR",
   "OK"
 ])
+
+export const llmTypeEnum = pgEnum("llm_type", [
+  "EMBEDDING",
+  "TEXT",
+]);
