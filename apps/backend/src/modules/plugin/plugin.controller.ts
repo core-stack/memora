@@ -11,9 +11,10 @@ import { PluginService } from './plugin.service';
 
 import type { CreatePlugin } from "@snipet/schemas";
 @Controller('plugin')
-export class PluginController extends CrudController<Plugin> {
-  constructor(protected service: PluginService) {
-    super(service, pluginFilterSchema, createPluginSchema, updatePluginSchema);
+export class PluginController
+  extends CrudController<Plugin>(pluginFilterSchema, createPluginSchema, updatePluginSchema) {
+  constructor(public service: PluginService) {
+    super(service);
   }
 
   @Post("test")

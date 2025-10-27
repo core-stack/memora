@@ -4,7 +4,8 @@ import { Body } from '@nestjs/common';
 
 import { ZodValidationPipe } from '../pipes/zod.pipe';
 
-export const ZodBody = (schemaOrField: z.ZodType | string, schema?: z.ZodType) => {
+export const ZodBody = (schemaOrField?: z.ZodType | string, schema?: z.ZodType) => {
+  if (!schemaOrField) return Body();
   if (typeof schemaOrField === 'string') {
     return Body(schemaOrField, new ZodValidationPipe(schema ?? z.string()))
   }

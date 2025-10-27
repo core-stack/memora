@@ -11,14 +11,13 @@ import { SourceService } from './source.service';
 import type { GetUploadUrl } from '@snipet/schemas';
 import type { Request } from 'express';
 @Controller('knowledge/:knowledgeSlug/source')
-export class SourceController extends CrudController<Source> {
-  constructor(protected readonly service: SourceService) {
-    super(
-      service,
-      sourceFilterSchema,
-      createSourceSchema,
-      updateSourceSchema
-    );
+export class SourceController extends CrudController<Source>(
+  sourceFilterSchema,
+  createSourceSchema,
+  updateSourceSchema
+) {
+  constructor(public service: SourceService) {
+    super(service);
   }
 
   @Get(":source_id/view")
