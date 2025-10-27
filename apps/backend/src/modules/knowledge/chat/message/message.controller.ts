@@ -11,14 +11,10 @@ import { MessageService } from './message.service';
 
 import type { CreateMessage, StreamMessage } from "@snipet/schemas";
 @Controller('knowledge/:knowledgeSlug/chat/:chatId/message')
-export class MessageController extends CrudController<Message> {
-  constructor(protected readonly service: MessageService) {
-    super(
-      service,
-      messageFilterSchema,
-      createMessageSchema,
-      updateMessageSchema
-    );
+export class MessageController
+  extends CrudController<Message>(messageFilterSchema, createMessageSchema, updateMessageSchema) {
+  constructor(public service: MessageService) {
+    super(service);
   }
 
   @Post("new")

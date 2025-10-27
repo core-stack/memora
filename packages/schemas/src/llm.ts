@@ -6,15 +6,15 @@ export const llmTypeSchema = z.enum(["EMBEDDING", "TEXT"]);
 export type LLMType = z.infer<typeof llmTypeSchema>;
 
 export const llmSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 
   name: z.string().max(255),
 
   model: z.string().max(255),
   type: llmTypeSchema,
- 
-  tenantId: z.string().uuid(),
-  
+
+  tenantId: z.uuid(),
+
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -23,9 +23,9 @@ export type LLM = z.infer<typeof llmSchema>;
 
 export const llmFilterSchema = filterSchema.extend({
   filter: z.object({
-    id: z.string().uuid().optional(),
+    id: z.uuid().optional(),
     name: z.string().optional(),
-    tenantId: z.string().uuid().optional(),
+    tenantId: z.uuid().optional(),
   }).strict().optional(),
   order: z.object({
     createdAt: orderSchema,

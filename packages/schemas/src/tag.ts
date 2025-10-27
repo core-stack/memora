@@ -3,10 +3,10 @@ import z from "zod";
 import { filterSchema, orderSchema } from "./shared";
 
 export const tagSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 
   name: z.string().max(255),
-  tenantId: z.string().uuid(),
+  tenantId: z.uuid(),
 
   createdAt: z.date(),
   updatedAt: z.date().optional(),
@@ -15,7 +15,7 @@ export type Tag = z.infer<typeof tagSchema>;
 
 export const tagFilterSchema = filterSchema.extend({
   filter: z.object({
-    id: z.string().uuid().optional(),
+    id: z.uuid().optional(),
     name: z.string().optional(),
   }).strict().optional(),
   order: z.object({

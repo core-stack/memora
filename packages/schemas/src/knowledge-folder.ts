@@ -3,15 +3,15 @@ import z from 'zod';
 import { filterSchema, orderSchema } from './shared';
 
 export const knowledgeFolderSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 
   name: z.string(),
   root: z.boolean(),
 
-  parentId: z.string().uuid().optional(),
-  knowledgeId: z.string().uuid(),
+  parentId: z.uuid().optional(),
+  knowledgeId: z.uuid(),
 
-  tenantId: z.string().uuid(),
+  tenantId: z.uuid(),
 
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -20,9 +20,9 @@ export type KnowledgeFolder = z.infer<typeof knowledgeFolderSchema>;
 
 export const knowledgeFolderFilterSchema = filterSchema.extend({
   filter: z.object({
-    id: z.string().uuid().nullable().optional(),
+    id: z.uuid().nullable().optional(),
     name: z.string().optional(),
-    parentId: z.string().uuid().nullable().optional(),
+    parentId: z.uuid().nullable().optional(),
   }).strict().optional(),
   order: z.object({
     name: orderSchema,

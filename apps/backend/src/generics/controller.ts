@@ -11,7 +11,8 @@ import { ICrudService } from './service.interface';
 
 import type { FilterOptions } from './filter-options';
 import type { Request } from 'express';
-import e from 'express';
+import { ZodParam } from '@/shared/decorators/zod-param';
+import { ZodBody } from '@/shared/decorators/zod-body';
 
 export const Http = (method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", path: string, ignore?: boolean) => {
   if (ignore) return applyDecorators();
@@ -35,7 +36,7 @@ export const HttpPut = (path: string, ignore?: boolean) => Http("PUT", path, ign
 export const HttpPatch = (path: string, ignore?: boolean) => Http("PATCH", path, ignore);
 export const HttpDelete = (path: string, ignore?: boolean) => Http("DELETE", path, ignore);
 
-const queryToFilter = <TEntity>(allQueryParams: Record<string, unknown>): FilterOptions<TEntity> => {
+export const queryToFilter = <TEntity>(allQueryParams: Record<string, unknown>): FilterOptions<TEntity> => {
   const result: FilterOptions<TEntity> = { filter: {} };
   for (const [key, value] of Object.entries(allQueryParams)) {
     if (key === "limit" || key === "offset") {
@@ -78,7 +79,10 @@ export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDt
     }
 
     @HttpGet(":id", ignore?.includes("findByID"))
-    async findByID(@Req() req: Request, @Param("id") id: string): Promise<TEntity | null> {
+    async findByID(
+      @Req() req: Request,
+      @ZodParam("id", idSchema) id: string
+    ): Promise<TEntity | null> {
       this.validateSchema(idSchema, id);
       return this.service.findByID(id, this.loadContext(req));
     }
@@ -98,22 +102,28 @@ export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDt
     }
 
     @HttpPost("", ignore?.includes("create"))
-    async create(@Req() req: Request, @Body() data: TCreateDto): Promise<TEntity> {
-      this.validateSchema(createDtoSchema, data);
+    async create(
+      @Req() req: Request,
+      @ZodBody(createDtoSchema) data: TCreateDto
+    ): Promise<TEntity> {
       return this.service.create(data, this.loadContext(req));
     }
 
     @HttpPut(":id", ignore?.includes("update"))
-    async update(@Req() req: Request, @Param("id") id: string, @Body() data: TUpdateDto) {
-      this.validateSchema(idSchema, id);
-      this.validateSchema(updateDtoSchema, data);
+    async update(
+      @Req() req: Request,
+      @ZodParam("id", idSchema) id: string,
+      @ZodBody(updateDtoSchema) data: TUpdateDto
+    ) {
       await this.service.update(id, data, this.loadContext(req));
       return { message: "Update successful" };
     }
 
     @HttpDelete(":id", ignore?.includes("delete"))
-    async delete(@Req() req: Request, @Param("id") id: string) {
-      this.validateSchema(idSchema, id);
+    async delete(
+      @Req() req: Request,
+      @ZodParam("id", idSchema) id: string
+    ) {
       await this.service.delete(id, this.loadContext(req));
       return { message: "Delete successful" };
     }

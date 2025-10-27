@@ -47,9 +47,9 @@ export type SourceFragmentMetadata = z.infer<typeof sourceFragmentMetadataSchema
 export const sourceFragmentSchema = baseFragmentSchema.extend({
   sourceType: sourceTypeSchema,
   seqId: z.number().optional(),
-  sourceId: z.string().uuid(),
-  knowledgeId: z.string().uuid(),
-  tenantId: z.string().uuid(),
+  sourceId: z.uuid(),
+  knowledgeId: z.uuid(),
+  tenantId: z.uuid(),
   metadata: sourceFragmentMetadataSchema
 });
 

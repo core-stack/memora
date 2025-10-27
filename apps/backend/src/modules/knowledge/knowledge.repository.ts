@@ -12,7 +12,6 @@ import { KnowledgeTag } from '@snipet/schemas';
 
 import { CreateKnowledge, Knowledge, UpdateKnowledge } from './knowledge.schema';
 import { RepositoryOptions } from '@/generics/repository.interface';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 @Injectable()
 export class KnowledgeRepository extends DrizzleGenericRepository<
@@ -95,7 +94,10 @@ export class KnowledgeRepository extends DrizzleGenericRepository<
   override async update(id: string, data: UpdateKnowledge, repoOpts?: RepositoryOptions): Promise<void> {
     return this.run(async (db) => {
       await db.update(knowledge).set(data as unknown as Knowledge).where(eq(knowledge.id, id));
-
+      if (!data.tenantId) {
+        const kn = await db.select().from(knowledge).where(eq(knowledge.id, id));
+        data.tenantId = kn[0]?.tenantId;
+      }
       const createdTags = await db.select().from(knowledgeTag).where(eq(knowledgeTag.knowledgeId, id));
       const tagsToDelete = createdTags.filter(tag => !data.tags?.includes(tag.name)).map(t => t.id);
       const tagsToCreate = data.tags?.filter(tag => !createdTags.some(t => t.name === tag)) || [];

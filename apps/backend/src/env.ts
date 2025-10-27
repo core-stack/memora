@@ -28,7 +28,7 @@ const envSchema = z.object({
   PLUGINS_BUCKET: z.string().optional().default("plugins"),
 
   // CORS
-  CORS_ORIGINS: z.string().transform((s) => s.split(",")).array().optional().default(["*", "http://localhost:3000", "http://localhost:5173"]),
+  CORS_ORIGINS: z.string().transform((s) => s.split(",")).optional().default(["*", "http://localhost:3000", "http://localhost:5173"]),
   CORS_METHODS: z.string().array().optional().default(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]),
   CORS_HEADERS: z.string().array().optional().default(["*"]),
   CORS_CREDENTIALS: z.boolean().optional().default(true),
@@ -37,7 +37,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   CREATE_DATABASE: z.coerce.boolean().optional().default(false),
 
-  TENANT_ID: z.string().uuid(),
+  TENANT_ID: z.uuid(),
 
   // STORAGE
   STORAGE_TYPE: z.enum(['s3']).default('s3'),

@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export const idSchema = z.string().uuid();
+export const idSchema = z.uuid();
 export type Id = z.infer<typeof idSchema>;
 
 export const orderSchema = z.enum(["ASC", "DESC"]).optional();
