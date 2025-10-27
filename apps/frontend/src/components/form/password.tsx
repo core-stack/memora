@@ -7,7 +7,7 @@ import { Input } from '../ui/input';
 type Props = React.ComponentProps<"input"> & {
   label?: string
 }
-export const FormInput = (props: Props) => {
+export const FormPassword = (props: Props) => {
   const form = useFormContext();
   const isLoading = form.formState.isSubmitting;
 

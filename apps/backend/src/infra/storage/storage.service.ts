@@ -1,5 +1,4 @@
 export type GetPreSignedUploadUrlOptions = {
-  publicAccess?: boolean;
   temp?: boolean
 }
 
@@ -13,7 +12,7 @@ export abstract class StorageService {
   abstract confirmTempUpload(key: string): Promise<string> | string;
   abstract getPreSignedDownloadUrl(key: string): Promise<string> | string;
   abstract getObject(key: string): Promise<NodeJS.ReadableStream | null> | NodeJS.ReadableStream | null;
-  abstract putObject(key: string, body: Buffer, contentType: string, opts?: { bucket?: string }): Promise<void>;
+  abstract putObject(key: string, body: Buffer, contentType: string): Promise<void>;
 
   abstract delete(key: string, isFolder?: boolean): Promise<void>;
 }

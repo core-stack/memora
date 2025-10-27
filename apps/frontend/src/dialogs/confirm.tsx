@@ -11,8 +11,8 @@ import { DialogType } from './';
 export type ConfirmDialogProps = {
   title: string;
   description: string;
-  confirm: { text?: string; action: () => void; icon?: React.ReactNode };
-  cancel?: { text: string; action: () => void; icon?: React.ReactNode };
+  confirm: { text?: string; action: () => void | Promise<void>; icon?: React.ReactNode };
+  cancel?: { text: string; action: () => void | Promise<void>; icon?: React.ReactNode };
 }
 export const ConfirmDialog = ({ description, title, confirm, cancel }: ConfirmDialogProps) => {
   const { closeDialog } = useDialog();
@@ -23,6 +23,10 @@ export const ConfirmDialog = ({ description, title, confirm, cancel }: ConfirmDi
   if (!confirm.icon) confirm.icon = <Check />;
   if (!confirm.text) confirm.text = "Yes";
 
+  const handleAction = async (action: () => void | Promise<void>) => {
+    await action();
+    closeDialog(DialogType.CONFIRM);
+  }
   return (
     <DialogContent>
       <DialogHeader>
@@ -30,10 +34,10 @@ export const ConfirmDialog = ({ description, title, confirm, cancel }: ConfirmDi
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
       <DialogFooter>
-        <Button variant="destructive" onClick={cancel?.action}>
+        <Button variant="destructive" onClick={() => handleAction(cancel?.action)}>
           {cancel?.icon} {cancel?.text}
         </Button>
-        <Button onClick={confirm.action}>
+        <Button onClick={() => handleAction(confirm.action)}>
           {confirm?.icon} {confirm?.text}
         </Button>
       </DialogFooter>

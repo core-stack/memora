@@ -1,7 +1,7 @@
 import { Job } from 'bullmq';
 import streamToBlob from 'stream-to-blob';
 
-import { StorageService } from '@/infra/storage/storage.service';
+import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
 import { SourceRepository } from '@/modules/knowledge/source/source.repository';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
@@ -16,7 +16,8 @@ export class IngestProcessor extends WorkerHost {
   private logger = new Logger(IngestProcessor.name);
   @Inject() private readonly processor!: ProcessorManager;
   @Inject() private readonly vectorStore!: SourceVectorStoreService;
-  @Inject() private readonly storage!: StorageService;
+  @Inject() private readonly storage!: PrivateStorageService;
+
   @Inject(forwardRef(() => SourceRepository)) private readonly sourceRepository: SourceRepository;
 
   async process(job: Job<Source>): Promise<any> {

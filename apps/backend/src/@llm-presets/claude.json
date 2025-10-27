@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Claude 3 Opus",
+    "description": "Constitutional AI for safe and helpful conversations",
+    "iconPath": "claude.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "required": ["apiKey"],
+    "config": {
+      "type": "TEXT",
+      "model": "claude-3-opus",
+      "baseUrl": "https://api.anthropic.com/v1/complete"
+    }
+  },
+  {
+    "name": "Claude 3 Sonnet",
+    "description": "Constitutional AI for safe and helpful conversations",
+    "iconPath": "claude.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "required": ["apiKey"],
+    "config": {
+      "type": "TEXT",
+      "model": "claude-3-sonnet",
+      "baseUrl": "https://api.anthropic.com/v1/complete"
+    }
+  },
+  {
+    "name": "Claude 3 Haiku",
+    "description": "Constitutional AI for safe and helpful conversations",
+    "iconPath": "claude.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "required": ["apiKey"],
+    "config": {
+      "type": "TEXT",
+      "model": "claude-3-haiku",
+      "baseUrl": "https://api.anthropic.com/v1/complete"
+    }
+  },
+  {
+    "name": "Claude 2.1",
+    "description": "Constitutional AI for safe and helpful conversations",
+    "iconPath": "claude.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "required": ["apiKey"],
+    "config": {
+      "type": "TEXT",
+      "model": "claude-2.1",
+      "baseUrl": "https://api.anthropic.com/v1/complete"
+    }
+  }
+]

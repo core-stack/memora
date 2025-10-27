@@ -3,6 +3,8 @@ import z from 'zod';
 import { knowledgeTagSchema } from './knowledge-tag';
 import { filterSchema, orderSchema } from './shared';
 
+export const knowledgeStatusEnum = z.enum(["DELETING", "DELETE_ERROR", "OK"]);
+
 export const knowledgeSchema = z.object({
   id: z.string().uuid(),
 
@@ -13,6 +15,9 @@ export const knowledgeSchema = z.object({
 
   files: z.number(),
   storage: z.number(),
+
+  status: knowledgeStatusEnum,
+  deleteError: z.string().optional(),
 
   tenantId: z.string().uuid(),
 
@@ -48,6 +53,8 @@ export const createKnowledgeSchema = knowledgeSchema.omit({
   updatedAt: true,
   files: true,
   storage: true,
+  deleteError: true,
+  status: true,
 }).extend({
   tags: z.array(z.string()).optional()
 });
@@ -60,6 +67,8 @@ export const updateKnowledgeSchema = knowledgeSchema.omit({
   updatedAt: true,
   files: true,
   storage: true,
+  deleteError: true,
+  status: true,
 }).extend({
   tags: z.array(z.string()).optional()
 });

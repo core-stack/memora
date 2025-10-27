@@ -4,7 +4,11 @@ import {
 
 import { CreateSourceFile } from './file';
 
-export const CreateSourceDialog = ({ folderId }: { folderId?: string; }) => {
+export type CreateSourceDialogProps = {
+  folderId?: string
+}
+
+export const CreateSourceDialog = ({ folderId }: CreateSourceDialogProps) => {
   return (
     <DialogContent>
       <DialogHeader>

@@ -5,7 +5,7 @@ import { env } from '@/env';
 import { CrudService } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
 import { HttpContext } from '@/generics/http-context';
-import { StorageService } from '@/infra/storage/storage.service';
+import { PublicStorageService } from '@/infra/storage/public-storage.service';
 import { JobType } from '@/jobs/types';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Injectable } from '@nestjs/common';
@@ -22,7 +22,7 @@ export class SourceService extends CrudService<Source, CreateSource, UpdateSourc
     protected readonly repository: SourceRepository,
     private readonly knowledgeService: KnowledgeService,
     private readonly folderService: FolderService,
-    private readonly storageService: StorageService,
+    private readonly storageService: PublicStorageService,
     @InjectQueue(JobType.INGEST) private readonly ingestQueue: Queue
   ) {
     super(repository);
@@ -63,7 +63,7 @@ export class SourceService extends CrudService<Source, CreateSource, UpdateSourc
   async getUploadUrl(input: GetUploadUrl, ctx: HttpContext) {
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
     const key = `source/${env.TENANT_ID}/${knowledgeId}/${randomUUID()}.${input.fileName.split(".").pop()}`;
-    return this.storageService.getUploadUrl(key, input.contentType, { temp: true, publicAccess: false });
+    return this.storageService.getUploadUrl(key, input.contentType, { temp: true });
   }
 
   async view(sourceId: string) {

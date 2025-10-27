@@ -12,7 +12,7 @@ import { SourceService } from './source.service';
 @Module({
   controllers: [SourceController],
   providers: [SourceService, SourceRepository],
-  imports: [FolderModule, DatabaseModule, KnowledgeModule, StorageModule.register(), forwardRef(() => IngestModule)],
+  imports: [FolderModule, DatabaseModule, KnowledgeModule, StorageModule, forwardRef(() => IngestModule)],
   exports: [SourceService, SourceRepository],
 })
 export class SourceModule {}

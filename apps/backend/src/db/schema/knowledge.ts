@@ -4,7 +4,9 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { chat } from './chat';
+import { knowledgeStatusEnum } from './enums';
 import { folder } from './folder';
+import { knowledgeLLM } from './knowledge_llm';
 import { knowledgeTag } from './knowledge_tag';
 import { plugin } from './plugin';
 import { source } from './source';
@@ -16,6 +18,9 @@ export const knowledge = pgTable("knowledge", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   instructions: text("instructions"),
+
+  status: knowledgeStatusEnum("status").notNull().default("OK"),
+  deleteError: text("delete_error"),
 
   files: integer("file_count").default(0),
   storage: bigint({ mode: "number" }).default(0),
@@ -35,4 +40,5 @@ export const knowledgeRelations = relations(knowledge, ({ many }) => ({
   plugins: many(plugin),
   chats: many(chat),
   tags: many(knowledgeTag),
+  llms: many(knowledgeLLM),
 }));

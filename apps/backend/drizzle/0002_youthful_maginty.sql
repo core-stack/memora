@@ -1,0 +1,1 @@
+ALTER TABLE "llm" ADD COLUMN "model" varchar(255) NOT NULL;

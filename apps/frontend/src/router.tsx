@@ -4,6 +4,7 @@ import ChatPage from './pages/[knowledgeSlug]/chat/page';
 import Knowledge from './pages/[knowledgeSlug]/page';
 import PluginPage from './pages/[knowledgeSlug]/plugins/page';
 import SourcePage from './pages/[knowledgeSlug]/source/page';
+import LLMManagementPage from './pages/llm/page';
 import Home from './pages/page';
 import { RootProviders } from './root-providers';
 
@@ -13,6 +14,7 @@ export const Router = () => {
       <Routes>
         <Route path="/" element={ <RootProviders /> }>
           <Route path="/" element={ <Home /> } />
+          <Route path='/llm' element={ <LLMManagementPage />} />
           <Route path="/:knowledgeSlug" element={ <Knowledge /> }>
             <Route path='chat' element={ <ChatPage /> } />
             <Route path='chat/:chatId' element={ <ChatPage /> } />

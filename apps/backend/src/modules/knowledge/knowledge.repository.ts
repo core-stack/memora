@@ -94,12 +94,7 @@ export class KnowledgeRepository extends DrizzleGenericRepository<
 
   override async update(id: string, data: UpdateKnowledge, repoOpts?: RepositoryOptions): Promise<void> {
     return this.run(async (db) => {
-      await db.update(knowledge).set({
-        title: data.title,
-        tenantId: data.tenantId,
-        description: data.description,
-        instructions: data.instructions,
-      } as Knowledge).where(eq(knowledge.id, id));
+      await db.update(knowledge).set(data as unknown as Knowledge).where(eq(knowledge.id, id));
 
       const createdTags = await db.select().from(knowledgeTag).where(eq(knowledgeTag.knowledgeId, id));
       const tagsToDelete = createdTags.filter(tag => !data.tags?.includes(tag.name)).map(t => t.id);

@@ -17,7 +17,7 @@ import { MessageService } from './message.service';
   imports: [
     DatabaseModule,
     KnowledgeModule,
-    StorageModule.register(),
+    StorageModule,
     LLMModule,
     MemoryModule,
     PromptModule,

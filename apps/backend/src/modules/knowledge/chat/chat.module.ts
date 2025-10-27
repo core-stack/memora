@@ -15,7 +15,7 @@ import { ChatService } from './chat.service';
   imports: [
     DatabaseModule,
     KnowledgeModule,
-    StorageModule.register(),
+    StorageModule,
     LLMModule,
     PromptModule
   ],

@@ -1,29 +1,28 @@
 import { env } from 'src/env';
 
 import {
-  CopyObjectCommand, Delete, DeleteObjectsCommand, GetObjectCommand, ListObjectsV2Command,
-  PutObjectCommand, S3Client
+  CopyObjectCommand, CreateBucketCommand, Delete, DeleteObjectsCommand, GetObjectCommand,
+  ListBucketsCommand, ListObjectsV2Command, PutBucketPolicyCommand, PutObjectCommand, S3Client
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 import { StorageDeleteError } from '../errors/delete-error';
 import { GetPreSignedUploadUrlOptions, StorageService } from '../storage.service';
 
-@Injectable()
-export class S3Service extends StorageService {
-  
-  private readonly s3: S3Client;
-  private readonly defaultBucket?: string;
-  private readonly publicBaseURL?: string;
+import type { CreateBucketCommandInput } from '@aws-sdk/client-s3';
 
-  constructor() {
+@Injectable()
+export class S3Service extends StorageService implements OnModuleInit {
+  private readonly logger = new Logger(S3Service.name);
+
+  private readonly s3: S3Client;
+
+  constructor(private config: CreateBucketCommandInput, private policy?: Record<string, any>) {
     super();
     if (!env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY) return;
-    this.defaultBucket = env.AWS_BUCKET;
-    this.publicBaseURL = env.AWS_PUBLIC_BUCKET_BASE_URL;
     this.s3 = new S3Client({
-      region: env.AWS_REGION ?? "auto",
+      region: env.AWS_REGION,
       endpoint: env.AWS_ENDPOINT,
       forcePathStyle: env.AWS_FORCE_PATH_STYLE,
       credentials: {
@@ -33,37 +32,53 @@ export class S3Service extends StorageService {
     });
   }
 
+  async onModuleInit() {
+    const res = await this.s3.send(new ListBucketsCommand());
+    if (!res.Buckets) {
+      this.logger.warn('No buckets found');
+      return;
+    }
+    if (res.Buckets.find(b => b.Name === this.config.Bucket)) {
+      this.logger.log(`Bucket ${this.config.Bucket} already exists`);
+    } else {
+      this.logger.log(`Creating bucket ${this.config.Bucket}`);
+      await this.s3.send(new CreateBucketCommand(this.config));
+      this.logger.log(`Bucket ${this.config.Bucket} created`);
+    }
+    if (this.policy) {
+      this.logger.log(`Setting policy for bucket ${this.config.Bucket}`);
+      await this.s3.send(new PutBucketPolicyCommand({ Bucket: this.config.Bucket, Policy: JSON.stringify(this.policy) }));
+      this.logger.log(`Policy set for bucket ${this.config.Bucket}`);
+    }
+  }
+
   async getUploadUrl(
     key: string,
     contentType: string,
-    { publicAccess, temp }: GetPreSignedUploadUrlOptions = {
-      publicAccess: false,
-      temp: false
-    }
+    { temp }: GetPreSignedUploadUrlOptions = { temp: false }
   ): Promise<{ url: string, key: string }> {
     if (temp) {
       key = `temp/${key}`
     }
 
     const command = new PutObjectCommand({
-      Bucket: this.defaultBucket,
+      Bucket: this.config.Bucket,
       Key: key,
       ContentType: contentType,
-      ACL: publicAccess ? "public-read" : "private",
     });
     return { url: await getSignedUrl(this.s3, command, { expiresIn: 300 }), key };
   }
 
   async getVisualizationUrl(key: string): Promise<{ url: string, key: string }> {
     const command = new GetObjectCommand({
-      Bucket: this.defaultBucket,
+      Bucket: this.config.Bucket,
       Key: key,
     });
 
     return { url: await getSignedUrl(this.s3, command, { expiresIn: 300 }), key};
   }
 
-  async confirmTempUpload(key: string, bucket = this.defaultBucket): Promise<string> {
+  async confirmTempUpload(key: string, bucket = this.config.Bucket): Promise<string> {
     const targetKey = key.replace("temp/", "");
     const sourceKey = key.startsWith("temp/") ? key : `temp/${key}`
 
@@ -81,7 +96,7 @@ export class S3Service extends StorageService {
     throw new Error("Error copying object");
   }
 
-  async getPreSignedDownloadUrl(key: string, bucket = this.defaultBucket): Promise<string> {
+  async getPreSignedDownloadUrl(key: string, bucket = this.config.Bucket): Promise<string> {
     const command = new GetObjectCommand({
       Bucket: bucket,
       Key: key,
@@ -90,7 +105,7 @@ export class S3Service extends StorageService {
     return getSignedUrl(this.s3, command, { expiresIn: 300 });
   }
 
-  async getObject(key: string, bucket = this.defaultBucket): Promise<NodeJS.ReadableStream | null> {
+  async getObject(key: string, bucket = this.config.Bucket): Promise<NodeJS.ReadableStream | null> {
     const command = new GetObjectCommand({
       Bucket: bucket,
       Key: key,
@@ -100,7 +115,7 @@ export class S3Service extends StorageService {
     return result.Body as NodeJS.ReadableStream | null;
   }
 
-  async putObject(key: string, body: Buffer, contentType: string, opts: { bucket?: string } = { bucket: this.defaultBucket } ): Promise<void> {
+  async putObject(key: string, body: Buffer, contentType: string, opts: { bucket?: string } = { bucket: this.config.Bucket } ): Promise<void> {
     const command = new PutObjectCommand({
       Bucket: opts.bucket,
       Key: key,
@@ -111,13 +126,9 @@ export class S3Service extends StorageService {
     await this.s3.send(command);
   }
 
-  buildPublicUrl(key: string, publicBaseURL = this.publicBaseURL): string {
-    return `${publicBaseURL}/${key}`;
-  }
-
   async delete(key: string, isFolder?: boolean): Promise<void> {
     const listOfObjects = await this.s3.send(new ListObjectsV2Command({
-      Bucket: this.defaultBucket,
+      Bucket: this.config.Bucket,
       Prefix: isFolder ? key.endsWith("/") ? key : `${key}/` : key
     }));
     if (!listOfObjects.Contents || listOfObjects.Contents.length === 0) return;
@@ -126,7 +137,7 @@ export class S3Service extends StorageService {
     listOfObjects.Contents?.forEach((object) => objectsToDelete.Objects?.push({ Key: object.Key }));
   
     const deleteResult = await this.s3.send(new DeleteObjectsCommand({
-      Bucket: this.defaultBucket,
+      Bucket: this.config.Bucket,
       Delete: objectsToDelete,
     }));
   
