@@ -26,7 +26,7 @@ export class LLMService {
     }
   }
 
-  async withStructuredOutput<S extends z.ZodTypeAny>(query: string, schema: S): Promise<z.infer<S>> {
+  async withStructuredOutput<S extends z.ZodObject<any>>(query: string, schema: S): Promise<z.infer<S>> {
     const structuredLLM = this.llm.withStructuredOutput<z.infer<S>>(schema);
     return (await structuredLLM.invoke(query));
   }

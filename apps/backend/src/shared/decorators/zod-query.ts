@@ -4,7 +4,8 @@ import z from "zod";
 import { QueryTransformerPipe } from "../pipes/query-transformer.pipe";
 import { ZodValidationPipe } from "../pipes/zod.pipe";
 
-export const ZodQuery = (schemaOrField: z.ZodType | string, schema?: z.ZodType) => {
+export const ZodQuery = (schemaOrField?: z.ZodType | string, schema?: z.ZodType) => {
+  if (!schemaOrField) return Query();
   if (typeof schemaOrField === 'string') {
     return Query(schemaOrField, new QueryTransformerPipe(), new ZodValidationPipe(schema ?? z.string()))
   }

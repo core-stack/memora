@@ -6,7 +6,7 @@ import { filterSchema, orderSchema } from './shared';
 export const knowledgeStatusEnum = z.enum(["DELETING", "DELETE_ERROR", "OK"]);
 
 export const knowledgeSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 
   slug: z.string().trim().min(3),
   title: z.string().trim().min(3),
@@ -19,7 +19,7 @@ export const knowledgeSchema = z.object({
   status: knowledgeStatusEnum,
   deleteError: z.string().optional(),
 
-  tenantId: z.string().uuid(),
+  tenantId: z.uuid(),
 
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -31,7 +31,7 @@ export type Knowledge = z.infer<typeof knowledgeSchema>;
 
 export const knowledgeFilterSchema = filterSchema.extend({
   filter: z.object({
-    id: z.string().uuid().optional(),
+    id: z.uuid().optional(),
     slug: z.string().optional(),
     title: z.string().optional(),
     tag: z.string().optional(),
@@ -46,13 +46,11 @@ export const knowledgeFilterSchema = filterSchema.extend({
 
 export type KnowledgeFilter = z.infer<typeof knowledgeFilterSchema>;
 
-export const createKnowledgeSchema = knowledgeSchema.omit({
-  id: true,
-  tenantId: true,
-  createdAt: true,
-  updatedAt: true,
-  files: true,
-  storage: true,
+export const createKnowledgeSchema = knowledgeSchema.pick({
+  slug: true,
+  title: true,
+  description: true,
+  instructions: true,
   deleteError: true,
   status: true,
 }).extend({
@@ -60,16 +58,7 @@ export const createKnowledgeSchema = knowledgeSchema.omit({
 });
 export type CreateKnowledge = z.infer<typeof createKnowledgeSchema>;
 
-export const updateKnowledgeSchema = knowledgeSchema.omit({
+export const updateKnowledgeSchema = createKnowledgeSchema.omit({
   slug: true,
-  tenantId: true,
-  createdAt: true,
-  updatedAt: true,
-  files: true,
-  storage: true,
-  deleteError: true,
-  status: true,
-}).extend({
-  tags: z.array(z.string()).optional()
-});
+}).partial();
 export type UpdateKnowledge = z.infer<typeof updateKnowledgeSchema>;

@@ -17,9 +17,9 @@ export type Chat = z.infer<typeof chatSchema>;
 
 export const chatFilterSchema = filterSchema.extend({
   filter: z.object({
-    id: z.string().uuid().optional(),
+    id: z.uuid().optional(),
     name: z.string().optional(),
-    knowledgeId: z.string().uuid().optional(),
+    knowledgeId: z.uuid().optional(),
   }).strict().optional(),
   order: z.object({
     createdAt: orderSchema,

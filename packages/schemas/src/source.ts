@@ -42,7 +42,7 @@ export const sourceImageMetadataSchema = baseFileMetadata.extend({
 export type SourceImageMetadata = z.infer<typeof sourceImageMetadataSchema>;
 
 export const sourceSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 
   key: z.string(),
   path: z.string().optional(),
@@ -62,9 +62,9 @@ export const sourceSchema = z.object({
   indexStatus: indexStatusSchema,
   indexError: z.string().optional(),
 
-  memoryId: z.string().uuid().optional(),
-  knowledgeId: z.string().uuid(),
-  folderId: z.string().uuid(),
+  memoryId: z.uuid().optional(),
+  knowledgeId: z.uuid(),
+  folderId: z.uuid(),
 
   createdAt: z.date(),
   updatedAt: z.date().optional(),
@@ -74,12 +74,12 @@ export type Source = z.infer<typeof sourceSchema>;
 
 export const sourceFilterSchema = filterSchema.extend({
   filter: z.object({
-    id: z.string().uuid().nullable().optional(),
+    id: z.uuid().nullable().optional(),
     key: z.string().optional(),
     name: z.string().optional(),
     originalName: z.string().optional(),
     indexStatus: indexStatusSchema.optional(),
-    folderId: z.string().uuid().nullable().optional(),
+    folderId: z.uuid().nullable().optional(),
   }).strict().optional(),
   order: z.object({
     name: orderSchema,
@@ -101,7 +101,7 @@ export const createSourceSchema = sourceSchema.omit({
   knowledgeId: true,
   memoryId: true,
 }).extend({
-  folderId: z.string().uuid().optional(),
+  folderId: z.uuid().optional(),
 });
 export type CreateSource = z.infer<typeof createSourceSchema>;
 

@@ -6,15 +6,15 @@ export const messageRoleSchema = z.enum(["USER", "AI"]);
 export type MessageRole = z.infer<typeof messageRoleSchema>;
 
 export const messageSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 
   messageRole: messageRoleSchema,
 
   content: z.string(),
 
-  chatId: z.string().uuid(),
-  knowledgeId: z.string().uuid(),
-  tenantId: z.string().uuid(),
+  chatId: z.uuid(),
+  knowledgeId: z.uuid(),
+  tenantId: z.uuid(),
 
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -24,11 +24,11 @@ export type Message = z.infer<typeof messageSchema>;
 
 export const messageFilterSchema = filterSchema.extend({
   filter: z.object({
-    id: z.string().uuid().optional(),
+    id: z.uuid().optional(),
     name: z.string().optional(),
-    knowledgeId: z.string().uuid().optional(),
-    chatId: z.string().uuid().optional(),
-    tenantId: z.string().uuid().optional(),
+    knowledgeId: z.uuid().optional(),
+    chatId: z.uuid().optional(),
+    tenantId: z.uuid().optional(),
   }).strict().optional(),
   order: z.object({
     createdAt: orderSchema,
@@ -45,7 +45,7 @@ export type UpdateMessage = z.infer<typeof updateMessageSchema>;
 
 
 export const streamMessageSchema = z.object({
-  userMessageId: z.string().uuid(),
-  aiMessageId: z.string().uuid(),
+  userMessageId: z.uuid(),
+  aiMessageId: z.uuid(),
 });
 export type StreamMessage = z.infer<typeof streamMessageSchema>;

@@ -15,7 +15,7 @@ import { JobType } from '../types';
 @Processor(JobType.DELETE_KNOWLEDGE, { concurrency: 5 })
 export class DeleteKnowledgeProcessor extends WorkerHost {
   private logger = new Logger(IngestProcessor.name);
-  
+
   constructor(
     @Inject(forwardRef(() => KnowledgeRepository)) private readonly knowledgeRepository: KnowledgeRepository,
     private readonly sourceVectorStore: SourceVectorStoreService,
@@ -34,18 +34,18 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
 
     await this.chatVectorStore.delete({ knowledgeId });
     job.updateProgress(50);
-  
+
     // delete files in storage
     try {
       await this.storageService.delete(`source/${tenantId}/${knowledgeId}`, true);
       job.updateProgress(90);
     } catch (error) {
       if (error instanceof StorageDeleteError) {
-        console.error(error);  
+        console.error(error);
       }
       throw error;
     }
-  
+
     // delete knowledge in database
     await this.knowledgeRepository.delete(knowledgeId);
     job.updateProgress(100);

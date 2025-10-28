@@ -8,13 +8,11 @@ import {
 import { KnowledgeService } from './knowledge.service';
 
 @Controller('knowledge')
-export class KnowledgeController extends CrudController<Knowledge, CreateKnowledge, UpdateKnowledge> {
-  constructor(protected readonly service: KnowledgeService) {
-    super(
-      service,
-      knowledgeFilterSchema,
-      createKnowledgeSchema,
-      updateKnowledgeSchema
-    );
+export class KnowledgeController extends CrudController<Knowledge, CreateKnowledge, UpdateKnowledge>(
+  knowledgeFilterSchema, createKnowledgeSchema, updateKnowledgeSchema
+) {
+
+  constructor(service: KnowledgeService) {
+    super(service);
   }
 }

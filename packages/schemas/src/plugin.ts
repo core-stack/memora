@@ -3,7 +3,7 @@ import z from "zod";
 import { filterSchema, orderSchema } from "./shared";
 
 export const pluginSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 
   name: z.string().max(50).nullable(),
   description: z.string().nullable(),
@@ -11,7 +11,7 @@ export const pluginSchema = z.object({
   type: z.string().max(255),
   config: z.any(),
 
-  tenantId: z.string().uuid(),
+  tenantId: z.uuid(),
   pluginRegistry: z.string(),
 
   createdAt: z.date(),
@@ -21,7 +21,7 @@ export type Plugin = z.infer<typeof pluginSchema>;
 
 export const pluginFilterSchema = filterSchema.extend({
   filter: z.object({
-    id: z.string().uuid().optional(),
+    id: z.uuid().optional(),
     name: z.string().optional(),
     type: z.string().optional(),
   }).strict().optional(),

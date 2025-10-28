@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, getTableColumns, isNull, SQL } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { NodePgDatabase, NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
 import * as schema from '@/db/schema';
@@ -7,7 +7,15 @@ import { DrizzleAsyncProvider } from '@/infra/database/drizzle.provider';
 import { Inject } from '@nestjs/common';
 
 import { FilterOptions } from '../../generics/filter-options';
-import { ICrudRepository } from '../../generics/repository.interface';
+import { ICrudRepository, RepositoryOptions } from '../../generics/repository.interface';
+import { PgTransaction } from 'drizzle-orm/pg-core';
+import { ExtractTablesWithRelations } from 'drizzle-orm';
+
+export type TxType = PgTransaction<
+  NodePgQueryResultHKT,
+  typeof schema,
+  ExtractTablesWithRelations<typeof schema>
+>;
 
 export abstract class DrizzleGenericRepository<
   TTable extends PgTable,
@@ -23,9 +31,11 @@ export abstract class DrizzleGenericRepository<
     this.columns = getTableColumns(table);
   }
 
-  async create(data: TCreateDto): Promise<TEntity> {
-    const [created] = await this.db.insert(this.table).values(data as unknown as TEntity).returning();
-    return created as TEntity;
+  async create(data: TCreateDto, repoOpts?: RepositoryOptions<TxType>): Promise<TEntity> {
+    return this.run(async (db) => {
+      const [created] = await db.insert(this.table).values(data as unknown as TEntity).returning();
+      return created as TEntity;
+    }, repoOpts);
   }
 
   buildFilter(opts: FilterOptions<TEntity>): { filter: SQL[], order: SQL[] } {
@@ -52,39 +62,55 @@ export abstract class DrizzleGenericRepository<
     return { filter, order };
   }
 
-  async find(opts: FilterOptions<TEntity>): Promise<TEntity[]> {
-    if (!opts.limit) opts.limit = 1000;
-    if (!opts.offset) opts.offset = 0;
+  async find(opts: FilterOptions<TEntity>, repoOpts?: RepositoryOptions<TxType>): Promise<TEntity[]> {
+    return this.run(async (db) => {
+      if (!opts.limit) opts.limit = 1000;
+      if (!opts.offset) opts.offset = 0;
 
-    const { filter, order } = this.buildFilter(opts);
-    const results = await this.db.select().from(this.table as PgTable)
-      .where(and(...filter))
-      .limit(opts.limit)
-      .offset(opts.offset)
-      .orderBy(...order);
+      const { filter, order } = this.buildFilter(opts);
+      const results = await db.select().from(this.table as PgTable)
+        .where(and(...filter))
+        .limit(opts.limit)
+        .offset(opts.offset)
+        .orderBy(...order);
 
-    return results as TEntity[];
+      return results as TEntity[];
+    }, repoOpts);
   }
 
-  async findByID(id: string): Promise<TEntity | null> {
-    const [result] = await this.db
-      .select()
-      .from(this.table as PgTable)
-      .where(eq(this.columns.id, id))
-      .limit(1);
+  async findByID(id: string, repoOpts?: RepositoryOptions<TxType>): Promise<TEntity | null> {
+    return this.run(async (db) => {
+      const [result] = await db.select()
+        .from(this.table as PgTable)
+        .where(eq(this.columns.id, id))
+        .limit(1);
 
-    return (result as TEntity) || null;
+      return (result as TEntity) || null;
+    }, repoOpts);
   }
 
-  async update(id: string, data: TUpdateDto): Promise<void> {
-    await this.db.update(this.table).set(data).where(eq(this.columns.id, id))
+  async update(id: string, data: TUpdateDto, repoOpts?: RepositoryOptions<TxType>): Promise<void> {
+    return this.run(async (db) => {
+      await db.update(this.table).set(data).where(eq(this.columns.id, id));
+    }, repoOpts)
   }
 
-  async delete(id: string): Promise<void> {
-    await this.db.delete(this.table).where(eq(this.columns.id, id));
+  async delete(id: string, repoOpts?: RepositoryOptions<TxType>): Promise<void> {
+    return this.run(async (db) => {
+      await db.delete(this.table).where(eq(this.columns.id, id));
+    }, repoOpts);
   }
 
-  get query() {
-    return this.db.query;
+  protected getDB(repoOpts?: RepositoryOptions<TxType>): NodePgDatabase<typeof schema> {
+    return repoOpts?.tx ? repoOpts.tx : this.db;
+  }
+
+  protected run<T>(
+    fn: (tx: NodePgDatabase<typeof schema>) => Promise<T>,
+    repoOpts?: RepositoryOptions<TxType>,
+    transaction?: boolean
+  ): Promise<T> {
+    if (transaction && !repoOpts?.tx) return this.db.transaction(fn);
+    return fn(this.getDB(repoOpts));
   }
 }

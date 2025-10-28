@@ -1,11 +1,11 @@
 import z from 'zod';
 
 export const knowledgeTagSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 
   name: z.string().trim(),
 
-  knowledgeId: z.string().uuid(),
-  tenantId: z.string().uuid(),
+  knowledgeId: z.uuid(),
+  tenantId: z.uuid(),
 });
 export type KnowledgeTag = z.infer<typeof knowledgeTagSchema>;

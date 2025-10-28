@@ -5,9 +5,9 @@ import { baseFragmentSchema } from './base';
 
 export const chatFragmentSchema = baseFragmentSchema.extend({
   role: messageRoleSchema,
-  chatId: z.string().uuid(),
-  knowledgeId: z.string().uuid(),
-  tenantId: z.string().uuid(),
+  chatId: z.uuid(),
+  knowledgeId: z.uuid(),
+  tenantId: z.uuid(),
   metadata: z.object({})
 });
 

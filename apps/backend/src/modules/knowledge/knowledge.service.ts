@@ -14,7 +14,7 @@ import { KnowledgeRepository } from './knowledge.repository';
 export class KnowledgeService extends CrudService<Knowledge, CreateKnowledge, UpdateKnowledge> {
   constructor(
     protected readonly repository: KnowledgeRepository,
-    @InjectQueue(JobType.DELETE_KNOWLEDGE) private readonly deleteKnowledgeQueue: Queue    
+    @InjectQueue(JobType.DELETE_KNOWLEDGE) private readonly deleteKnowledgeQueue: Queue
   ) {
     super(repository);
   }
@@ -42,6 +42,7 @@ export class KnowledgeService extends CrudService<Knowledge, CreateKnowledge, Up
     input.tags = input.tags?.filter(Boolean);
     return this.repository.update(id, {
       ...input,
+      status: "OK",
       tenantId: env.TENANT_ID
     });
   }

@@ -5,9 +5,9 @@ import { createLLMSchema, LLM, llmFilterSchema, updateLLMSchema } from '@snipet/
 import { LLMService } from './llm.service';
 
 @Controller('llm')
-export class LLMController extends CrudController<LLM> {
-  constructor(protected service: LLMService) {
-    super(service, llmFilterSchema, createLLMSchema, updateLLMSchema);
+export class LLMController extends CrudController<LLM>(llmFilterSchema, createLLMSchema, updateLLMSchema) {
+  constructor(public service: LLMService) {
+    super(service);
   }
 
   @Get('presets')
