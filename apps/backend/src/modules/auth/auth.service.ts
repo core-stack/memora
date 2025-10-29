@@ -2,13 +2,17 @@ import { CreateAccountSchema } from "@snipet/schemas";
 import { UserRepository } from "../user/user.repository";
 import { BadRequestException } from "@nestjs/common";
 import { SecurityService } from "@/infra/security/security.service";
-import { TxManagerService } from "@/generics/tx-manager";
+import { TxManager } from "@/generics/tx-manager";
+import { VerificationTokenService } from "../verification-token/verification-token.service";
+import { env } from "@/env";
+import moment from "moment";
 
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly verificationTokenService: VerificationTokenService,
     private readonly securityService: SecurityService,
-    private readonly txManager: TxManagerService
+    private readonly txManager: TxManager
   ){}
 
   async createAccount(data: CreateAccountSchema) {
@@ -20,8 +24,19 @@ export class AuthService {
 
     data.password = hashedPassword;
     this.txManager.run(async (tx) => {
-      await this.userRepository.create(data, { tx });
+      const user = await this.userRepository.create({
+        ...data,
+        roleId: "",
+        emailVerified: env.REQUIRE_EMAIL_VERIFICATION ? undefined : new Date(),
+      }, { tx });
 
-    })
+      if (env.REQUIRE_EMAIL_VERIFICATION) {
+        const verificationToken = await this.verificationTokenService.create({
+          userId: user.id,
+          type: "ACTIVE_ACCOUNT",
+          expires: moment().add(env.ACTIVE_ACCOUNT_TOKEN_EXPIRES_IN, "second").toDate()
+        });
+      }
+    });
   }
 }

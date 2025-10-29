@@ -21,17 +21,17 @@ export class SourceController extends CrudController<Source>(
   }
 
   @Get(":source_id/view")
-  async view(@ZodParam("source_id", idSchema) sourceId: string) {
-    return this.service.view(sourceId);
+  async view(@Req() req: Request, @ZodParam("source_id", idSchema) sourceId: string) {
+    return this.service.view(sourceId, { http: this.loadContext(req) });
   }
 
   @Post("upload-url")
   async upload(@Req() req: Request, @ZodBody(getUploadUrlSchema) body: GetUploadUrl) {
-    return this.service.getUploadUrl(body, this.loadContext(req));
+    return this.service.getUploadUrl(body, { http: this.loadContext(req) });
   }
 
   @Post(":source_id/retry")
-  async retry(@ZodParam("source_id", idSchema) sourceId: string) {
-    return this.service.retryIndex(sourceId);
+  async retry(@Req() req: Request, @ZodParam("source_id", idSchema) sourceId: string) {
+    return this.service.retryIndex(sourceId, { http: this.loadContext(req) });
   }
 }

@@ -1,8 +1,10 @@
 import { folder } from '@/db/schema';
 import { DrizzleGenericRepository } from '@/generics';
-import { KnowledgeFolder } from '@snipet/schemas';
+import { CreateFolderEntity, FolderEntity, UpdateFolderEntity } from './folder.entity';
 
-export class FolderRepository extends DrizzleGenericRepository<typeof folder, KnowledgeFolder> {
+export class FolderRepository extends DrizzleGenericRepository<
+  typeof folder, FolderEntity, CreateFolderEntity, UpdateFolderEntity
+> {
   constructor() {
     super(folder);
   }

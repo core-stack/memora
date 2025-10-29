@@ -84,7 +84,7 @@ export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDt
       @ZodParam("id", idSchema) id: string
     ): Promise<TEntity | null> {
       this.validateSchema(idSchema, id);
-      return this.service.findByID(id, this.loadContext(req));
+      return this.service.findByID(id, { http: this.loadContext(req) });
     }
 
     @HttpGet("", ignore?.includes("find"))
@@ -98,7 +98,7 @@ export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDt
       const filteredParams = Object.fromEntries(Object.entries(params).filter(([k]) => filterKeys.some(f => f === k)));
       opts = { ...opts, filter: { ...filteredParams, ...opts.filter } };
       this.validateSchema(filterSchema, opts);
-      return this.service.find(opts, this.loadContext(req));
+      return this.service.find(opts, { http: this.loadContext(req) });
     }
 
     @HttpPost("", ignore?.includes("create"))
@@ -106,7 +106,7 @@ export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDt
       @Req() req: Request,
       @ZodBody(createDtoSchema) data: TCreateDto
     ): Promise<TEntity> {
-      return this.service.create(data, this.loadContext(req));
+      return this.service.create(data, { http: this.loadContext(req) });
     }
 
     @HttpPut(":id", ignore?.includes("update"))
@@ -115,7 +115,7 @@ export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDt
       @ZodParam("id", idSchema) id: string,
       @ZodBody(updateDtoSchema) data: TUpdateDto
     ) {
-      await this.service.update(id, data, this.loadContext(req));
+      await this.service.update(id, data, { http: this.loadContext(req) });
       return { message: "Update successful" };
     }
 
@@ -124,7 +124,7 @@ export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDt
       @Req() req: Request,
       @ZodParam("id", idSchema) id: string
     ) {
-      await this.service.delete(id, this.loadContext(req));
+      await this.service.delete(id, { http: this.loadContext(req) });
       return { message: "Delete successful" };
     }
 

@@ -9,7 +9,8 @@ import {
 
 import { MessageService } from './message.service';
 
-import type { CreateMessage, StreamMessage } from "@snipet/schemas";
+import type { CreateMessage } from "@snipet/schemas";
+
 @Controller('knowledge/:knowledgeSlug/chat/:chatId/message')
 export class MessageController
   extends CrudController<Message>(messageFilterSchema, createMessageSchema, updateMessageSchema) {
@@ -22,6 +23,6 @@ export class MessageController
     @Req() req: Request,
     @ZodBody(createMessageSchema) body: CreateMessage,
   ) {
-    return this.service.sendMessage(body.content, this.loadContext(req));
+    return this.service.sendMessage(body.content, { http: this.loadContext(req) });
   }
 }

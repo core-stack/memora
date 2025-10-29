@@ -1,8 +1,13 @@
 import { user } from '@/db/schema/user';
 import { DrizzleGenericRepository } from '@/generics';
-import { UserEntity } from './user.entity';
+import { CreateUserEntity, UpdateUserEntity, UserEntity } from './user.entity';
 
-export class UserRepository extends DrizzleGenericRepository<typeof user, UserEntity> {
+export class UserRepository extends DrizzleGenericRepository<
+  typeof user,
+  UserEntity,
+  CreateUserEntity,
+  UpdateUserEntity
+> {
   constructor() {
     super(user);
   }

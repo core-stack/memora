@@ -1,36 +1,40 @@
 import { FilterOptions } from './filter-options';
 import { HttpContext } from './http-context';
 import { ICrudRepository } from './repository.interface';
-import { ICrudService } from './service.interface';
+import { ICrudService, ServiceOptions } from './service.interface';
 
 export abstract class CrudService<
   TSchema,
   TCreateDto = Partial<TSchema>,
   TUpdateDto = Partial<TSchema>,
-  TEntity = TSchema
+  TEntity = TSchema,
+  TCreateEntity = TCreateDto,
+  TUpdateEntity = TUpdateDto
 > implements ICrudService<TSchema, TCreateDto, TUpdateDto> {
   constructor(
-    protected readonly repository: ICrudRepository<TEntity, TCreateDto, TUpdateDto>,
+    protected readonly repository: ICrudRepository<TEntity, TCreateEntity, TUpdateEntity>,
   ) { }
 
-  async find(opts: FilterOptions<TSchema>, ctx?: HttpContext): Promise<TSchema[]> {
-    return this.toSchema(await this.repository.find(opts as FilterOptions<TEntity>)) as TSchema[];
+  async find(filterOptions: FilterOptions<TSchema>, opts?: ServiceOptions): Promise<TSchema[]> {
+    return this.toSchema(
+      await this.repository.find(filterOptions as FilterOptions<TEntity>, { tx: opts?.tx })
+    ) as TSchema[];
   }
 
-  async findByID(id: string, ctx?: HttpContext): Promise<TSchema | null> {
-    return this.toSchema(await this.repository.findByID(id));
+  async findByID(id: string, opts?: ServiceOptions): Promise<TSchema | null> {
+    return this.toSchema(await this.repository.findByID(id, { tx: opts?.tx }));
   }
 
-  async create(input: TCreateDto, ctx?: HttpContext): Promise<TSchema> {
-    return this.toSchema(await this.repository.create(input as TCreateDto));
+  async create(input: TCreateDto | TCreateEntity, opts?: ServiceOptions): Promise<TSchema> {
+    return this.toSchema(await this.repository.create(input as unknown as TCreateEntity, { tx: opts?.tx }));
   }
 
-  async update(id: string, input: TUpdateDto, ctx?: HttpContext): Promise<void> {
-    await this.repository.update(id, input as TUpdateDto);
+  async update(id: string, input: TUpdateDto | TUpdateEntity, opts?: ServiceOptions): Promise<void> {
+    await this.repository.update(id, input as unknown as TUpdateEntity, { tx: opts?.tx });
   }
 
-  async delete(id: string, ctx?: HttpContext): Promise<void> {
-    await this.repository.delete(id);
+  async delete(id: string, opts?: ServiceOptions): Promise<void> {
+    await this.repository.delete(id, { tx: opts?.tx });
   }
 
   toSchema<T = TEntity>(entity: T): TSchema

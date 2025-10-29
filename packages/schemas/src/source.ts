@@ -11,7 +11,7 @@ export const baseFileMetadata = z.object({
   contentType: z.string(),
   size: z.number().int(),
   lastModified: z.number().int().optional(),
-  exif: z.record(z.any()).optional()
+  exif: z.record(z.string(), z.any()).optional()
 });
 export type BaseFileMetadata = z.infer<typeof baseFileMetadata>;
 

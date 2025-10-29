@@ -1,11 +1,11 @@
-import { TxManagerService } from "@/generics/tx-manager";
+import { TxManager } from "@/generics/tx-manager";
 import { Inject } from "@nestjs/common";
 import { DrizzleAsyncProvider } from "./drizzle.provider";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from '@/db/schema';
 import { TxType } from "./types";
 
-export class DrizzleTxManager extends TxManagerService<TxType> {
+export class DrizzleTxManager extends TxManager<TxType> {
   @Inject(DrizzleAsyncProvider) protected readonly db: NodePgDatabase<typeof schema>;
 
   constructor() {

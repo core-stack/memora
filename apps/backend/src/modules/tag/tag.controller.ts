@@ -6,7 +6,7 @@ import { TagService } from './tag.service';
 
 @Controller('tag')
 export class TagController extends CrudController<Tag>(tagFilterSchema, createTagSchema, updateTagSchema) {
-  constructor(tagService: TagService) {
-    super(tagService);
+  constructor(service: TagService) {
+    super(service);
   }
 }

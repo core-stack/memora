@@ -2,16 +2,16 @@ import { z } from "zod";
 import { orderSchema } from "./shared";
 
 export const userSchema = z.object({
-  id: z.uuid().optional(),
+  id: z.uuid(),
 
   name: z.string().max(255).optional(),
   email: z.email(),
-  emailVerified: z.date(),
+  emailVerified: z.date().optional(),
   image: z.url().nullable().optional(),
 
   roleId: z.uuid(),
 
-  createdAt: z.date().optional(),
+  createdAt: z.date(),
   updatedAt: z.date().optional(),
 });
 export type UserSchema = z.infer<typeof userSchema>;

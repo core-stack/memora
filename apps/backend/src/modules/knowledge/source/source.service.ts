@@ -9,15 +9,19 @@ import { PublicStorageService } from '@/infra/storage/public-storage.service';
 import { JobType } from '@/jobs/types';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { GetUploadUrl, Source } from '@snipet/schemas';
+import { CreateSource, GetUploadUrl, Source, UpdateSource } from '@snipet/schemas';
 
 import { FolderService } from '../folder/folder.service';
 import { KnowledgeService } from '../knowledge.service';
 import { SourceRepository } from './source.repository';
-import { CreateSource, UpdateSource } from './source.schema';
+import { CreateSourceEntity, SourceEntity, UpdateSourceEntity } from './source.entity';
+import { ServiceOptions } from '@/generics/service.interface';
 
 @Injectable()
-export class SourceService extends CrudService<Source, CreateSource, UpdateSource> {
+export class SourceService extends CrudService<
+  Source, CreateSource, UpdateSource,
+  SourceEntity, CreateSourceEntity, UpdateSourceEntity
+> {
   constructor(
     protected readonly repository: SourceRepository,
     private readonly knowledgeService: KnowledgeService,
@@ -28,22 +32,23 @@ export class SourceService extends CrudService<Source, CreateSource, UpdateSourc
     super(repository);
   }
 
-  override async find(opts: FilterOptions<Source>, ctx: HttpContext): Promise<Source[]> {
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
-    opts.filter = opts.filter ?? {};
-    opts.filter.knowledgeId = knowledgeId;
-    return super.find(opts, ctx);
+  override async find(filterOpts: FilterOptions<Source>, opts?: ServiceOptions): Promise<Source[]> {
+    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
+    filterOpts.filter = filterOpts.filter ?? {};
+    filterOpts.filter.knowledgeId = knowledgeId;
+    return super.find(filterOpts, opts);
   }
 
-  override async create(input: CreateSource, ctx: HttpContext) {
+  override async create(input: CreateSourceEntity, opts?: ServiceOptions) {
     if (!input.key) throw new BadRequestException("Key is required");
 
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
+    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
     input.knowledgeId = knowledgeId;
     input.indexStatus = 'PENDING';
     input.path = await this.folderService.getPathByFolderId(
       input.originalName ?? input.name!,
-      input.folderId
+      input.folderId,
+      opts
     );
 
     try {
@@ -52,30 +57,30 @@ export class SourceService extends CrudService<Source, CreateSource, UpdateSourc
       throw new BadRequestException("Invalid key");
     }
 
-    const createdSource = await super.create(input, ctx);
-    
+    const createdSource = await super.create(input, opts);
+
     await this.knowledgeService.increaseFileCount(knowledgeId);
     await this.knowledgeService.increaseStorageCount(knowledgeId, createdSource.metadata.size);
     await this.ingestQueue.add(JobType.INGEST, createdSource, { jobId: createdSource.id });
     return createdSource;
   }
 
-  async getUploadUrl(input: GetUploadUrl, ctx: HttpContext) {
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(ctx));
+  async getUploadUrl(input: GetUploadUrl, opts?: ServiceOptions) {
+    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
     const key = `source/${env.TENANT_ID}/${knowledgeId}/${randomUUID()}.${input.fileName.split(".").pop()}`;
     return this.storageService.getUploadUrl(key, input.contentType, { temp: true });
   }
 
-  async view(sourceId: string) {
-    const source = (await this.repository.find({ filter: { id: sourceId } }))[0];
+  async view(sourceId: string, opts?: ServiceOptions) {
+    const source = (await this.repository.find({ filter: { id: sourceId } }, { tx: opts?.tx }))[0];
     if (!source) throw new BadRequestException("Source not found");
     return this.storageService.getVisualizationUrl(source.key);
   }
 
-  async retryIndex(sourceId: string) {
-    const source = (await this.repository.find({ filter: { id: sourceId } }))[0];
+  async retryIndex(sourceId: string, opts?: ServiceOptions) {
+    const source = (await this.repository.find({ filter: { id: sourceId } }, { tx: opts?.tx }))[0];
     if (!source) throw new BadRequestException("Source not found");
-    await this.repository.update(source.id, { indexStatus: 'PENDING' });
+    await this.repository.update(source.id, { indexStatus: 'PENDING' }, { tx: opts?.tx });
     const failedJob = await this.ingestQueue.getJob(source.id);
     if (failedJob && await failedJob.isFailed()) {
       await failedJob.retry();

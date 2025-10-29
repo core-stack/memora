@@ -1,8 +1,10 @@
 import { tag } from '@/db/schema';
 import { DrizzleGenericRepository } from '@/generics';
-import { Tag } from '@snipet/schemas';
+import { CreateTagEntity, TagEntity, UpdateTagEntity } from './tag.entity';
 
-export class TagRepository extends DrizzleGenericRepository<typeof tag, Tag> {
+export class TagRepository extends DrizzleGenericRepository<
+  typeof tag, TagEntity, CreateTagEntity, UpdateTagEntity
+> {
   constructor() {
     super(tag);
   }
