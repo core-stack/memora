@@ -67,8 +67,8 @@ export const queryToFilter = <TEntity>(allQueryParams: Record<string, unknown>):
 
 export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDto = Partial<TEntity>>(
   filterSchema: z.ZodType<FilterOptions<TEntity>>,
-  createDtoSchema: z.ZodType<TCreateDto>,
-  updateDtoSchema: z.ZodType<TUpdateDto>,
+  createDtoSchema?: z.ZodType<TCreateDto>,
+  updateDtoSchema?: z.ZodType<TUpdateDto>,
   ignore?: Array<"find" | "findByID" | "create" | "update" | "delete">
 ) {
   abstract class Base {

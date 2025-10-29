@@ -14,3 +14,5 @@ export * from "./search";
 export * from "./utils";
 export * from "./source-type";
 export * from "./llm";
+export * from "./auth";
+export * from "./user";

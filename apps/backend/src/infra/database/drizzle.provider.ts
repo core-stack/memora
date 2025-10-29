@@ -16,6 +16,6 @@ export const drizzleProvider = [
 
       return drizzle(pool, { schema }) as NodePgDatabase<typeof schema>;
     },
-  },
+  }
 ];
 

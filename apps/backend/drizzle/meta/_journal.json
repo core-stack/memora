@@ -22,6 +22,13 @@
       "when": 1761297626163,
       "tag": "0002_youthful_maginty",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1761674703530,
+      "tag": "0003_puzzling_crystal",
+      "breakpoints": true
     }
   ]
 }

@@ -9,7 +9,6 @@ export class PluginRepository extends DrizzleGenericRepository<typeof plugin, Pl
     super(plugin);
   }
 
-
   async findByIDList(idList: string[]): Promise<Plugin[]> {
     return this.db.select().from(plugin).where(inArray(plugin.id, idList));
   }

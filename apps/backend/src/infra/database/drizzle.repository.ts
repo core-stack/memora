@@ -8,14 +8,7 @@ import { Inject } from '@nestjs/common';
 
 import { FilterOptions } from '../../generics/filter-options';
 import { ICrudRepository, RepositoryOptions } from '../../generics/repository.interface';
-import { PgTransaction } from 'drizzle-orm/pg-core';
-import { ExtractTablesWithRelations } from 'drizzle-orm';
-
-export type TxType = PgTransaction<
-  NodePgQueryResultHKT,
-  typeof schema,
-  ExtractTablesWithRelations<typeof schema>
->;
+import { TxType } from './types';
 
 export abstract class DrizzleGenericRepository<
   TTable extends PgTable,
