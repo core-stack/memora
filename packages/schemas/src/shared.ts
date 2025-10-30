@@ -13,7 +13,7 @@ export const filterSchema = z.object({
 });
 
 export const getFileUrlResponseSchema = z.object({
-  url: z.string().url(),
+  url: z.url(),
   key: z.string(),
 })
 export type GetFileUrlResponse = z.infer<typeof getFileUrlResponseSchema>;

@@ -2,6 +2,8 @@ export * from "./chat";
 export * from "./enums";
 export * from "./folder";
 export * from "./knowledge_plugin";
+export * from "./knowledge_llm";
+export * from "./knowledge_tag";
 export * from "./knowledge";
 export * from "./message";
 export * from "./plugin";

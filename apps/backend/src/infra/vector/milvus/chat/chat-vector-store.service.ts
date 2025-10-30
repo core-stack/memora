@@ -1,16 +1,18 @@
 import moment from 'moment';
 
 import { ChatFragment, Fragments } from '@/fragment';
-import { Logger } from '@nestjs/common';
+import { LLMManagerService } from '@/infra/llm-manager/llm-manager.service';
+import { Injectable, Logger } from '@nestjs/common';
 import { RowData, SearchResultData } from '@zilliz/milvus2-sdk-node';
 
 import { MilvusService } from '../base';
 import { chatFields, chatFunctions, chatIndexSchema } from './chat-schemas';
 
+@Injectable()
 export class MilvusChatVectorStoreService extends MilvusService<ChatFragment> {
   protected override logger = new Logger(MilvusChatVectorStoreService.name);
-  constructor() {
-    super(ChatFragment, "chat", chatFields, chatFunctions, chatIndexSchema)
+  constructor(llmManager: LLMManagerService) {
+    super(llmManager, "chat", ChatFragment, chatFields, chatFunctions, chatIndexSchema)
   }
 
   fragmentToChunk(c: ChatFragment | ChatFragment[] | Fragments<ChatFragment>): RowData[] {
@@ -51,7 +53,7 @@ export class MilvusChatVectorStoreService extends MilvusService<ChatFragment> {
     const result = await this.client.search({
       collection_name: this.collectionName,
       filter,
-      order_by: 'seqId desc',
+      data: {},
       topk: n,
     });
 

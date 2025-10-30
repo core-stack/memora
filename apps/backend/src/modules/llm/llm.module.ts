@@ -9,6 +9,7 @@ import { LLMService } from './llm.service';
 @Module({
   controllers: [LLMController],
   providers: [LLMService, LLMRepository],
-  imports: [DatabaseModule, SecurityModule]
+  imports: [DatabaseModule, SecurityModule],
+  exports: [LLMRepository, LLMService]
 })
 export class LLMModule {}

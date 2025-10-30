@@ -1,5 +1,4 @@
 import { CacheModule } from '@/infra/cache/cache.module';
-import { EmbeddingsModule } from '@/infra/embeddings/embeddings.module';
 import { LLMModule } from '@/infra/llm/llm.module';
 import { PromptModule } from '@/infra/prompt/prompt.module';
 import { VectorModule } from '@/infra/vector/vector.module';
@@ -14,7 +13,6 @@ import { ChatMemoryService } from './chat-memory.service';
     VectorModule,
     CacheModule.register("chat-memory"),
     LLMModule,
-    EmbeddingsModule,
     KnowledgeModule,
     PromptModule
   ],

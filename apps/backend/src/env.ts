@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import moment from 'moment';
 import path from 'path';
 import z from 'zod';
 
@@ -20,8 +21,12 @@ dotenv.config({
 const envSchema = z.object({
   // APP
   APP_PORT: z.coerce.number().default(3000),
-  API_URL: z.string().url().optional().default("http://localhost:3000/api"),
+  API_URL: z.url().optional().default("http://localhost:3000/api"),
   SERVE_STATIC: z.string().optional(),
+
+
+  // SECURITY
+  ENCRYPT_MASTER_PASSWORD: z.string().optional().default("snipet"),
 
   // PLUGIN
   PLUGINS_DIR: z.string().optional().default(path.join(__dirname, "..", "..", "plugins")),
@@ -62,10 +67,9 @@ const envSchema = z.object({
   BULL_BOARD_USER: z.string().optional().default("admin"),
   BULL_BOARD_PASSWORD: z.string().optional().default("admin"),
 
-  // EMBEDDINGS
-  EMBEDDING_ENGINE: z.enum(['gemini']).default('gemini'),
-  EMBEDDING_DIMENSION: z.coerce.number().optional().default(3072),
-  EMBEDDING_MODEL: z.string().optional().default("gemini-embedding-001"),
+  // LLM
+  LLM_INSTANCE_LIMIT: z.coerce.number().optional().default(10),
+  LLM_INSTANCE_DURATION: z.coerce.number().optional().default(moment().minutes(15).valueOf()),
 
   // GEMINI
   GEMINI_API_KEY: z.string(),
@@ -74,7 +78,7 @@ const envSchema = z.object({
   // VECTOR
   VECTOR_ENGINE: z.enum(['milvus']).default('milvus'),
   // MILVUS
-  MILVUS_URL: z.string().url().optional().default("localhost:19530"),
+  MILVUS_URL: z.url().optional().default("localhost:19530"),
   MILVUS_COLLECTION_PREFIX: z.string().optional().default("snipet"),
   MULVUS_RECREATE_COLLECTION: z.string().transform((s) => s === "true").optional(),
 

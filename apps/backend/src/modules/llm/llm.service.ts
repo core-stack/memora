@@ -25,12 +25,23 @@ export class LLMService extends TenantService<LLM> implements OnModuleInit {
 
   async onModuleInit() {
     const presetsPath = join(__root, 'dist', '@llm-presets');
-    const dir = await readdir(presetsPath);    
-    const presets = (llmPresetSchema.array().array().parse(dir
-      .filter((file) => file.endsWith(".json"))
-      .map((file) => require(`${presetsPath}/${file}`))));
+    const dir = await readdir(presetsPath);
+    const presets = dir.filter((file) => file.endsWith(".json")).reduce<Array<LLMPreset>>((acc, file) => {
+      const presets = require(`${presetsPath}/${file}`);
+      return [...acc, ...presets];
+    }, [] as LLMPreset[]);
+
+    presets.forEach(preset => {
+      try {
+        llmPresetSchema.parse(preset);
+      } catch (error) {
+        console.error(`Invalid preset: ${JSON.stringify(preset)}`);
+        console.error(error);
+        throw error;
+      }
+    })
   
-    this.presets = presets.flat();
+    this.presets = presets;
   }
 
   getPresets() {
@@ -46,7 +57,7 @@ export class LLMService extends TenantService<LLM> implements OnModuleInit {
     if (!preset) throw new NotFoundException("LLM not found");
     await Promise.all(Object.entries(input.config).map(async ([key, value]) => {
       const isSecret = preset.fields?.[key] === "secret-string";
-      if (isSecret) input.config[key] = await this.securityService.encrypt(value, "password");
+      if (isSecret) input.config[key] = await this.securityService.encrypt(value as string, env.ENCRYPT_MASTER_PASSWORD);
     }))
 
     return super.create(input, ctx);

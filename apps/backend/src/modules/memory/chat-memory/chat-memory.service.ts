@@ -36,14 +36,14 @@ export class ChatMemoryService {
   }
 
   async add(message: Message) {
-    await this.chatVectorStore.addFragments(await this.messageToFragment(message));
+    await this.chatVectorStore.addFragments(message.knowledgeId, await this.messageToFragment(message));
   }
 
   async remove(message: Message) {
-    await this.chatVectorStore.deleteFragments(await this.messageToFragment(message));
+    await this.chatVectorStore.deleteFragments(message.knowledgeId, await this.messageToFragment(message));
   }
 
-  async search(chatId: string, ...opts: WithChatSearchOptions[]) {
+  async search(knowledgeId: string, chatId: string, ...opts: WithChatSearchOptions[]) {
     const options = this.buildChatSearchOptions(...opts);
     const response: { lastNMessages: Fragments<ChatFragment>, searchQuery: Fragments<ChatFragment> } = {
       lastNMessages: Fragments.fromFragmentArray([]),
@@ -54,6 +54,7 @@ export class ChatMemoryService {
     // }
     if (options.searchQuery) {
       const searchQuery = await this.chatVectorStore.search(
+        knowledgeId,
         ChatVectorStoreService.withChatId(chatId),
         ChatVectorStoreService.withQuery(options.searchQuery),
         options.filters && ChatVectorStoreService.withFilters(options.filters)

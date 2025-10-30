@@ -1,4 +1,3 @@
-import { EmbeddingsModule } from '@/infra/embeddings/embeddings.module';
 import { StorageModule } from '@/infra/storage/storage.module';
 import { VectorModule } from '@/infra/vector/vector.module';
 import { SourceModule } from '@/modules/knowledge/source/source.module';
@@ -17,7 +16,6 @@ import { PDFProcessor } from './processors/pdf.processor';
   imports: [
     VectorModule,
     StorageModule,
-    EmbeddingsModule,
     forwardRef(() => SourceModule),
     BullModule.registerQueue({ name: JobType.INGEST }),
     BullBoardModule.forFeature({ name: JobType.INGEST, adapter: BullMQAdapter }),

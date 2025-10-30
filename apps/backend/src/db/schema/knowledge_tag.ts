@@ -13,7 +13,7 @@ export const knowledgeTag = pgTable("knowledge_tag", {
   index("knowledge_tag_tenant_idx").on(table.tenantId),
 ]);
 
-export const knowledgePluginRelations = relations(knowledgeTag, ({ one }) => ({
+export const knowledgeTagRelations = relations(knowledgeTag, ({ one }) => ({
   knowledge: one(knowledge, {
     fields: [knowledgeTag.knowledgeId],
     references: [knowledge.id],

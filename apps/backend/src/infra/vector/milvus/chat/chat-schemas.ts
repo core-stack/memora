@@ -1,9 +1,8 @@
-import { env } from '@/env';
 import {
   CreateIndexesReq, DataType, FieldType, FunctionType, IndexType, MetricType
 } from '@zilliz/milvus2-sdk-node';
 
-export const chatFields: FieldType[] = [
+export const chatFields = (_: string, dim: number): FieldType[] => [
   {
     name: "id",
     data_type: DataType.VarChar,
@@ -13,7 +12,7 @@ export const chatFields: FieldType[] = [
   {
     name: "dense",
     data_type: DataType.FloatVector,
-    dim: env.EMBEDDING_DIMENSION
+    dim
   },
   {
     name: "sparse",

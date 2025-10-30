@@ -6,6 +6,7 @@
     "fields": {
       "apiKey": "secret-string"
     },
+    "adapter": "openai",
     "required": ["apiKey"],
     "config": {
       "type": "EMBEDDING",
@@ -21,6 +22,7 @@
     "fields": {
       "apiKey": "secret-string"
     },
+    "adapter": "openai",
     "required": ["apiKey"],
     "config": {
       "type": "EMBEDDING",
@@ -36,6 +38,7 @@
     "fields": {
       "apiKey": "secret-string"
     },
+    "adapter": "openai",
     "required": ["apiKey"],
     "config": {
       "type": "EMBEDDING",

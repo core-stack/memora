@@ -1,8 +1,10 @@
 import { Constructor } from '@/@types/constructor';
 import { env } from '@/env';
 import { BaseFragment, Fragments } from '@/fragment';
-import { Embeddings } from '@langchain/core/embeddings';
-import { Inject, Logger, OnModuleInit } from '@nestjs/common';
+import { InvalidPresetError } from '@/infra/llm-manager/errors/invalid-preset.error';
+import { LLMManagerService } from '@/infra/llm-manager/llm-manager.service';
+import { Logger, OnModuleInit } from '@nestjs/common';
+import { LLMPreset } from '@snipet/schemas';
 import {
   CreateIndexesReq, FieldType, FunctionObject, HybridSearchSingleReq, MilvusClient, RerankerObj,
   RowData, RRFRanker, SearchResultData
@@ -18,36 +20,47 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
   protected abstract readonly logger: Logger;
   client: MilvusClient;
 
-  @Inject() private readonly embeddings: Embeddings;
-
   constructor(
-    protected readonly Type: Constructor<T>,
+    protected readonly llmManager: LLMManagerService,
     protected readonly collectionName: string,
-    protected readonly fields: FieldType[] = [],
-    protected readonly functions: FunctionObject[] = [],
+    protected readonly Type: Constructor<T>,
+    protected readonly fields: FieldType[] | ((model: string, dim: number) => FieldType[]) = [],
+    protected readonly functions: FunctionObject[] | (() => FunctionObject[]) = [],
     protected readonly indexSchema: CreateIndexesReq | ((collectionName: string) => CreateIndexesReq) = [],
-    protected readonly reranker: RerankerObj = RRFRanker(100)
+    protected readonly reranker: RerankerObj = RRFRanker(100),
   ) {
     super();
     this.client = new MilvusClient({ address: env.MILVUS_URL });
   }
 
+  protected buildCollectionName(preset: LLMPreset) {
+    if (preset.config.type === "TEXT") throw new InvalidPresetError("Cannot create collection for TEXT preset");
+    const { dimension, model } = preset.config;
+    return `${this.collectionName}_${model}_${dimension}`;
+  }
+
   async onModuleInit() {
     await this.client.connectPromise;
-    const existsCollection = (await this.client.hasCollection({ collection_name: this.collectionName })).value;
-    if (!env.MULVUS_RECREATE_COLLECTION && existsCollection) return;
-    if (env.MULVUS_RECREATE_COLLECTION && existsCollection) {
-      this.logger.warn("Env var MULVUS_RECREATE_COLLECTION is true, dropping collection");
-      await this.client.dropCollection({ collection_name: this.collectionName });
-    }
+    this.llmManager.getPresets().map(async preset => {
+      if (preset.config.type === "TEXT") return;
+      const { dimension, model } = preset.config;
+      const collectionName = this.buildCollectionName(preset);
+      const existsCollection = (await this.client.hasCollection({ collection_name: collectionName })).value;
 
-    await this.client.createCollection({
-      collection_name: this.collectionName,
-      fields: this.fields,
-      functions: this.functions
-    });
-    await this.client.createIndex(this.indexSchema instanceof Function ? this.indexSchema(this.collectionName) : this.indexSchema);
-    await this.client.loadCollectionAsync({ collection_name: this.collectionName });
+      if (!env.MULVUS_RECREATE_COLLECTION && existsCollection) return;
+      if (env.MULVUS_RECREATE_COLLECTION && existsCollection) {
+        this.logger.warn("Env var MULVUS_RECREATE_COLLECTION is true, dropping collection");
+        await this.client.dropCollection({ collection_name: collectionName });
+      }
+  
+      await this.client.createCollection({
+        collection_name: collectionName,
+        fields: this.fields instanceof Function ? this.fields(model, dimension) : this.fields,
+        functions: this.functions instanceof Function ? this.functions() : this.functions
+      });
+      await this.client.createIndex(this.indexSchema instanceof Function ? this.indexSchema(collectionName) : this.indexSchema);
+      await this.client.loadCollectionAsync({ collection_name: collectionName });
+    })
   }
 
   abstract fragmentToChunk(fragment: T | T[] | Fragments<T>): RowData[];
@@ -63,32 +76,43 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
     return fragments;
   }
 
-  async addFragments(c: T[] | T | Fragments<T>): Promise<void> {
-    const chunks = this.fragmentToChunk(this.toFragments(c));
+  async addFragments(knowledgeId: string, c: T[] | T | Fragments<T>): Promise<void> {
     // add embeddings
-    const embeddings = await this.embeddings.embedDocuments(chunks.map(c => (c.content as string)));
+    const embeddingProvider = await this.llmManager.getEmbeddingByKnowledge(knowledgeId);
+    if (!embeddingProvider) throw new VectorMutationError("Embedding service not found");
+    const collectionName = this.buildCollectionName(embeddingProvider.preset);
+  
+    const chunks = this.fragmentToChunk(this.toFragments(c));
+    const embeddings = embeddingProvider.embed(chunks.map(c => (c.content as string)));
 
-    for (let i = 0; i < chunks.length; i++) {
-      chunks[i].dense = embeddings[i];
-    }
-    const res = await this.client.insert({ collection_name: this.collectionName, fields_data: chunks });
+    for (let i = 0; i < chunks.length; i++) chunks[i].dense = embeddings[i];
+    
+    const res = await this.client.insert({ collection_name: collectionName, fields_data: chunks });
     if (res.err_index.length > 0) throw new VectorMutationError("Error adding fragments", res);
-    await this.client.flushSync({ collection_names: [this.collectionName] });
+    await this.client.flushSync({ collection_names: [collectionName] });
   }
 
-  async deleteFragments(c: T | T[] | Fragments<T>): Promise<void> {
+  async deleteFragments(knowledgeId: string, c: T | T[] | Fragments<T>): Promise<void> {
+    const embeddingProvider = await this.llmManager.getEmbeddingByKnowledge(knowledgeId);
+    if (!embeddingProvider) throw new VectorMutationError("Embedding service not found");
+    const collectionName = this.buildCollectionName(embeddingProvider.preset);
+    
     const ids = this.toFragments(c).map((f: any) => f.id);
     if (!ids.length) return;
 
     const res = await this.client.delete({
-      collection_name: this.collectionName,
+      collection_name: collectionName,
       filter: `id in [${ids.map(id => `"${id}"`).join(", ")}]`
     });
     if (res.err_index.length > 0) throw new VectorMutationError("Error deleting fragments", res);
-    await this.client.flushSync({ collection_names: [this.collectionName] });
+    await this.client.flushSync({ collection_names: [collectionName] });
   }
 
-  async search(...opts: WithSearchOptions[]): Promise<Fragments<T>> {
+  async search(knowledgeId: string, ...opts: WithSearchOptions[]): Promise<Fragments<T>> {
+    const embeddingProvider = await this.llmManager.getEmbeddingByKnowledge(knowledgeId);
+    if (!embeddingProvider) throw new VectorMutationError("Embedding service not found");
+    const collectionName = this.buildCollectionName(embeddingProvider.preset);
+    
     const options = this.buildSearchOptions(...opts);
 
     let filter = this.buildFilters(options.filters);
@@ -100,7 +124,7 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
       let topK = options.topK;
       if (typeof options.dense !== "string" && options.dense.topK) topK = options.dense.topK
 
-      const embeddings = await this.embeddings.embedQuery(typeof options.dense === "string" ? options.dense : options.dense.query);
+      const embeddings = await embeddingProvider.embed(typeof options.dense === "string" ? options.dense : options.dense.query);
 
       data.push({
         anns_field: "dense",
@@ -135,9 +159,13 @@ export abstract class MilvusService<T extends BaseFragment> extends VectorStore<
     return this.searchResultToFragment(result.results);
   }
 
-  async delete(filter: Record<string, string | number | boolean>): Promise<void> {
+  async delete(knowledgeId: string, filter: Record<string, string | number | boolean>): Promise<void> {
+    const embeddingProvider = await this.llmManager.getEmbeddingByKnowledge(knowledgeId);
+    if (!embeddingProvider) throw new VectorMutationError("Embedding service not found");
+    const collectionName = this.buildCollectionName(embeddingProvider.preset);
+    
     const res = await this.client.delete({
-      collection_name: this.collectionName,
+      collection_name: collectionName,
       filter: this.buildFilters(filter),
     });
     if (res.err_index.length > 0) {

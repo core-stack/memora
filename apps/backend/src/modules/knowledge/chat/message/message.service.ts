@@ -54,6 +54,7 @@ export class MessageService extends TenantService<Message> {
     
     //#region get relevant fragments to answer
     const chatSearchResult = await this.chatMemoryService.search(
+      knowledgeId,
       chatId,
       ChatMemoryService.withSearchQuery(content),
       // ChatMemoryService.withLastNMessages(10),

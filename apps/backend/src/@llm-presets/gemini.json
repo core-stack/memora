@@ -6,6 +6,7 @@
     "fields": {
       "apiKey": "secret-string"
     },
+    "adapter": "gemini",
     "required": ["apiKey"],
     "config": {
       "type": "EMBEDDING",
@@ -20,6 +21,7 @@
     "fields": {
       "apiKey": "secret-string"
     },
+    "adapter": "gemini",
     "required": ["apiKey"],
     "config": {
       "type": "EMBEDDING",

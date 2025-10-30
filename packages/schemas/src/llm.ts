@@ -1,4 +1,4 @@
-import z from 'zod';
+import z, { config } from 'zod';
 
 import { filterSchema, orderSchema } from './shared';
 
@@ -46,27 +46,56 @@ export type UpdateLLM = z.infer<typeof updateLLMSchema>;
 
 export const presetFieldTypeSchema = z.enum(["string", "secret-string"]);
 
+
 export const textLLMConfigSchema = z.object({
   type: z.literal("TEXT"),
   model: z.string(),
-  baseUrl: z.string().optional(),
 });
 
 export const embeddingLLMConfigSchema = z.object({
   type: z.literal("EMBEDDING"),
   model: z.string(),
-  baseUrl: z.string().optional(),
   dimension: z.number()
 });
 
-export const llmPresetSchema = z.object({
+//#region OpenAI Adapter
+export const openAiTextLLMConfigSchema = textLLMConfigSchema.extend({
+  baseUrl: z.url(),
+  // apiKey: z.string()
+})
+export const openAiEmbeddingLLMConfigSchema = embeddingLLMConfigSchema.extend({
+  baseUrl: z.url(),
+  // apiKey: z.string()
+})
+//#endregion
+
+//#region Gemini Adapter
+export const geminiTextLLMConfigSchema = textLLMConfigSchema.extend({
+  // apiKey: z.string()
+})
+export const geminiEmbeddingLLMConfigSchema = embeddingLLMConfigSchema.extend({
+  // apiKey: z.string()
+})
+//#endregion
+
+export const baseLLMPresetSchema = z.object({
   name: z.string(),
   description: z.string(),
   iconPath: z.string(),
   fields: z.record(z.string(), presetFieldTypeSchema).optional(),
   defaults: z.record(z.string(), z.any()).optional(),
-  required: z.array(z.string()).optional(),
-  config: z.union([textLLMConfigSchema, embeddingLLMConfigSchema]),
+  required: z.array(z.string()).optional()
 });
+
+export const llmPresetSchema = z.discriminatedUnion("adapter", [
+  baseLLMPresetSchema.extend({
+    adapter: z.literal("openai"),
+    config: z.union([openAiTextLLMConfigSchema, openAiEmbeddingLLMConfigSchema])
+  }),
+  baseLLMPresetSchema.extend({
+    adapter: z.literal("gemini"),
+    config: z.union([geminiTextLLMConfigSchema, geminiEmbeddingLLMConfigSchema])
+  })
+]);
 
 export type LLMPreset = z.infer<typeof llmPresetSchema>;

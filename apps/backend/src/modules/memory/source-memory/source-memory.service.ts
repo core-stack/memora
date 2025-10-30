@@ -64,7 +64,8 @@ export class SourceMemoryService {
     }
     
     return fragments.merge(await this.vectorStore.search(
-      SourceVectorStoreService.withFilters({ knowledgeId, ...opts.metadata }),
+      knowledgeId,
+      SourceVectorStoreService.withFilters({ ...opts.metadata }),
       SourceVectorStoreService.withDense({ query: userInput, topK: 100 }),
       SourceVectorStoreService.withSparse({ query: userInput, topK: 100 }),
       SourceVectorStoreService.withTopK(10),
@@ -111,7 +112,7 @@ export class SourceMemoryService {
     }
 
     const fragments = await this.vectorStore.search(
-      SourceVectorStoreService.withFilters({ knowledgeId }),
+      knowledgeId,
       SourceVectorStoreService.withSparse(userInput),
       SourceVectorStoreService.withTerm(userInput),
     );
