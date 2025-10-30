@@ -18,6 +18,5 @@ export const updateUserEntity = userEntitySchema.omit({
   email: true,
   createdAt: true,
   updatedAt: true,
-  password: true,
 }).partial();
 export type UpdateUserEntity = z.infer<typeof updateUserEntity>;

@@ -1,4 +1,4 @@
-import { CreateAccountSchema } from "@snipet/schemas";
+import { ActiveAccountSchema, CreateAccountSchema, ForgetPasswordSchema, LoginSchema, ResetPasswordSchema } from "@snipet/schemas";
 import { UserRepository } from "../user/user.repository";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { SecurityService } from "@/infra/security/security.service";
@@ -13,10 +13,12 @@ import { JobType } from "@/jobs/types";
 import { Queue } from "bullmq";
 import { EmailPayload, EmailTemplate } from "@/jobs/email/schemas";
 import { VerificationTokenEntity, VerificationTokenType } from "../verification-token/verification-token.entity";
+import { AuthManager } from "./auth-manager.service";
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly authManager: AuthManager,
     private readonly userService: UserService,
     private readonly verificationTokenService: VerificationTokenService,
     private readonly securityService: SecurityService,
@@ -88,9 +90,9 @@ export class AuthService {
     });
   }
 
-  async activeAccount(token: string, opts?: ServiceOptions) {
+  async activeAccount(data: ActiveAccountSchema, opts?: ServiceOptions) {
     const verificationTokenList = await this.verificationTokenService.find({
-      filter: { token, type: "ACTIVE_ACCOUNT" }
+      filter: { token: data.token, type: "ACTIVE_ACCOUNT" }
     });
 
     if (!verificationTokenList || verificationTokenList.length === 0) {
@@ -122,7 +124,8 @@ export class AuthService {
     })
   }
 
-  async forgetPassword(email: string, opts?: ServiceOptions) {
+  async forgetPassword(data: ForgetPasswordSchema, opts?: ServiceOptions) {
+    const { email } = data;
     const user = await this.userService.findUnique({ filter: { email } }, { tx: opts?.tx });
     if (!user) throw new NotFoundException("User not found");
 
@@ -138,5 +141,57 @@ export class AuthService {
         }
       });
     });
+  }
+
+  async login(data: LoginSchema, opts?: ServiceOptions) {
+    if (!opts?.http) throw new Error("http context is required");
+
+    const user = await this.userService.findFirstWithMemberRoleTenant(
+      { filter: { email: data.email } },
+      { tx: opts?.tx }
+    );
+
+    if (!user) throw new NotFoundException("Email or password invalid");
+    if (!user.password) throw new NotFoundException("Email or password invalid");
+    const valid = await this.securityService.compareHash(data.password, user.password);
+    if (!valid) throw new NotFoundException("Email or password invalid");
+
+    const { token } = await this.authManager.createSessionAndTokens(user);
+
+    opts.http.setCookie("access-token", token.accessToken, {
+      maxAge: token.accessTokenDuration,
+      httpOnly: true,
+      path: "/",
+    });
+    opts.http.setCookie("refresh-token", token.refreshToken, {
+      maxAge: token.refreshTokenDuration,
+      httpOnly: true,
+      path: "/",
+    });
+
+    return { redirect: data.redirect ?? "/" }
+  }
+
+  async logout(opts?: ServiceOptions) {
+    if (!opts?.http) throw new Error("http context is required");
+    opts.http.deleteCookies(["access-token", "refresh-token"]);
+  }
+
+  async resetPassword(data: ResetPasswordSchema, opts?: ServiceOptions) {
+    await this.txManager.runOrCreate(opts?.tx, async (tx) => {
+      const verificationToken = await this.verificationTokenService.findUniqueWithUser({
+        filter: { token: data.token, type: "RESET_PASSWORD" }
+      }, { ...opts, tx });
+      if (!verificationToken) throw new BadRequestException("Reset password link invalid");
+      if (!verificationToken.user) throw new BadRequestException("User not found");
+
+      await this.userService.update(
+        verificationToken.user.id,
+        { password: await this.securityService.hash(data.password) },
+        { ...opts, tx }
+      );
+      await this.verificationTokenService.delete(data.token, { ...opts, tx });
+    })
+
   }
 }

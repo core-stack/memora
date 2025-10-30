@@ -12,7 +12,7 @@ import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from '@/utils/zod-resolver';
 import { createKnowledgeSchema } from '@snipet/schemas';
 
 import { DialogType } from './';

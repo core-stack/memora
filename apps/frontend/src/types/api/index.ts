@@ -8,8 +8,9 @@ import type { TagRoutes } from "./tag";
 import type { PluginRegistryRoutes } from "./plugin-registry";
 import type { SearchRoutes } from "./search";
 import type { LLMRoutes } from "./llm";
+import type { AuthRoutes } from "./auth";
 
 export type ApiRoutes =
   PluginRegistryRoutes & FolderRoutes & KnowledgeRoutes &
-  SourceRoutes & ChatRoutes & MessageRoutes &
+  SourceRoutes & ChatRoutes & MessageRoutes & AuthRoutes &
   PluginRoutes & TagRoutes & SearchRoutes & LLMRoutes;
