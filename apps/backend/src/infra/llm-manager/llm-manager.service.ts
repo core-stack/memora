@@ -2,8 +2,8 @@ import { readdir, readFile } from 'fs/promises';
 import { join } from 'path';
 
 import { env } from '@/env';
+import { LLMEntity } from '@/modules/llm/llm.entity';
 import { LLMRepository } from '@/modules/llm/llm.repository';
-import { LLMEntity } from '@/modules/llm/llm.schema';
 import { __root } from '@/root';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -34,7 +34,7 @@ export class LLMManagerService {
       try {
         await readdir(presetsPath);
       } catch (dirError) {
-        this.logger.warn(`Diretório de presets não encontrado: ${presetsPath}`);
+        this.logger.warn(`Preset directory not found: ${presetsPath}`);
         this.presets = [];
         return;
       }
@@ -50,18 +50,16 @@ export class LLMManagerService {
           
           const validatedPresets = llmPresetSchema.array().parse(parsedData);
           presets.push(...validatedPresets);
-          
-          this.logger.log(`✅ Preset carregado: ${file} (${validatedPresets.length} modelos)`);
         } catch (err) {
-          this.logger.error(`❌ Erro ao carregar preset ${file}:`, err);
+          this.logger.error(`Error loading preset ${file}:`, err);
         }
       }
       
       setTimeout(() => {
         this.presets = presets || [];
-        this.logger.verbose(`📊 LLM Manager inicializado com ${this.presets.length} presets`);
+        this.logger.verbose(`LLM Manager inicializado com ${this.presets.length} presets`);
         this.presets.forEach(preset => {
-          this.logger.verbose(`   - ${preset.name} (${preset.config.model})`);
+          this.logger.verbose(`   - ${preset.name}`);
         });
       });
     } catch (err) {

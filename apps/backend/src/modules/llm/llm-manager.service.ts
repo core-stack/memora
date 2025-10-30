@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { LLMEntity } from './llm.schema';
+import { LLMEntity } from './llm.entity';
 
 @Injectable()
 export class LLMManagerService {

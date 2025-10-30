@@ -1,4 +1,4 @@
-import { LLMEntity } from '@/modules/llm/llm.schema';
+import { LLMEntity } from '@/modules/llm/llm.entity';
 import { Injectable } from '@nestjs/common';
 import { LLMPreset } from '@snipet/schemas';
 

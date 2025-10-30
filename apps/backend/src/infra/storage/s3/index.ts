@@ -39,16 +39,16 @@ export class S3Service extends StorageService implements OnModuleInit {
       return;
     }
     if (res.Buckets.find(b => b.Name === this.config.Bucket)) {
-      this.logger.log(`Bucket ${this.config.Bucket} already exists`);
+      this.logger.verbose(`Bucket ${this.config.Bucket} already exists`);
     } else {
-      this.logger.log(`Creating bucket ${this.config.Bucket}`);
+      this.logger.verbose(`Creating bucket ${this.config.Bucket}`);
       await this.s3.send(new CreateBucketCommand(this.config));
-      this.logger.log(`Bucket ${this.config.Bucket} created`);
+      this.logger.verbose(`Bucket ${this.config.Bucket} created`);
     }
     if (this.policy) {
-      this.logger.log(`Setting policy for bucket ${this.config.Bucket}`);
+      this.logger.verbose(`Setting policy for bucket ${this.config.Bucket}`);
       await this.s3.send(new PutBucketPolicyCommand({ Bucket: this.config.Bucket, Policy: JSON.stringify(this.policy) }));
-      this.logger.log(`Policy set for bucket ${this.config.Bucket}`);
+      this.logger.verbose(`Policy set for bucket ${this.config.Bucket}`);
     }
   }
 

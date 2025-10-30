@@ -19,11 +19,11 @@ export class PromptService implements OnModuleInit {
 
   async onModuleInit(): Promise<void> {
     const files = await readdir(this.templatesDir);
-    this.logger.log(`Found ${files.length} templates in ${this.templatesDir}`);
+    this.logger.verbose(`Found ${files.length} templates in ${this.templatesDir}`);
 
     for (const file of files) {
       try {
-        this.logger.log(`Loading prompt template: ${file}`);
+        this.logger.verbose(`Loading prompt template: ${file}`);
         const { content } = matter(await readFile(join(this.templatesDir, file), 'utf-8'));
         const name = file.replace(/\..+$/, '');
         this.templates.set(name, new PromptTemplate(content));
@@ -32,7 +32,7 @@ export class PromptService implements OnModuleInit {
       }
     }
 
-    this.logger.log(`Prompt instances generated!`);
+    this.logger.verbose(`Prompt instances generated!`);
   }
 
   // @ts-ignore

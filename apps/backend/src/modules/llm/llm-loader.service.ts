@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LLMPreset } from '@snipet/schemas';
 
-import { LLMEntity } from './llm.schema';
+import { LLMEntity } from './llm.entity';
 import { EmbeddingProvider } from './provider/embedding/base';
 import { OpenAILLMEmbeddingAdapter } from './provider/embedding/openai.adapter';
 import { TextProvider } from './provider/text/base';
