@@ -10,7 +10,7 @@ import { Form, FormError } from '@/components/ui/form';
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from '@/utils/zod-resolver';
 import { buildConfigObjectSchema, createPluginSchema } from '@snipet/schemas';
 
 import { DialogType } from './';
@@ -36,7 +36,7 @@ export const InstallPluginDialog = ({ plugin }: InstallPluginProps) => {
   const { closeDialog } = useDialog();
   const { mutate: save }  = useApiMutation("/api/plugin", { method: "POST" });
   const handleSubmit = form.handleSubmit(async (body) => {
-    save({ body }, { 
+    save({ body }, {
       onSuccess: () => {
         toast({
           title: "Plugin installed",

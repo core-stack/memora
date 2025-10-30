@@ -8,14 +8,8 @@ import { Inject } from '@nestjs/common';
 
 import { FilterOptions } from '../../generics/filter-options';
 import { ICrudRepository, RepositoryOptions } from '../../generics/repository.interface';
-import { PgTransaction } from 'drizzle-orm/pg-core';
-import { ExtractTablesWithRelations } from 'drizzle-orm';
-
-export type TxType = PgTransaction<
-  NodePgQueryResultHKT,
-  typeof schema,
-  ExtractTablesWithRelations<typeof schema>
->;
+import { TxType } from './types';
+import { NonUniqueError } from './errors/non-unique.error';
 
 export abstract class DrizzleGenericRepository<
   TTable extends PgTable,
@@ -27,7 +21,10 @@ export abstract class DrizzleGenericRepository<
 
   private readonly columns: TTable["_"]["columns"];
 
-  constructor(protected readonly table: TTable) {
+  constructor(
+    protected readonly table: TTable,
+    protected readonly idColumn: keyof TTable["_"]["columns"] = "id" as keyof TTable["_"]["columns"]
+  ) {
     this.columns = getTableColumns(table);
   }
 
@@ -78,6 +75,19 @@ export abstract class DrizzleGenericRepository<
     }, repoOpts);
   }
 
+  async findUnique(opts: FilterOptions<TEntity>, repoOpts?: RepositoryOptions): Promise<TEntity | null> {
+    const findResult = await this.find(opts, repoOpts);
+    if (findResult.length === 0) return null;
+    if (findResult.length > 1) throw new NonUniqueError("Multiple results found");
+    return findResult[0];
+  }
+
+  async findFirst(opts: FilterOptions<TEntity>, repoOpts?: RepositoryOptions): Promise<TEntity | null> {
+    const findResult = await this.find(opts, repoOpts);
+    if (findResult.length === 0) return null;
+    return findResult[0];
+  }
+
   async findByID(id: string, repoOpts?: RepositoryOptions<TxType>): Promise<TEntity | null> {
     return this.run(async (db) => {
       const [result] = await db.select()
@@ -97,7 +107,7 @@ export abstract class DrizzleGenericRepository<
 
   async delete(id: string, repoOpts?: RepositoryOptions<TxType>): Promise<void> {
     return this.run(async (db) => {
-      await db.delete(this.table).where(eq(this.columns.id, id));
+      await db.delete(this.table).where(eq(this.columns[this.idColumn], id));
     }, repoOpts);
   }
 

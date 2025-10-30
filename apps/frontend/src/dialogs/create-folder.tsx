@@ -11,7 +11,7 @@ import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useDialog } from '@/hooks/use-dialog';
 import { useKnowledge } from '@/hooks/use-knowledge';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from '@/utils/zod-resolver';
 import { createKnowledgeFolderSchema } from '@snipet/schemas';
 
 import { DialogType } from './';

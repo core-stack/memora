@@ -4,6 +4,8 @@ export type RepositoryOptions<T = any> = {
 }
 export interface ICrudRepository<TEntity, TCreateDto = Partial<TEntity>, TUpdateDto = Partial<TEntity>> {
   find(opts: FilterOptions<TEntity>, repoOpts?: RepositoryOptions): Promise<TEntity[]>;
+  findUnique(opts: FilterOptions<TEntity>, repoOpts?: RepositoryOptions): Promise<TEntity | null>;
+  findFirst(opts: FilterOptions<TEntity>, repoOpts?: RepositoryOptions): Promise<TEntity | null>;
   findByID(id: string, repoOpts?: RepositoryOptions): Promise<TEntity | null>;
 
   create(data: TCreateDto, repoOpts?: RepositoryOptions): Promise<TEntity>;

@@ -2,18 +2,22 @@ import { readdir } from 'fs/promises';
 import { join } from 'path';
 
 import { env } from '@/env';
+import { CrudService } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
-import { HttpContext } from '@/generics/http-context';
-import { TenantService } from '@/generics/tenant.service';
+import { ServiceOptions } from '@/generics/service.interface';
 import { SecurityService } from '@/infra/security/security.service';
 import { __root } from '@/root';
 import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { CreateLLM, LLM, LLMPreset, llmPresetSchema } from '@snipet/schemas';
+import { CreateLLM, LLM, LLMPreset, llmPresetSchema, UpdateLLM } from '@snipet/schemas';
 
+import { CreateLLMEntity, LLMEntity, UpdateLLMEntity } from './llm.entity';
 import { LLMRepository } from './llm.repository';
 
 @Injectable()
-export class LLMService extends TenantService<LLM> implements OnModuleInit {
+export class LLMService extends CrudService<
+  LLM, CreateLLM, UpdateLLM,
+  LLMEntity, CreateLLMEntity, UpdateLLMEntity
+> implements OnModuleInit {
   presets: LLMPreset[] = [];
 
   constructor(
@@ -48,11 +52,11 @@ export class LLMService extends TenantService<LLM> implements OnModuleInit {
     return this.presets.map(preset => ({ ...preset, iconPath: `${env.AWS_PUBLIC_BASE_URL}/${preset.iconPath}` }));
   }
 
-  override async find(opts: FilterOptions<LLM>): Promise<LLM[]> {
-    return (await this.repository.find(opts)).map(({ config: _, ...llm }) => (llm))
+  override async find(filterOpts: FilterOptions<LLM>, opts?: ServiceOptions): Promise<LLM[]> {
+    return (await this.repository.find(filterOpts, { tx: opts?.tx })).map(({ config: _, ...llm }) => (llm))
   }
 
-  override async create(input: CreateLLM, ctx: HttpContext): Promise<LLM> {
+  override async create(input: CreateLLM, opts?: ServiceOptions): Promise<LLM> {
     const preset = this.presets.find(preset => preset.config.model === input.model);
     if (!preset) throw new NotFoundException("LLM not found");
     await Promise.all(Object.entries(input.config).map(async ([key, value]) => {
@@ -60,6 +64,6 @@ export class LLMService extends TenantService<LLM> implements OnModuleInit {
       if (isSecret) input.config[key] = await this.securityService.encrypt(value as string, env.ENCRYPT_MASTER_PASSWORD);
     }))
 
-    return super.create(input, ctx);
+    return super.create(input, opts);
   }
 }

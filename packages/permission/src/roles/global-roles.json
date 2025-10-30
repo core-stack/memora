@@ -1,0 +1,23 @@
+[
+  {
+    "key": "admin",
+    "name": "Admin",
+    "permissions": [
+      "CREATE_USER",
+      "READ_USER",
+      "UPDATE_USER",
+      "DELETE_USER",
+      "BAN_USER",
+      "MANAGE_TENANT"
+    ],
+    "scope": "GLOBAL",
+    "default": "admin"
+  },
+  {
+    "key": "user",
+    "name": "User",
+    "permissions": [],
+    "scope": "GLOBAL",
+    "default": "user"
+  }
+]

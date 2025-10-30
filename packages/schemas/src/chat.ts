@@ -33,8 +33,5 @@ export const createChatSchema = chatSchema.pick({
 });
 export type CreateChat = z.infer<typeof createChatSchema>;
 
-export const updateChatSchema = chatSchema.pick({
-  id: true,
-  name: true
-})
+export const updateChatSchema = createChatSchema.partial();
 export type UpdateChat = z.infer<typeof updateChatSchema>;

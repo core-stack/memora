@@ -13,7 +13,7 @@ import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { capitalizeFirstLetter } from '@/lib/string';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from '@/utils/zod-resolver';
 import { createLLMSchema } from '@snipet/schemas';
 
 import { DialogType } from '../';
@@ -27,11 +27,11 @@ export function ConfigureLLDialog({ preset }: ConfigureLLDialogProps) {
   const { closeDialog } = useDialog();
   const { toast } = useToast();
 
-  const form = useForm<CreateLLM>({ 
-    resolver: zodResolver(createLLMSchema), 
-    defaultValues: { 
-      ...preset.defaults, 
-      type: preset.config.type, 
+  const form = useForm<CreateLLM>({
+    resolver: zodResolver(createLLMSchema),
+    defaultValues: {
+      ...preset.defaults,
+      type: preset.config.type,
       model: preset.config.model
     }
   });
@@ -54,7 +54,7 @@ export function ConfigureLLDialog({ preset }: ConfigureLLDialogProps) {
   })
 
   const handleCancel = () => closeDialog(DialogType.CONFIGURE_LLM);
-  
+
   return (
     <DialogContent className="sm:max-w-[500px]">
       <DialogHeader>
@@ -76,7 +76,7 @@ export function ConfigureLLDialog({ preset }: ConfigureLLDialogProps) {
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={handleSubmit}>
-          <FormInput 
+          <FormInput
             name='name'
             label='Instance Name'
             placeholder="e.g., Production GPT-4"
@@ -85,9 +85,9 @@ export function ConfigureLLDialog({ preset }: ConfigureLLDialogProps) {
           />
           <div className="space-y-4 py-4">
             {preset.fields && Object.entries(preset.fields).map(([fieldName, fieldType]) => (
-              <FormInput 
+              <FormInput
                 type={fieldType === 'string' ? "text" : "password"}
-                key={fieldName} 
+                key={fieldName}
                 name={`config.${fieldName}`}
                 label={capitalizeFirstLetter(fieldName, true)}
               />

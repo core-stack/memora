@@ -1,8 +1,10 @@
 import { message } from '@/db/schema';
 import { DrizzleGenericRepository } from '@/generics';
-import { Message } from '@snipet/schemas';
+import { CreateMessageEntity, MessageEntity, UpdateMessageEntity } from './message.entity';
 
-export class MessageRepository extends DrizzleGenericRepository<typeof message, Message> {
+export class MessageRepository extends DrizzleGenericRepository<
+  typeof message, MessageEntity, CreateMessageEntity, UpdateMessageEntity
+> {
   constructor() {
     super(message);
   }

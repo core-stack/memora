@@ -1,13 +1,17 @@
-import { HttpContext } from '@/generics/http-context';
-import { TenantService } from '@/generics/tenant.service';
 import { Injectable } from '@nestjs/common';
-import { Chat } from '@snipet/schemas';
+import { Chat, CreateChat, UpdateChat } from '@snipet/schemas';
 
 import { KnowledgeService } from '../knowledge.service';
 import { ChatRepository } from './chat.repository';
+import { CrudService } from '@/generics';
+import { ServiceOptions } from '@/generics/service.interface';
+import { ChatEntity, CreateChatEntity, UpdateChatEntity } from './chat.entity';
 
 @Injectable()
-export class ChatService extends TenantService<Chat> {
+export class ChatService extends CrudService<
+  Chat, CreateChat, UpdateChat,
+  ChatEntity, CreateChatEntity, UpdateChatEntity
+> {
   constructor(
     protected readonly repository: ChatRepository,
     private readonly knowledgeService: KnowledgeService
@@ -15,16 +19,16 @@ export class ChatService extends TenantService<Chat> {
     super(repository);
   }
 
-  override async create(input: Partial<Chat>, ctx: HttpContext): Promise<Chat> {
-    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug(ctx);
-    
-    input.knowledgeId = knowledgeId;
-    input.name = "New Chat";
+  override async create(input: CreateChat, opts?: ServiceOptions): Promise<Chat> {
+    if (!opts?.http) throw new Error("http context is required");
+    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug(opts.http);
 
-    return super.create(input, ctx);
+    if (!input.name) input.name = "New Chat";
+
+    return super.create({ ...input, knowledgeId }, opts);
   }
 
-  async findWithCountMessages(chatId: string, ctx: HttpContext) {
-    return this.repository.findWithCountMessages(chatId);
+  async findWithCountMessages(chatId: string, opts?: ServiceOptions) {
+    return this.repository.findWithCountMessages(chatId, { tx: opts?.tx });
   }
 }

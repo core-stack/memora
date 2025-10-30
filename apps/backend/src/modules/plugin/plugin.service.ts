@@ -1,5 +1,4 @@
 import { HttpContext } from '@/generics/http-context';
-import { TenantService } from '@/generics/tenant.service';
 import { LLMService } from '@/infra/llm/llm.service';
 import { PromptService } from '@/infra/prompt/prompt.service';
 import { SecurityService } from '@/infra/security/security.service';
@@ -7,13 +6,19 @@ import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
 import { PluginRegistryWithInput } from '@/plugin-registry/plugin-registry';
 import { PluginRegistryService } from '@/plugin-registry/plugin-registry.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { buildConfigObjectSchema, Plugin } from '@snipet/schemas';
+import { buildConfigObjectSchema, CreatePlugin, Plugin, UpdatePlugin } from '@snipet/schemas';
 
 import { KnowledgePluginRepository } from './knowledge-plugin.repository';
 import { PluginRepository } from './plugin.repository';
+import { CrudService } from '@/generics';
+import { ServiceOptions } from '@/generics/service.interface';
+import { CreatePluginEntity, PluginEntity, UpdatePluginEntity } from './plugin.entity';
 
 @Injectable()
-export class PluginService extends TenantService<Plugin> {
+export class PluginService extends CrudService<
+  Plugin, CreatePlugin, UpdatePlugin,
+  PluginEntity, CreatePluginEntity, UpdatePluginEntity
+> {
   constructor(
     protected repository: PluginRepository,
     private readonly knowledgePluginRepository: KnowledgePluginRepository,
@@ -37,7 +42,7 @@ export class PluginService extends TenantService<Plugin> {
   ): Promise<Plugin[]> {
     const plugins = await this.knowledgePluginRepository.findPluginByKnowledgeId(knowledgeId);
     if (!plugins.length) return [];
-    const prompt = this.promptService.getTemplate("DecidePluginsToUse").build({ 
+    const prompt = this.promptService.getTemplate("DecidePluginsToUse").build({
       plugins,
       query,
       knowledgeInstructions
@@ -50,8 +55,8 @@ export class PluginService extends TenantService<Plugin> {
     if (!registry) throw new BadRequestException(`Plugin registry ${input.pluginRegistry} not found`);
     return registry;
   }
-  
-  override async create(input: Partial<Plugin>, ctx: HttpContext): Promise<Plugin> {
+
+  override async create(input: CreatePlugin, opts: ServiceOptions): Promise<Plugin> {
     const registry = await this.findRegistry(input);
     if (registry.configSchema) {
       try {
@@ -69,7 +74,7 @@ export class PluginService extends TenantService<Plugin> {
       }));
     }
 
-    return super.create(input, ctx);
+    return super.create(input, opts);
   }
 
   async test(input: Partial<Plugin>): Promise<boolean> {

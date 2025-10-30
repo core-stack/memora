@@ -1,5 +1,6 @@
 import * as argon2 from 'argon2';
 import * as crypto from 'crypto';
+import bcrypt from 'bcrypt';
 
 import { Injectable } from '@nestjs/common';
 
@@ -89,5 +90,13 @@ export class SecurityService {
     );
 
     return secret;
+  }
+
+  hash(password: string): Promise<string> {
+    return bcrypt.hash(password, 10)
+  }
+
+  compareHash(password: string, hash: string): Promise<boolean> {
+    return bcrypt.compare(password, hash)
   }
 }

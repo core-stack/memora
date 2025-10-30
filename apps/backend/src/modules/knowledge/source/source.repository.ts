@@ -1,8 +1,10 @@
 import { source } from '@/db/schema';
 import { DrizzleGenericRepository } from '@/generics';
-import { Source } from '@snipet/schemas';
+import { CreateSourceEntity, createSourceEntity, SourceEntity, UpdateSourceEntity } from './source.entity';
 
-export class SourceRepository extends DrizzleGenericRepository<typeof source, Source> {
+export class SourceRepository extends DrizzleGenericRepository<
+  typeof source, SourceEntity, CreateSourceEntity, UpdateSourceEntity
+> {
   constructor() {
     super(source);
   }

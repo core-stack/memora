@@ -1,0 +1,28 @@
+[
+  {
+    "key": "admin",
+    "name": "Tenant Admin",
+    "permissions": [
+      "UPDATE_TENANT",
+      "DELETE_TENANT",
+      "GET_MEMBERS",
+      "UPDATE_MEMBER",
+      "DELETE_MEMBER",
+      "CREATE_INVITE",
+      "DELETE_INVITE",
+      "UPDATE_BILLING",
+      "DELETE_BILLING"
+    ],
+    "scope": "TENANT",
+    "default": "tenant-admin"
+  },
+  {
+    "key": "user",
+    "name": "Tenant User",
+    "permissions": [
+      "GET_MEMBERS"
+    ],
+    "scope": "TENANT",
+    "default": "tenant-user"
+  }
+]

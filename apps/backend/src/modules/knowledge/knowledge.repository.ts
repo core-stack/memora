@@ -4,32 +4,30 @@ import { PgTable } from 'drizzle-orm/pg-core';
 import * as schema from '@/db/schema';
 import { knowledge } from '@/db/schema';
 import { knowledgeTag } from '@/db/schema/knowledge_tag';
-import { DrizzleGenericRepository, TxType } from '@/generics';
+import { DrizzleGenericRepository } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
 import { increment } from '@/infra/database/utils';
 import { Injectable } from '@nestjs/common';
 import { KnowledgeTag } from '@snipet/schemas';
 
-import { CreateKnowledge, Knowledge, UpdateKnowledge } from './knowledge.schema';
+import { CreateKnowledgeEntity, KnowledgeEntity, UpdateKnowledgeEntity } from './knowledge.entity';
 import { RepositoryOptions } from '@/generics/repository.interface';
+import { TxType } from '@/infra/database/types';
 
 @Injectable()
 export class KnowledgeRepository extends DrizzleGenericRepository<
-  typeof knowledge,
-  Knowledge,
-  CreateKnowledge,
-  UpdateKnowledge
+  typeof knowledge, KnowledgeEntity, CreateKnowledgeEntity, UpdateKnowledgeEntity
 > {
   constructor() {
     super(knowledge);
   }
 
-  async findBySlug(slug: string, repoOpts?: RepositoryOptions): Promise<Knowledge | null> {
+  async findBySlug(slug: string, repoOpts?: RepositoryOptions<TxType>): Promise<KnowledgeEntity | null> {
     const res = await this.find({ filter: { slug } }, repoOpts);
     return res[0] || null;
   }
 
-  override async find(opts: FilterOptions<Knowledge>, repoOpts?: RepositoryOptions): Promise<Knowledge[]> {
+  override async find(opts: FilterOptions<KnowledgeEntity>, repoOpts?: RepositoryOptions<TxType>): Promise<KnowledgeEntity[]> {
     return this.run(async (db) => {
       if (!opts.limit) opts.limit = 1000;
       if (!opts.offset) opts.offset = 0;
@@ -47,11 +45,11 @@ export class KnowledgeRepository extends DrizzleGenericRepository<
       }
 
       const rows = await query;
-      let result = [] as Knowledge[];
+      let result = [] as KnowledgeEntity[];
 
       if (!!rows.at(0)?.knowledge) {
         result = rows.reduce((acc, row) => {
-          const kn = row.knowledge as Knowledge;
+          const kn = row.knowledge as KnowledgeEntity;
           const tag = row.knowledge_tag as KnowledgeTag;
 
           const index = acc.findIndex(p => p.id === kn.id);
@@ -62,16 +60,16 @@ export class KnowledgeRepository extends DrizzleGenericRepository<
             if (tag) acc[index].tags.push(tag);
           }
           return acc;
-        }, [] as Knowledge[]);
+        }, [] as KnowledgeEntity[]);
       } else {
-        result = rows as Knowledge[];
+        result = rows as KnowledgeEntity[];
       }
 
       return result;
     }, repoOpts);
   }
 
-  override async create(data: CreateKnowledge, repoOpts?: RepositoryOptions): Promise<Knowledge> {
+  override async create(data: CreateKnowledgeEntity, repoOpts?: RepositoryOptions<TxType>): Promise<KnowledgeEntity> {
     return this.run(async (db) => {
       const [createdKnowledge] = await db.insert(knowledge).values({
         slug: data.slug,
@@ -87,13 +85,13 @@ export class KnowledgeRepository extends DrizzleGenericRepository<
           tenantId: data.tenantId
         } as KnowledgeTag)));
       }
-      return createdKnowledge as Knowledge;
+      return createdKnowledge as KnowledgeEntity;
     }, repoOpts, true);
   }
 
-  override async update(id: string, data: UpdateKnowledge, repoOpts?: RepositoryOptions): Promise<void> {
+  override async update(id: string, data: UpdateKnowledgeEntity, repoOpts?: RepositoryOptions<TxType>): Promise<void> {
     return this.run(async (db) => {
-      await db.update(knowledge).set(data as unknown as Knowledge).where(eq(knowledge.id, id));
+      await db.update(knowledge).set(data as unknown as KnowledgeEntity).where(eq(knowledge.id, id));
       if (!data.tenantId) {
         const kn = await db.select().from(knowledge).where(eq(knowledge.id, id));
         data.tenantId = kn[0]?.tenantId;
@@ -116,7 +114,7 @@ export class KnowledgeRepository extends DrizzleGenericRepository<
     }, repoOpts, true);
   }
 
-  async increment(id: string, field: keyof Knowledge, count: number = 1, repoOpts?: RepositoryOptions): Promise<void> {
+  async increment(id: string, field: keyof KnowledgeEntity, count: number = 1, repoOpts?: RepositoryOptions<TxType>): Promise<void> {
     return await this.run(async (db) => {
       await db.update(knowledge)
         .set({ [field]: increment(knowledge[field], count) })

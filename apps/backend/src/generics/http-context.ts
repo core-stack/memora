@@ -1,5 +1,5 @@
 import { BadRequestException } from "@nestjs/common";
-import { Request } from "express";
+import { CookieOptions, Request, Response } from "express";
 
 abstract class Getter {
   constructor(private params: Record<string, string | number | boolean | undefined>, private name: string) { }
@@ -57,8 +57,25 @@ export class HttpContext {
   params: Params;
   query: Query;
 
-  constructor(request: Request) {
+  constructor(request: Request, private response?: Response) {
     this.params = new Params(request.params);
     this.query = new Query(request.query as Record<string, string | number | boolean | undefined>);
+  }
+
+  setCookie(name: string, value: string, options: CookieOptions = {}) {
+    if (!this.response) {
+      console.warn("Missing response in http context to set cookie");
+    }
+    return this.response?.cookie(name, value, options);
+  }
+
+  deleteCookies(names: string | string[]) {
+    if (!this.response) {
+      console.warn("Missing response in http context to delete cookie");
+    }
+    names = Array.isArray(names) ? names : [names];
+    names.forEach((name) => {
+      this.response?.clearCookie(name);
+    })
   }
 }

@@ -31,3 +31,10 @@ export const llmTypeEnum = pgEnum("llm_type", [
   "EMBEDDING",
   "TEXT",
 ]);
+
+export const roleScopeEnum = pgEnum("role_scope", ["TENANT", "GLOBAL"]);
+
+export const verificationTypeEnum = pgEnum("verification_type", [
+  "ACTIVE_ACCOUNT",
+  "RESET_PASSWORD",
+]);
