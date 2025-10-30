@@ -20,11 +20,36 @@ dotenv.config({
 const envSchema = z.object({
   // APP
   APP_PORT: z.coerce.number().default(3000),
-  API_URL: z.string().url().optional().default("http://localhost:3000/api"),
+  API_URL: z.string().optional().default("http://localhost:3000/api"),
   SERVE_STATIC: z.string().optional(),
+  FRONTEND_URL: z.url().optional().default("http://localhost:3000"),
 
   // AUTH
   REQUIRE_EMAIL_VERIFICATION: z.coerce.boolean().optional().default(false),
+  STORE: z.enum(["memory", "redis"]).default("redis"),
+  REDIS_STORE_URL: z.url().optional().default("redis://localhost:6379"),
+
+  // OAUTH
+  GOOGLE_ENABLED: z.coerce.boolean().default(false),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  GOOGLE_REDIRECT_URI: z.string().optional(),
+
+  // JWT
+  JWT_SECRET: z.string().default("change-me"),
+  JWT_ACCESS_TOKEN_DURATION: z.coerce.number().default(60 * 5 * 1000), // 5 min
+  JWT_REFRESH_TOKEN_DURATION: z.coerce.number().default(60 * 60 * 24 * 30 * 1000), // 30 days
+
+  // SMTP
+  SMTP_ENABLED: z.coerce.boolean().default(false),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().optional(),
+  SMTP_SECURE: z.coerce.boolean().default(false),
+  SMTP_USER: z.string().optional(),
+  SMTP_ENV: z.enum(["development", "production", "test"]).default("development"),
+  SMTP_TEST_EMAIL: z.string().optional(),
+  SMTP_FROM: z.string().optional(),
+  SMTP_PASSWORD: z.string().optional(),
 
   ACTIVE_ACCOUNT_TOKEN_EXPIRES_IN: z.coerce.number().optional().default(60 * 60 * 24), // 1 day
   RESET_PASSWORD_TOKEN_EXPIRES_IN: z.coerce.number().optional().default(60 * 60), // 1 hour

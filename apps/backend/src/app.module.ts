@@ -26,12 +26,28 @@ import { MemoryModule } from './modules/memory/memory.module';
 import { PluginModule } from './modules/plugin/plugin.module';
 import { TagModule } from './modules/tag/tag.module';
 import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
+import { EmailModule } from './jobs/email/email.module';
+import { AccountModule } from './modules/account/account.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { MemberModule } from './modules/member/member.module';
+import { RoleModule } from './modules/role/role.module';
+import { TenantModule } from './modules/tenant/tenant.module';
+import { UserModule } from './modules/user/user.module';
+import { VerificationTokenModule } from './modules/verification-token/verification-token.module';
 
 @Module({
   imports: [
     LLMModule,
     IngestModule,
     DeleteKnowledgeModule,
+    EmailModule,
+    AccountModule,
+    AuthModule,
+    MemberModule,
+    RoleModule,
+    TenantModule,
+    UserModule,
+    VerificationTokenModule,
     SearchModule,
     DatabaseModule,
     StorageModule,

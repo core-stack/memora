@@ -21,6 +21,18 @@ export abstract class CrudService<
     ) as TSchema[];
   }
 
+  async findUnique(filterOptions: FilterOptions<TSchema>, opts?: ServiceOptions): Promise<TSchema | null> {
+    return this.toSchema(
+      await this.repository.findUnique(filterOptions as FilterOptions<TEntity>, { tx: opts?.tx })
+    ) as TSchema;
+  }
+
+  async findFirst(filterOptions: FilterOptions<TSchema>, opts?: ServiceOptions): Promise<TSchema | null> {
+    return this.toSchema(
+      await this.repository.findFirst(filterOptions as FilterOptions<TEntity>, { tx: opts?.tx })
+    ) as TSchema;
+  }
+
   async findByID(id: string, opts?: ServiceOptions): Promise<TSchema | null> {
     return this.toSchema(await this.repository.findByID(id, { tx: opts?.tx }));
   }

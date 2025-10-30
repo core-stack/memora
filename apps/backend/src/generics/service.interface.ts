@@ -8,6 +8,8 @@ export type ServiceOptions<TxType = any> = {
 
 export interface ICrudService<TEntity, TCreateDto = Partial<TEntity>, TUpdateDto = Partial<TEntity>> {
   find(filterOptions: FilterOptions<TEntity>, opts?: ServiceOptions): Promise<TEntity[]>
+  findUnique(filterOptions: FilterOptions<TEntity>, opts?: ServiceOptions): Promise<TEntity | null>
+  findFirst(filterOptions: FilterOptions<TEntity>, opts?: ServiceOptions): Promise<TEntity | null>
   findByID(id: string, opts?: ServiceOptions): Promise<TEntity | null>
   create(input: TCreateDto, opts?: ServiceOptions): Promise<TEntity>
   update(id: string, input: TUpdateDto, opts?: ServiceOptions): Promise<void>

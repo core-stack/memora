@@ -1,18 +1,27 @@
 import { z } from "zod";
+import { orderSchema } from "./shared";
 
 export const accountSchema = z.object({
   id: z.uuid().optional(),
-  type: z.string().min(1),
+
   provider: z.string().min(1),
   providerAccountId: z.string().min(1),
 
-  accessToken: z.string().nullable().optional(),
-  refreshToken: z.string().nullable().optional(),
-  expiresAt: z.date().nullable().optional(),
-
   userId: z.uuid(),
-
-  createdAt: z.date().optional(),
 });
 
-export type Account = z.infer<typeof accountSchema>;
+export type AccountSchema = z.infer<typeof accountSchema>;
+
+export const accountFilterSchema = z.object({
+  filter: z.object({
+    id: z.uuid().optional(),
+    userId: z.uuid().optional(),
+    provider: z.string().optional(),
+    providerAccountId: z.uuid().optional(),
+  }).strict().optional(),
+  order: z.object({
+    provider: orderSchema,
+  }).strict().optional()
+}).strict();
+
+export type AccountFilterSchema = z.infer<typeof accountFilterSchema>;

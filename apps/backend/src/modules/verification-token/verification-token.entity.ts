@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const verificationTokenEnum = z.enum(["RESET_PASSWORD", "ACTIVE_ACCOUNT"]);
+export type VerificationTokenType = z.infer<typeof verificationTokenEnum>;
 
 export const verificationTokenEntity = z.object({
   type: verificationTokenEnum,

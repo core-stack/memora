@@ -15,4 +15,9 @@ export class DrizzleTxManager extends TxManager<TxType> {
   run<T>(fn: (tx: TxType) => Promise<T>): Promise<T> {
     return this.db.transaction(fn);
   }
+
+  runOrCreate<T>(tx: TxType | undefined, fn: (tx: TxType) => Promise<T>): T | Promise<T> {
+    if (!tx) return this.run(fn);
+    return fn(tx);
+  }
 }

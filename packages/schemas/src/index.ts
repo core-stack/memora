@@ -1,3 +1,4 @@
+export * from "./account";
 export * from "./knowledge";
 export * from "./knowledge-folder";
 export * from "./knowledge-plugin";
@@ -16,3 +17,6 @@ export * from "./source-type";
 export * from "./llm";
 export * from "./auth";
 export * from "./user";
+export * from "./role";
+export * from "./member";
+export * from "./tenant";

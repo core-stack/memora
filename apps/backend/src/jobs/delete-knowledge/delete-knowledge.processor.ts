@@ -9,12 +9,11 @@ import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { Knowledge, Source } from '@snipet/schemas';
 
-import { IngestProcessor } from '../ingest/ingest.processor';
 import { JobType } from '../types';
 
-@Processor(JobType.DELETE_KNOWLEDGE, { concurrency: 5 })
+@Processor(JobType.DELETE_KNOWLEDGE, { concurrency: 10 })
 export class DeleteKnowledgeProcessor extends WorkerHost {
-  private logger = new Logger(IngestProcessor.name);
+  private logger = new Logger(DeleteKnowledgeProcessor.name);
 
   constructor(
     @Inject(forwardRef(() => KnowledgeRepository)) private readonly knowledgeRepository: KnowledgeRepository,

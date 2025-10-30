@@ -9,6 +9,6 @@ export class VerificationTokenRepository extends DrizzleGenericRepository<
   UpdateVerificationTokenEntity
 > {
   constructor() {
-    super(verificationToken);
+    super(verificationToken, "token");
   }
 }

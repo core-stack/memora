@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { orderSchema } from "./shared";
 
 export const roleScopeEnum = z.enum(["TENANT", "GLOBAL"]);
 
@@ -19,3 +20,17 @@ export const roleSchema = z.object({
 });
 
 export type RoleSchema = z.infer<typeof roleSchema>;
+
+export const roleFilterSchema = z.object({
+  filter: z.object({
+    id: z.uuid().optional(),
+    key: z.string().optional(),
+    name: z.string().optional(),
+  }).strict().optional(),
+  order: z.object({
+    name: orderSchema,
+    createdAt: orderSchema,
+    updatedAt: orderSchema,
+  }).strict().optional()
+}).strict();
+export type RoleFilterSchema = z.infer<typeof roleFilterSchema>;
