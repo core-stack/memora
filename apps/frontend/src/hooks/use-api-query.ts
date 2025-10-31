@@ -60,10 +60,10 @@ export function useApiQuery<
       queryFn: async (): Promise<TData> => {
         if (opts.passParams === undefined) opts.passParams = true;
         if (opts.passQuery === undefined) opts.passQuery = true;
-        
+
         const params = { ...(opts.passParams ? routeParams : {}), ...opts?.params };
         const query = { ...(opts.passQuery ? Object.fromEntries(routeSearchParams.entries()) : {}), ...opts?.query };
-        
+
         const url = buildUrl(path, params, query);
         const res = await fetch(url, {
           method: method as string,
@@ -77,7 +77,7 @@ export function useApiQuery<
 
         const [json, err] = await catchError<TData, TError>(res.json());
         if (err !== null) throw err;
-        if (!res.ok) throw json;
+        if (!res.ok) throw new ApiError({ body: json, statusCode: res.status });
         if (!json) throw new ApiError({ message: "Error fetching data" });
 
         return json;

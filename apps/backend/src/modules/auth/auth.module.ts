@@ -48,7 +48,15 @@ const useProvider = (name: string, provider: Provider, use: boolean) => {
       } as Record<string, Provider>
     }
   ],
-  exports: [],
-  imports: [EmailModule, UserModule, AccountModule, VerificationTokenModule, SecurityModule, DatabaseModule, RoleModule],
+  exports: [ AuthManager, AuthService ],
+  imports: [
+    EmailModule,
+    UserModule,
+    AccountModule,
+    VerificationTokenModule,
+    SecurityModule,
+    DatabaseModule,
+    RoleModule
+  ],
 })
 export class AuthModule {}

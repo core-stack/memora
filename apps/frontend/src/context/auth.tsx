@@ -1,5 +1,5 @@
 import type { GetSelfUserSchema, TenantSchema } from "@snipet/schemas";
-import { createContext } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useCookies } from 'react-cookie';
 
 import { useApiMutation } from '@/hooks/use-api-mutation';
@@ -9,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { can as canPermission } from '@snipet/permission';
 
 import type { Permission } from "@snipet/permission";
+import { publicRoutes, REDIRECT_WHEN_NOT_AUTHENTICATED_PATH } from "@/routes";
+import { useLocation } from "@/hooks/use-location";
 type AuthContextType = {
   user: GetSelfUserSchema | undefined;
   currentTenant: TenantSchema | undefined;
@@ -22,19 +24,27 @@ type AuthContextType = {
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cookies] = useCookies<"tenantId", { tenantId: string }>(["tenantId"]);
+  const [exiting, setExiting] = useState(false);
+  const [cookies] = useCookies<
+    "tenant-id" | "access-token" | "refresh-token",
+    { ["tenant-id"]: string }
+  >(["tenant-id"]);
+
+  const tenantId = useMemo(() => cookies["tenant-id"], [cookies]);
+
   const router = useRouter();
+  const { pathname } = useLocation();
   const { toast } = useToast();
   const { mutate } = useApiMutation("/api/auth/logout", { method: "POST" });
-  const { data: user, isLoading } = useApiQuery("/api/user/self", { method: "GET" });
+  const { data: user, isLoading, error } = useApiQuery("/api/user/self", { method: "GET", retry: false });
 
   const permissions = user?.members.map((member) => ({
     tenantId: member.tenantId,
     role: member.role,
   }));
-  
+
   const isAuthenticated = !!user;
-  const currentMember = user?.members.find((member) => member.tenantId === cookies.tenantId);
+  const currentMember = user?.members.find((member) => member.tenantId === tenantId);
   const currentTenant = currentMember?.tenant;
   const canInTenant = (tenantId: string, permission: Permission | Permission[]): boolean => {
     if (permissions) {
@@ -46,22 +56,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return false;
   }
 
-  const can = (permission: Permission | Permission[]): boolean => canInTenant(cookies.tenantId, permission);
+  const can = (permission: Permission | Permission[]): boolean => canInTenant(tenantId, permission);
 
-  const logout = () => {
+  const logout = useCallback(() => {
+    setExiting(true);
+    setExiting(true);
     mutate({}, {
       onSuccess: () => {
         router.replace("/login");
-      }, 
+        setExiting(false);
+      },
       onError: (error) => {
         toast({
           title: "Error logging out",
           description: (error as Error).message,
           variant: "destructive",
         })
-      }
+        setExiting(false);
+      },
     })
-  }
+  }, [mutate, router, toast]);
+
+  useEffect(() => {
+    if (isLoading) return;
+    const publicRoute = publicRoutes.find(route => pathname.startsWith(route.path));
+    if (!isAuthenticated && publicRoute) return;
+    else if (isAuthenticated && publicRoute && publicRoute.whenAuthenticated === "redirect") router.replace("/");
+    else if (!publicRoute && !isAuthenticated) router.replace(REDIRECT_WHEN_NOT_AUTHENTICATED_PATH);
+    else if (error && error.statusCode === 401 && !exiting) logout();
+  }, [isAuthenticated, pathname, router, error, exiting, logout, isLoading]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -74,6 +98,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         can,
         canInTenant,
       }}
-    >{children}</AuthContext.Provider>
+    >
+      { isLoading ? <div>Loading...</div> : children }
+    </AuthContext.Provider>
   )
 }

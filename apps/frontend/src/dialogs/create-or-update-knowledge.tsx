@@ -52,7 +52,7 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
   const onSubmit = form.handleSubmit(async (body) => {
     try {
       if (isEditing) {
-        await updateKnowledge({ body: { ...body, id: knowledge!.id }, params: { id: knowledge!.id } });
+        await updateKnowledge({ body, params: { id: knowledge!.id } });
       } else {
         await createKnowledge({ body });
       }

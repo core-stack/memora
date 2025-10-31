@@ -7,32 +7,38 @@ import type { ActiveAccountSchema, CreateAccountSchema, ForgetPasswordSchema, Lo
 import { HttpContext } from "@/generics/http-context";
 import { HttpPost } from "@/generics";
 import { env } from "@/env";
+import { Public } from "@/shared/decorators/public";
 
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public(true)
   @Post("login")
   async login(@Req() req: Request, @Res() res: Response, @ZodBody(loginSchema) body: LoginSchema) {
     const result = await this.authService.login(body, { http: new HttpContext(req, res) });
     return res.send(result);
   }
 
+  @Public(true)
   @Post("logout")
   async logout(@Req() req: Request, @Res() res: Response) {
     return res.send(this.authService.logout({ http: new HttpContext(req, res) }));
   }
 
+  @Public(true)
   @Post("create-account")
   async createAccount(@Req() req: Request, @ZodBody(createAccountSchema) body: CreateAccountSchema) {
     return this.authService.createAccount(body, { http: new HttpContext(req) });
   }
 
+  @Public(true)
   @HttpPost("active-account", !env.REQUIRE_EMAIL_VERIFICATION)
   async activeAccount(@Req() req: Request, @ZodBody(activeAccountSchema) body: ActiveAccountSchema) {
     return this.authService.activeAccount(body, { http: new HttpContext(req) });
   }
 
+  @Public(true)
   @Post("forget-password")
   async forgetPassword(@Req() req: Request, @ZodBody(forgetPasswordSchema) body: ForgetPasswordSchema) {
     return this.authService.forgetPassword(body, { http: new HttpContext(req) });

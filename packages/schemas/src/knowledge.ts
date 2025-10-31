@@ -50,9 +50,7 @@ export const createKnowledgeSchema = knowledgeSchema.pick({
   slug: true,
   title: true,
   description: true,
-  instructions: true,
-  deleteError: true,
-  status: true,
+  instructions: true
 }).extend({
   tags: z.array(z.string()).optional()
 });

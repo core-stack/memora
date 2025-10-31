@@ -1,8 +1,8 @@
 import { Outlet } from 'react-router';
 
 import { SearchProvider } from '@/context/search-provider';
+import { TopBar } from '@/components/topbar';
 
-import { TopBar } from '../../components/topbar';
 
 export default function Knowledge() {
   return (

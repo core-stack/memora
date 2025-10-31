@@ -1,7 +1,7 @@
 import z from 'zod';
 
 import {
-  createKnowledgeSchema, knowledgeSchema, updateKnowledgeSchema
+  createKnowledgeSchema, knowledgeSchema, knowledgeStatusEnum, updateKnowledgeSchema
 } from '@snipet/schemas';
 
 export const knowledgeEntity = knowledgeSchema
@@ -14,5 +14,7 @@ export type CreateKnowledgeEntity = z.infer<typeof createKnowledgeEntity>;
 
 export const updateKnowledgeEntity = updateKnowledgeSchema.extend({
   tenantId: z.uuid().optional(),
+  status: knowledgeStatusEnum,
+  deleteError: z.string().optional()
 });
 export type UpdateKnowledgeEntity = z.infer<typeof updateKnowledgeEntity>;

@@ -60,6 +60,11 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
   @OnWorkerEvent("failed")
   async onFailed(job: Job<Source>) {
     const source = job.data;
-    await this.knowledgeRepository.update(source.id, { status: "DELETE_ERROR", deleteError: "Error deleting knowledge, try again" });
+    await this.knowledgeRepository.update(source.id,
+      {
+        status: "DELETE_ERROR",
+        deleteError: "Error deleting knowledge, try again"
+      }
+    );
   }
 }
