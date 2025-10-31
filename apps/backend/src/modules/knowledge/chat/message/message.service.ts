@@ -12,15 +12,15 @@ import { KnowledgeService } from '../../knowledge.service';
 import { ChatService } from '../chat.service';
 import { MessageRepository } from './message.repository';
 import { CreateMessageEntity, MessageEntity, UpdateMessageEntity } from './message.entity';
-import { CrudService } from '@/generics';
 import { ServiceOptions } from '@/generics/service.interface';
+import { GenericTenantService } from '@/generics/tenant.service';
 
 @Injectable()
-export class MessageService extends CrudService<
+export class MessageService extends GenericTenantService<
   Message, CreateMessage, UpdateMessage,
   MessageEntity, CreateMessageEntity, UpdateMessageEntity
 > {
-  private readonly logger = new Logger(MessageService.name);
+  logger = new Logger(MessageService.name);
   constructor(
     protected readonly repository: MessageRepository,
     private readonly llmService: LLMService,
@@ -56,12 +56,11 @@ export class MessageService extends CrudService<
     //#endregion
 
     //#region add user message to memory and database
-    const userMessage = await this.repository.create({
+    const userMessage = await super.create({
       content,
       chatId,
       messageRole: "USER",
-      tenantId: env.TENANT_ID,
-      knowledgeId
+      knowledgeId,
     }, { tx: opts?.tx });
     await this.chatMemoryService.add(userMessage);
     //#endregion
@@ -91,13 +90,12 @@ export class MessageService extends CrudService<
 
     //#region generate, add ai message to memory and database
     const llmResponse = await this.llmService.query(answerPrompt);
-    const aiMessage = await this.repository.create({
+    const aiMessage = await super.create({
       content: llmResponse,
       chatId,
       messageRole: "AI",
-      tenantId: env.TENANT_ID,
       knowledgeId
-    }, { tx: opts?.tx });
+    }, opts);
     await this.chatMemoryService.add(aiMessage);
     //#endregion
 

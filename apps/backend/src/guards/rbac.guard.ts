@@ -3,11 +3,12 @@
 import { AuthRequest } from '@/@types/auth-request';
 import { Permissions } from '@/shared/decorators/role';
 import {
-  CanActivate, ExecutionContext, ForbiddenException, UnauthorizedException
+  CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { can, mergePermissions, numberToPermissions } from '@snipet/permission';
 
+@Injectable()
 export class RBACGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
@@ -21,7 +22,7 @@ export class RBACGuard implements CanActivate {
     let permissions = numberToPermissions(session.user.permissions);
     const tenantId = request.cookies["tenantId"];
     const tenant = session.tenants.find(w => w.id === tenantId);
-    
+
     if (tenant) {
       permissions = mergePermissions(permissions, tenant.permissions);
     } else {

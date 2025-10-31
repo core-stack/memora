@@ -13,11 +13,11 @@ export const RootProviders = () => {
     <ThemeProvider>
       <QueryClientContext>
         <CookiesProvider>
-          <AuthProvider>
-            <DialogProvider dialogs={dialogs}>
+          <DialogProvider dialogs={dialogs}>
+            <AuthProvider>
               <Outlet />
-            </DialogProvider>
-          </AuthProvider>
+            </AuthProvider>
+          </DialogProvider>
         </CookiesProvider>
         <Toaster />
       </QueryClientContext>

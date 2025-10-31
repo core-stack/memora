@@ -10,8 +10,10 @@ import type { SearchRoutes } from "./search";
 import type { LLMRoutes } from "./llm";
 import type { AuthRoutes } from "./auth";
 import type { UserRoutes } from "./user";
+import type { TenantRoutes } from "./tenant";
 
 export type ApiRoutes =
   PluginRegistryRoutes & FolderRoutes & KnowledgeRoutes &
   SourceRoutes & ChatRoutes & MessageRoutes & AuthRoutes &
-  PluginRoutes & TagRoutes & SearchRoutes & LLMRoutes & UserRoutes;
+  PluginRoutes & TagRoutes & SearchRoutes & LLMRoutes & UserRoutes &
+  TenantRoutes;

@@ -3,13 +3,13 @@ import { z } from 'zod';
 import { filterSchema, orderSchema } from './shared';
 
 export const tenantSchema = z.object({
-  id: z.uuid().optional(),
+  id: z.uuid(),
 
   name: z.string().min(1),
-  description: z.string().nullable().optional(),
-  backgroundImage: z.string().min(1),
+  description: z.string().optional(),
+  backgroundImage: z.string().optional(),
 
-  disabledAt: z.date().nullable().optional(),
+  disabledAt: z.date().optional(),
 
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
@@ -33,7 +33,6 @@ export type TenantFilterSchema = z.infer<typeof tenantFilterSchema>;
 
 export const createTenantSchema = tenantSchema.pick({
   name: true,
-  slug: true,
   description: true,
   backgroundImage: true,
 });

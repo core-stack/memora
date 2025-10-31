@@ -2,11 +2,15 @@ import z from 'zod';
 
 import { sourceSchema } from '@snipet/schemas';
 
-export const sourceEntity = sourceSchema;
+export const sourceEntity = sourceSchema.extend({
+  tenantId: z.uuid(),
+});
+
 export type SourceEntity = z.infer<typeof sourceEntity>;
 
 export const createSourceEntity = sourceEntity.omit({
   id: true,
+  tenantId: true,
   createdAt: true,
   updatedAt: true,
 });

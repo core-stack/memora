@@ -1,10 +1,10 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
-import { env } from '@/env';
 import { Fragments, SourceFragment } from '@/fragment';
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
 import { Injectable } from '@nestjs/common';
 import { FragmentFileMetadata, Source, SourceType } from '@snipet/schemas';
+import { SourceEntity } from '@/modules/knowledge/source/source.entity';
 
 @Injectable()
 export class PDFProcessor {
@@ -23,7 +23,7 @@ export class PDFProcessor {
   }
 
   async process(
-    source: Source,
+    source: SourceEntity,
     pathOrBlob: string | Blob,
     metadata: FragmentFileMetadata
   ): Promise<Fragments<SourceFragment>> {
@@ -35,7 +35,7 @@ export class PDFProcessor {
         content: chunk.pageContent,
         sourceId: source.id,
         knowledgeId: source.knowledgeId,
-        tenantId: env.TENANT_ID,
+        tenantId: source.tenantId,
         seqId,
         metadata,
         sourceType: SourceType.DOC,

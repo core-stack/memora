@@ -20,7 +20,7 @@ export type DialogState = {
   closeAllDialogs: () => void;
 };
 
-export const DialogContext = createContext<DialogState | undefined>(undefined);
+export const DialogContext = createContext<DialogState>({} as DialogState);
 
 type DialogProviderProps<D extends DialogComponents> = {
   children: React.ReactNode;

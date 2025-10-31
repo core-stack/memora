@@ -93,7 +93,7 @@ export class AuthManager {
       permissions: m.role.permissions,
     }));
     session.status = "active";
-    session.user.permissions = user.role.permissions;
+    session.user.permissions = user.role?.permissions ?? 0;
     session.lastSeen = new Date();
     await this.store.set(sessionId, session);
     return session;

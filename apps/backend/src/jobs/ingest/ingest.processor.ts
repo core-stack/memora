@@ -10,6 +10,7 @@ import { Source } from '@snipet/schemas';
 
 import { JobType } from '../types';
 import { ProcessorManager } from './processor-manager';
+import { SourceEntity } from '@/modules/knowledge/source/source.entity';
 
 @Processor(JobType.INGEST, { concurrency: 1 })
 export class IngestProcessor extends WorkerHost {
@@ -20,18 +21,18 @@ export class IngestProcessor extends WorkerHost {
 
   @Inject(forwardRef(() => SourceRepository)) private readonly sourceRepository: SourceRepository;
 
-  async process(job: Job<Source>): Promise<any> {
+  async process(job: Job<SourceEntity>): Promise<any> {
     const source = job.data;
-    
+
     const obj = await this.storage.getObject(source.key);
     if (!obj) throw new Error("File not found");
     const fragments = await this.processor.process(source, await streamToBlob(obj));
-    
+
     await this.vectorStore.addFragments(source.knowledgeId, fragments);
   }
 
   @OnWorkerEvent("active")
-  async onStart(job: Job<Source>) {
+  async onStart(job: Job<SourceEntity>) {
     this.logger.log("ingest started");
     const source = job.data;
     await this.sourceRepository.update(source.id, { indexStatus: "INDEXING" });
@@ -47,7 +48,7 @@ export class IngestProcessor extends WorkerHost {
   @OnWorkerEvent("failed")
   async onFailed(job: Job<Source>, error: Error) {
     this.logger.log(error);
-    
+
     const source = job.data;
     await this.sourceRepository.update(source.id, { indexStatus: "ERROR", indexError: error.message });
   }

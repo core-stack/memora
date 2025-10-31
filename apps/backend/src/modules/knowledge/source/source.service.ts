@@ -8,7 +8,7 @@ import { HttpContext } from '@/generics/http-context';
 import { PublicStorageService } from '@/infra/storage/public-storage.service';
 import { JobType } from '@/jobs/types';
 import { InjectQueue } from '@nestjs/bullmq';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateSource, GetUploadUrl, Source, UpdateSource } from '@snipet/schemas';
 
 import { FolderService } from '../folder/folder.service';
@@ -16,12 +16,14 @@ import { KnowledgeService } from '../knowledge.service';
 import { SourceRepository } from './source.repository';
 import { CreateSourceEntity, SourceEntity, UpdateSourceEntity } from './source.entity';
 import { ServiceOptions } from '@/generics/service.interface';
+import { GenericTenantService } from '@/generics/tenant.service';
 
 @Injectable()
-export class SourceService extends CrudService<
+export class SourceService extends GenericTenantService<
   Source, CreateSource, UpdateSource,
   SourceEntity, CreateSourceEntity, UpdateSourceEntity
 > {
+  logger = new Logger(SourceService.name);
   constructor(
     protected readonly repository: SourceRepository,
     private readonly knowledgeService: KnowledgeService,
@@ -67,7 +69,8 @@ export class SourceService extends CrudService<
 
   async getUploadUrl(input: GetUploadUrl, opts?: ServiceOptions) {
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
-    const key = `source/${env.TENANT_ID}/${knowledgeId}/${randomUUID()}.${input.fileName.split(".").pop()}`;
+    const ext = input.fileName.split(".").pop();
+    const key = `source/${this.getTenantId(opts)}/${knowledgeId}/${randomUUID()}.${ext}`;
     return this.storageService.getUploadUrl(key, input.contentType, { temp: true });
   }
 

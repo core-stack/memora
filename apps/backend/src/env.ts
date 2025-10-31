@@ -76,8 +76,6 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   CREATE_DATABASE: z.coerce.boolean().optional().default(false),
 
-  TENANT_ID: z.uuid(),
-
   // STORAGE
   STORAGE_TYPE: z.enum(['s3']).default('s3'),
   // S3

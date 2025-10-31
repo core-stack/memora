@@ -16,6 +16,7 @@ import type { ConfirmDialogProps } from "./confirm";
 import type { CreateOrUpdateKnowledgeDialogProps } from "./create-or-update-knowledge";
 import type { CreateKnowledgeFolderDialogProps } from "./create-folder";
 import type { CreateSourceDialogProps } from "./create-source";
+import { CreateTenantDialog } from './create-tenant';
 
 export enum DialogType {
   CREATE_SOURCE = "create-source",
@@ -26,6 +27,7 @@ export enum DialogType {
   CONFIRM = "confirm",
   SELECT_LLM_PRESET = "select-llm-preset",
   CONFIGURE_LLM = "configure-llm",
+  CREATE_TENANT = "create-tenant"
 }
 
 export const dialogs = {
@@ -37,4 +39,5 @@ export const dialogs = {
   [DialogType.CONFIRM]: (props: ConfirmDialogProps) => <ConfirmDialog {...props} />,
   [DialogType.CONFIGURE_LLM]: (props: ConfigureLLDialogProps) => <ConfigureLLDialog {...props} />,
   [DialogType.SELECT_LLM_PRESET]: (props: SelectPresetDialogProps) => <SelectPresetDialog {...props} />,
+  [DialogType.CREATE_TENANT]: () => <CreateTenantDialog />
 } as const;

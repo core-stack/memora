@@ -3,12 +3,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { OriginType, Source, SourceType } from '@snipet/schemas';
 
 import { PDFProcessor } from './processors/pdf.processor';
+import { SourceEntity } from '@/modules/knowledge/source/source.entity';
 
 @Injectable()
 export class ProcessorManager {
   @Inject() private readonly pdfProcessor!: PDFProcessor;
 
-  async process(source: Source, input: Blob): Promise<Fragments<SourceFragment>> {
+  async process(source: SourceEntity, input: Blob): Promise<Fragments<SourceFragment>> {
     if (source.metadata.type !== SourceType.DOC) throw new Error("Invalid file format");
     if (source.metadata.extension !== "pdf") throw new Error("Invalid file format");
 

@@ -1,11 +1,14 @@
-import { tag } from '@/db/schema';
 import { DrizzleGenericRepository } from '@/generics';
 import { CreateTenantEntity, TenantEntity, UpdateTenantEntity } from './tenant.entity';
+import { UserEntity } from '../user/user.entity';
+import { RepositoryOptions } from '@/generics/repository.interface';
+import { TxType } from '@/infra/database/types';
+import { tenant } from '@/db/schema/tenant';
 
 export class TenantRepository extends DrizzleGenericRepository<
-  typeof tag, TenantEntity, CreateTenantEntity, UpdateTenantEntity
+  typeof tenant, TenantEntity, CreateTenantEntity, UpdateTenantEntity
 > {
   constructor() {
-    super(tag);
+    super(tenant);
   }
 }

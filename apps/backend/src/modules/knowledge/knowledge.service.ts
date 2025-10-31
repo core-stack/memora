@@ -5,18 +5,20 @@ import { CrudService } from '@/generics';
 import { HttpContext } from '@/generics/http-context';
 import { JobType } from '@/jobs/types';
 import { InjectQueue } from '@nestjs/bullmq';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateKnowledge, Knowledge, UpdateKnowledge } from '@snipet/schemas';
 
 import { KnowledgeRepository } from './knowledge.repository';
 import { ServiceOptions } from '@/generics/service.interface';
 import { CreateKnowledgeEntity, KnowledgeEntity, UpdateKnowledgeEntity } from './knowledge.entity';
+import { GenericTenantService } from '@/generics/tenant.service';
 
 @Injectable()
-export class KnowledgeService extends CrudService<
+export class KnowledgeService extends GenericTenantService<
   Knowledge, CreateKnowledge, UpdateKnowledge,
   KnowledgeEntity, CreateKnowledgeEntity, UpdateKnowledgeEntity
 > {
+  logger = new Logger(KnowledgeService.name);
   constructor(
     protected readonly repository: KnowledgeRepository,
     @InjectQueue(JobType.DELETE_KNOWLEDGE) private readonly deleteKnowledgeQueue: Queue
@@ -38,18 +40,14 @@ export class KnowledgeService extends CrudService<
 
   override create(input: CreateKnowledge, opts?: ServiceOptions): Promise<Knowledge> {
     input.tags = input.tags?.filter(Boolean);
-    return this.repository.create({
-      ...input,
-      tenantId: env.TENANT_ID
-    }, { tx: opts?.tx });
+    return this.repository.create(input as CreateKnowledgeEntity, { tx: opts?.tx });
   }
 
   override update(id: string, input: UpdateKnowledge, opts?: ServiceOptions): Promise<void> {
     input.tags = input.tags?.filter(Boolean);
     return this.repository.update(id, {
       ...input,
-      status: "OK",
-      tenantId: env.TENANT_ID
+      status: "OK"
     }, { tx: opts?.tx });
   }
 

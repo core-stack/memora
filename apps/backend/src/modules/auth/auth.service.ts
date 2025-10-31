@@ -21,6 +21,7 @@ import {
 } from '../verification-token/verification-token.entity';
 import { VerificationTokenService } from '../verification-token/verification-token.service';
 import { AuthManager } from './auth-manager.service';
+import { TenantService } from '../tenant/tenant.service';
 
 @Injectable()
 export class AuthService {

@@ -79,7 +79,15 @@ export class UserRepository extends DrizzleGenericRepository<
               tenantId: row.members.tenantId,
               userId: row.members.userId,
               role: row.role_member!,
-              tenant: row.tenants!,
+              tenant: {
+                name: row.tenants!.name,
+                backgroundImage: row.tenants!.backgroundImage,
+                createdAt: row.tenants!.createdAt!,
+                description: row.tenants!.description ?? undefined,
+                disabledAt: row.tenants!.disabledAt ?? undefined,
+                id: row.tenants!.id,
+                updatedAt: row.tenants!.updatedAt ?? undefined
+              },
               roleId: row.members.roleId,
               createdAt: row.members.createdAt!,
               updatedAt: row.members.updatedAt ?? undefined

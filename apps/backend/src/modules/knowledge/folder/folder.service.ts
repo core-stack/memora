@@ -1,19 +1,20 @@
 import { FilterOptions } from '@/generics/filter-options';
 import { HttpContext } from '@/generics/http-context';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateKnowledgeFolder, KnowledgeFolder, UpdateKnowledgeFolder } from '@snipet/schemas';
 
 import { KnowledgeService } from '../knowledge.service';
 import { FolderRepository } from './folder.repository';
-import { CrudService } from '@/generics';
 import { CreateFolderEntity, FolderEntity, UpdateFolderEntity } from './folder.entity';
 import { ServiceOptions } from '@/generics/service.interface';
+import { GenericTenantService } from '@/generics/tenant.service';
 
 @Injectable()
-export class FolderService extends CrudService<
+export class FolderService extends GenericTenantService<
   KnowledgeFolder, CreateKnowledgeFolder, UpdateKnowledgeFolder,
   FolderEntity, CreateFolderEntity, UpdateFolderEntity
 > {
+  logger = new Logger(FolderService.name);
   constructor(
     protected readonly repository: FolderRepository,
     private readonly knowledgeService: KnowledgeService
