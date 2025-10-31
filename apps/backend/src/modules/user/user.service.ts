@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { UserSchema } from '@snipet/schemas';
-
-import { UserRepository } from './user.repository';
 import { CrudService } from '@/generics';
-import { CreateUserEntity, UpdateUserEntity, UserEntity } from './user.entity';
 import { FilterOptions } from '@/generics/filter-options';
 import { ServiceOptions } from '@/generics/service.interface';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UserSchema } from '@snipet/schemas';
+
+import { CreateUserEntity, UpdateUserEntity, UserEntity } from './user.entity';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService extends CrudService<
@@ -32,5 +32,12 @@ export class UserService extends CrudService<
 
   async findFirstWithMemberRoleTenant(filterOpts: FilterOptions<UserEntity>, opts?: ServiceOptions) {
     return await this.repository.findFirstWithMemberRoleTenant(filterOpts, { tx: opts?.tx });
+  }
+
+  async self(opts: ServiceOptions) {
+    if (!opts.http) throw new Error("http context is required");
+    if (!opts.http.auth.session) throw new UnauthorizedException();
+
+    return await this.repository.findFirstWithMemberRoleTenant({ filter: { id: opts.http.auth.session.user.id }}, opts);
   }
 }

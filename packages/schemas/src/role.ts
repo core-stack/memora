@@ -1,10 +1,11 @@
-import { z } from "zod";
-import { orderSchema } from "./shared";
+import { z } from 'zod';
+
+import { orderSchema } from './shared';
 
 export const roleScopeEnum = z.enum(["TENANT", "GLOBAL"]);
 
 export const roleSchema = z.object({
-  id: z.uuid().optional(),
+  id: z.uuid(),
 
   key: z.string().min(1),
   name: z.string().min(1),
@@ -12,10 +13,10 @@ export const roleSchema = z.object({
 
   scope: roleScopeEnum.default("TENANT"),
 
-  tenantId: z.uuid().nullable().optional(),
-  creatorId: z.uuid().nullable().optional(),
+  tenantId: z.uuid().nullable(),
+  creatorId: z.uuid().nullable(),
 
-  createdAt: z.date().optional(),
+  createdAt: z.date(),
   updatedAt: z.date().optional(),
 });
 

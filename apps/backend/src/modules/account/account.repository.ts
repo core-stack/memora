@@ -1,17 +1,23 @@
-import { DrizzleGenericRepository } from '@/generics';
-import { AccountEntity, CreateAccountEntity } from './account.entity';
+import { eq } from 'drizzle-orm';
+
 import { account } from '@/db/schema/account';
+import { user } from '@/db/schema/user';
+import { DrizzleGenericRepository } from '@/generics';
 import { RepositoryOptions } from '@/generics/repository.interface';
 import { TxType } from '@/infra/database/types';
-import { user } from '@/db/schema/user';
-import { eq } from 'drizzle-orm';
+import { NotFoundException } from '@nestjs/common';
+import { ROLES } from '@snipet/permission';
+
+import { RoleService } from '../role/role.service';
 import { UserEntity } from '../user/user.entity';
-import e from 'express';
+import { AccountEntity, CreateAccountEntity } from './account.entity';
 
 export class AccountRepository extends DrizzleGenericRepository<
   typeof account, AccountEntity
 > {
-  constructor() {
+  constructor(
+    private readonly roleService: RoleService
+  ) {
     super(account);
   }
 
@@ -20,8 +26,10 @@ export class AccountRepository extends DrizzleGenericRepository<
       const userList = await db.select().from(user).where(eq(user.email, data.email));
       let userData: UserEntity;
       if (userList.length === 0) {
+        const role = await this.roleService.findUnique({ filter: { key: ROLES.global.user.key, scope: "GLOBAL" } });
+        if (!role) throw new NotFoundException("Role not found");
         const [created] = await db.insert(user).values({
-          roleId: "",
+          roleId: role.id,
           email: data.email,
           name: data.name,
           image: data.image,

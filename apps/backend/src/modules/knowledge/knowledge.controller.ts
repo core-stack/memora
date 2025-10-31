@@ -9,7 +9,7 @@ import { KnowledgeService } from './knowledge.service';
 
 @Controller('knowledge')
 export class KnowledgeController extends CrudController<Knowledge, CreateKnowledge, UpdateKnowledge>(
-  knowledgeFilterSchema, createKnowledgeSchema, updateKnowledgeSchema
+  { filterSchema: knowledgeFilterSchema, createDtoSchema: createKnowledgeSchema, updateDtoSchema: updateKnowledgeSchema }
 ) {
 
   constructor(service: KnowledgeService) {

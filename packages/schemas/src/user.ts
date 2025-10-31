@@ -1,5 +1,9 @@
-import { z } from "zod";
-import { orderSchema } from "./shared";
+import { z } from 'zod';
+
+import { memberSchema } from './member';
+import { roleSchema } from './role';
+import { orderSchema } from './shared';
+import { tenantSchema } from './tenant';
 
 export const userSchema = z.object({
   id: z.uuid(),
@@ -30,3 +34,14 @@ export const userFilterSchema = z.object({
   }).strict().optional()
 }).strict();
 export type UserFilterSchema = z.infer<typeof userFilterSchema>;
+
+export const getSelfUserSchema = userSchema.extend({
+  role: roleSchema,
+  members: z.array(
+    memberSchema.extend({
+      role: roleSchema,
+      tenant: tenantSchema
+    }),
+  ),
+});
+export type GetSelfUserSchema = z.infer<typeof getSelfUserSchema>;

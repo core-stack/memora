@@ -1,5 +1,8 @@
-import { BadRequestException } from "@nestjs/common";
-import { CookieOptions, Request, Response } from "express";
+import { CookieOptions, Response } from 'express';
+
+import { AuthRequest } from '@/@types/auth-request';
+import { Session } from '@/modules/auth/types';
+import { BadRequestException } from '@nestjs/common';
 
 abstract class Getter {
   constructor(private params: Record<string, string | number | boolean | undefined>, private name: string) { }
@@ -52,14 +55,27 @@ export class Query extends Getter {
     super(query, "query");
   }
 }
+export class Auth {
+  session: Session | undefined
+  constructor(request: AuthRequest) {
+    if (!request.session) console.warn("Missing session in auth context, this is a public route?");
+    this.session = request.session;
+  }
+}
 
 export class HttpContext {
   params: Params;
   query: Query;
+  auth: Auth;
 
-  constructor(request: Request, private response?: Response) {
+  constructor(private request: AuthRequest, private response?: Response) {
     this.params = new Params(request.params);
     this.query = new Query(request.query as Record<string, string | number | boolean | undefined>);
+    this.auth = new Auth(request);
+  }
+
+  getCookie(name: string): string | undefined {
+    return this.request.cookies[name];
   }
 
   setCookie(name: string, value: string, options: CookieOptions = {}) {

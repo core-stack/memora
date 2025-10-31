@@ -5,7 +5,9 @@ import { createTagSchema, Tag, tagFilterSchema, updateTagSchema } from '@snipet/
 import { TagService } from './tag.service';
 
 @Controller('tag')
-export class TagController extends CrudController<Tag>(tagFilterSchema, createTagSchema, updateTagSchema) {
+export class TagController extends CrudController<Tag>(
+  { filterSchema: tagFilterSchema, createDtoSchema: createTagSchema, updateDtoSchema: updateTagSchema}
+) {
   constructor(service: TagService) {
     super(service);
   }

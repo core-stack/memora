@@ -1,19 +1,18 @@
 import z from 'zod';
 
+import { ZodBody } from '@/shared/decorators/zod-body';
+import { ZodParam } from '@/shared/decorators/zod-param';
 import {
-  applyDecorators,
-  BadRequestException, Body, Delete, Get, Param, Post, Put, Query, Req
+  applyDecorators, BadRequestException, Delete, Get, Param, Post, Put, Query, Req
 } from '@nestjs/common';
 import { idSchema } from '@snipet/schemas';
 
 import { HttpContext } from './http-context';
-import { ICrudService } from './service.interface';
+
+import type { ICrudService } from './service.interface';
 
 import type { FilterOptions } from './filter-options';
-import type { Request } from 'express';
-import { ZodParam } from '@/shared/decorators/zod-param';
-import { ZodBody } from '@/shared/decorators/zod-body';
-
+import type { Request, Response } from 'express';
 export const Http = (method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", path: string, ignore?: boolean) => {
   if (ignore) return applyDecorators();
   switch (method) {
@@ -65,17 +64,20 @@ export const queryToFilter = <TEntity>(allQueryParams: Record<string, unknown>):
   return result;
 }
 
-export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDto = Partial<TEntity>>(
+export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDto = Partial<TEntity>>({
+ filterSchema, createDtoSchema, updateDtoSchema, ignore, publicRoutes,
+}: {
   filterSchema: z.ZodType<FilterOptions<TEntity>>,
   createDtoSchema?: z.ZodType<TCreateDto>,
   updateDtoSchema?: z.ZodType<TUpdateDto>,
-  ignore?: Array<"find" | "findByID" | "create" | "update" | "delete">
-) {
+  ignore?: Array<"find" | "findByID" | "create" | "update" | "delete">,
+  publicRoutes?: Array<string>,
+}) {
   abstract class Base {
     constructor(public readonly service: ICrudService<TEntity, TCreateDto, TUpdateDto>) {}
 
-    public loadContext(req: Request) {
-      return new HttpContext(req);
+    public loadContext(req: Request, res?: Response) {
+      return new HttpContext(req, res);
     }
 
     @HttpGet(":id", ignore?.includes("findByID"))
@@ -94,7 +96,7 @@ export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDt
       @Param() params: Record<string, unknown>
     ): Promise<TEntity[]> {
       let opts = queryToFilter(allParams);
-      const filterKeys = Object.keys((filterSchema._def as any).shape().filter._def.innerType._def.shape());
+      const filterKeys = Object.keys(z.toJSONSchema(filterSchema).properties ?? {});
       const filteredParams = Object.fromEntries(Object.entries(params).filter(([k]) => filterKeys.some(f => f === k)));
       opts = { ...opts, filter: { ...filteredParams, ...opts.filter } };
       this.validateSchema(filterSchema, opts);

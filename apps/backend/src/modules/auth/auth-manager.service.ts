@@ -1,14 +1,13 @@
-import { isUUID } from "@/utils/uuid";
+import { isUUID } from '@/utils/uuid';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { AccessToken, JWTService, RefreshToken } from "./jwt.service";
-import { Provider } from "./providers/types";
-import { Session } from "./types";
-  import { Store } from "./store/types";
-import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
-import { UserService } from "../user/user.service";
-import { UserWithMemberRoleTenant } from "../user/user.repository";
-import { AccountService } from "../account/account.service";
-
+import { AccountService } from '../account/account.service';
+import { UserWithMemberRoleTenant } from '../user/user.repository';
+import { UserService } from '../user/user.service';
+import { AccessToken, JWTService, RefreshToken } from './jwt.service';
+import { Provider } from './providers/types';
+import { Store } from './store/types';
+import { Session } from './types';
 
 export const PROVIDERS = Symbol("providers");
 
@@ -60,7 +59,6 @@ export class AuthManager {
       status: "active",
       tenants: user.members?.map((m) => ({
         id: m.tenantId,
-        slug: m.tenant.slug,
         memberId: m.id,
         permissions: m.role?.permissions,
       })),
@@ -91,7 +89,6 @@ export class AuthManager {
     if (!user) throw new UnauthorizedException();
     session.tenants = user.members.map((m) => ({
       id: m.tenantId,
-      slug: m.tenant.slug,
       memberId: m.id,
       permissions: m.role.permissions,
     }));

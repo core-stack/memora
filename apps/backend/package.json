@@ -48,6 +48,7 @@
     "@nestjs/schedule": "^6.0.1",
     "@nestjs/serve-static": "^5.0.3",
     "@snipet/schemas": "workspace:*",
+    "@snipet/permission": "workspace:*",
     "@zilliz/milvus2-sdk-node": "^2.6.0",
     "argon2": "^0.44.0",
     "bcrypt": "^6.0.0",

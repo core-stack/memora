@@ -12,9 +12,7 @@ import type { GetUploadUrl } from '@snipet/schemas';
 import type { Request } from 'express';
 @Controller('knowledge/:knowledgeSlug/source')
 export class SourceController extends CrudController<Source>(
-  sourceFilterSchema,
-  createSourceSchema,
-  updateSourceSchema
+  { filterSchema: sourceFilterSchema, createDtoSchema: createSourceSchema, updateDtoSchema: updateSourceSchema },
 ) {
   constructor(public service: SourceService) {
     super(service);

@@ -1,18 +1,11 @@
-import { relations, sql } from "drizzle-orm";
-import {
-  pgTable,
-  varchar,
-  text,
-  integer,
-  timestamp,
-  uniqueIndex,
-} from "drizzle-orm/pg-core";
+import { relations, sql } from 'drizzle-orm';
+import { integer, pgTable, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 
-import { member } from "./member";
-import { tenant } from "./tenant";
-import { user } from "./user";
-import { invite } from "./invite";
-import { roleScopeEnum } from "./enums";
+import { roleScopeEnum } from './enums';
+import { invite } from './invite';
+import { member } from './member';
+import { tenant } from './tenant';
+import { user } from './user';
 
 export const role = pgTable("roles", {
   id: varchar("id", { length: 36 })

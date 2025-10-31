@@ -1,21 +1,23 @@
-import { Module } from "@nestjs/common";
-import { AuthController } from "./auth.controller";
-import { AuthManager, PROVIDERS } from "./auth-manager.service";
-import { JWTService } from "./jwt.service";
-import { AuthService } from "./auth.service";
-import { EmailModule } from "@/jobs/email/email.module";
-import { Store } from "./store/types";
-import { Session } from "./types";
-import { RedisStore } from "./store/redis.store";
-import { env } from "@/env";
-import { MemoryStore } from "./store/memory.store";
-import { Provider } from "./providers/types";
-import { GoogleProvider } from "./providers/google";
-import { UserModule } from "../user/user.module";
-import { AccountModule } from "../account/account.module";
-import { VerificationTokenModule } from "../verification-token/verification-token.module";
-import { SecurityModule } from "@/infra/security/security.module";
-import { DatabaseModule } from "@/infra/database/database.module";
+import { env } from '@/env';
+import { DatabaseModule } from '@/infra/database/database.module';
+import { SecurityModule } from '@/infra/security/security.module';
+import { EmailModule } from '@/jobs/email/email.module';
+import { Module } from '@nestjs/common';
+
+import { AccountModule } from '../account/account.module';
+import { RoleModule } from '../role/role.module';
+import { UserModule } from '../user/user.module';
+import { VerificationTokenModule } from '../verification-token/verification-token.module';
+import { AuthManager, PROVIDERS } from './auth-manager.service';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { JWTService } from './jwt.service';
+import { GoogleProvider } from './providers/google';
+import { Provider } from './providers/types';
+import { MemoryStore } from './store/memory.store';
+import { RedisStore } from './store/redis.store';
+import { Store } from './store/types';
+import { Session } from './types';
 
 const useProvider = (name: string, provider: Provider, use: boolean) => {
   return use ? { [name]: provider } : {};
@@ -47,6 +49,6 @@ const useProvider = (name: string, provider: Provider, use: boolean) => {
     }
   ],
   exports: [],
-  imports: [EmailModule, UserModule, AccountModule, VerificationTokenModule, SecurityModule, DatabaseModule],
+  imports: [EmailModule, UserModule, AccountModule, VerificationTokenModule, SecurityModule, DatabaseModule, RoleModule],
 })
 export class AuthModule {}

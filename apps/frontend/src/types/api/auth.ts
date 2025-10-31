@@ -25,4 +25,9 @@ export interface AuthRoutes {
       response: undefined;
     }
   },
+  "/api/auth/logout": {
+    POST: {
+      response: undefined;
+    }
+  }
 }

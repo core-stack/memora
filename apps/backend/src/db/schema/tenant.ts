@@ -1,23 +1,16 @@
-import { relations, sql } from "drizzle-orm";
-import {
-  pgTable,
-  varchar,
-  text,
-  timestamp,
-  uniqueIndex,
-} from "drizzle-orm/pg-core";
+import { relations, sql } from 'drizzle-orm';
+import { pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
-import { member } from "./member";
-import { invite } from "./invite";
-import { notification } from "./notification";
-import { role } from "./role";
+import { invite } from './invite';
+import { member } from './member';
+import { notification } from './notification';
+import { role } from './role';
 
 export const tenant = pgTable("tenants", {
   id: varchar("id", { length: 36 })
     .primaryKey()
     .default(sql`gen_random_uuid()`),
 
-  slug: varchar("slug", { length: 255 }).notNull().unique(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
 

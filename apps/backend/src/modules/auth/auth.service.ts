@@ -1,25 +1,33 @@
-import { ActiveAccountSchema, CreateAccountSchema, ForgetPasswordSchema, LoginSchema, ResetPasswordSchema } from "@snipet/schemas";
-import { UserRepository } from "../user/user.repository";
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { SecurityService } from "@/infra/security/security.service";
-import { TxManager } from "@/generics/tx-manager";
-import { VerificationTokenService } from "../verification-token/verification-token.service";
-import { env } from "@/env";
-import moment from "moment";
-import { UserService } from "../user/user.service";
-import { ServiceOptions } from "@/generics/service.interface";
-import { InjectQueue } from "@nestjs/bullmq";
-import { JobType } from "@/jobs/types";
-import { Queue } from "bullmq";
-import { EmailPayload, EmailTemplate } from "@/jobs/email/schemas";
-import { VerificationTokenEntity, VerificationTokenType } from "../verification-token/verification-token.entity";
-import { AuthManager } from "./auth-manager.service";
+import { Queue } from 'bullmq';
+import moment from 'moment';
+
+import { env } from '@/env';
+import { ServiceOptions } from '@/generics/service.interface';
+import { TxManager } from '@/generics/tx-manager';
+import { SecurityService } from '@/infra/security/security.service';
+import { EmailPayload, EmailTemplate } from '@/jobs/email/schemas';
+import { JobType } from '@/jobs/types';
+import { InjectQueue } from '@nestjs/bullmq';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { ROLES } from '@snipet/permission';
+import {
+  ActiveAccountSchema, CreateAccountSchema, ForgetPasswordSchema, LoginSchema, ResetPasswordSchema
+} from '@snipet/schemas';
+
+import { RoleService } from '../role/role.service';
+import { UserService } from '../user/user.service';
+import {
+  VerificationTokenEntity, VerificationTokenType
+} from '../verification-token/verification-token.entity';
+import { VerificationTokenService } from '../verification-token/verification-token.service';
+import { AuthManager } from './auth-manager.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly authManager: AuthManager,
     private readonly userService: UserService,
+    private readonly roleService: RoleService,
     private readonly verificationTokenService: VerificationTokenService,
     private readonly securityService: SecurityService,
     private readonly txManager: TxManager,
@@ -73,9 +81,11 @@ export class AuthService {
 
     data.password = await this.securityService.hash(data.password);
     this.txManager.runOrCreate(opts?.tx, async (tx) => {
+      const role = await this.roleService.findUnique({ filter: { key: ROLES.global.user.key, scope: "GLOBAL" } }, { tx });
+      if (!role) throw new BadRequestException("Role not found");
       const user = await this.userService.create({
         ...data,
-        roleId: "",
+        roleId: role.id,
         emailVerified: env.REQUIRE_EMAIL_VERIFICATION ? undefined : new Date(),
       }, { tx });
 

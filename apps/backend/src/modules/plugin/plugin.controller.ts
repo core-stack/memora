@@ -11,8 +11,9 @@ import { PluginService } from './plugin.service';
 
 import type { CreatePlugin } from "@snipet/schemas";
 @Controller('plugin')
-export class PluginController
-  extends CrudController<Plugin>(pluginFilterSchema, createPluginSchema, updatePluginSchema) {
+export class PluginController extends CrudController<Plugin>(
+  {filterSchema: pluginFilterSchema, createDtoSchema: createPluginSchema, updateDtoSchema: updatePluginSchema}
+) {
   constructor(public service: PluginService) {
     super(service);
   }

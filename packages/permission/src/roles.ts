@@ -1,9 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import global from "./roles/global-roles.json";
-import tenant from "./roles/tenant-roles.json";
-
-import { Permission } from "./types";
+import global from './roles/global-roles.json';
+import tenant from './roles/tenant-roles.json';
+import { Permission } from './types';
 
 const permissionKeys = Object.keys(Permission).filter(k => isNaN(Number(k)));
 
@@ -26,7 +25,7 @@ const rolesSchema = z.array(roleSchema).superRefine((roles, ctx) => {
     const key = `${role.scope}-${role.key}`;
     if (seen.has(key)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: `Duplicated key '${role.key}' in scope '${role.scope}'`,
         path: [roles.indexOf(role), "key"]
       });

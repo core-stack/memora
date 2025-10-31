@@ -13,7 +13,6 @@ export type Session = {
   refreshToken: string;
   tenants: {
     id: string;
-    slug: string;
     permissions: number;
     memberId: string;
   }[];

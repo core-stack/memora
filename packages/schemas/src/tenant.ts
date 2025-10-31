@@ -1,10 +1,10 @@
-import { z } from "zod";
-import { filterSchema, orderSchema } from "./shared";
+import { z } from 'zod';
+
+import { filterSchema, orderSchema } from './shared';
 
 export const tenantSchema = z.object({
   id: z.uuid().optional(),
 
-  slug: z.string().min(3),
   name: z.string().min(1),
   description: z.string().nullable().optional(),
   backgroundImage: z.string().min(1),
