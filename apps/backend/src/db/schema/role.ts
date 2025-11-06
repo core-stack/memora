@@ -30,7 +30,7 @@ export const role = pgTable("roles", {
     .defaultNow()
     .$onUpdate(() => new Date()),
 }, (table) => [
-  uniqueIndex("roles_key_scope_unique").on(table.key, table.scope),
+  uniqueIndex("roles_key_scope_tenant_id_unique").on(table.key, table.scope, table.tenantId),
 ]);
 
 export const roleRelations = relations(role, ({ one, many }) => ({

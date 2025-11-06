@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
     let session: Session | undefined;
     try {
       if (accessToken) session = await this.authManager.getSession(accessToken);
-
+      
       if (!session && refreshToken) {
         const refreshResult = await this.authManager.refreshToken(refreshToken);
         session = refreshResult.session;
@@ -49,7 +49,7 @@ export class AuthGuard implements CanActivate {
     if (publicRoute) return true;
 
     if (!session) throw new UnauthorizedException();
-    request.session = session;
+    request.session = session;    
     return true;
   }
 }

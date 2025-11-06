@@ -8,15 +8,15 @@ import {
 import { Form } from '@/components/ui/form';
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
+import { useTenant } from '@/hooks/use-tenant';
 import { zodResolver } from '@/utils/zod-resolver';
 import { createTenantSchema } from '@snipet/schemas';
 
 import { DialogType } from './';
-import { useAuth } from '@/hooks/use-auth';
 
 export const CreateTenantDialog = () => {
   const { closeDialog } = useDialog();
-  const { setTenant } = useAuth();
+  const { setTenant } = useTenant();
   const defaultValues = {
     name: "",
     description: "",
@@ -32,10 +32,7 @@ export const CreateTenantDialog = () => {
   const onSubmit = form.handleSubmit(async (body) => {
     mutate({ body }, {
       onSuccess: ({ id }) => {
-        console.log(id);
         setTenant(id);
-        console.log("set tenant");
-
         closeDialog(DialogType.CREATE_TENANT);
       }
     });

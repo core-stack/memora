@@ -1,0 +1,20 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="16" cy="96" r="16" fill="#1E1E1E"/>
+<circle cx="16" cy="96" r="16" fill="#1E1E1E"/>
+<circle cx="96" cy="176" r="16" transform="rotate(-90 96 176)" fill="#1E1E1E"/>
+<circle cx="152.569" cy="39.4316" r="16" transform="rotate(135 152.569 39.4316)" fill="#1E1E1E"/>
+<circle cx="39.4318" cy="39.4316" r="16" transform="rotate(45 39.4318 39.4316)" fill="#1E1E1E"/>
+<circle cx="176" cy="96" r="16" fill="#1E1E1E"/>
+<circle cx="96" cy="16" r="16" transform="rotate(-90 96 16)" fill="#1E1E1E"/>
+<circle cx="39.4314" cy="152.568" r="16" transform="rotate(135 39.4314 152.568)" fill="#1E1E1E"/>
+<circle cx="152.569" cy="152.568" r="16" transform="rotate(45 152.569 152.568)" fill="#1E1E1E"/>
+<circle cx="95.6274" cy="95.6275" r="24.5685" transform="rotate(45 95.6274 95.6275)" fill="#1E1E1E"/>
+<path d="M96 97.5L96 172" stroke="#1E1E1E" stroke-width="4"/>
+<path d="M96 22L96 96" stroke="#1E1E1E" stroke-width="4"/>
+<line x1="96" y1="95" x2="167" y2="95" stroke="#1E1E1E" stroke-width="4"/>
+<line x1="20" y1="95" x2="96" y2="95" stroke="#1E1E1E" stroke-width="4"/>
+<line x1="146.55" y1="145.89" x2="94.5497" y2="93.8903" stroke="#1E1E1E" stroke-width="4"/>
+<line x1="95.605" y1="94.9455" x2="42.605" y2="41.9455" stroke="#1E1E1E" stroke-width="4"/>
+<path d="M94.8307 96.5L45.4405 145.89" stroke="#1E1E1E" stroke-width="4"/>
+<line x1="149.385" y1="41.9455" x2="96.3852" y2="94.9455" stroke="#1E1E1E" stroke-width="4"/>
+</svg>

@@ -4,14 +4,13 @@ import { useCookies } from 'react-cookie';
 
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useApiQuery } from '@/hooks/use-api-query';
+import { useLocation } from '@/hooks/use-location';
 import { useRouter } from '@/hooks/use-router';
 import { useToast } from '@/hooks/use-toast';
+import { publicRoutes, REDIRECT_WHEN_NOT_AUTHENTICATED_PATH } from '@/routes';
 import { can as canPermission } from '@snipet/permission';
 
 import type { Permission } from "@snipet/permission";
-import { publicRoutes, REDIRECT_WHEN_NOT_AUTHENTICATED_PATH } from "@/routes";
-import { useLocation } from "@/hooks/use-location";
-
 type AuthContextType = {
   user: GetSelfUserSchema | undefined;
   currentMember: GetSelfUserSchema["members"][0] | undefined;
@@ -19,7 +18,7 @@ type AuthContextType = {
   isLoading: boolean;
   isAuthenticated: boolean;
   can: (permission: Permission | Permission[]) => boolean;
-  canInTenant: (tenantId: string, permission: Permission | Permission[]) => boolean;
+  canInTenant: (permission: Permission | Permission[], tenantId?: string) => boolean;
 }
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
@@ -42,12 +41,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const tenantId = useMemo(() => cookies["tenant-id"], [cookies]);
   const isAuthenticated = !!user;
   const currentMember = user?.members.find((member) => member.tenantId === tenantId);
-  const currentTenant = currentMember?.tenant;
-  const isLoading = (!currentTenant && isAuthenticated) || loadingUserSelf;
+  const isLoading = loadingUserSelf;
 
   //#region Permissions
   const tenantPermissions = user?.members.map((member) => ({ tenantId: member.tenantId, role: member.role }));
-  const canInTenant = (tenantId: string, permission: Permission | Permission[]): boolean => {
+  const canInTenant = (permission: Permission | Permission[], tenantId: string = cookies["tenant-id"]): boolean => {
     if (tenantPermissions) {
       return canPermission(
         tenantPermissions.find((p) => p.tenantId === tenantId)?.role.permissions ?? [],
@@ -57,9 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return false;
   }
 
-  const can = (permission: Permission | Permission[]): boolean => {
-
-  };
+  const can = (permission: Permission | Permission[]): boolean => canPermission( user?.role.permissions ?? [], permission);
   //#endregion
 
   const logout = useCallback(() => {
@@ -109,7 +105,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         canInTenant,
       }}
     >
-      { (isLoading) ? <div>Loading...</div> : children }
+      { isLoading ? <div>Loading...</div> : children }
     </AuthContext.Provider>
   )
 }

@@ -20,3 +20,4 @@ export * from "./user";
 export * from "./role";
 export * from "./member";
 export * from "./tenant";
+export * from "./invite";

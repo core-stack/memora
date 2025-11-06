@@ -29,11 +29,11 @@ export const Http = (method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", path: 
   }
 }
 
-export const HttpGet = (path: string, ignore?: boolean) => Http("GET", path, ignore);
-export const HttpPost = (path: string, ignore?: boolean) => Http("POST", path, ignore);
-export const HttpPut = (path: string, ignore?: boolean) => Http("PUT", path, ignore);
-export const HttpPatch = (path: string, ignore?: boolean) => Http("PATCH", path, ignore);
-export const HttpDelete = (path: string, ignore?: boolean) => Http("DELETE", path, ignore);
+export const HttpGet = (path?: string, ignore?: boolean) => Http("GET", path ?? "", ignore);
+export const HttpPost = (path?: string, ignore?: boolean) => Http("POST", path ?? "", ignore);
+export const HttpPut = (path?: string, ignore?: boolean) => Http("PUT", path ?? "", ignore);
+export const HttpPatch = (path?: string, ignore?: boolean) => Http("PATCH", path ?? "", ignore);
+export const HttpDelete = (path?: string, ignore?: boolean) => Http("DELETE", path ?? "", ignore);
 
 export const queryToFilter = <TEntity>(allQueryParams: Record<string, unknown>): FilterOptions<TEntity> => {
   const result: FilterOptions<TEntity> = { filter: {} };

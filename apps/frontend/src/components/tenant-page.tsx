@@ -1,0 +1,141 @@
+"use client"
+
+import { ArrowLeftRight, Brain, Database, LogOut, Plug, Settings, Users } from 'lucide-react';
+import { Outlet } from 'react-router';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Link } from '@/components/ui/link';
+import { useAuth } from '@/hooks/use-auth';
+import { useLocation } from '@/hooks/use-location';
+import { useTenant } from '@/hooks/use-tenant';
+import { getNameInitials } from '@/lib/string';
+import { cn } from '@/lib/utils';
+
+const menuItems = [
+  {
+    id: "knowledge",
+    label: "Knowledge",
+    path: '/',
+    icon: Database,
+  },
+  {
+    id: "llm",
+    label: "LLMs",
+    path: '/llm',
+    icon: Brain,
+  },
+  {
+    id: "integrations",
+    label: "Integrations",
+    path: '/integrations',
+    icon: Plug,
+  },
+  {
+    id: "member",
+    label: "Members",
+    path: '/member',
+    icon: Users,
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    path: '/settings',
+    icon: Settings,
+  }
+ 
+]
+
+export function TenantPage() {
+  const { user } = useAuth();
+  const { tenant, tenants } = useTenant();
+  const { pathname } = useLocation();
+
+  const activeSection = menuItems.find((item) => pathname === item.path)?.id ?? "knowledge";
+
+  const handleLogout = () => {
+    // Implementar lógica de logout
+    alert("Logout - Implementar lógica de autenticação")
+  }
+
+  const handleProfile = () => {
+    // Implementar navegação para perfil
+    alert("Configurações de Perfil - Implementar página de perfil")
+  }
+
+  return (
+    <div>
+      <header className="border-b bg-card sticky top-0 z-50">
+        <div className="flex items-center justify-between px-6 h-16">
+          <div className='flex gap-4 h-full'>
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-foreground flex items-center justify-center">
+                  <img src="logo.svg" className="h-5 w-5" />
+                </div>
+              </div>
+            </div>
+
+            <nav className="flex items-center gap-4">
+              {menuItems.map((item) => {
+                const Icon = item.icon
+                const isActive = activeSection === item.id
+
+                return (
+                  <Link
+                    key={item.id}
+                    className={cn("gap-2 flex items-center h-full p-2 border-b-4 hover:border-secondary border-transparent", isActive && "border-primary")}
+                    href={item.path}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{item.label}</span>
+                  </Link>
+                )
+              })}
+            </nav>
+          </div>
+
+          <div className='flex gap-2'>
+            {
+              tenants && tenants?.length > 1 &&
+              <Button variant="ghost" className="gap-2 px-2">
+                <p className='font-bold'>{tenant?.name}</p>
+                <ArrowLeftRight className='w-2 h-2 text-primary' />
+              </Button>
+            }
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button asChild className="gap-2 px-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user?.image || "/placeholder.svg"} alt={user?.name} />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                      {getNameInitials(user?.name || "")}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleProfile}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Exit</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
+      <Outlet />
+    </div>
+  )
+}

@@ -21,7 +21,7 @@ export default function LLMManagementPage() {
   const filteredLLMs = activeTab === "all" ? llms : llms.filter((llm) => llm.type === activeTab);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-full bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
@@ -54,7 +54,7 @@ export default function LLMManagementPage() {
         </div>
 
         {filteredLLMs.length > 0 ? (
-          <ScrollArea className='h-[70vh] max-sm:h-[65vh]'>
+          <ScrollArea className='h-[65vh]'>
             <div className="space-y-3 pr-3">
               {filteredLLMs.map((llm) => (
                 <LLMListItem

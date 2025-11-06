@@ -11,9 +11,11 @@ import type { LLMRoutes } from "./llm";
 import type { AuthRoutes } from "./auth";
 import type { UserRoutes } from "./user";
 import type { TenantRoutes } from "./tenant";
+import type { InviteRoutes } from "./invite";
+import type { MemberRoutes } from "./member";
 
 export type ApiRoutes =
   PluginRegistryRoutes & FolderRoutes & KnowledgeRoutes &
   SourceRoutes & ChatRoutes & MessageRoutes & AuthRoutes &
   PluginRoutes & TagRoutes & SearchRoutes & LLMRoutes & UserRoutes &
-  TenantRoutes;
+  TenantRoutes & InviteRoutes & MemberRoutes;

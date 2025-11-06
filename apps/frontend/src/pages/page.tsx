@@ -10,7 +10,7 @@ export default function Home() {
   const { openDialog } = useDialog();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-full bg-background">
       <div className="container mx-auto py-8 px-4 max-w-6xl">
         <div className="flex items-center justify-between mb-8">
           <div>

@@ -1,18 +1,19 @@
+import { and, eq } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
+
+import { member } from '@/db/schema/member';
+import { role } from '@/db/schema/role';
+import { tenant } from '@/db/schema/tenant';
 import { user } from '@/db/schema/user';
 import { DrizzleGenericRepository } from '@/generics';
-import { CreateUserEntity, UpdateUserEntity, UserEntity } from './user.entity';
 import { FilterOptions } from '@/generics/filter-options';
 import { RepositoryOptions } from '@/generics/repository.interface';
 import { TxType } from '@/infra/database/types';
-import { alias } from 'drizzle-orm/pg-core';
-import { and, eq } from 'drizzle-orm';
-import { member } from '@/db/schema/member';
-import { tenant } from '@/db/schema/tenant';
-import { role } from '@/db/schema/role';
-import { TenantEntity } from '../tenant/tenant.entity';
+
 import { MemberEntity } from '../member/member.entity';
 import { RoleEntity } from '../role/role.entity';
-
+import { TenantEntity } from '../tenant/tenant.entity';
+import { CreateUserEntity, UpdateUserEntity, UserEntity } from './user.entity';
 
 export type UserWithMemberRoleTenant = UserEntity & {
   members: Array<MemberEntity & { tenant: TenantEntity; role: RoleEntity }>;
@@ -50,7 +51,16 @@ export class UserRepository extends DrizzleGenericRepository<
         .limit(opts.limit)
         .offset(opts.offset)
         .orderBy(...order);
-
+      console.log(db.select().from(user)
+      .leftJoin(member, eq(member.userId, user.id))
+      .leftJoin(tenant, eq(tenant.id, member.tenantId))
+      .leftJoin(roleMember, eq(roleMember.id, member.roleId))
+      .leftJoin(roleUser, eq(roleUser.id, user.roleId))
+      .where(and(...filter))
+      .limit(opts.limit)
+      .offset(opts.offset)
+      .orderBy(...order).toSQL().sql);
+      
       const users = Object.values(
         rows.reduce((acc, row) => {
           const userId = row.users.id;
@@ -79,6 +89,7 @@ export class UserRepository extends DrizzleGenericRepository<
               tenantId: row.members.tenantId,
               userId: row.members.userId,
               role: row.role_member!,
+              owner: row.members.owner,
               tenant: {
                 name: row.tenants!.name,
                 backgroundImage: row.tenants!.backgroundImage,
@@ -105,6 +116,6 @@ export class UserRepository extends DrizzleGenericRepository<
     opts: FilterOptions<UserEntity>,
     repoOpts?: RepositoryOptions<TxType>
   ): Promise<UserWithMemberRoleTenant | null> {
-    return (await this.findWithMemberRoleTenant({ ...opts, limit: 1 }, repoOpts)).at(0) ?? null;
+    return (await this.findWithMemberRoleTenant({ ...opts }, repoOpts)).at(0) ?? null;
   }
 }

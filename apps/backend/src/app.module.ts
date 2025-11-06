@@ -22,6 +22,7 @@ import { EmailModule } from './jobs/email/email.module';
 import { IngestModule } from './jobs/ingest/ingest.module';
 import { AccountModule } from './modules/account/account.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { InviteModule } from './modules/invite/invite.module';
 import { ChatModule } from './modules/knowledge/chat/chat.module';
 import { MessageModule } from './modules/knowledge/chat/message/message.module';
 import { FolderModule } from './modules/knowledge/folder/folder.module';
@@ -55,6 +56,7 @@ import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
     UserModule,
     VerificationTokenModule,
     SearchModule,
+    InviteModule,
     DatabaseModule,
     StorageModule,
     KnowledgeModule,
@@ -88,8 +90,8 @@ import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
     MemoryModule,
     CacheModule,
     PromptModule,
-    ...(env.SERVE_STATIC ? [
-      ServeStaticModule.forRoot({ rootPath: env.SERVE_STATIC })
+    ...(env.SERVE_STATIC_PATH ? [
+      ServeStaticModule.forRoot({ rootPath: env.SERVE_STATIC_PATH })
     ] : []),
   ],
   providers: [

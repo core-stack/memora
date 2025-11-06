@@ -38,6 +38,6 @@ export class UserService extends CrudService<
     if (!opts.http) throw new Error("http context is required");
     if (!opts.http.auth.session) throw new UnauthorizedException();
 
-    return await this.repository.findFirstWithMemberRoleTenant({ filter: { id: opts.http.auth.session.user.id }}, opts);
+    return this.toSchema(await this.repository.findFirstWithMemberRoleTenant({ filter: { id: opts.http.auth.session.user.id }}, opts));
   }
 }

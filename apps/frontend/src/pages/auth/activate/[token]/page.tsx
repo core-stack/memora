@@ -1,12 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "@/components/ui/link";
-import { useApiMutation } from "@/hooks/use-api-mutation";
-import { useParams } from "@/hooks/use-params";
-import { ArrowRight, CheckCircle, XCircle } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { ArrowRight, CheckCircle, XCircle } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from '@/components/ui/link';
+import { Spinner } from '@/components/ui/spinner';
+import { useApiMutation } from '@/hooks/use-api-mutation';
+import { useParams } from '@/hooks/use-params';
 
 export function ActivateAccountPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const { token } = useParams<{ token?: string }>();
   const errorMessage = useRef<string | null>(token ? null : "Invalid activation code");
   const { mutate: activeAccount } = useApiMutation("/api/auth/active-account", { method: "POST" });
@@ -14,23 +17,36 @@ export function ActivateAccountPage() {
   useEffect(() => {
     if (!errorMessage.current && token) {
       activeAccount({ body: { token } }, {
-        onError(error) {
-          errorMessage.current = error.message ?? "Invalid activation code";
-        }
+        onSuccess: ()  => setIsLoading(false),
+        onError: (error) => {
+          console.log("error", error);
+          setIsLoading(false);
+          errorMessage.current = error.message ?? "Invalid activation code"
+        }, 
       })
     }
   }, [activeAccount, token]);
 
+  const getDescription = () => {
+    if (isLoading) return "Wait a moment!";
+    else {
+      if (errorMessage.current) return "Error activating account!";
+      else return "Account Activated!";
+    }
+  }
+  
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-b from-background/50 to-background">
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-linear-to-b from-background/50 to-background">
       <div className="w-full max-w-md mx-auto">
         <Card className="border-border/40 shadow-xl">
           <CardHeader>
             <CardTitle className='text-center'>Account Activation</CardTitle>
-            <CardDescription className='text-center'>We are activating your account</CardDescription>
+            <CardDescription className='text-center'>{getDescription()}</CardDescription>
           </CardHeader>
           <CardContent className="pb-8 px-8">
-            {errorMessage.current ? <ActivationError error={errorMessage.current} /> : <ActivationSuccess />}
+            { isLoading && <ActivationLoading /> }
+            { !isLoading && (errorMessage.current ? <ActivationError error={errorMessage.current} /> : <ActivationSuccess />) }
           </CardContent>
         </Card>
       </div>
@@ -38,8 +54,29 @@ export function ActivateAccountPage() {
   )
 }
 
-const ActivationSuccess = () => {
+const ActivationLoading = () => {
+  return (
+    <div className="text-center py-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex justify-center">
+        <div className="relative">
+          <div className="absolute inset-0 rounded-full bg-secondary dark:bg-secondary/30 animate-ping opacity-75 scale-110"></div>
+          <div className="relative rounded-full p-4 bg-secondary dark:bg-secondary/30">
+            <Spinner variant="secondary" />
+          </div>
+        </div>
+      </div>
+      <div className="space-y-3">
+        <h2 className="text-2xl font-semibold text-foreground">Activating account!</h2>
+        <p className="text-muted-foreground max-w-sm mx-auto">
+          We are activating your account...
+        </p>
+      </div>
+    </div>
+  )
+}
 
+
+const ActivationSuccess = () => {
   return (
     <div className="text-center py-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex justify-center">
@@ -66,7 +103,6 @@ const ActivationSuccess = () => {
 }
 
 const ActivationError = ({ error }: { error: string }) => {
-
   return (
     <div className="text-center py-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex justify-center">

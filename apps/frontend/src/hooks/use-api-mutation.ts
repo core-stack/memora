@@ -71,13 +71,14 @@ export function useApiMutation<
         headers: { "Content-Type": "application/json" },
         body: options.method === "GET" ? undefined : JSON.stringify(body ?? {}),
       });
-
+          
       const [json, err] = await catchError<TData, TError>(res.json());
-      if (err !== null) throw err;
-      if (!res.ok) throw json;
-      if (!json) throw new ApiError({ message: "Error fetching data" });
+      if (!res.ok) {
+        if (err) throw err; 
+        throw json;
+      }
 
-      return json;
+      return json as TData;
     },
     mutationKey: [key],
     ...options,

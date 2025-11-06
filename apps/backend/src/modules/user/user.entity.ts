@@ -1,8 +1,9 @@
-import { passwordSchema, userSchema } from "@snipet/schemas";
-import z from "zod";
+import z from 'zod';
+
+import { passwordSchema, userSchema } from '@snipet/schemas';
 
 export const userEntitySchema = userSchema.extend({
-  password: passwordSchema,
+  password: passwordSchema.optional(),
 });
 export type UserEntity = z.infer<typeof userEntitySchema>;
 

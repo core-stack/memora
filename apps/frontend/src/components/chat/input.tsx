@@ -63,7 +63,7 @@ export const ChatInput = () => {
           variant="outline"
           size="sm"
           onClick={onOpenSourceSelector}
-          className="flex-shrink-0 bg-card/50 border-border/50 hover:bg-accent/50"
+          className="shrink-0 bg-card/50 border-border/50 hover:bg-accent/50"
         >
           <Paperclip className="h-4 w-4" />
         </Button>

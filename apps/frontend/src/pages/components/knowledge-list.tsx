@@ -16,6 +16,7 @@ export function KnowledgeList() {
       refetchInterval: (query) =>  query.state.data?.some((s) => ["DELETING"].includes(s.status)) ? 5000 : false,
     }
   );
+
   const [searchQuery, setSearchQuery] = useState("")
 
   const sortedAndFilteredKnowledgeBases = useMemo(() => {

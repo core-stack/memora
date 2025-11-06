@@ -12,3 +12,9 @@ export const capitalizeFirstLetter = (text: string, allWords = false) => {
   }
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
+
+export const getNameInitials = (name: string) => {
+  const names = name.split(" ")
+  const initials = names.map((n) => n.charAt(0)).join("")
+  return initials.toUpperCase()
+}

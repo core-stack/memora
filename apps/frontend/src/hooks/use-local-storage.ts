@@ -14,6 +14,7 @@ export const useLocalStorage = <T = string>(key: string, defaultValue?: T | null
   });
 
   useEffect(() => {
+    if (!state) localStorage.removeItem(k);
     localStorage.setItem(k, JSON.stringify(state));
   }, [k, state]);
 

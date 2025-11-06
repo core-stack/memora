@@ -3,7 +3,6 @@
 import { Calendar, MessageSquare, Plus, Search } from 'lucide-react';
 import { useState } from 'react';
 
-import { If } from '@/components/if';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -62,7 +61,8 @@ export function ChatSidebar() {
 
       {/* Chat List */}
       <ScrollArea className="p-2 space-y-1 h-full">
-        <If condition={isLoading}>
+        {
+          isLoading &&
           <div>
             {
               Array.from({ length: 16 }).map((_, index) => (
@@ -70,9 +70,10 @@ export function ChatSidebar() {
               ))
             }
           </div>
-        </If>
-        <If condition={!isLoading}>
-          {filteredChats.map((chat) => {
+        }
+        {
+          !isLoading && filteredChats.length > 0 &&
+          filteredChats.map((chat) => {
             const isSelected = chatId === chat.id
 
             return (
@@ -95,7 +96,7 @@ export function ChatSidebar() {
                   <TooltipContent>
                     <span className="font-medium text-sm text-foreground flex-1 mr-2">{chat.name}</span>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
                         <Calendar className="h-3 w-3" />
                         {formatDate(chat.updatedAt, DateFormat.lll)}
                       </div>
@@ -104,10 +105,11 @@ export function ChatSidebar() {
                 </Tooltip>
               </TooltipProvider>
             )
-          })}
-        </If>
-        <If condition={!isLoading && filteredChats.length === 0}>
-          <div className="text-center py-8">
+          })
+        }
+        {
+          !isLoading && filteredChats.length === 0 &&
+           <div className="text-center py-8">
             <MessageSquare className="h-8 w-8 mx-auto mb-2 text-muted-foreground opacity-50" />
             <p className="text-sm text-muted-foreground">{searchQuery ? "No chats found" : "No chats yet"}</p>
             {!searchQuery && (
@@ -116,7 +118,7 @@ export function ChatSidebar() {
               </Button>
             )}
           </div>
-        </If>
+        }
       </ScrollArea>
     </div>
   )

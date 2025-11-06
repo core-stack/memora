@@ -1,23 +1,27 @@
-import { DialogType } from "@/dialogs";
-import { useApiQuery } from "@/hooks/use-api-query";
-import { useAuth } from "@/hooks/use-auth";
-import { useDialog } from "@/hooks/use-dialog";
-import type { TenantSchema } from "@snipet/schemas";
-import { createContext, useCallback, useEffect, useMemo, useState } from "react";
-import { useCookies } from "react-cookie";
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCookies } from 'react-cookie';
+import { Outlet } from 'react-router';
 
+import { DialogType } from '@/dialogs';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { useAuth } from '@/hooks/use-auth';
+import { useDialog } from '@/hooks/use-dialog';
+
+import type { TenantSchema } from "@snipet/schemas";
 type TenantContextType = {
   tenant?: TenantSchema;
+  tenants?: TenantSchema[];
   setTenant: (tenantId: string) => void;
   isLoading: boolean;
 }
 
 export const TenantContext = createContext<TenantContextType>({} as TenantContextType);
 
-export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
+export const TenantProvider = () => {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const { openDialog } = useDialog();
   const { isAuthenticated } = useAuth();
+  const [canRender, setCanRender] = useState(false);
 
   const [cookies, setCookies] = useCookies<
     "tenant-id", { ["tenant-id"]: string }
@@ -29,35 +33,43 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   );
   const tenantId = useMemo(() => cookies["tenant-id"], [cookies]);
   const tenant = user?.members.find((member) => member.tenantId === tenantId)?.tenant;
+  const tenants = user?.members.map((member) => member.tenant).filter((tenant) => !!tenant);
 
   const setTenant = useCallback(async (tenantId: string) => {
-    console.log("set tenant");
     try {
-      setCookies("tenant-id", { "tenant-id": tenantId });
-      const res = await refetch();
-      console.log(res);
+      setCookies("tenant-id", tenantId);
+      setCanRender(true);
+      await refetch();
     } catch (error) {
       console.error(error);
     }
-    console.log("set tenant end");
-
   }, [refetch, setCookies]);
 
-
   useEffect(() => {
+    console.log(tenant, isAuthenticated, user);
     if (!tenant && isAuthenticated && !isOpenDialog) {
-      setIsOpenDialog(true);
-      openDialog({ type: DialogType.CREATE_TENANT });
+      console.log("no tenant");
+      
+      if (user && user.members.length) {
+        setTenant(user.members[0].tenantId);
+      } else {
+        setIsOpenDialog(true);
+        openDialog({ type: DialogType.CREATE_TENANT });
+      }
     }
-  }, [tenant, isAuthenticated, isOpenDialog, openDialog]);
+    if (tenant && !canRender) {
+      setCanRender(true);
+    }
+  }, [tenant, isAuthenticated, isOpenDialog, openDialog, user]);
 
   return (
     <TenantContext.Provider value={{
       tenant,
+      tenants,
       setTenant,
       isLoading
     }}>
-      {children}
+      {canRender && <Outlet />}
     </TenantContext.Provider>
   )
 }

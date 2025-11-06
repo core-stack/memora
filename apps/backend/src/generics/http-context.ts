@@ -56,17 +56,22 @@ export class Query extends Getter {
   }
 }
 export class Auth {
-  session: Session | undefined
+  private readonly _session: Session | undefined;
+
+  get session(): Session | undefined {
+    if (!this._session) console.warn("Missing session in auth context, this is a public route?");
+    return this._session;
+  }
+
   constructor(request: AuthRequest) {
-    if (!request.session) console.warn("Missing session in auth context, this is a public route?");
-    this.session = request.session;
+    this._session = request.session;
   }
 }
 
 export class HttpContext {
-  params: Params;
-  query: Query;
-  auth: Auth;
+  readonly params: Params;
+  readonly query: Query;
+  readonly auth: Auth;
 
   constructor(private request: AuthRequest, private response?: Response) {
     this.params = new Params(request.params);

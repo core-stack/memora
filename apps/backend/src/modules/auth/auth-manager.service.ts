@@ -86,6 +86,7 @@ export class AuthManager {
     const session = await this.store.get(sessionId);
     if (!session) throw new UnauthorizedException();
     const user = await this.userService.findFirstWithMemberRoleTenant({ filter: { id: session.user.id } });
+    
     if (!user) throw new UnauthorizedException();
     session.tenants = user.members.map((m) => ({
       id: m.tenantId,

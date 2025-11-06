@@ -1,18 +1,17 @@
 import { and, eq, inArray } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 
-import * as schema from '@/db/schema';
 import { knowledge } from '@/db/schema';
 import { knowledgeTag } from '@/db/schema/knowledge_tag';
 import { DrizzleGenericRepository } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
+import { RepositoryOptions } from '@/generics/repository.interface';
+import { TxType } from '@/infra/database/types';
 import { increment } from '@/infra/database/utils';
 import { Injectable } from '@nestjs/common';
 import { KnowledgeTag } from '@snipet/schemas';
 
 import { CreateKnowledgeEntity, KnowledgeEntity, UpdateKnowledgeEntity } from './knowledge.entity';
-import { RepositoryOptions } from '@/generics/repository.interface';
-import { TxType } from '@/infra/database/types';
 
 @Injectable()
 export class KnowledgeRepository extends DrizzleGenericRepository<
@@ -47,7 +46,7 @@ export class KnowledgeRepository extends DrizzleGenericRepository<
       const rows = await query;
       let result = [] as KnowledgeEntity[];
 
-      if (!!rows.at(0)?.knowledge) {
+      if (opts.include && opts.include?.length > 0) {
         result = rows.reduce((acc, row) => {
           const kn = row.knowledge as KnowledgeEntity;
           const tag = row.knowledge_tag as KnowledgeTag;

@@ -75,12 +75,11 @@ export function useApiQuery<
           }),
         });
 
+        if (res.status === 204) return undefined as TData;
+        
         const [json, err] = await catchError<TData, TError>(res.json());
-        if (err !== null) throw err;
-        if (!res.ok) throw new ApiError({ body: json, statusCode: res.status });
-        if (!json) throw new ApiError({ message: "Error fetching data" });
-
-        return json;
+        if (!res.ok) throw err;
+        return json as TData;
       },
     }),
     optimisticUpdate

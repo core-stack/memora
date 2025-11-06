@@ -22,7 +22,7 @@ const envSchema = z.object({
   // APP
   APP_PORT: z.coerce.number().default(3000),
   API_URL: z.url().optional().default("http://localhost:3000/api"),
-  SERVE_STATIC: z.string().optional(),
+  SERVE_STATIC_PATH: z.string().optional(),
   FRONTEND_URL: z.url().optional().default("http://localhost:3000"),
 
   // AUTH

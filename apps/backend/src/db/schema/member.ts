@@ -1,14 +1,16 @@
-import { relations, sql } from "drizzle-orm";
-import { pgTable, varchar, timestamp, index } from "drizzle-orm/pg-core";
+import { relations, sql } from 'drizzle-orm';
+import { boolean, index, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 
-import { tenant } from "./tenant";
-import { user } from "./user";
-import { role } from "./role";
-import { notification } from "./notification";
-import { invite } from "./invite";
+import { invite } from './invite';
+import { notification } from './notification';
+import { role } from './role';
+import { tenant } from './tenant';
+import { user } from './user';
 
 export const member = pgTable("members", {
   id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
+
+  owner: boolean("owner").notNull().default(false),
 
   userId: varchar("user_id", { length: 36 }).notNull().references(() => user.id, { onDelete: "cascade" }),
   tenantId: varchar("tenant_id", { length: 36 }).notNull().references(() => tenant.id, { onDelete: "cascade" }),
