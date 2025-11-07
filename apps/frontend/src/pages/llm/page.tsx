@@ -15,8 +15,8 @@ import { LLMListItem } from './components/llm-list-item';
 
 export default function LLMManagementPage() {
   const { openDialog } = useDialog();
-  const { data: llms = [] } = useApiQuery("/api/llm", { method: "GET", query: { order: { createdAt: "DESC" } } });
-  const { data: presets = [] } = useApiQuery("/api/llm/presets", { method: "GET" });
+  const { data: llms = [] } = useApiQuery("/api/tenant/:tenantId/llm", { method: "GET", query: { order: { createdAt: "DESC" } } });
+  const { data: presets = [] } = useApiQuery("/api/tenant/:tenantId/llm/presets", { method: "GET" });
   const [activeTab, setActiveTab] = useState("all")
 
   const filteredLLMs = activeTab === "all" ? llms : llms.filter((llm) => llm.type === activeTab);

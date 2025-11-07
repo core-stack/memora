@@ -24,7 +24,7 @@ export interface SelectPresetDialogProps {
 export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true }: SelectPresetDialogProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { openDialog, closeDialog } = useDialog();
-  const { data: presets = [] } = useApiQuery("/api/llm/presets", { method: "GET" });
+  const { data: presets = [] } = useApiQuery("/api/tenant/:tenantId/llm/presets", { method: "GET" });
 
   const filteredPresets = presets.filter(
     (preset) =>

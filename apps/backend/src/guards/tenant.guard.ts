@@ -1,8 +1,8 @@
 import { AuthRequest } from '@/@types/auth-request';
 import { AuthManager } from '@/modules/auth/auth-manager.service';
 import { Session } from '@/modules/auth/types';
+import { isUUID } from '@/utils/uuid';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { mergePermissions, numberToPermissions } from '@snipet/permission';
 
 @Injectable()
 export class TenantGuard implements CanActivate {
@@ -14,28 +14,14 @@ export class TenantGuard implements CanActivate {
     let { session } = request;
     if (!session) throw new UnauthorizedException();
     
-    if (this.checkTenantAccess(session, request.cookies["tenant-id"])) return true;    
+    if (this.checkTenantAccess(session, request.params.tenantId)) return true;
     session = await this.authManager.reloadSession(session.id);
-    return this.checkTenantAccess(session, request.cookies["tenant-id"]);
+    return this.checkTenantAccess(session, request.params.tenantId);
   }
 
-  private checkTenantAccess(session: Session, tenantId?: string): boolean {
-    if (!tenantId) {
-      if (session.tenants.length > 0) {
-        tenantId = session.tenants[0].id;
-      } else {
-        return false;
-      }
-    }
-    let permissions = numberToPermissions(session.user.permissions);
-    
+  private checkTenantAccess(session: Session, tenantId: string): boolean {
+    if (!isUUID(tenantId)) return false;
     const tenant = session.tenants.find(w => w.id === tenantId);
-
-    if (tenant) {
-      permissions = mergePermissions(permissions, tenant.permissions);
-    } else {
-      return false;
-    }
-    return true;
+    return !!tenant;
   }
 }

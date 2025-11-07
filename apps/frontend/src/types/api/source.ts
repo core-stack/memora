@@ -1,49 +1,49 @@
-import type { GetUploadUrl, SourceFilter, CreateSource, UpdateSource, Source, GetFileUrlResponse,  } from "@snipet/schemas"
+import type { GetUploadUrl, SourceFilter, CreateSource, UpdateSource, Source, GetFileUrlResponse } from "@snipet/schemas"
 
 export interface SourceRoutes {
-  "/api/knowledge/:knowledgeSlug/source/:sourceId/view": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:sourceId/view": {
     GET: {
-      params: { knowledgeSlug: string, sourceId: string };
+      params: { tenantId: string, knowledgeSlug: string, sourceId: string };
       response: GetFileUrlResponse;
     }
   },
-  "/api/knowledge/:knowledgeSlug/source/upload-url": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/upload-url": {
     POST: {
-      params: { knowledgeSlug: string };
+      params: { tenantId: string, knowledgeSlug: string };
       body: GetUploadUrl;
       response: GetFileUrlResponse;
     }
   },
-  "/api/knowledge/:knowledgeSlug/source": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source": {
     GET: {
       query: SourceFilter;
-      params: { knowledgeSlug: string };
+      params: { tenantId: string, knowledgeSlug: string };
       response: Source[];
     },
     POST: {
       body: CreateSource;
-      params: { knowledgeSlug: string };
+      params: { tenantId: string, knowledgeSlug: string };
       response: Source;
     }
   },
-  "/api/knowledge/:knowledgeSlug/source/:id": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id": {
     GET: {
-      params: { knowledgeSlug: string, id: string };
+      params: { tenantId: string, knowledgeSlug: string, id: string };
       response: Source;
     },
     PUT: {
       body: UpdateSource;
-      params: { knowledgeSlug: string, id: string };
+      params: { tenantId: string, knowledgeSlug: string, id: string };
       response: undefined;
     },
     DELETE: {
-      params: { knowledgeSlug: string, id: string };
+      params: { tenantId: string, knowledgeSlug: string, id: string };
       response: undefined;
     }
   },
-  "/api/knowledge/:knowledgeSlug/source/:id/retry": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/retry": {
     POST: {
-      params: { knowledgeSlug?: string, id: string };
+      params: { tenantId: string, knowledgeSlug?: string, id: string };
     }
   }
 }

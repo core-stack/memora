@@ -1,9 +1,9 @@
 import type { GetSelfUserSchema } from "@snipet/schemas";
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
-import { useCookies } from 'react-cookie';
+import { createContext, useCallback, useEffect, useState } from 'react';
 
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useApiQuery } from '@/hooks/use-api-query';
+import { useLocalStorage } from '@/hooks/use-local-storage';
 import { useLocation } from '@/hooks/use-location';
 import { useRouter } from '@/hooks/use-router';
 import { useToast } from '@/hooks/use-toast';
@@ -24,7 +24,7 @@ export const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [exiting, setExiting] = useState(false);
-  const [cookies] = useCookies<"tenant-id", { ["tenant-id"]: string }>(["tenant-id"]);
+  const [tenantId] = useLocalStorage<string>("tenant-id", null);
 
   const router = useRouter();
   const { pathname } = useLocation();
@@ -38,17 +38,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     { method: "GET", retry: false }
   );
 
-  const tenantId = useMemo(() => cookies["tenant-id"], [cookies]);
   const isAuthenticated = !!user;
   const currentMember = user?.members.find((member) => member.tenantId === tenantId);
   const isLoading = loadingUserSelf;
 
   //#region Permissions
   const tenantPermissions = user?.members.map((member) => ({ tenantId: member.tenantId, role: member.role }));
-  const canInTenant = (permission: Permission | Permission[], tenantId: string = cookies["tenant-id"]): boolean => {
+  const canInTenant = (permission: Permission | Permission[], tenant: string | undefined = tenantId ?? undefined): boolean => {
+    if (!tenant) throw new Error("tenant is required");
     if (tenantPermissions) {
       return canPermission(
-        tenantPermissions.find((p) => p.tenantId === tenantId)?.role.permissions ?? [],
+        tenantPermissions.find((p) => p.tenantId === tenant)?.role.permissions ?? [],
         Array.isArray(permission) ? permission : [permission]
       );
     }

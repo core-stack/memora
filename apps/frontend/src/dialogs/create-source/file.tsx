@@ -16,7 +16,7 @@ import type { CreateSource, GetFileUrlResponse } from '@snipet/schemas';
 type Props = { folderId?: string; }
 
 export const CreateSourceFile = ({ folderId }: Props) => {
-  const { mutateAsync: generateUrl } = useApiMutation("/api/knowledge/:knowledgeSlug/source/upload-url", { method: "POST" });
+  const { mutateAsync: generateUrl } = useApiMutation("/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/upload-url", { method: "POST" });
   const { closeDialog } = useDialog();
   const { toast } = useToast();
 
@@ -27,7 +27,7 @@ export const CreateSourceFile = ({ folderId }: Props) => {
   }
 
   const invalidate = useApiInvalidate();
-  const { mutateAsync: createSource } = useApiMutation("/api/knowledge/:knowledgeSlug/source", { method: "POST" });
+  const { mutateAsync: createSource } = useApiMutation("/api/tenant/:tenantId/knowledge/:knowledgeSlug/source", { method: "POST" });
   const onUploadComplete = async (f: UploadedFile) => {
     const metadata = await getFileMetadata(f.file);
     const body: CreateSource = {
@@ -46,8 +46,8 @@ export const CreateSourceFile = ({ folderId }: Props) => {
   }
 
   const onFinish = () => {
-    invalidate('/api/knowledge/:knowledgeSlug/folder');
-    invalidate('/api/knowledge/:knowledgeSlug/source');
+    invalidate('/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder');
+    invalidate('/api/tenant/:tenantId/knowledge/:knowledgeSlug/source');
     closeDialog(DialogType.CREATE_SOURCE);
   }
 

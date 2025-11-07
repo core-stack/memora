@@ -19,7 +19,7 @@ export function ChatSidebar() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("")
   const { data: chats = [], isLoading } = useApiQuery(
-    "/api/knowledge/:knowledgeSlug/chat",
+    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat",
     { method: "GET", query: { order: { createdAt: "DESC" } } }
   );
 

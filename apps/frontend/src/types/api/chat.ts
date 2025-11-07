@@ -1,30 +1,30 @@
 import type { Chat, ChatFilter, CreateChat, UpdateChat } from "@snipet/schemas";
 
 export interface ChatRoutes {
-  "/api/knowledge/:knowledgeSlug/chat": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat": {
     GET: {
       query: ChatFilter;
-      params: { knowledgeSlug: string };
+      params: { tenantId: string, knowledgeSlug: string };
       response: Chat[];
     },
     POST: {
       body: CreateChat;
-      params: { knowledgeSlug: string };
+      params: { tenantId: string, knowledgeSlug: string };
       response: Chat;
     }
   },
-  "/api/knowledge/:knowledgeSlug/chat/:id": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:id": {
     GET: {
-      params: { knowledgeSlug: string, id: string };
+      params: { tenantId: string, knowledgeSlug: string, id: string };
       response: Chat;
     },
     PUT: {
       body: UpdateChat;
-      params: { knowledgeSlug: string, id: string };
+      params: { tenantId: string, knowledgeSlug: string, id: string };
       response: undefined;
     },
     DELETE: {
-      params: { knowledgeSlug: string, id: string };
+      params: { tenantId: string, knowledgeSlug: string, id: string };
       response: undefined;
     }
   },

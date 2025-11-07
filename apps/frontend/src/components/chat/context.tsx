@@ -30,21 +30,21 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
   
   const router = useRouter();
   const { data: messages = [], isLoading: loadingMessages, optimisticUpdate } = useApiQuery(
-    "/api/knowledge/:knowledgeSlug/chat/:chatId/message",
+    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message",
     { method: "GET", enabled: !!chatId, params: { chatId: chatId ?? "" } }
   );
 
   const { data: chat, isLoading: loadingChat } = useApiQuery(
-    "/api/knowledge/:knowledgeSlug/chat/:id",
+    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:id",
     { method: "GET", params: { id: chatId ?? "" }, enabled: !!chatId }
   );
 
   const { mutate: createChatMutation } = useApiMutation(
-    "/api/knowledge/:knowledgeSlug/chat",
+    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat",
     { method: "POST" }
   );
   const { mutate: sendChatMessage } = useApiMutation(
-    "/api/knowledge/:knowledgeSlug/chat/:chatId/message/new",
+    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message/new",
     { method: "POST" }
   )
 
@@ -85,8 +85,8 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
 
     sendChatMessage({ body: { content: message }, params: chatId ? { chatId } : undefined }, {
       onSuccess: () => {
-        invalidate("/api/knowledge/:knowledgeSlug/chat/:chatId/message");
-        invalidate("/api/knowledge/:knowledgeSlug/chat");
+        invalidate("/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message");
+        invalidate("/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat");
       }
     });
   }
@@ -96,7 +96,7 @@ export const ChatProvider = ({ children, chatId }: ChatProviderProps) => {
       {
         onSuccess: async (data) => {
           router.replace(`/${knowledgeSlug}/chat/${data.id}`);
-          await invalidate('/api/knowledge/:knowledgeSlug/chat');
+          await invalidate('/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat');
           sendMessage(initialMessage, data);
         }
       }

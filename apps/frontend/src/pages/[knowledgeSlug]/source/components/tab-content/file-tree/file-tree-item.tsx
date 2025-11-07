@@ -75,7 +75,7 @@ export function FileTreeItem({
   const isSelected = isFolder ? selectedFolderId === item.id : selectedFileId === item.id;
   const { data: childs } = useExplorer(item.id, isFolder);
   const invalidate = useApiInvalidate();
-  const { mutateAsync: retryIndexing } = useApiMutation("/api/knowledge/:knowledgeSlug/source/:id/retry")
+  const { mutateAsync: retryIndexing } = useApiMutation("/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/retry")
   const handleClick = () => {
     if (isFolder) {
       setOpen(!open);
@@ -96,8 +96,8 @@ export function FileTreeItem({
     await retryIndexing({ params: { id: item.id } });
     console.log("retry indexing");
     
-    invalidate("/api/knowledge/:knowledgeSlug/source");
-    invalidate("/api/knowledge/:knowledgeSlug/folder");
+    invalidate("/api/tenant/:tenantId/knowledge/:knowledgeSlug/source");
+    invalidate("/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder");
     toast({
       title: "Indexing retried",
       description: "The indexing process has been retried.",

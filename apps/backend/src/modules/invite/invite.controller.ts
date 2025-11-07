@@ -6,7 +6,7 @@ import {
 
 import { InviteService } from './invite.service';
 
-@Controller('invite')
+@Controller('tenant/:tenantId/invite')
 export class InviteController extends CrudController<InviteSchema, CreateInviteSchema>(
   { filterSchema: inviteFilterSchema, createDtoSchema: createInviteSchema }
 ) {

@@ -4,7 +4,7 @@ import { createLLMSchema, LLM, llmFilterSchema, updateLLMSchema } from '@snipet/
 
 import { LLMService } from './llm.service';
 
-@Controller('llm')
+@Controller('tenant/:tenantId/llm')
 export class LLMController extends CrudController<LLM>(
   { filterSchema: llmFilterSchema, createDtoSchema: createLLMSchema, updateDtoSchema: updateLLMSchema }
 ) {

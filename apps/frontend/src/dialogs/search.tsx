@@ -22,8 +22,8 @@ import { DialogType } from './';
 import type { SourceFragment } from '@snipet/schemas';
 export function SearchDialog() {
   const [query, setQuery] = useState("");
-  const { mutateAsync: search, data: results = [] } = useApiMutation("/api/knowledge/:knowledgeSlug/search", { method: "GET" });
-  const { data: recent = [] } = useApiQuery("/api/knowledge/:knowledgeSlug/search/recent", { method: "GET" });
+  const { mutateAsync: search, data: results = [] } = useApiMutation("/api/tenant/:tenantId/knowledge/:knowledgeSlug/search", { method: "GET" });
+  const { data: recent = [] } = useApiQuery("/api/tenant/:tenantId/knowledge/:knowledgeSlug/search/recent", { method: "GET" });
   const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 

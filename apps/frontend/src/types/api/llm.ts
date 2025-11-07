@@ -1,29 +1,32 @@
 import type { LLMFilter, CreateLLM, UpdateLLM, LLM, LLMPreset } from "@snipet/schemas"
 
 export interface LLMRoutes {
-  "/api/llm": {
+  "/api/tenant/:tenantId/llm": {
     GET: {
       query: LLMFilter;
+      params: { tenantId: string };
       response: LLM[];
     },
     POST: {
       body: CreateLLM;
+      params: { tenantId: string };
       response: LLM;
     }
   },
-  "/api/llm/presets": {
+  "/api/tenant/:tenantId/llm/presets": {
     GET: {
+      params: { tenantId: string };
       response: LLMPreset[];
     },
   },
-  "/api/llm/:id": {
+  "/api/tenant/:tenantId/llm/:id": {
     PUT: {
       body: UpdateLLM;
-      params: { id: string };
+      params: { tenantId: string, id: string };
       response: undefined;
     },
     DELETE: {
-      params: { id: string };
+      params: { tenantId: string, id: string };
       response: undefined;
     }
   },

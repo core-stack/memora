@@ -1,17 +1,18 @@
-import { CrudService } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
 import { ServiceOptions } from '@/generics/service.interface';
-import { Injectable } from '@nestjs/common';
+import { GenericTenantService } from '@/generics/tenant.service';
+import { Injectable, Logger } from '@nestjs/common';
 import { MemberSchema } from '@snipet/schemas';
 
 import { MemberEntity } from './member.entity';
 import { MemberRepository } from './member.repository';
 
 @Injectable()
-export class MemberService extends CrudService<
+export class MemberService extends GenericTenantService<
   MemberSchema, Partial<MemberSchema>, Partial<MemberSchema>,
   MemberEntity
 > {
+  logger = new Logger(MemberService.name);
   constructor(repository: MemberRepository) {
     super(repository);
   }

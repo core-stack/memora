@@ -10,7 +10,7 @@ import { KnowledgeCard } from './knowledge-card';
 
 export function KnowledgeList() {
   const { data: knowledges = [] } = useApiQuery(
-    "/api/knowledge",
+    "/api/tenant/:tenantId/knowledge",
     { 
       method: "GET", query: { include: [ "tags" ] },
       refetchInterval: (query) =>  query.state.data?.some((s) => ["DELETING"].includes(s.status)) ? 5000 : false,

@@ -1,9 +1,10 @@
 import type { MemberFilterSchema, MemberSchema } from "@snipet/schemas"
 
 export interface MemberRoutes {
-  "/api/member": {
+  "/api/tenant/:tenantId/member": {
     GET: {
       query: MemberFilterSchema;
+      params: { tenantId: string };
       response: MemberSchema[];
     },
   },

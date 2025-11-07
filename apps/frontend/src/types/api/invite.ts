@@ -1,19 +1,21 @@
 import type { InviteFilterSchema, InviteSchema, CreateInviteSchema } from "@snipet/schemas"
 
 export interface InviteRoutes {
-  "/api/invite": {
+  "/api/tenant/:tenantId/invite": {
     GET: {
       query: InviteFilterSchema;
+      params: { tenantId: string };
       response: InviteSchema[];
     },
     POST: {
       body: CreateInviteSchema;
+      params: { tenantId: string };
       response: InviteSchema;
     }
   },
-  "/api/invite/:id": {
+  "/api/tenant/:tenantId/invite/:id": {
     DELETE: {
-      params: { id: string };
+      params: { tenantId: string, id: string };
       response: undefined;
     }
   },

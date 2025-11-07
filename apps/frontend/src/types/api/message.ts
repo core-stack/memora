@@ -1,10 +1,10 @@
 import type { Message, MessageFilter, CreateMessage, UpdateMessage, StreamMessage } from "@snipet/schemas";
 
 export interface MessageRoutes {
-  "/api/knowledge/:knowledgeSlug/chat/:chatId/message": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message": {
     GET: {
       query: MessageFilter;
-      params: { knowledgeSlug: string, chatId: string };
+      params: { tenantId: string, knowledgeSlug: string, chatId: string };
       response: Message[];
     },
     POST: {
@@ -13,27 +13,27 @@ export interface MessageRoutes {
       response: Message;
     }
   },
-  "/api/knowledge/:knowledgeSlug/chat/:chatId/message/new": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message/new": {
     POST: {
       body: CreateMessage;
-      params: Partial<{ knowledgeSlug: string, chatId: string }>;
+      params: Partial<{ tenantId: string, knowledgeSlug: string, chatId: string }>;
       response: { userMessage: Message; aiMessage: Message; };
     }
   },
-  "/api/knowledge/:knowledgeSlug/chat/:chatId/message/stream": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message/stream": {
     POST: {
-      params: { knowledgeSlug: string, chatId: string };
+      params: { tenantId: string, knowledgeSlug: string, chatId: string };
       query: StreamMessage;
     }
   },
-  "/api/knowledge/:knowledgeSlug/chat/:chatId/message/:id": {
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message/:id": {
     PUT: {
       body: UpdateMessage;
-      params: { knowledgeSlug: string, chatId: string, id: string };
+      params: { tenantId: string, knowledgeSlug: string, chatId: string, id: string };
       response: undefined;
     },
     DELETE: {
-      params: { knowledgeSlug: string, chatId: string, id: string };
+      params: { tenantId: string, knowledgeSlug: string, chatId: string, id: string };
       response: undefined;
     }
   },

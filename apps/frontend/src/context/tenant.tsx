@@ -1,11 +1,11 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
-import { useCookies } from 'react-cookie';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 
 import { DialogType } from '@/dialogs';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useAuth } from '@/hooks/use-auth';
 import { useDialog } from '@/hooks/use-dialog';
+import { useLocalStorage } from '@/hooks/use-local-storage';
 
 import type { TenantSchema } from "@snipet/schemas";
 type TenantContextType = {
@@ -22,28 +22,23 @@ export const TenantProvider = () => {
   const { openDialog } = useDialog();
   const { isAuthenticated } = useAuth();
   const [canRender, setCanRender] = useState(false);
-
-  const [cookies, setCookies] = useCookies<
-    "tenant-id", { ["tenant-id"]: string }
-  >(["tenant-id"]);
+  const [tenantId, setTenantId] = useLocalStorage<string>("tenant-id", null);
 
   const { data: user, isLoading, refetch } = useApiQuery(
     "/api/user/self",
     { method: "GET", retry: false }
   );
-  const tenantId = useMemo(() => cookies["tenant-id"], [cookies]);
   const tenant = user?.members.find((member) => member.tenantId === tenantId)?.tenant;
   const tenants = user?.members.map((member) => member.tenant);
   
   const setTenant = useCallback(async (tenantId: string) => {
     try {
-      setCookies("tenant-id", tenantId);
+      setTenantId(tenantId);
       setCanRender(true);
-      await refetch();
     } catch (error) {
       console.error(error);
     }
-  }, [refetch, setCookies]);
+  }, [refetch, setTenantId]);
 
   useEffect(() => {
     if (!tenant && isAuthenticated && !isOpenDialog) {

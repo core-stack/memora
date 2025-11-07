@@ -4,7 +4,7 @@ import { MemberSchema, tagFilterSchema } from '@snipet/schemas';
 
 import { MemberService } from './member.service';
 
-@Controller('member')
+@Controller('tenant/:tenantId/member')
 export class MemberController extends CrudController<MemberSchema>({ filterSchema: tagFilterSchema }) {
   constructor(service: MemberService) {
     super(service);

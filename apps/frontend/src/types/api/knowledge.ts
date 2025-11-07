@@ -1,24 +1,26 @@
 import type { KnowledgeFilter, CreateKnowledge, Knowledge, UpdateKnowledge } from "@snipet/schemas"
 
 export interface KnowledgeRoutes {
-  "/api/knowledge": {
+  "/api/tenant/:tenantId/knowledge": {
     GET: {
       query: KnowledgeFilter;
+      params: { tenantId: string };
       response: Knowledge[];
     },
     POST: {
       body: CreateKnowledge;
+      params: { tenantId: string };
       response: Knowledge;
     }
   },
-  "/api/knowledge/:id": {
+  "/api/tenant/:tenantId/knowledge/:id": {
     PUT: {
       body: UpdateKnowledge;
-      params: { id: string };
+      params: { tenantId: string, id: string };
       response: undefined;
     },
     DELETE: {
-      params: { id: string };
+      params: { tenantId: string, id: string };
       response: undefined;
     }
   },

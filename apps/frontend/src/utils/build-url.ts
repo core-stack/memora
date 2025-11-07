@@ -7,8 +7,14 @@ export function buildUrl(
   path: string,
   params?: Record<string, any>,
   query?: Record<string, any>
-) {
-
+) {  
+  if (extractParamNames(path).some(name => name === "tenantId")) {
+    const tenantId = localStorage.getItem("@snipet/tenant-id")?.replace(/"/g, "");
+    
+    if (tenantId) {
+      params = { ...params, tenantId };
+    }
+  }
   if (params) {
     for (const [key, value] of Object.entries(params)) {
       path = path.replace(

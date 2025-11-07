@@ -4,7 +4,7 @@ import { Chat, chatFilterSchema, createChatSchema, updateChatSchema } from '@sni
 
 import { ChatService } from './chat.service';
 
-@Controller('knowledge/:knowledgeSlug/chat')
+@Controller('tenant/:tenantId/knowledge/:knowledgeSlug/chat')
 export class ChatController extends CrudController<Chat>(
   { filterSchema: chatFilterSchema, createDtoSchema: createChatSchema, updateDtoSchema: updateChatSchema }
 ) {

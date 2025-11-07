@@ -26,17 +26,17 @@ export const CreateKnowledgeFolderDialog = ({ folderId }: CreateKnowledgeFolderD
   const isLoading = form.formState.isSubmitting;
 
   const { data: folder } = useApiQuery(
-    "/api/knowledge/:knowledgeSlug/folder/:id",
+    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder/:id",
     { method: "GET", params: { id: folderId }, enabled: !!folderId }
   );
 
   const invalidate = useApiInvalidate();
-  const { mutate } = useApiMutation('/api/knowledge/:knowledgeSlug/folder', { method: 'POST' });
+  const { mutate } = useApiMutation('/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder', { method: 'POST' });
   const onSubmit = form.handleSubmit(async (body) => {
     mutate({ body, params: { knowledgeSlug: slug! }, query: { parentId: folderId } }, {
       onSuccess: () => {
-        invalidate('/api/knowledge/:knowledgeSlug/folder');
-        invalidate('/api/knowledge/:knowledgeSlug/source');
+        invalidate('/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder');
+        invalidate('/api/tenant/:tenantId/knowledge/:knowledgeSlug/source');
         closeDialog(DialogType.CREATE_FOLDER);
       }
     });

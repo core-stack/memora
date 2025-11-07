@@ -19,7 +19,7 @@ export const DocumentViewer = (props: Props) => {
 }
 
 const RemoteDocumentViewer = ({ sourceId }: RemoteDocumentViewerProps) => {
-  const { data } = useApiQuery("/api/knowledge/:knowledgeSlug/source/:sourceId/view", { method: "GET", params: { sourceId } });
+  const { data } = useApiQuery("/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:sourceId/view", { method: "GET", params: { sourceId } });
 
   return (
     <iframe src={data?.url} width={"100%"} height={"100%"} />

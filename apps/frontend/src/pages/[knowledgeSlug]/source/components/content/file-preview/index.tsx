@@ -10,7 +10,7 @@ export function FileContentViewer() {
   const { selectedFileId } = useSource();
 
   const { data, isLoading } = useApiQuery(
-    "/api/knowledge/:knowledgeSlug/source/:id",
+    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id",
     { method: "GET", params: { id: selectedFileId ?? "" }, enabled: !!selectedFileId }
   );
 

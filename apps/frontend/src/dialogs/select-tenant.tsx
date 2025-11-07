@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useDialog } from '@/hooks/use-dialog';
 
 import { DialogType } from './';
@@ -20,13 +21,13 @@ export type SelectTenantDialogProps = {
 export function SelectTenantDialog({ setTenant, tenants }: SelectTenantDialogProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { closeDialog } = useDialog();
-
+  const invalidate = useApiInvalidate();
   const filteredTenants = tenants?.filter(preset => preset.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  console.log(tenants);
   
   const handleSelectTenant = (tenantId: string) => {
     setTenant(tenantId);
-    setSearchQuery("")
+    setSearchQuery("");
+    setTimeout(() => invalidate());
     closeDialog(DialogType.SELECT_TENANT);
   }
 

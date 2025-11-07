@@ -1,4 +1,5 @@
 import { CrudController } from '@/generics';
+import { TenantGuard } from '@/guards/tenant.guard';
 import { Controller, UseGuards } from '@nestjs/common';
 import {
   CreateKnowledge, createKnowledgeSchema, Knowledge, knowledgeFilterSchema, UpdateKnowledge,
@@ -6,10 +7,9 @@ import {
 } from '@snipet/schemas';
 
 import { KnowledgeService } from './knowledge.service';
-import { TenantGuard } from '@/guards/tenant.guard';
 
 @UseGuards(TenantGuard)
-@Controller('knowledge')
+@Controller('tenant/:tenantId/knowledge')
 export class KnowledgeController extends CrudController<Knowledge, CreateKnowledge, UpdateKnowledge>(
   { filterSchema: knowledgeFilterSchema, createDtoSchema: createKnowledgeSchema, updateDtoSchema: updateKnowledgeSchema }
 ) {

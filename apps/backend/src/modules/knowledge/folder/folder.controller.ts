@@ -7,7 +7,7 @@ import {
 
 import { FolderService } from './folder.service';
 
-@Controller('knowledge/:knowledgeSlug/folder')
+@Controller('tenant/:tenantId/knowledge/:knowledgeSlug/folder')
 export class FolderController extends CrudController<KnowledgeFolder>(
   { 
     filterSchema: knowledgeFolderFilterSchema,

@@ -4,7 +4,7 @@ import { createTagSchema, Tag, tagFilterSchema, updateTagSchema } from '@snipet/
 
 import { TagService } from './tag.service';
 
-@Controller('tag')
+@Controller('tenant/:tenantId/tag')
 export class TagController extends CrudController<Tag>(
   { filterSchema: tagFilterSchema, createDtoSchema: createTagSchema, updateDtoSchema: updateTagSchema}
 ) {

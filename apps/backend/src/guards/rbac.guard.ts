@@ -20,7 +20,7 @@ export class RBACGuard implements CanActivate {
     if (!session) throw new UnauthorizedException();
 
     let permissions = numberToPermissions(session.user.permissions);
-    const tenantId = request.cookies["tenantId"];
+    const tenantId = request.params.tenantId;
     const tenant = session.tenants.find(w => w.id === tenantId);
 
     if (tenant) {

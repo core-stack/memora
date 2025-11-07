@@ -1,9 +1,9 @@
 import { Queue } from 'bullmq';
 import { randomUUID } from 'crypto';
 
-import { CrudService } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
 import { ServiceOptions } from '@/generics/service.interface';
+import { GenericTenantService } from '@/generics/tenant.service';
 import { PublicStorageService } from '@/infra/storage/public-storage.service';
 import { JobType } from '@/jobs/types';
 import { InjectQueue } from '@nestjs/bullmq';
@@ -16,7 +16,7 @@ import { CreateSourceEntity, SourceEntity, UpdateSourceEntity } from './source.e
 import { SourceRepository } from './source.repository';
 
 @Injectable()
-export class SourceService extends CrudService<
+export class SourceService extends GenericTenantService<
   Source, CreateSource, UpdateSource,
   SourceEntity, CreateSourceEntity, UpdateSourceEntity
 > {

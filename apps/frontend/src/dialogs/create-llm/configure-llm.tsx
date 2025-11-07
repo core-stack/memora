@@ -37,13 +37,13 @@ export function ConfigureLLDialog({ preset }: ConfigureLLDialogProps) {
   });
 
   const invalidate = useApiInvalidate();
-  const { mutate } = useApiMutation("/api/llm", { method: "POST" });
+  const { mutate } = useApiMutation("/api/tenant/:tenantId/llm", { method: "POST" });
   const isLoading = form.formState.isSubmitting;
 
   const handleSubmit = form.handleSubmit((body) => {
     mutate({ body }, {
       onSuccess: async () => {
-        await invalidate("/api/llm");
+        await invalidate("/api/tenant/:tenantId/llm");
         closeDialog(DialogType.CONFIGURE_LLM);
         toast({
           title: "LLM created",

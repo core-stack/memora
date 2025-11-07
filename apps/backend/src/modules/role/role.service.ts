@@ -1,4 +1,4 @@
-import { CrudService } from '@/generics';
+import { GenericTenantService } from '@/generics/tenant.service';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { permissionsToNumber, ROLES } from '@snipet/permission';
 import { RoleSchema } from '@snipet/schemas';
@@ -7,11 +7,11 @@ import { RoleEntity } from './role.entity';
 import { RoleRepository } from './role.repository';
 
 @Injectable()
-export class RoleService extends CrudService<
+export class RoleService extends GenericTenantService<
   RoleSchema, Partial<RoleSchema>, Partial<RoleSchema>,
   RoleEntity
 > implements OnModuleInit {
-  private readonly logger = new Logger(RoleService.name);
+  logger = new Logger(RoleService.name);
   constructor(protected repository: RoleRepository) {
     super(repository);
   }

@@ -2,22 +2,23 @@ import { readdir } from 'fs/promises';
 import { join } from 'path';
 
 import { env } from '@/env';
-import { CrudService } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
 import { ServiceOptions } from '@/generics/service.interface';
+import { GenericTenantService } from '@/generics/tenant.service';
 import { SecurityService } from '@/infra/security/security.service';
 import { __root } from '@/root';
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { CreateLLM, LLM, LLMPreset, llmPresetSchema, UpdateLLM } from '@snipet/schemas';
 
 import { CreateLLMEntity, LLMEntity, UpdateLLMEntity } from './llm.entity';
 import { LLMRepository } from './llm.repository';
 
 @Injectable()
-export class LLMService extends CrudService<
+export class LLMService extends GenericTenantService<
   LLM, CreateLLM, UpdateLLM,
   LLMEntity, CreateLLMEntity, UpdateLLMEntity
 > implements OnModuleInit {
+  logger = new Logger(LLMService.name);
   presets: LLMPreset[] = [];
 
   constructor(

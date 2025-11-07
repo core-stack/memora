@@ -13,9 +13,11 @@ type ApiInvalidateOpts<TPath extends keyof ApiRoutes, TMethod extends keyof ApiR
 export const useApiInvalidate = () => {
   const queryClient = useQueryClient();
 
-  return <TPath extends keyof ApiRoutes, TMethod extends keyof ApiRoutes[TPath] = keyof ApiRoutes[TPath]>(path: TPath, opts?: ApiInvalidateOpts<TPath, TMethod>) =>
-    queryClient.invalidateQueries({
+  return <TPath extends keyof ApiRoutes, TMethod extends keyof ApiRoutes[TPath] = keyof ApiRoutes[TPath]>(path?: TPath, opts?: ApiInvalidateOpts<TPath, TMethod>) => {
+    if (!path) return queryClient.invalidateQueries();
+    return queryClient.invalidateQueries({
       queryKey: opts ? [path, opts.params, opts.query] : [path],
       predicate: (q) => q.queryKey[0] === path && !opts
     });
+  }
 };

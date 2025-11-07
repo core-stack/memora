@@ -24,7 +24,7 @@ import type {
 } from "@tanstack/react-table";
 import type { MemberSchema } from "@snipet/schemas";
 export const MembersTable = () => {
-  const { data: members = [] } = useApiQuery("/api/member", { method: "GET", query: { include: [ "user", "role" ] } });
+  const { data: members = [] } = useApiQuery("/api/tenant/:tenantId/member", { method: "GET", query: { include: [ "user", "role" ] } });
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})

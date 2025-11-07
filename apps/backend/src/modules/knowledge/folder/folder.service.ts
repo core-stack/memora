@@ -1,13 +1,12 @@
 import { FilterOptions } from '@/generics/filter-options';
-import { HttpContext } from '@/generics/http-context';
+import { ServiceOptions } from '@/generics/service.interface';
+import { GenericTenantService } from '@/generics/tenant.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateKnowledgeFolder, KnowledgeFolder, UpdateKnowledgeFolder } from '@snipet/schemas';
 
 import { KnowledgeService } from '../knowledge.service';
-import { FolderRepository } from './folder.repository';
 import { CreateFolderEntity, FolderEntity, UpdateFolderEntity } from './folder.entity';
-import { ServiceOptions } from '@/generics/service.interface';
-import { GenericTenantService } from '@/generics/tenant.service';
+import { FolderRepository } from './folder.repository';
 
 @Injectable()
 export class FolderService extends GenericTenantService<

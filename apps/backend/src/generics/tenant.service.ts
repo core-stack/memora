@@ -5,10 +5,10 @@ import { CrudService } from './service';
 import { ServiceOptions } from './service.interface';
 
 export abstract class GenericTenantService<
-  TSchema extends { tenantId: string },
+  TSchema,
   TCreateDto = Partial<TSchema>,
   TUpdateDto = Partial<TSchema>,
-  TEntity = TSchema,
+  TEntity extends { tenantId: string | null } = TSchema & { tenantId: string | null },
   TCreateEntity = TCreateDto,
   TUpdateEntity = TUpdateDto
 > extends CrudService<TSchema, TCreateDto, TUpdateDto, TEntity, TCreateEntity, TUpdateEntity> {
@@ -43,20 +43,20 @@ export abstract class GenericTenantService<
     opts?: ServiceOptions,
   ): Promise<void> {
     const tenantId = this.getTenantId(opts);
-    this.logger.debug(`Atualizando registro ${id} com tenantId: ${tenantId}`);
+    this.logger.debug(`Updating ${id} with tenantId: ${tenantId}`);
 
     return super.update(id, { ...input, tenantId } as TUpdateEntity, opts);
   }
 
   protected getTenantId(opts?: ServiceOptions): string | undefined {
     if (!opts?.http) {
-      this.logger.warn('HttpContext não encontrado — necessário para obter tenantId');
+      this.logger.warn('HttpContext not found — tenantId not found');
       return undefined;
     }
 
-    const tenantId = opts.http.getCookie?.('tenant-id');
+    const tenantId = opts.http.params.shouldGetString("tenantId");
     if (!tenantId) {
-      this.logger.warn('TenantId não encontrado no cookie');
+      this.logger.warn('TenantId not found in params');
     }
 
     return tenantId;

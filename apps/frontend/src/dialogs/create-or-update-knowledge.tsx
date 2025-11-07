@@ -46,8 +46,8 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
   const invalidate = useApiInvalidate();
   const { toast } = useToast();
 
-  const { mutateAsync: createKnowledge } = useApiMutation("/api/knowledge", { method: "POST" });
-  const { mutateAsync: updateKnowledge } = useApiMutation("/api/knowledge/:id", { method: "PUT" });
+  const { mutateAsync: createKnowledge } = useApiMutation("/api/tenant/:tenantId/knowledge", { method: "POST" });
+  const { mutateAsync: updateKnowledge } = useApiMutation("/api/tenant/:tenantId/knowledge/:id", { method: "PUT" });
 
   const onSubmit = form.handleSubmit(async (body) => {
     try {
@@ -57,7 +57,7 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
         await createKnowledge({ body });
       }
 
-      invalidate("/api/knowledge");
+      invalidate("/api/tenant/:tenantId/knowledge");
       closeDialog(DialogType.CREATE_OR_UPDATE_KNOWLEDGE);
       toast({
         title: isEditing ? "Knowledge updated" : "Knowledge created",

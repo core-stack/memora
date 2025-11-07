@@ -11,7 +11,7 @@ import { MessageService } from './message.service';
 
 import type { CreateMessage } from "@snipet/schemas";
 
-@Controller('knowledge/:knowledgeSlug/chat/:chatId/message')
+@Controller('tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message')
 export class MessageController extends CrudController<Message>(
   { filterSchema: messageFilterSchema, createDtoSchema: createMessageSchema, updateDtoSchema: updateMessageSchema}
 ) {

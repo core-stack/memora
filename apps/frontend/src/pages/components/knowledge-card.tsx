@@ -23,7 +23,7 @@ interface KnowledgeCardProps {
 export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
   const { openDialog, closeDialog } = useDialog();
 
-  const { mutate: deleteKnowledge } = useApiMutation("/api/knowledge/:id", { method: "DELETE" });
+  const { mutate: deleteKnowledge } = useApiMutation("/api/tenant/:tenantId/knowledge/:id", { method: "DELETE" });
   const { toast } = useToast();
   const invalidate = useApiInvalidate();
   const handleDelete = () => {
@@ -42,7 +42,7 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
                   title: "Delete knowledge base",
                   description: "The knowledge base has been added to deletion queue, and will be deleted soon."
                 })
-                await invalidate("/api/knowledge");
+                await invalidate("/api/tenant/:tenantId/knowledge");
                 closeDialog(DialogType.CONFIRM)
               }
             })

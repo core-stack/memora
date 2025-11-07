@@ -10,7 +10,9 @@ import { SourceService } from './source.service';
 
 import type { GetUploadUrl } from '@snipet/schemas';
 import type { Request } from 'express';
-@Controller('knowledge/:knowledgeSlug/source')
+
+
+@Controller('tenant/:tenantId/knowledge/:knowledgeSlug/source')
 export class SourceController extends CrudController<Source>(
   { filterSchema: sourceFilterSchema, createDtoSchema: createSourceSchema, updateDtoSchema: updateSourceSchema },
 ) {

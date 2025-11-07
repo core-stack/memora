@@ -5,7 +5,7 @@ import { SearchService } from './search.service';
 
 import type { Request } from "express";
 
-@Controller('knowledge/:knowledgeSlug/search')
+@Controller('tenant/:tenantId/knowledge/:knowledgeSlug/search')
 export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 
