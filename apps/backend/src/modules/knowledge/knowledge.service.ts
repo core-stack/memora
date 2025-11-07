@@ -1,17 +1,15 @@
 import { Queue } from 'bullmq';
 
-import { env } from '@/env';
-import { CrudService } from '@/generics';
 import { HttpContext } from '@/generics/http-context';
+import { ServiceOptions } from '@/generics/service.interface';
+import { GenericTenantService } from '@/generics/tenant.service';
 import { JobType } from '@/jobs/types';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateKnowledge, Knowledge, UpdateKnowledge } from '@snipet/schemas';
 
-import { KnowledgeRepository } from './knowledge.repository';
-import { ServiceOptions } from '@/generics/service.interface';
 import { CreateKnowledgeEntity, KnowledgeEntity, UpdateKnowledgeEntity } from './knowledge.entity';
-import { GenericTenantService } from '@/generics/tenant.service';
+import { KnowledgeRepository } from './knowledge.repository';
 
 @Injectable()
 export class KnowledgeService extends GenericTenantService<
@@ -40,7 +38,7 @@ export class KnowledgeService extends GenericTenantService<
 
   override create(input: CreateKnowledge, opts?: ServiceOptions): Promise<Knowledge> {
     input.tags = input.tags?.filter(Boolean);
-    return this.repository.create(input as CreateKnowledgeEntity, { tx: opts?.tx });
+    return super.create(input as CreateKnowledgeEntity, opts);
   }
 
   override update(id: string, input: UpdateKnowledge, opts?: ServiceOptions): Promise<void> {

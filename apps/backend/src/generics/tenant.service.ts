@@ -1,9 +1,11 @@
-import { Logger } from "@nestjs/common";
-import { CrudService } from "./service";
-import { ServiceOptions } from "./service.interface";
+import { Logger } from '@nestjs/common';
+
+import { FilterOptions } from './filter-options';
+import { CrudService } from './service';
+import { ServiceOptions } from './service.interface';
 
 export abstract class GenericTenantService<
-  TSchema,
+  TSchema extends { tenantId: string },
   TCreateDto = Partial<TSchema>,
   TUpdateDto = Partial<TSchema>,
   TEntity = TSchema,
@@ -12,27 +14,51 @@ export abstract class GenericTenantService<
 > extends CrudService<TSchema, TCreateDto, TUpdateDto, TEntity, TCreateEntity, TUpdateEntity> {
   abstract readonly logger: Logger;
 
-  override create(
-    input: Omit<TCreateDto, "tenantId"> | Omit<TCreateEntity, "tenantId">,
-    opts?: ServiceOptions
+  override async find(filterOptions: FilterOptions<TSchema>, opts?: ServiceOptions): Promise<TSchema[]> {
+    const tenantId = this.getTenantId(opts);
+    if (!tenantId) {
+      this.logger.warn('Tentando realizar find sem tenantId');
+      return [];
+    }
+
+    return super.find(
+      { ...filterOptions, filter: { ...(filterOptions.filter as Partial<TSchema>), tenantId } },
+      opts,
+    );
+  }
+
+  override async create(
+    input: Omit<TCreateDto, 'tenantId'> | Omit<TCreateEntity, 'tenantId'>,
+    opts?: ServiceOptions,
   ): Promise<TSchema> {
-    return super.create({ ...input, tenantId: this.getTenantId(opts) } as TCreateEntity, opts);
+    const tenantId = this.getTenantId(opts);
+    this.logger.debug(`Criando registro com tenantId: ${tenantId}`);
+
+    return super.create({ ...input, tenantId } as TCreateEntity, opts);
   }
 
-  override update(
+  override async update(
     id: string,
-    input: Omit<TUpdateDto, "tenantId"> | Omit<TUpdateEntity, "tenantId">,
-    opts?: ServiceOptions
+    input: Omit<TUpdateDto, 'tenantId'> | Omit<TUpdateEntity, 'tenantId'>,
+    opts?: ServiceOptions,
   ): Promise<void> {
-    return super.update(id, { ...input, tenantId: this.getTenantId(opts) } as TUpdateEntity, opts);
+    const tenantId = this.getTenantId(opts);
+    this.logger.debug(`Atualizando registro ${id} com tenantId: ${tenantId}`);
+
+    return super.update(id, { ...input, tenantId } as TUpdateEntity, opts);
   }
 
-  protected getTenantId(opts?: ServiceOptions) {
-    if (!opts?.http) this.logger.warn(`HttpContext not found, but is required to get tenantId`);
+  protected getTenantId(opts?: ServiceOptions): string | undefined {
+    if (!opts?.http) {
+      this.logger.warn('HttpContext não encontrado — necessário para obter tenantId');
+      return undefined;
+    }
 
-    const tenantId = opts?.http?.getCookie("tenant-id");
-    if (!tenantId) this.logger.warn(`TenantId not found`);
+    const tenantId = opts.http.getCookie?.('tenant-id');
+    if (!tenantId) {
+      this.logger.warn('TenantId não encontrado no cookie');
+    }
 
-    return opts?.http?.getCookie("tenant-id");
+    return tenantId;
   }
 }

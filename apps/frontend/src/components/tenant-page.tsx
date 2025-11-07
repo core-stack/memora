@@ -10,7 +10,9 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Link } from '@/components/ui/link';
+import { DialogType } from '@/dialogs';
 import { useAuth } from '@/hooks/use-auth';
+import { useDialog } from '@/hooks/use-dialog';
 import { useLocation } from '@/hooks/use-location';
 import { useTenant } from '@/hooks/use-tenant';
 import { getNameInitials } from '@/lib/string';
@@ -52,9 +54,9 @@ const menuItems = [
 
 export function TenantPage() {
   const { user } = useAuth();
-  const { tenant, tenants } = useTenant();
+  const { tenant, tenants, setTenant } = useTenant();
   const { pathname } = useLocation();
-
+  const { openDialog } = useDialog();
   const activeSection = menuItems.find((item) => pathname === item.path)?.id ?? "knowledge";
 
   const handleLogout = () => {
@@ -65,6 +67,13 @@ export function TenantPage() {
   const handleProfile = () => {
     // Implementar navegação para perfil
     alert("Configurações de Perfil - Implementar página de perfil")
+  }
+
+  const handleSelectTenant = () => {
+    openDialog({
+      type: DialogType.SELECT_TENANT,
+      props: { tenants: tenants ?? [], setTenant }
+    })
   }
 
   return (
@@ -102,7 +111,7 @@ export function TenantPage() {
           <div className='flex gap-2'>
             {
               tenants && tenants?.length > 1 &&
-              <Button variant="ghost" className="gap-2 px-2">
+              <Button variant="ghost" className="gap-2 px-2" onClick={handleSelectTenant}>
                 <p className='font-bold'>{tenant?.name}</p>
                 <ArrowLeftRight className='w-2 h-2 text-primary' />
               </Button>
@@ -135,7 +144,11 @@ export function TenantPage() {
           </div>
         </div>
       </header>
-      <Outlet />
+      <div className="h-full bg-background">
+        <div className="container mx-auto py-8 px-4 max-w-6xl">
+          <Outlet />
+        </div>
+      </div>
     </div>
   )
 }

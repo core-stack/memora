@@ -1,10 +1,9 @@
 import { Queue } from 'bullmq';
 import { randomUUID } from 'crypto';
 
-import { env } from '@/env';
 import { CrudService } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
-import { HttpContext } from '@/generics/http-context';
+import { ServiceOptions } from '@/generics/service.interface';
 import { PublicStorageService } from '@/infra/storage/public-storage.service';
 import { JobType } from '@/jobs/types';
 import { InjectQueue } from '@nestjs/bullmq';
@@ -13,13 +12,11 @@ import { CreateSource, GetUploadUrl, Source, UpdateSource } from '@snipet/schema
 
 import { FolderService } from '../folder/folder.service';
 import { KnowledgeService } from '../knowledge.service';
-import { SourceRepository } from './source.repository';
 import { CreateSourceEntity, SourceEntity, UpdateSourceEntity } from './source.entity';
-import { ServiceOptions } from '@/generics/service.interface';
-import { GenericTenantService } from '@/generics/tenant.service';
+import { SourceRepository } from './source.repository';
 
 @Injectable()
-export class SourceService extends GenericTenantService<
+export class SourceService extends CrudService<
   Source, CreateSource, UpdateSource,
   SourceEntity, CreateSourceEntity, UpdateSourceEntity
 > {
@@ -70,7 +67,7 @@ export class SourceService extends GenericTenantService<
   async getUploadUrl(input: GetUploadUrl, opts?: ServiceOptions) {
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
     const ext = input.fileName.split(".").pop();
-    const key = `source/${this.getTenantId(opts)}/${knowledgeId}/${randomUUID()}.${ext}`;
+    const key = `source/${opts?.http?.getCookie("tenant-id")}/${knowledgeId}/${randomUUID()}.${ext}`;
     return this.storageService.getUploadUrl(key, input.contentType, { temp: true });
   }
 

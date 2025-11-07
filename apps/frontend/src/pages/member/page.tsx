@@ -1,12 +1,13 @@
 "use client"
 
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Users } from 'lucide-react';
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { CardDescription, CardTitle } from '@/components/ui/card';
+import { TenantPageHeader } from '@/components/tenant-page-header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DialogType } from '@/dialogs';
 import { useAuth } from '@/hooks/use-auth';
+import { useDialog } from '@/hooks/use-dialog';
 import { Permission } from '@snipet/permission';
 
 import { InvitesTable } from './invite-table';
@@ -14,23 +15,22 @@ import { MembersTable } from './member-table';
 
 export default function MembersPage() {
   const [activeTab, setActiveTab] = useState("members")
-  const { can } = useAuth();
-  
+  const { canInTenant } = useAuth();
+  const { openDialog } = useDialog();
   return (
-    <div className="p-6">
-      <div className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle>Members</CardTitle>
-          <CardDescription>Manage your team members</CardDescription>
-        </div>
-        {
-          can(Permission.CREATE_INVITE) &&
-          <Button>
-            <UserPlus className="mr-2 h-4 w-4" />
-            Invite
-          </Button>
+    <>
+      <TenantPageHeader
+        title='Members'
+        description='Manage your team members'
+        icon={<Users className="h-6 w-6 text-primary" />}
+        action={
+          canInTenant(Permission.CREATE_INVITE) ? {
+            icon: <UserPlus className="mr-2 h-4 w-4" />,
+            text: "Invite Member",
+            action: () => openDialog({ type: DialogType.INVITE_MEMBER })
+          } : undefined
         }
-      </div>
+      />
       <Tabs defaultValue="members" value={activeTab} onValueChange={setActiveTab}>
         <div className="flex items-center justify-between mb-4">
           <TabsList>
@@ -47,7 +47,6 @@ export default function MembersPage() {
           <InvitesTable />
         </TabsContent>
       </Tabs>
-
-    </div>
+    </>
   )
 }

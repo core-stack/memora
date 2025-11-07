@@ -33,8 +33,8 @@ export const TenantProvider = () => {
   );
   const tenantId = useMemo(() => cookies["tenant-id"], [cookies]);
   const tenant = user?.members.find((member) => member.tenantId === tenantId)?.tenant;
-  const tenants = user?.members.map((member) => member.tenant).filter((tenant) => !!tenant);
-
+  const tenants = user?.members.map((member) => member.tenant);
+  
   const setTenant = useCallback(async (tenantId: string) => {
     try {
       setCookies("tenant-id", tenantId);
@@ -46,10 +46,7 @@ export const TenantProvider = () => {
   }, [refetch, setCookies]);
 
   useEffect(() => {
-    console.log(tenant, isAuthenticated, user);
     if (!tenant && isAuthenticated && !isOpenDialog) {
-      console.log("no tenant");
-      
       if (user && user.members.length) {
         setTenant(user.members[0].tenantId);
       } else {
