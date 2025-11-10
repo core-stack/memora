@@ -14,7 +14,7 @@ export class MilvusSourceVectorStoreService extends MilvusService<SourceFragment
   protected override logger = new Logger(MilvusSourceVectorStoreService.name);
 
   constructor(llmManager: LLMManagerService) {
-    super(llmManager, "chat", SourceFragment, sourceFields, sourceFunctions, sourceIndexSchema)
+    super(llmManager, "source", SourceFragment, sourceFields, sourceFunctions, sourceIndexSchema)
   }
 
   fragmentToChunk(c: SourceFragment | SourceFragment[] | Fragments<SourceFragment>): RowData[] {

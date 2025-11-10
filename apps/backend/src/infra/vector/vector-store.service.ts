@@ -17,7 +17,7 @@ export abstract class VectorStore<T extends BaseFragment> {
   abstract deleteFragments(knowledgeId: string, fragments: T[] | T | Fragments<T>): Promise<void>;
   abstract search(knowledgeId: string, ...options: Array<WithSearchOptions | undefined>): Promise<Fragments<T>>;
 
-  abstract delete(knowledgeId: string, filter: Record<string, string | number | boolean>): Promise<void>;
+  abstract deleteByFilter(knowledgeId: string, filter: Record<string, string | number | boolean>): Promise<void>;
 
   static withFilters(filters: Record<string, string | number | boolean>): WithSearchOptions {
     return (currentOpts: Partial<SearchOptions>) => {

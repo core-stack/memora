@@ -28,10 +28,10 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
     if (!knowledge) return;
     job.updateProgress(10);
     // delete data in vector store
-    await this.sourceVectorStore.delete(knowledgeId, {});
+    await this.sourceVectorStore.deleteByFilter(knowledgeId, {});
     job.updateProgress(30);
 
-    await this.chatVectorStore.delete(knowledgeId, {});
+    await this.chatVectorStore.deleteByFilter(knowledgeId, {});
     job.updateProgress(50);
 
     // delete files in storage

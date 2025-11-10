@@ -61,7 +61,6 @@ const envSchema = z.object({
   // SECURITY
   ENCRYPT_MASTER_PASSWORD: z.string().optional().default("snipet"),
 
-
   // PLUGIN
   PLUGINS_DIR: z.string().optional().default(path.join(__dirname, "..", "..", "plugins")),
   PLUGINS_BUCKET: z.string().optional().default("plugins"),
@@ -112,7 +111,7 @@ const envSchema = z.object({
   // MILVUS
   MILVUS_URL: z.url().optional().default("localhost:19530"),
   MILVUS_COLLECTION_PREFIX: z.string().optional().default("snipet"),
-  MULVUS_RECREATE_COLLECTION: z.string().transform((s) => s === "true").optional(),
+  MILVUS_RECREATE_COLLECTION: z.string().transform((s) => s === "true").optional(),
 
   // PROMPT
   PROMPT_TEMPLATES_DIR: z.string().optional().default(path.join(__root, "prompts")),

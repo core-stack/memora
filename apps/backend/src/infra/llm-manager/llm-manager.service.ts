@@ -26,11 +26,11 @@ export class LLMManagerService {
     private readonly loader: LLMLoaderService,
     private readonly llmRepository: LLMRepository
   ) {}
-  
+
   async onModuleInit() {
     try {
       const presetsPath = join(__root, 'dist', '@llm-presets');
-      
+
       try {
         await readdir(presetsPath);
       } catch (dirError) {
@@ -38,29 +38,27 @@ export class LLMManagerService {
         this.presets = [];
         return;
       }
-  
+
       const dir = await readdir(presetsPath);
       const presets: LLMPreset[] = [];
-      
+
       for (const file of dir.filter((f) => f.endsWith('.json'))) {
         const filePath = join(presetsPath, file);
         try {
           const content = await readFile(filePath, 'utf8');
           const parsedData = JSON.parse(content);
-          
+
           const validatedPresets = llmPresetSchema.array().parse(parsedData);
           presets.push(...validatedPresets);
         } catch (err) {
           this.logger.error(`Error loading preset ${file}:`, err);
         }
       }
-      
-      setTimeout(() => {
-        this.presets = presets || [];
-        this.logger.verbose(`LLM Manager inicializado com ${this.presets.length} presets`);
-        this.presets.forEach(preset => {
-          this.logger.verbose(`   - ${preset.name}`);
-        });
+
+      this.presets = presets || [];
+      this.logger.verbose(`LLM Manager inicializado com ${this.presets.length} presets`);
+      this.presets.forEach(preset => {
+        this.logger.verbose(`   - ${preset.name}`);
       });
     } catch (err) {
       this.logger.error(err);
@@ -68,29 +66,28 @@ export class LLMManagerService {
     }
   }
 
-
   getPresets() {
     return this.presets.map(preset => ({ ...preset, iconPath: `${env.AWS_PUBLIC_BASE_URL}/${preset.iconPath}` }));
   }
 
-  async getEmbeddingByKnowledge(knowledgeId: string) {
+  async getEmbeddingByKnowledge(knowledgeId: string): Promise<EmbeddingProvider | null> {
     const llms = await this.llmRepository.findByKnowledge(knowledgeId);
     const embeddingLLM = llms.find(llm => llm.type === "EMBEDDING");
     if (!embeddingLLM) return null;
-    return this.getInstance("EMBEDDING", embeddingLLM);
+    return this.getInstance(embeddingLLM) as unknown as EmbeddingProvider;
   }
 
-  getInstance(type: "EMBEDDING", llm: LLMEntity): Promise<EmbeddingProvider>
-  getInstance(type: "TEXT", llm: LLMEntity): Promise<TextProvider>
-  async getInstance(type: LLMType, llm: LLMEntity): Promise<EmbeddingProvider | TextProvider> {
-    if (this.instances.has(llm.id)) return this.instances.get(llm.id)!.instance;
+  async getInstance<T extends LLMEntity>(
+    llm: T
+  ): Promise<T['type'] extends 'EMBEDDING' ? EmbeddingProvider : TextProvider> {
+    if (this.instances.has(llm.id)) return this.instances.get(llm.id)!.instance as any;
 
     const preset = this.presets.find(preset => preset.config.model === llm.model);
     if (!preset) throw new NotFoundError("LLM not found");
-    
+
     const instance = await this.loader.load(llm, preset);
     this.addInstance(llm, instance);
-    return instance;
+    return instance as any;
   }
 
   private addInstance(llm: LLMEntity, instance: EmbeddingProvider | TextProvider) {
@@ -99,11 +96,10 @@ export class LLMManagerService {
 
   @Cron(CronExpression.EVERY_MINUTE)
   async cleanupInstances() {
-    this.logger.verbose(`Cleaning up instances...`);
     if (this.instances.size > env.LLM_INSTANCE_LIMIT) {
       this.logger.verbose(`Cleaning up ${this.instances.size - env.LLM_INSTANCE_LIMIT} instances...`);
       // remove most old usages
-      this.instances = new Map(Array.from(this.instances).sort((a, b) => a[1].lastUse - b[1].lastUse).slice(0, env.LLM_INSTANCE_LIMIT));   
+      this.instances = new Map(Array.from(this.instances).sort((a, b) => a[1].lastUse - b[1].lastUse).slice(0, env.LLM_INSTANCE_LIMIT));
     }
 
     this.instances.forEach((instance, key) => {
@@ -117,7 +113,5 @@ export class LLMManagerService {
         return;
       }
     });
-
-    this.logger.verbose(`Done cleaning up instances...`);
   }
 }
