@@ -121,7 +121,7 @@ export function TenantPage() {
                 <Button asChild className="gap-2 px-2">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.image || "/placeholder.svg"} alt={user?.name} />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                    <AvatarFallback className="bg-primary text-white font-bold text-xs">
                       {getNameInitials(user?.name || "")}
                     </AvatarFallback>
                   </Avatar>

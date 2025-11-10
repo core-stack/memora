@@ -16,8 +16,8 @@ export default function Home() {
         description='Manage your knowledge bases and organize your documents'
         icon={<Database className="h-6 w-6 text-primary" />}
         action={{
-          text: "Knowledge Base",
-          action: () => openDialog({ type: DialogType.SELECT_LLM_PRESET }),
+          text: "Add Knowledge Base",
+          action: () => openDialog({ type: DialogType.CREATE_OR_UPDATE_KNOWLEDGE }),
           icon: <Plus className="h-5 w-5 mr-2" />
         }}
       />

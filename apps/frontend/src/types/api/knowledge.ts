@@ -4,23 +4,23 @@ export interface KnowledgeRoutes {
   "/api/tenant/:tenantId/knowledge": {
     GET: {
       query: KnowledgeFilter;
-      params: { tenantId: string };
+      params: Partial<{ tenantId: string }>;
       response: Knowledge[];
     },
     POST: {
       body: CreateKnowledge;
-      params: { tenantId: string };
+      params: Partial<{ tenantId: string }>;
       response: Knowledge;
     }
   },
   "/api/tenant/:tenantId/knowledge/:id": {
     PUT: {
       body: UpdateKnowledge;
-      params: { tenantId: string, id: string };
+      params: Partial<{ tenantId: string, id: string }>;
       response: undefined;
     },
     DELETE: {
-      params: { tenantId: string, id: string };
+      params: Partial<{ tenantId: string, id: string }>;
       response: undefined;
     }
   },

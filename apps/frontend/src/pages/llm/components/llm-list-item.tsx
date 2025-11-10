@@ -51,7 +51,7 @@ export function LLMListItem({ llm, preset }: LLMListItemProps) {
       <CardContent className="p-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className={cn("relative h-10 w-10 flex-shrink-0 rounded-lg flex items-center justify-center", !preset && "bg-muted")}>
+            <div className={cn("relative h-10 w-10 shrink-0 rounded-lg flex items-center justify-center", !preset && "bg-muted")}>
               { !preset && <Settings className="h-6 w-6 text-muted-foreground" /> }
               { preset && <img src={preset.iconPath} alt={preset.name} width={48} height={48} className="object-cover" /> }
             </div>

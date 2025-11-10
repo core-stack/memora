@@ -2,6 +2,7 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Help } from '../ui/help';
 import { Input } from '../ui/input';
 
 type Props = React.ComponentProps<"input"> & {
@@ -9,6 +10,7 @@ type Props = React.ComponentProps<"input"> & {
   name: string;
   fieldclassname?: string;
   split?: boolean | { separator: string; type?: "string" | "number" };
+  help?: string; 
 };
 
 export const FormInput = ({ split, ...props }: Props = { split: false } as Props) => {
@@ -22,13 +24,25 @@ export const FormInput = ({ split, ...props }: Props = { split: false } as Props
     splitOptions = { type: split?.type ?? "string", separator: split?.separator ?? "," };
   }
 
+  if (props.help && !props.label) {
+    throw new Error("help prop requires label prop");
+  }
+
   return (
     <FormField
       control={form.control}
       name={props.name}
       render={({ field }) => (
         <FormItem className={props.fieldclassname}>
-          {props.label && <FormLabel>{props.label}</FormLabel>}
+          {
+            props.label && (
+              <FormLabel className='flex gap-0.5'>
+                { props.label }
+                { props.required && <span className="text-destructive">*</span> }
+                { props.help && <Help text={props.help} /> }
+              </FormLabel>
+            )
+          }
           <FormControl>
             <Input
               disabled={isLoading}

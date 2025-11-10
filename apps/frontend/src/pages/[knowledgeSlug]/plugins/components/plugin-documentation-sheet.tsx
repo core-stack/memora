@@ -31,7 +31,7 @@ export function PluginDocumentationSheet({ plugin, isOpen, onClose }: PluginDocu
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
         <SheetHeader className="space-y-4">
           <div className="flex items-start gap-4">
-            <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-muted/50 flex-shrink-0">
+            <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-muted/50 shrink-0">
               <img
                 src={`${env.STORAGE_URL}/plugins/${plugin.name}/${plugin.iconPath ?? "icon.png"}`}
                 alt={`${plugin.displayName || plugin.name} icon`}

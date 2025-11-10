@@ -26,6 +26,7 @@ export const llmFilterSchema = filterSchema.extend({
     id: z.uuid().optional(),
     name: z.string().optional(),
     tenantId: z.uuid().optional(),
+    type: llmTypeSchema.optional(),
   }).strict().optional(),
   order: z.object({
     createdAt: orderSchema,

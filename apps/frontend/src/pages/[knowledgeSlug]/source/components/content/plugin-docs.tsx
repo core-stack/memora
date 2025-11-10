@@ -34,7 +34,7 @@ export function PluginDocs() {
             <img
               src={plugin.iconPath || "/placeholder.svg"}
               alt={plugin.displayName || plugin.name}
-              className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+              className="w-16 h-16 rounded-lg object-cover shrink-0"
             />
           )}
           <div className="flex-1">

@@ -59,7 +59,7 @@ export function ConfigureLLDialog({ preset }: ConfigureLLDialogProps) {
     <DialogContent className="sm:max-w-[500px]">
       <DialogHeader>
         <div className="flex items-center gap-3 mb-2">
-          <div className="relative h-10 w-10 flex-shrink-0 rounded-lg flex items-center justify-center overflow-hidden">
+          <div className="relative h-10 w-10 shrink-0 rounded-lg flex items-center justify-center overflow-hidden">
             <img
               src={preset.iconPath || "/placeholder.svg"}
               alt={preset.name}

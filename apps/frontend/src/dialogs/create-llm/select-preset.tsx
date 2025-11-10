@@ -65,7 +65,7 @@ export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true }: 
                 onClick={() => handleSelectPreset(preset)}
                 className="w-full flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-accent hover:border-accent-foreground/20 transition-colors text-left"
               >
-                <div className="relative h-12 w-12 flex-shrink-0 rounded-lg flex items-center justify-center overflow-hidden">
+                <div className="relative h-12 w-12 shrink-0 rounded-lg flex items-center justify-center overflow-hidden">
                   <img
                     src={preset.iconPath || "/placeholder.svg"}
                     alt={preset.name}

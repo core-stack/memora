@@ -20,6 +20,7 @@ export const knowledgeSchema = z.object({
   deleteError: z.string().optional(),
 
   tenantId: z.uuid(),
+  embeddingModelId: z.uuid(),
 
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -50,7 +51,8 @@ export const createKnowledgeSchema = knowledgeSchema.pick({
   slug: true,
   title: true,
   description: true,
-  instructions: true
+  instructions: true,
+  embeddingModelId: true,
 }).extend({
   tags: z.array(z.string()).optional()
 });
