@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Google Gemini Embedding (text-embedding-004)",
+    "description": "Modelo de embedding de texto da Google com alta precisão semântica.",
+    "iconPath": "gemini.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "adapter": "gemini",
+    "required": ["apiKey"],
+    "config": {
+      "type": "EMBEDDING",
+      "model": "text-embedding-004",
+      "dimension": 768
+    }
+  },
+  {
+    "name": "Google Gemini Embedding (text-multilingual-embedding-002)",
+    "description": "Modelo de embedding multilíngue da Google, ideal para aplicações globais.",
+    "iconPath": "gemini.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "adapter": "gemini",
+    "required": ["apiKey"],
+    "config": {
+      "type": "EMBEDDING",
+      "model": "text-multilingual-embedding-002",
+      "dimension": 512
+    }
+  }
+]

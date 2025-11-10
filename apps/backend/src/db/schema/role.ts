@@ -18,7 +18,7 @@ export const role = pgTable("roles", {
 
   scope: roleScopeEnum("scope").notNull().default("TENANT"),
 
-  tenantId: varchar("tenant_id", { length: 36 }),
+  tenantId: varchar("tenant_id", { length: 36 }).references(() => tenant.id, { onDelete: "cascade" }),
   creatorId: varchar("creator_id", { length: 36 }),
 
   createdAt: timestamp("created_at", { withTimezone: true })

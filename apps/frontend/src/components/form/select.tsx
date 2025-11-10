@@ -19,18 +19,26 @@ type Props = {
 export const FormSelect = (props: Props) => {
   const form = useFormContext();
   const isLoading = form.formState.isSubmitting;
-  
+
   if (props.help && !props.label) {
     throw new Error("help prop requires label prop");
+  }
+
+  const log = (...args: any) => {
+    console.log(...args);
+    return true;
   }
 
   return (
     <FormField
       control={form.control}
       name={props.name}
+      defaultValue={props.defaultValue}
+      disabled={props.disabled || isLoading}
       render={({ field }) => (
         <FormItem className={props.fieldclassname}>
           {
+            !log("field", field) &&
             props.label && (
               <FormLabel className='flex gap-0.5'>
                 { props.label }
@@ -40,7 +48,13 @@ export const FormSelect = (props: Props) => {
             )
           }
           <FormControl>
-            <Select disabled={isLoading} value={field.value} onValueChange={(v) => field.onChange(v)} defaultValue={props.defaultValue}>
+            <Select
+              disabled={isLoading || props.disabled}
+              value={field.value}
+              name={props.name}
+              onValueChange={(v) => field.onChange(v)}
+              defaultValue={props.defaultValue}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={props.placeholder} />
               </SelectTrigger>

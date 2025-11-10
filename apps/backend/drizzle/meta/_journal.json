@@ -5,50 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1761147258705,
-      "tag": "0000_brainy_mentor",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1761176630191,
-      "tag": "0001_add llm",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1761297626163,
-      "tag": "0002_youthful_maginty",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1761674703530,
-      "tag": "0003_puzzling_crystal",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1761866006134,
-      "tag": "0004_overconfident_the_fallen",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1761920966524,
-      "tag": "0005_swift_the_spike",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1762452239484,
-      "tag": "0006_unusual_ironclad",
+      "when": 1762781695406,
+      "tag": "0000_left_jigsaw",
       "breakpoints": true
     }
   ]

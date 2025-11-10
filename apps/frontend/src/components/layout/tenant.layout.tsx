@@ -1,22 +1,16 @@
 "use client"
 
-import { ArrowLeftRight, Brain, Database, LogOut, Plug, Settings, Users } from 'lucide-react';
+import { ArrowLeftRight, Brain, Database, Plug, Settings, Users } from 'lucide-react';
 import { Outlet } from 'react-router';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
 import { Link } from '@/components/ui/link';
 import { DialogType } from '@/dialogs';
-import { useAuth } from '@/hooks/use-auth';
 import { useDialog } from '@/hooks/use-dialog';
 import { useLocation } from '@/hooks/use-location';
 import { useTenant } from '@/hooks/use-tenant';
-import { getNameInitials } from '@/lib/string';
 import { cn } from '@/lib/utils';
+import { UserInfo } from '../user';
 
 const menuItems = [
   {
@@ -49,25 +43,15 @@ const menuItems = [
     path: '/settings',
     icon: Settings,
   }
- 
+
 ]
 
-export function TenantPage() {
-  const { user } = useAuth();
+export function TenantLayout() {
   const { tenant, tenants, setTenant } = useTenant();
   const { pathname } = useLocation();
   const { openDialog } = useDialog();
   const activeSection = menuItems.find((item) => pathname === item.path)?.id ?? "knowledge";
 
-  const handleLogout = () => {
-    // Implementar lógica de logout
-    alert("Logout - Implementar lógica de autenticação")
-  }
-
-  const handleProfile = () => {
-    // Implementar navegação para perfil
-    alert("Configurações de Perfil - Implementar página de perfil")
-  }
 
   const handleSelectTenant = () => {
     openDialog({
@@ -83,9 +67,9 @@ export function TenantPage() {
           <div className='flex gap-4 h-full'>
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-foreground flex items-center justify-center">
+                <Link href='/' className="h-8 w-8 rounded-lg bg-foreground flex items-center justify-center">
                   <img src="logo.svg" className="h-5 w-5" />
-                </div>
+                </Link>
               </div>
             </div>
 
@@ -116,31 +100,7 @@ export function TenantPage() {
                 <ArrowLeftRight className='w-2 h-2 text-primary' />
               </Button>
             }
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button asChild className="gap-2 px-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.image || "/placeholder.svg"} alt={user?.name} />
-                    <AvatarFallback className="bg-primary text-white font-bold text-xs">
-                      {getNameInitials(user?.name || "")}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleProfile}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Exit</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <UserInfo />
           </div>
         </div>
       </header>

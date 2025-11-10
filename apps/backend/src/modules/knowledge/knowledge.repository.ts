@@ -1,7 +1,7 @@
 import { and, eq, inArray } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 
-import { knowledge } from '@/db/schema';
+import { knowledge, knowledgeLLM } from '@/db/schema';
 import { knowledgeTag } from '@/db/schema/knowledge_tag';
 import { DrizzleGenericRepository } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
@@ -77,6 +77,10 @@ export class KnowledgeRepository extends DrizzleGenericRepository<
         description: data.description,
         instructions: data.instructions,
       }).returning();
+      await db.insert(knowledgeLLM).values({
+        knowledgeId: createdKnowledge.id,
+        llmId: data.embeddingModelId
+      });
       if (data.tags && data.tags.length > 0) {
         await db.insert(knowledgeTag).values(data.tags.map(tag => ({
           knowledgeId: createdKnowledge.id,

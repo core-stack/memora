@@ -77,6 +77,11 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
   const watchName = form.watch("title");
 
   useEffect(() => {
+    if (!llms.length) return;
+    form.setValue("embeddingModelId", llms[0]?.id);
+  }, [form, llms]);
+
+  useEffect(() => {
     if (watchName && !isEditing) form.setValue("slug", generateSlug(watchName))
   }, [form, isEditing, watchName]);
 
@@ -90,14 +95,14 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-6">
-          <FormInput 
+          <FormInput
             name='title'
             placeholder='Title of knowledge'
             label='Title'
-            required 
+            required
             help='A name for the knowledge base'
           />
-          <FormTextarea 
+          <FormTextarea
             name='description'
             placeholder='Description of knowledge'
             label='Description'
@@ -112,7 +117,7 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div className="space-y-6">
-                <FormInput 
+                <FormInput
                   name='slug'
                   placeholder='Slug of knowledge'
                   label='Slug'
@@ -120,9 +125,9 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
                   required
                   help='A unique identifier for the knowledge base that will be used in the URL'
                 />
-                <FormSelect 
-                  name='embedding-model' 
-                  data={llms.map(llm => ({ label: llm.name, value: llm.id}))}
+                <FormSelect
+                  name='embeddingModelId'
+                  data={llms.map(llm => ({ label: llm.name, value: llm.id }))}
                   placeholder='Select a embedding model'
                   label='Embedding Model'
                   defaultValue={isEditing ? knowledge?.embeddingModelId : llms.length > 0 ? llms[0].id : undefined}
@@ -136,8 +141,8 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
                   help='Instructions for the knowledge base'
                 />
                 <FormInput
-                  name='tags' 
-                  placeholder='Tags of knowledge' 
+                  name='tags'
+                  placeholder='Tags of knowledge'
                   label='Tags'
                   help='Tags for the knowledge base'
                 />

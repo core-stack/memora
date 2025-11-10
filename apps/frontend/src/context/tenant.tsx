@@ -26,25 +26,30 @@ export const TenantProvider = () => {
 
   const { data: user, isLoading, refetch } = useApiQuery(
     "/api/user/self",
-    { method: "GET", retry: false }
+    { method: "GET", retry: (failureCount) => failureCount < 1 }
   );
+
   const tenant = user?.members.find((member) => member.tenantId === tenantId)?.tenant;
   const tenants = user?.members.map((member) => member.tenant);
-  
+
   const setTenant = useCallback(async (tenantId: string) => {
     try {
       setTenantId(tenantId);
       setCanRender(true);
+      await refetch();
     } catch (error) {
       console.error(error);
     }
   }, [refetch, setTenantId]);
 
   useEffect(() => {
-    if (!tenant && isAuthenticated && !isOpenDialog) {
-      if (user && user.members.length) {
-        setTenant(user.members[0].tenantId);
-      } else {
+    if (!tenant && tenantId) return setTenantId(null);
+    if (!tenant && isAuthenticated) {
+      if (tenants && tenants?.length > 0) {
+        console.log(tenants);
+
+        setTenant(tenants[0].id);
+      } else if (!isOpenDialog) {
         setIsOpenDialog(true);
         openDialog({ type: DialogType.CREATE_TENANT });
       }
@@ -52,7 +57,7 @@ export const TenantProvider = () => {
     if (tenant && !canRender) {
       setCanRender(true);
     }
-  }, [tenant, isAuthenticated, isOpenDialog, openDialog, user]);
+  }, [tenant, isAuthenticated, isOpenDialog, openDialog, tenants, canRender, setTenant, tenantId, setTenantId]);
 
   return (
     <TenantContext.Provider value={{
