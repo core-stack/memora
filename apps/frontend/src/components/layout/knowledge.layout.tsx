@@ -6,21 +6,20 @@ import { Outlet } from 'react-router';
 
 import { Link } from '@/components/ui/link';
 import { SearchProvider } from '@/context/search-provider';
-import { DialogType } from '@/dialogs';
-import { useDialog } from '@/hooks/use-dialog';
 import { useKnowledge } from '@/hooks/use-knowledge';
 import { useLocation } from '@/hooks/use-location';
-import { useTenant } from '@/hooks/use-tenant';
 import { cn } from '@/lib/utils';
 
 import { Button } from '../ui/button';
 import { UserInfo } from '../user';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 export function KnowledgeLayout() {
-  const { tenant, tenants, setTenant } = useTenant();
+  const { data: knowledges = [] } = useApiQuery("/api/tenant/:tenantId/knowledge", { method: "GET" });
   const { pathname } = useLocation();
-  const { openDialog } = useDialog();
   const { slug } = useKnowledge();
+  const knowledge = knowledges.find((knowledge) => knowledge.slug === slug);
 
   const menuItems = useMemo(() => [
     {
@@ -52,10 +51,10 @@ export function KnowledgeLayout() {
   const activeSection = menuItems.find((item) => pathname === item.path)?.id ?? "knowledge";
 
   const handleSelectTenant = () => {
-    openDialog({
-      type: DialogType.SELECT_TENANT,
-      props: { tenants: tenants ?? [], setTenant }
-    })
+    // openDialog({
+    //   type: DialogType.SELECT_TENANT,
+    //   props: { tenants: tenants ?? [], setTenant }
+    // })
   }
 
   return (
@@ -93,11 +92,20 @@ export function KnowledgeLayout() {
 
             <div className='flex gap-2'>
               {
-                tenants && tenants?.length > 1 &&
-                <Button variant="ghost" className="gap-2 px-2" onClick={handleSelectTenant}>
-                  <p className='font-bold'>{tenant?.name}</p>
-                  <ArrowLeftRight className='w-2 h-2 text-primary' />
-                </Button>
+                knowledges && knowledges?.length > 1 &&
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" className="gap-2 px-2" onClick={handleSelectTenant}>
+                        <p className='font-bold'>{knowledge?.title}</p>
+                        <ArrowLeftRight className='w-2 h-2 text-primary' />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Switch knowledge base</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               }
               <UserInfo />
             </div>

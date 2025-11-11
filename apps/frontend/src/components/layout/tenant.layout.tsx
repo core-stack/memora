@@ -12,6 +12,7 @@ import { useTenant } from '@/hooks/use-tenant';
 import { cn } from '@/lib/utils';
 
 import { UserInfo } from '../user';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 const menuItems = [
   {
@@ -52,7 +53,6 @@ export function TenantLayout() {
   const { pathname } = useLocation();
   const { openDialog } = useDialog();
   const activeSection = menuItems.find((item) => pathname === item.path)?.id ?? "knowledge";
-
 
   const handleSelectTenant = () => {
     openDialog({
@@ -96,10 +96,19 @@ export function TenantLayout() {
           <div className='flex gap-2'>
             {
               tenants && tenants?.length > 1 &&
-              <Button variant="ghost" className="gap-2 px-2" onClick={handleSelectTenant}>
-                <p className='font-bold'>{tenant?.name}</p>
-                <ArrowLeftRight className='w-2 h-2 text-primary' />
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" className="gap-2 px-2" onClick={handleSelectTenant}>
+                      <p className='font-bold'>{tenant?.name}</p>
+                      <ArrowLeftRight className='w-2 h-2 text-primary' />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Switch tenant</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             }
             <UserInfo />
           </div>
