@@ -28,18 +28,24 @@ export interface SourceRoutes {
   },
   "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id": {
     GET: {
-      params: { tenantId: string, knowledgeSlug: string, id: string };
+      params: Partial<{ tenantId: string, knowledgeSlug: string, id: string }>;
       response: Source;
     },
     PUT: {
       body: UpdateSource;
-      params: { tenantId: string, knowledgeSlug: string, id: string };
+      params: Partial<{ tenantId: string, knowledgeSlug: string, id: string }>;
       response: undefined;
     },
     DELETE: {
-      params: { tenantId: string, knowledgeSlug: string, id: string };
+      params: Partial<{ tenantId: string, knowledgeSlug: string, id: string }>;
       response: undefined;
     }
+  },
+  "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/download-url": {
+    GET: {
+      params: Partial<{ tenantId: string, knowledgeSlug: string, id: string }>;
+      response: GetFileUrlResponse;
+    },
   },
   "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/retry": {
     POST: {

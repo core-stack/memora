@@ -1,4 +1,4 @@
-import { Download, ExternalLink } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -13,20 +13,46 @@ import { DateFormat, formatBytes, formatDate } from '@/utils/format';
 import { PDFViewer } from './pdf';
 
 import type { Source } from '@snipet/schemas';
+import { useApiMutation } from '@/hooks/use-api-mutation';
+import { useToast } from '@/hooks/use-toast';
+import { useDownload } from '@/hooks/use-download';
 type Props = {
   source?: Source;
   isLoading: boolean;
 }
 
 export const FileViewer = ({ source }: Props) => {
+  const { toast } = useToast();
   const { data: preview } = useApiQuery(
     "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:sourceId/view",
-    { method: "GET", params: { sourceId: source?.id } }
+    { method: "GET", params: { sourceId: source?.id }, enabled: !!source?.id }
   );
+  const { download } = useDownload();
+  const { mutate } = useApiMutation(
+    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/download-url",
+    { method: "GET" }
+  )
 
   const [showHeader, setShowHeader] = useState(false);
 
-  const click = () => alert("test");
+  const handleDownload = () => {
+    if (!source) return;
+    mutate(
+      { params: { id: source?.id } },
+      {
+        onSuccess: (data) => {
+          download(data.url, source?.originalName);
+        },
+        onError: (error) => {
+          toast({
+            title: "Error downloading file",
+            description: (error as Error).message,
+            variant: "destructive",
+          })
+        }
+      },
+    );
+  }
   return (
     <Card
       className="flex flex-col w-full h-full relative overflow-hidden group"
@@ -45,11 +71,8 @@ export const FileViewer = ({ source }: Props) => {
             <IndexStatusBadge status={source?.indexStatus} />
           </div>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={click}>
+            <Button variant="ghost" size="sm" onClick={handleDownload}>
               <Download className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={click}>
-              <ExternalLink className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -65,7 +88,18 @@ export const FileViewer = ({ source }: Props) => {
       </CardHeader>
 
       <CardContent className="flex-1 p-0">
-        <PDFViewer file={preview?.url!} />
+        {
+          preview?.url && (
+            <PDFViewer file={preview.url} />
+          )
+        }
+        {
+          !preview?.url && (
+            <div className="flex items-center justify-center h-full">
+              <span className="text-muted-foreground">No preview available</span>
+            </div>
+          )
+        }
       </CardContent>
       <div className="absolute top-0 left-0 right-0 h-12 z-9" onMouseEnter={() => setShowHeader(true)} />
     </Card>

@@ -7,7 +7,7 @@ import { GenericTenantService } from '@/generics/tenant.service';
 import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { JobType } from '@/jobs/types';
 import { InjectQueue } from '@nestjs/bullmq';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateSource, GetUploadUrl, Source, UpdateSource } from '@snipet/schemas';
 
 import { FolderService } from '../folder/folder.service';
@@ -71,15 +71,24 @@ export class SourceService extends GenericTenantService<
     return this.storageService.getUploadUrl(key, input.contentType, { temp: true });
   }
 
+  async downloadUrl(sourceId: string, opts?: ServiceOptions) {
+    const source = await this.repository.findByID(sourceId, { tx: opts?.tx });
+    if (!source) throw new NotFoundException("Source not found");
+    return {
+      url: await this.storageService.getPreSignedDownloadUrl(source.key),
+      key: source.key
+    };
+  }
+
   async view(sourceId: string, opts?: ServiceOptions) {
     const source = (await this.repository.find({ filter: { id: sourceId } }, { tx: opts?.tx }))[0];
-    if (!source) throw new BadRequestException("Source not found");
+    if (!source) throw new NotFoundException("Source not found");
     return this.storageService.getVisualizationUrl(source.key);
   }
 
   async retryIndex(sourceId: string, opts?: ServiceOptions) {
     const source = (await this.repository.find({ filter: { id: sourceId } }, { tx: opts?.tx }))[0];
-    if (!source) throw new BadRequestException("Source not found");
+    if (!source) throw new NotFoundException("Source not found");
     await this.repository.update(source.id, { indexStatus: 'PENDING' }, { tx: opts?.tx });
     const failedJob = await this.ingestQueue.getJob(source.id);
     if (failedJob && await failedJob.isFailed()) {

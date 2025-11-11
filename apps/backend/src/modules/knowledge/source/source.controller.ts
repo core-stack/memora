@@ -11,10 +11,13 @@ import { SourceService } from './source.service';
 import type { GetUploadUrl } from '@snipet/schemas';
 import type { Request } from 'express';
 
-
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/source')
 export class SourceController extends CrudController<Source>(
-  { filterSchema: sourceFilterSchema, createDtoSchema: createSourceSchema, updateDtoSchema: updateSourceSchema },
+  {
+    filterSchema: sourceFilterSchema,
+    createDtoSchema: createSourceSchema,
+    updateDtoSchema: updateSourceSchema
+  },
 ) {
   constructor(public service: SourceService) {
     super(service);
@@ -23,6 +26,11 @@ export class SourceController extends CrudController<Source>(
   @Get(":source_id/view")
   async view(@Req() req: Request, @ZodParam("source_id", idSchema) sourceId: string) {
     return this.service.view(sourceId, { http: this.loadContext(req) });
+  }
+
+  @Get(":source_id/download-url")
+  async download(@Req() req: Request, @ZodParam("source_id", idSchema) sourceId: string) {
+    return this.service.downloadUrl(sourceId, { http: this.loadContext(req) });
   }
 
   @Post("upload-url")
