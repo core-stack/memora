@@ -15,7 +15,7 @@ export interface InviteRoutes {
   },
   "/api/tenant/:tenantId/invite/:id": {
     DELETE: {
-      params: { tenantId: string, id: string };
+      params: Partial<{ tenantId: string, id: string }>;
       response: undefined;
     }
   },

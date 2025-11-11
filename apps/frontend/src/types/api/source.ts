@@ -3,13 +3,13 @@ import type { GetUploadUrl, SourceFilter, CreateSource, UpdateSource, Source, Ge
 export interface SourceRoutes {
   "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:sourceId/view": {
     GET: {
-      params: { tenantId: string, knowledgeSlug: string, sourceId: string };
+      params: Partial<{ tenantId: string, knowledgeSlug: string, sourceId: string }>;
       response: GetFileUrlResponse;
     }
   },
   "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/upload-url": {
     POST: {
-      params: { tenantId: string, knowledgeSlug: string };
+      params: Partial<{ tenantId: string, knowledgeSlug: string }>;
       body: GetUploadUrl;
       response: GetFileUrlResponse;
     }
@@ -17,12 +17,12 @@ export interface SourceRoutes {
   "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source": {
     GET: {
       query: SourceFilter;
-      params: { tenantId: string, knowledgeSlug: string };
+      params: Partial<{ tenantId: string, knowledgeSlug: string }>;
       response: Source[];
     },
     POST: {
       body: CreateSource;
-      params: { tenantId: string, knowledgeSlug: string };
+      params: Partial<{ tenantId: string, knowledgeSlug: string }>;
       response: Source;
     }
   },
@@ -49,7 +49,7 @@ export interface SourceRoutes {
   },
   "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/retry": {
     POST: {
-      params: { tenantId: string, knowledgeSlug?: string, id: string };
+      params: Partial<{ tenantId: string, knowledgeSlug?: string, id: string }>;
     }
   }
 }

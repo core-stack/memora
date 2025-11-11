@@ -1,14 +1,14 @@
+import { appendErrors } from 'react-hook-form';
+import * as z from 'zod';
+
 import { toNestErrors, validateFieldsNatively } from '@hookform/resolvers';
+
 import type {
   FieldError,
   FieldErrors,
   FieldValues,
   Resolver,
-  ResolverError,
 } from 'react-hook-form';
-import { appendErrors } from 'react-hook-form';
-import * as z from 'zod';
-
 const isZod4Error = (error: Error): error is z.ZodError => {
   // instanceof is safe in Zod 4 (uses Symbol.hasInstance)
   return error instanceof z.ZodError;

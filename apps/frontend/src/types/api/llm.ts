@@ -22,11 +22,11 @@ export interface LLMRoutes {
   "/api/tenant/:tenantId/llm/:id": {
     PUT: {
       body: UpdateLLM;
-      params: { tenantId: string, id: string };
+      params: Partial<{ tenantId: string, id: string }>;
       response: undefined;
     },
     DELETE: {
-      params: { tenantId: string, id: string };
+      params: Partial<{ tenantId: string, id: string }>;
       response: undefined;
     }
   },

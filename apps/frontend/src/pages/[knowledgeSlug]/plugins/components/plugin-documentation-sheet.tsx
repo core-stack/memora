@@ -22,7 +22,7 @@ interface PluginDocumentationSheetProps {
 export function PluginDocumentationSheet({ plugin, isOpen, onClose }: PluginDocumentationSheetProps) {
   const url = `${env.STORAGE_URL}/plugins/${plugin?.name}/documentation.md`;
   const { openDialog } = useDialog();
-  const handleInstall = () => openDialog({ type: DialogType.INSTALL_PLUGIN, props: { plugin } });
+  const handleInstall = () => openDialog({ type: DialogType.INSTALL_PLUGIN });
 
   if (!plugin) return null;
 

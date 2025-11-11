@@ -25,8 +25,8 @@ export const InvitesTable = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({});
-  const { data: invites = [] } = useApiQuery("/api/invite", { method: "GET" });
-  const { mutate: deleteInvite } = useApiMutation("/api/invite/:id", { method: "DELETE" });
+  const { data: invites = [] } = useApiQuery("/api/tenant/:tenantId/invite", { method: "GET" });
+  const { mutate: deleteInvite } = useApiMutation("/api/tenant/:tenantId/invite/:id", { method: "DELETE" });
   const invalidate = useApiInvalidate();
   const { toast } = useToast();
   const { canInTenant } = useAuth();
@@ -108,13 +108,13 @@ export const InvitesTable = () => {
               size="sm"
               onClick={() => {
                 deleteInvite({
-                  params: { id: row.original.id! },
+                  params: { id: row.original.id },
                 }, { onSuccess: () => {
                   toast({
                     title: "Invite canceled",
                     description: "The invite has been canceled.",
                   })
-                  invalidate("/api/invite");
+                  invalidate("/api/tenant/:tenantId/invite");
                 } });
               }}
             >

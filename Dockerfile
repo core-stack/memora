@@ -22,6 +22,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 
 RUN pnpm install bunchee@^6.4.0 --filter @snipet/schemas
+RUN pnpm install bunchee@^6.4.0 --filter @snipet/permission
 
 RUN pnpm generate:prompts
 RUN pnpm build
@@ -44,6 +45,10 @@ COPY --from=builder /app/apps/frontend/package.json ./apps/frontend/package.json
 COPY --from=builder /app/packages/schemas/dist ./packages/schemas/dist
 COPY --from=builder /app/packages/schemas/node_modules ./packages/schemas/node_modules
 COPY --from=builder /app/packages/schemas/package.json ./packages/schemas/package.json
+
+COPY --from=builder /app/packages/permission/dist ./packages/permission/dist
+COPY --from=builder /app/packages/permission/node_modules ./packages/permission/node_modules
+COPY --from=builder /app/packages/permission/package.json ./packages/permission/package.json
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json

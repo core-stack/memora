@@ -37,7 +37,7 @@ export function InviteMemberDialog() {
 
   const isLoading = form.formState.isSubmitting;
   const invalidate = useApiInvalidate();
-  const { mutate } = useApiMutation("/api/invite", { method: "POST" });
+  const { mutate } = useApiMutation("/api/tenant/:tenantId/invite", { method: "POST" });
   const { closeDialog } = useDialog();
 
   const { fields, remove, insert } = useFieldArray({
@@ -50,7 +50,7 @@ export function InviteMemberDialog() {
   async function onSubmit(body: CreateInviteSchema) {
     mutate({ body }, {
       onSuccess: async () => {
-        await invalidate("/api/invite");
+        await invalidate("/api/tenant/:tenantId/invite");
         form.reset();
         closeDialog(DialogType.INVITE_MEMBER);
       }

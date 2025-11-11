@@ -76,7 +76,7 @@ export function LLMListItem({ llm, preset }: LLMListItemProps) {
             variant="ghost"
             size="icon"
             onClick={handleDelete}
-            className="flex-shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+            className="shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
