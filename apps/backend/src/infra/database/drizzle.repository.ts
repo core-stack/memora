@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, getTableColumns, isNull, SQL } from 'drizzle-orm';
-import { NodePgDatabase, NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
 import * as schema from '@/db/schema';
@@ -8,8 +8,8 @@ import { Inject } from '@nestjs/common';
 
 import { FilterOptions } from '../../generics/filter-options';
 import { ICrudRepository, RepositoryOptions } from '../../generics/repository.interface';
-import { TxType } from './types';
 import { NonUniqueError } from './errors/non-unique.error';
+import { TxType } from './types';
 
 export abstract class DrizzleGenericRepository<
   TTable extends PgTable,

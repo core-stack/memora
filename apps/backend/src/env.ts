@@ -57,7 +57,6 @@ const envSchema = z.object({
 
   ENCRYPT_KEY_MASTER_PASSWORD: z.string().optional().default("change-me"),
 
-
   // SECURITY
   ENCRYPT_MASTER_PASSWORD: z.string().optional().default("snipet"),
 
@@ -77,6 +76,7 @@ const envSchema = z.object({
 
   // STORAGE
   STORAGE_TYPE: z.enum(['s3']).default('s3'),
+  DELETE_TEMP_FILES_AFTER: z.coerce.number().optional().default(60 * 60 * 24), // 1 day
   // S3
   AWS_ACCESS_KEY_ID: z.string().optional(),
   AWS_SECRET_ACCESS_KEY: z.string().optional(),

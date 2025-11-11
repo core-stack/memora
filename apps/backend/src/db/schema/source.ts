@@ -5,6 +5,7 @@ import { indexStatusEnum, sourceTypeEnum } from './enums';
 import { folder } from './folder';
 import { knowledge } from './knowledge';
 import { sourceTag } from './source_tag';
+import { tenant } from './tenant';
 
 export const source = pgTable("sources", {
   id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
@@ -24,6 +25,7 @@ export const source = pgTable("sources", {
 
   memoryId: varchar("memory_id", { length: 36 }),
   knowledgeId: varchar("knowledge_id", { length: 36 }).notNull().references(() => knowledge.id, { onDelete: "cascade" }),
+  tenantId: varchar("tenant_id", { length: 36 }).notNull().references(() => tenant.id, { onDelete: "cascade" }),
   folderId: varchar("folder_id", { length: 36 }).references(() => folder.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -44,4 +46,8 @@ export const sourceRelations = relations(source, ({ one, many }) => ({
     references: [folder.id],
   }),
   tags: many(sourceTag),
+  tenant: one(tenant, {
+    fields: [source.tenantId],
+    references: [tenant.id],
+  }),
 }));

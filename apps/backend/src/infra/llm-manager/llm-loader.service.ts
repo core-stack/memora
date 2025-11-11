@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { LLMPreset } from '@snipet/schemas';
 
 import { EmbeddingProvider } from './provider/embedding/base';
+import { GeminiLLMEmbeddingAdapter } from './provider/embedding/gemini.adapter';
 import { OpenAILLMEmbeddingAdapter } from './provider/embedding/openai.adapter';
 import { TextProvider } from './provider/text/base';
 import { GeminiTextAdapter } from './provider/text/gemini.adapter';
@@ -26,7 +27,7 @@ export class LLMLoaderService {
       case "openai":
         AdapterClass = OpenAILLMTextAdapter;
         break;
-      case "gemini":
+      case "gemini":        
         AdapterClass = GeminiTextAdapter;
         break;
       default:
@@ -37,20 +38,22 @@ export class LLMLoaderService {
     return new AdapterClass({ ...preset.config, ...llm.config }, preset);
   }
 
-  private embeddingProviderLoader(adapter: string, llm: LLMEntity, preset: LLMPreset) {
+  private embeddingProviderLoader(adapter: string, llm: LLMEntity, preset: LLMPreset): { embed: (text: string) => Promise<number[]> } {
     if (preset.config.type !== "EMBEDDING") throw new Error("Invalid provider type");
 
     let AdapterClass: new (config: any, preset: LLMPreset) => EmbeddingProvider;
-
     switch(adapter) {
       case "openai":
         AdapterClass = OpenAILLMEmbeddingAdapter;
+        break;
+      case "gemini":
+        AdapterClass = GeminiLLMEmbeddingAdapter;
         break;
       default:
         AdapterClass = OpenAILLMEmbeddingAdapter;
         break;
     }
 
-    return new AdapterClass({ ...preset.config, ...llm.config }, preset);
+    return new AdapterClass({ ...preset.config, ...llm.config } as any, preset);
   }
 }

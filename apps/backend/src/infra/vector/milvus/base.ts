@@ -59,9 +59,9 @@ export abstract class MilvusService<T extends BaseFragment>
     if (preset.config.type === "TEXT") return;
     const { dimension, model } = preset.config;
     const collectionName = this.buildCollectionName(preset);
-
+    
     const existsCollection = (await this.client.hasCollection({ collection_name: collectionName })).value;
-
+    
     if (!env.MILVUS_RECREATE_COLLECTION && existsCollection) return;
     if (env.MILVUS_RECREATE_COLLECTION && existsCollection) {
       this.logger.warn("Env var MILVUS_RECREATE_COLLECTION is true, dropping collection");

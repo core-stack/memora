@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto';
 import { FilterOptions } from '@/generics/filter-options';
 import { ServiceOptions } from '@/generics/service.interface';
 import { GenericTenantService } from '@/generics/tenant.service';
-import { PublicStorageService } from '@/infra/storage/public-storage.service';
+import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { JobType } from '@/jobs/types';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
@@ -25,7 +25,7 @@ export class SourceService extends GenericTenantService<
     protected readonly repository: SourceRepository,
     private readonly knowledgeService: KnowledgeService,
     private readonly folderService: FolderService,
-    private readonly storageService: PublicStorageService,
+    private readonly storageService: PrivateStorageService,
     @InjectQueue(JobType.INGEST) private readonly ingestQueue: Queue
   ) {
     super(repository);
@@ -67,7 +67,7 @@ export class SourceService extends GenericTenantService<
   async getUploadUrl(input: GetUploadUrl, opts?: ServiceOptions) {
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
     const ext = input.fileName.split(".").pop();
-    const key = `source/${opts?.http?.getCookie("tenant-id")}/${knowledgeId}/${randomUUID()}.${ext}`;
+    const key = `source/${opts?.http?.params.shouldGetString("tenantId")}/${knowledgeId}/${randomUUID()}.${ext}`;
     return this.storageService.getUploadUrl(key, input.contentType, { temp: true });
   }
 
@@ -84,6 +84,8 @@ export class SourceService extends GenericTenantService<
     const failedJob = await this.ingestQueue.getJob(source.id);
     if (failedJob && await failedJob.isFailed()) {
       await failedJob.retry();
+    } else {
+      await this.ingestQueue.add(JobType.INGEST, source, { jobId: source.id });
     }
     return source;
   }

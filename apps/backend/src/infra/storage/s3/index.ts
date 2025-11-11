@@ -1,17 +1,16 @@
-import { env } from 'src/env';
-
+import { env } from '@/env';
 import {
   CopyObjectCommand, CreateBucketCommand, Delete, DeleteObjectsCommand, GetObjectCommand,
   ListBucketsCommand, ListObjectsV2Command, PutBucketPolicyCommand, PutObjectCommand, S3Client
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { StorageDeleteError } from '../errors/delete-error';
 import { GetPreSignedUploadUrlOptions, StorageService } from '../storage.service';
 
 import type { CreateBucketCommandInput } from '@aws-sdk/client-s3';
-
 @Injectable()
 export class S3Service extends StorageService implements OnModuleInit {
   private readonly logger = new Logger(S3Service.name);
@@ -143,6 +142,46 @@ export class S3Service extends StorageService implements OnModuleInit {
   
     if (deleteResult.Errors) {
       throw new StorageDeleteError("Error deleting objects", deleteResult.Errors.map((err) => err.Key).filter(e => e !== undefined));
+    }
+  }
+
+  @Cron(CronExpression.EVERY_MINUTE)
+  async deleteTempFiles() {
+    try {
+      const listCommand = new ListObjectsV2Command({
+        Bucket: this.config.Bucket,
+        Prefix: 'temp/',
+      });
+      const listedObjects = await this.s3.send(listCommand);
+
+      if (!listedObjects.Contents || listedObjects.Contents.length === 0) return;
+
+      const now = new Date();
+        const expiredObjects = listedObjects.Contents.filter(obj => {
+        if (!obj.LastModified) return false;
+        const age = (now.getTime() - obj.LastModified.getTime());
+        return age > env.DELETE_TEMP_FILES_AFTER;
+      });
+
+      if (expiredObjects.length === 0) return;
+
+      const deleteCommand = new DeleteObjectsCommand({
+        Bucket: this.config.Bucket,
+        Delete: {
+          Objects: expiredObjects.map(obj => ({ Key: obj.Key! })),
+        },
+      });
+
+      const result = await this.s3.send(deleteCommand);
+
+      if (result.Errors && result.Errors.length > 0) {
+        this.logger.error(`Error deleting some temp files: ${result.Errors.map(e => e.Key).join(', ')}`);
+      } else {
+        this.logger.verbose(`Deleted ${expiredObjects.length} expired temp file(s).`);
+      }
+
+    } catch (err) {
+      this.logger.error('Error while deleting temp files', err instanceof Error ? err.stack : err);
     }
   }
 }

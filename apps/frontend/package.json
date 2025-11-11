@@ -29,6 +29,7 @@
     "@radix-ui/react-tabs": "^1.1.9",
     "@radix-ui/react-toast": "^1.2.11",
     "@radix-ui/react-tooltip": "^1.2.6",
+    "@react-pdf-viewer/core": "3.12.0",
     "@snipet/permission": "workspace:*",
     "@snipet/schemas": "workspace:*",
     "@tailwindcss/vite": "^4.1.12",

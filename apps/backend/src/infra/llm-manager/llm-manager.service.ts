@@ -3,11 +3,11 @@ import { join } from 'path';
 
 import { env } from '@/env';
 import { LLMEntity } from '@/modules/llm/llm.entity';
-import { LLMRepository } from '@/modules/llm/llm.repository';
+import { LLMService } from '@/modules/llm/llm.service';
 import { __root } from '@/root';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { LLMPreset, llmPresetSchema, LLMType } from '@snipet/schemas';
+import { LLMPreset, llmPresetSchema } from '@snipet/schemas';
 
 import { NotFoundError } from './errors/not-found.error';
 import { LLMLoaderService } from './llm-loader.service';
@@ -24,7 +24,7 @@ export class LLMManagerService {
 
   constructor(
     private readonly loader: LLMLoaderService,
-    private readonly llmRepository: LLMRepository
+    private readonly llmService: LLMService
   ) {}
 
   async onModuleInit() {
@@ -71,7 +71,7 @@ export class LLMManagerService {
   }
 
   async getEmbeddingByKnowledge(knowledgeId: string): Promise<EmbeddingProvider | null> {
-    const llms = await this.llmRepository.findByKnowledge(knowledgeId);
+    const llms = await this.llmService.findByKnowledge(knowledgeId);
     const embeddingLLM = llms.find(llm => llm.type === "EMBEDDING");
     if (!embeddingLLM) return null;
     return this.getInstance(embeddingLLM) as unknown as EmbeddingProvider;
@@ -83,9 +83,9 @@ export class LLMManagerService {
     if (this.instances.has(llm.id)) return this.instances.get(llm.id)!.instance as any;
 
     const preset = this.presets.find(preset => preset.config.model === llm.model);
-    if (!preset) throw new NotFoundError("LLM not found");
-
+    if (!preset) throw new NotFoundError("LLM not found");    
     const instance = await this.loader.load(llm, preset);
+
     this.addInstance(llm, instance);
     return instance as any;
   }

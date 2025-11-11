@@ -32,7 +32,7 @@ export abstract class GenericTenantService<
     opts?: ServiceOptions,
   ): Promise<TSchema> {
     const tenantId = this.getTenantId(opts);
-    this.logger.debug(`Criando registro com tenantId: ${tenantId}`);
+    this.logger.debug(`Creating with tenantId: ${tenantId}`);
 
     return super.create({ ...input, tenantId } as TCreateEntity, opts);
   }

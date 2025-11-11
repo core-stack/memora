@@ -1,19 +1,20 @@
 "use client"
 
 import { ArrowLeftRight, Database, Home, MessageCircle, Plug } from 'lucide-react';
+import { useMemo } from 'react';
 import { Outlet } from 'react-router';
 
 import { Link } from '@/components/ui/link';
+import { SearchProvider } from '@/context/search-provider';
 import { DialogType } from '@/dialogs';
 import { useDialog } from '@/hooks/use-dialog';
+import { useKnowledge } from '@/hooks/use-knowledge';
 import { useLocation } from '@/hooks/use-location';
 import { useTenant } from '@/hooks/use-tenant';
 import { cn } from '@/lib/utils';
-import { SearchProvider } from '@/context/search-provider';
-import { useMemo } from 'react';
-import { useKnowledge } from '@/hooks/use-knowledge';
-import { UserInfo } from '../user';
+
 import { Button } from '../ui/button';
+import { UserInfo } from '../user';
 
 export function KnowledgeLayout() {
   const { tenant, tenants, setTenant } = useTenant();
@@ -66,7 +67,7 @@ export function KnowledgeLayout() {
               <div className="flex items-center gap-8">
                 <div className="flex items-center gap-2">
                   <Link href='/' className="h-8 w-8 rounded-lg bg-foreground flex items-center justify-center">
-                    <img src="logo.svg" className="h-5 w-5" />
+                    <img src="/logo.svg" className="h-5 w-5" />
                   </Link>
                 </div>
               </div>
@@ -79,7 +80,7 @@ export function KnowledgeLayout() {
                   return (
                     <Link
                       key={item.id}
-                      className={cn("gap-2 flex items-center h-full p-2 border-b-4 hover:border-secondary border-transparent", isActive && "border-primary")}
+                      className={cn("gap-2 flex items-center h-full p-2 border-b-4 border-transparent hover:border-primary", isActive && "border-primary")}
                       href={item.path}
                     >
                       <Icon className="h-4 w-4" />

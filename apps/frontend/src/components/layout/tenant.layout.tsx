@@ -10,6 +10,7 @@ import { useDialog } from '@/hooks/use-dialog';
 import { useLocation } from '@/hooks/use-location';
 import { useTenant } from '@/hooks/use-tenant';
 import { cn } from '@/lib/utils';
+
 import { UserInfo } from '../user';
 
 const menuItems = [
@@ -68,7 +69,7 @@ export function TenantLayout() {
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-2">
                 <Link href='/' className="h-8 w-8 rounded-lg bg-foreground flex items-center justify-center">
-                  <img src="logo.svg" className="h-5 w-5" />
+                  <img src="/logo.svg" className="h-5 w-5" />
                 </Link>
               </div>
             </div>
@@ -81,7 +82,7 @@ export function TenantLayout() {
                 return (
                   <Link
                     key={item.id}
-                    className={cn("gap-2 flex items-center h-full p-2 border-b-4 hover:border-secondary border-transparent", isActive && "border-primary")}
+                    className={cn("gap-2 flex items-center h-full p-2 border-b-4 hover:border-primary border-transparent", isActive && "border-primary")}
                     href={item.path}
                   >
                     <Icon className="h-4 w-4" />
