@@ -16,7 +16,6 @@ import type { Recent } from "@snipet/schemas";
 export type FindOptions = {
   knowledgeId: string;
   userInput: string;
-  chatId?: string;
   metadata?: Record<string, any>;
   forceUsePlugins?: string[]; // list of plugin ids
   excludePlugins?: string[]; // list of plugin ids
@@ -62,7 +61,7 @@ export class SourceMemoryService {
       const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, userInput);
       this.logger.debug(`Plugin ${p.pluginRegistry} response: ${pluginResponse}`);
     }
-    
+
     return fragments.merge(await this.vectorStore.search(
       knowledgeId,
       SourceVectorStoreService.withFilters({ ...opts.metadata }),
@@ -104,7 +103,7 @@ export class SourceMemoryService {
   async findByTerm(knowledgeId: string, userInput: string): Promise<Fragments<SourceFragment>> {
     this.logger.verbose("Finding fragments by term");
     await this.saveInputToRecents(knowledgeId, userInput);
-    
+
     const cachedFragments = await this.findFragmentsInCache(knowledgeId, userInput);
     if (cachedFragments) {
       this.logger.verbose("Found fragments in cache");

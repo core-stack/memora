@@ -1,11 +1,13 @@
 import { ChatFragment, Fragments } from '@/fragment';
 import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
+import { MessageEntity } from '@/modules/knowledge/chat/message/message.entity';
+import { MessageService } from '@/modules/knowledge/chat/message/message.service';
 import { buildOptions } from '@/utils/build-options';
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Message } from '@snipet/schemas';
 
 export type ChatSearchOptions = {
-  // lastNMessages?: number;
+  lastNMessages?: number;
   searchQuery?: string | { topK?: number, query: string };
   filters?: Record<string, string | number | boolean>;
 }
@@ -16,11 +18,12 @@ export type WithChatSearchOptions = (currentOpts: Partial<ChatSearchOptions>) =>
 @Injectable()
 export class ChatMemoryService {
   private readonly logger = new Logger(ChatMemoryService.name);
-  
+
   constructor(
-    private readonly chatVectorStore: ChatVectorStoreService
+    private readonly chatVectorStore: ChatVectorStoreService,
+    @Inject(forwardRef(() => MessageService)) private readonly messageService: MessageService
   ) {}
-  
+
   private async messageToFragment(message: Message): Promise<ChatFragment> {
     return ChatFragment.fromObject({
       id: message.id,
@@ -45,13 +48,14 @@ export class ChatMemoryService {
 
   async search(knowledgeId: string, chatId: string, ...opts: WithChatSearchOptions[]) {
     const options = this.buildChatSearchOptions(...opts);
-    const response: { lastNMessages: Fragments<ChatFragment>, searchQuery: Fragments<ChatFragment> } = {
-      lastNMessages: Fragments.fromFragmentArray([]),
+    const response: { lastNMessages: MessageEntity[], searchQuery: Fragments<ChatFragment> } = {
+      lastNMessages: [],
       searchQuery: Fragments.fromFragmentArray([]),
     }
-    // if (options.lastNMessages) {
-    //   response.lastNMessages = await this.chatVectorStore.searchLastNMessages(chatId, options.lastNMessages);
-    // }
+    if (options.lastNMessages) {
+      response.lastNMessages = await this.messageService.findLastNMessages(chatId, options.lastNMessages);
+    }
+
     if (options.searchQuery) {
       const searchQuery = await this.chatVectorStore.search(
         knowledgeId,
@@ -72,11 +76,11 @@ export class ChatMemoryService {
     }
   }
 
-  // static withLastNMessages(lastNMessages: number): WithChatSearchOptions {
-  //   return (currentOpts: Partial<ChatSearchOptions>) => {
-  //     return { ...currentOpts, lastNMessages };
-  //   }
-  // }
+  static withLastNMessages(lastNMessages: number): WithChatSearchOptions {
+    return (currentOpts: Partial<ChatSearchOptions>) => {
+      return { ...currentOpts, lastNMessages };
+    }
+  }
 
   static withSearchQuery(searchQuery: string): WithChatSearchOptions {
     return (currentOpts: Partial<ChatSearchOptions>) => {

@@ -5,7 +5,7 @@ import { LLMService } from '@/infra/llm/llm.service';
 import { PromptService } from '@/infra/prompt/prompt.service';
 import { ChatMemoryService } from '@/modules/memory/chat-memory/chat-memory.service';
 import { SourceMemoryService } from '@/modules/memory/source-memory/source-memory.service';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateMessage, Message, UpdateMessage } from '@snipet/schemas';
 
 import { KnowledgeService } from '../../knowledge.service';
@@ -25,7 +25,7 @@ export class MessageService extends GenericTenantService<
     protected readonly repository: MessageRepository,
     private readonly llmService: LLMService,
     private readonly knowledgeService: KnowledgeService,
-    private readonly chatMemoryService: ChatMemoryService,
+    @Inject(forwardRef(() => ChatMemoryService)) private readonly chatMemoryService: ChatMemoryService,
     private readonly sourceMemoryService: SourceMemoryService,
     private readonly promptService: PromptService,
     private readonly chatService: ChatService
@@ -33,13 +33,14 @@ export class MessageService extends GenericTenantService<
     super(repository);
   }
 
-  async sendMessage(content: string, opts?: ServiceOptions): Promise<{ userMessage: Message; aiMessage: Message; }> {
+  async sendMessage(
+    content: string,
+    opts?: ServiceOptions
+  ): Promise<{ userMessage: Message; aiMessage: Message; }> {
     const { id: knowledgeId } = await this.knowledgeService.loadFromSlug(opts?.http);
 
     //#region get chat
-    const chatId = opts?.http?.params.getString("chatId");
-    if (!chatId) throw new NotFoundException("Chat id is required");
-
+    const chatId = opts?.http?.params.shouldGetString("chatId")!;
     const chat = await this.chatService.findWithCountMessages(chatId, opts);
     if (!chat) throw new NotFoundException("Chat not found");
 
@@ -61,7 +62,7 @@ export class MessageService extends GenericTenantService<
       chatId,
       messageRole: "USER",
       knowledgeId,
-    }, { tx: opts?.tx });
+    }, opts);
     await this.chatMemoryService.add(userMessage);
     //#endregion
 
@@ -73,20 +74,19 @@ export class MessageService extends GenericTenantService<
     );
     const sourceSearchResult = await this.sourceMemoryService.find(
       knowledgeId,
-      content
+      content,
     )
     //#endregion
-
 
     //#region build prompt to get answer
     const answerPrompt = this.promptService.getTemplate("AnwserQuestion").build({
       question: content,
       recentMessages: [], // lastNMessages.map(f => ({ role: f.role, content: f.content })),
       relevantMessages: chatSearchResult.searchQuery.map(f => ({ content: f.content, role: f.role })),
-      retrievedFragments: sourceSearchResult.map(f => f.content),
+      retrievedFragments: sourceSearchResult
+        .map(f => (`${f.content} {sourceId:${f.sourceId}, seqId:${f.seqId}}`)),
     });
     //#endregion
-
 
     //#region generate, add ai message to memory and database
     const llmResponse = await this.llmService.query(answerPrompt);
@@ -100,5 +100,9 @@ export class MessageService extends GenericTenantService<
     //#endregion
 
     return { userMessage, aiMessage };
+  }
+
+  async findLastNMessages(chatId: string, lastNMessages: number, opts?: ServiceOptions) {
+    return await this.repository.findLastNMessages(chatId, lastNMessages, opts);
   }
 }
