@@ -1,29 +1,62 @@
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { FragmentFileMetadata, OriginType } from '@snipet/schemas';
 import { Fragments, SourceFragment } from '@/fragment';
-import { Inject, Injectable } from '@nestjs/common';
-import { OriginType, Source, SourceType } from '@snipet/schemas';
-
-import { PDFProcessor } from './processors/pdf.processor';
 import { SourceEntity } from '@/modules/knowledge/source/source.entity';
+
+import {
+  PDFProcessor,
+  DocxProcessor,
+  PPTProcessor,
+  TextProcessor,
+  CSVProcessor,
+  JSONProcessor,
+  JSONLProcessor,
+} from './processors';
+import { IProcessor } from './processors/types';
 
 @Injectable()
 export class ProcessorManager {
+  private readonly logger = new Logger(ProcessorManager.name);
+
   @Inject() private readonly pdfProcessor!: PDFProcessor;
+  @Inject() private readonly docxProcessor!: DocxProcessor;
+  @Inject() private readonly pptProcessor!: PPTProcessor;
+  @Inject() private readonly textProcessor!: TextProcessor;
+  @Inject() private readonly csvProcessor!: CSVProcessor;
+  @Inject() private readonly jsonProcessor!: JSONProcessor;
+  @Inject() private readonly jsonlProcessor!: JSONLProcessor;
+
+  private getProcessor(extension: string): IProcessor {
+    const ext = extension.toLowerCase();
+
+    if (['pdf'].includes(ext)) return this.pdfProcessor;
+    if (['doc', 'docx'].includes(ext)) return this.docxProcessor;
+    if (['ppt', 'pptx'].includes(ext)) return this.pptProcessor;
+    if (['txt', 'md', 'log'].includes(ext)) return this.textProcessor;
+    if (['csv'].includes(ext)) return this.csvProcessor;
+    if (['json'].includes(ext)) return this.jsonProcessor;
+    if (['jsonl', 'ndjson'].includes(ext)) return this.jsonlProcessor;
+
+    throw new Error(`Unsupported file extension: ${extension}`);
+  }
 
   async process(source: SourceEntity, input: Blob): Promise<Fragments<SourceFragment>> {
-    if (source.metadata.type !== SourceType.DOC) throw new Error("Invalid file format");
-    if (source.metadata.extension !== "pdf") throw new Error("Invalid file format");
+    const ext = source.metadata.extension?.toLowerCase();
+    if (!ext) throw new Error('Missing file extension');
 
-    const fragments = await this.pdfProcessor.process(source, input,
-      {
-        contentType: source.metadata.contentType,
-        extension: source.metadata.extension,
-        name: source.originalName,
-        size: source.metadata.size,
-        type: OriginType.FILE,
-        path: source.key
-      }
-    );
+    const processor = this.getProcessor(ext);
 
-    return fragments;
+    const metadata: FragmentFileMetadata = {
+      contentType: source.metadata.contentType,
+      extension: source.metadata.extension,
+      name: source.originalName,
+      size: source.metadata.size,
+      type: OriginType.FILE,
+      path: source.key,
+    };
+
+    this.logger.debug(`Processing file "${metadata.name}" with ${processor.constructor.name}`);
+
+    return processor.process(source, input, metadata);
   }
 }

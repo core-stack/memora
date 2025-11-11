@@ -1,6 +1,11 @@
 import { Fragments, SourceFragment } from '@/fragment';
-import { Source } from '@snipet/schemas';
+import { SourceEntity } from '@/modules/knowledge/source/source.entity';
+import { FragmentFileMetadata } from '@snipet/schemas';
 
 export interface IProcessor {
-  process(source: Source, input: any): Promise<Fragments<SourceFragment>>
+  process(
+    source: SourceEntity,
+    pathOrBlob: string | Blob,
+    metadata: FragmentFileMetadata
+  ): Promise<Fragments<SourceFragment>>
 }
