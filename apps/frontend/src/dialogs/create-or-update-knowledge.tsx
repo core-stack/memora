@@ -55,6 +55,7 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
   const { data: llms = [] } = useApiQuery("/api/tenant/:tenantId/llm", { method: "GET", query: { filter: { type: "EMBEDDING" }} });
 
   const onSubmit = form.handleSubmit(async (body) => {
+    if (!body.embeddingModelId) body.embeddingModelId = llms[0]?.id;
     try {
       if (isEditing) {
         await updateKnowledge({ body, params: { id: knowledge!.id } });
