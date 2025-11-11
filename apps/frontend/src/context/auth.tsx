@@ -11,6 +11,8 @@ import { publicRoutes, REDIRECT_WHEN_NOT_AUTHENTICATED_PATH } from '@/routes';
 import { can as canPermission } from '@snipet/permission';
 
 import type { Permission } from "@snipet/permission";
+import { useQueryClient } from "@tanstack/react-query";
+
 type AuthContextType = {
   user: GetSelfUserSchema | undefined;
   currentMember: GetSelfUserSchema["members"][0] | undefined;
@@ -29,16 +31,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { pathname } = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const { mutate } = useApiMutation(
     "/api/auth/logout",
     { method: "POST" }
   );
-  const { data: user, isLoading: loadingUserSelf, error } = useApiQuery(
+  const { data: user, isLoading: loadingUserSelf, error, refetch } = useApiQuery(
     "/api/user/self",
     { method: "GET", retry: false }
   );
 
-  const isAuthenticated = !!user;
+  const isAuthenticated = !!user && !error;
   const currentMember = user?.members.find((member) => member.tenantId === tenantId);
   const isLoading = loadingUserSelf;
 
@@ -62,8 +66,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setExiting(true);
     setExiting(true);
     mutate({}, {
-      onSuccess: () => {
-        router.replace("/login");
+      onSuccess: async () => {
+        queryClient.clear();
+        await refetch();
+        router.push("/auth/login");
         setExiting(false);
       },
       onError: (error) => {
@@ -75,12 +81,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setExiting(false);
       },
     })
-  }, [mutate, router, toast]);
+  }, [mutate, queryClient, refetch, router, toast]);
 
   //#region Effects
   useEffect(() => {
     if (isLoading) return;
     const publicRoute = publicRoutes.find(route => pathname.startsWith(route.path));
+    console.log(publicRoute, isAuthenticated);
+
     if (!isAuthenticated && publicRoute) {
       return;
     } else if (isAuthenticated && publicRoute && publicRoute.whenAuthenticated === "redirect") {

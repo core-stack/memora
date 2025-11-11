@@ -5,13 +5,14 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { useTheme } from '@/context/theme';
 import { useAuth } from '@/hooks/use-auth';
 import { getNameInitials } from '@/lib/string';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Moon, Settings, Sun } from 'lucide-react';
 
 export const UserInfo = () => {
   const { user, logout } = useAuth();
-
+  const { setTheme, theme } = useTheme();
   const handleLogout = logout;
 
   const handleProfile = () => {
@@ -36,6 +37,14 @@ export const UserInfo = () => {
         <DropdownMenuItem onClick={handleProfile}>
           <Settings className="mr-2 h-4 w-4" />
           <span>Profile</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+          {theme === "light" && <Moon className="mr-2 h-4 w-4" />}
+          {theme === "dark" && <Sun className="mr-2 h-4 w-4" />}
+          <span>
+            {theme === "light" && "Dark Mode"}
+            {theme === "dark" && "Light Mode"}
+          </span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
