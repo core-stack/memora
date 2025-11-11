@@ -32,7 +32,7 @@ export class RedisStore<T> extends Store<T> {
 
   async set(key: string, value: T, opts?: StoreOptions): Promise<void> {
     if (opts?.expiry) {
-      await this.redis.set(this.makeKey(key), JSON.stringify(value), "EX", opts.expiry);
+      await this.redis.set(this.makeKey(key), JSON.stringify(value), "EX", opts.expiry / 1000);
     } else {
       const ttl = await this.redis.ttl(this.makeKey(key));
       if (ttl > 0) {
