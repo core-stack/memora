@@ -1,13 +1,35 @@
-import { accountSchema } from "@snipet/schemas";
-import z from "zod";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  Unique,
+} from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+import { User } from '@/modules/user/user.entity';
 
-export const accountEntity = accountSchema;
-export type AccountEntity = z.infer<typeof accountEntity>;
+@Entity('accounts')
+@Unique(['provider', 'providerAccountId'])
+export class AccountEntity {
+  @ApiProperty({ example: '92b8a15b-13b2-4a1a-bf41-bba3e7d64d9a' })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-export const createAccountEntity = accountEntity.omit({ userId: true, id: true }).extend({
-  email: z.email(),
-  name: z.string().optional(),
-  image: z.string().optional(),
-  emailVerified: z.boolean().default(false),
-})
-export type CreateAccountEntity = z.infer<typeof createAccountEntity>;
+  @ApiProperty({ example: 'google' })
+  @Column({ length: 255 })
+  provider: string;
+
+  @ApiProperty({ example: '11786321736412' })
+  @Column({ name: 'provider_account_id', length: 255 })
+  providerAccountId: string;
+
+  @ApiProperty({ example: '2b0a9e10-1d83-4f61-8a3f-bfdc62131d4a' })
+  @Column({ name: 'user_id', length: 36 })
+  userId: string;
+
+  // 🔗 Relation
+  @ManyToOne(() => User, (user) => user.accounts, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+}

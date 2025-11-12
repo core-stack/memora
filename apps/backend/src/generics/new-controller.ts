@@ -35,43 +35,47 @@ export const HttpPut = (path?: string, ignore?: boolean) => Http("PUT", path ?? 
 export const HttpPatch = (path?: string, ignore?: boolean) => Http("PATCH", path ?? "", ignore);
 export const HttpDelete = (path?: string, ignore?: boolean) => Http("DELETE", path ?? "", ignore);
 
-export const queryToFilter = <TEntity>(allQueryParams: Record<string, unknown>): FilterOptions<TEntity> => {
+export const queryToFilter = <TEntity>(params: Record<string, unknown>): FilterOptions<TEntity> => {
   const result: FilterOptions<TEntity> = { filter: {} };
-  for (const [key, value] of Object.entries(allQueryParams)) {
-    if (key === "limit" || key === "offset") {
+
+  for (const [key, value] of Object.entries(params)) {
+    if (key === 'limit' || key === 'offset') {
       result[key] = parseInt(value as string);
       continue;
     }
-    const filterMatch = key.match(/^filter\[(.+)\]$/);
-    if (filterMatch) {
-      result.filter = result.filter || {};
-      result.filter[filterMatch[1]] = value === "null" ? null : value;
+
+    const match = key.match(/^filter\[(.+)\]$/);
+    if (match) {
+      const field = match[1] as any;
+      result.filter![field] = value === 'null' ? null : value;
     }
   }
 
-  if (allQueryParams.sort) {
-    const fields = (allQueryParams.sort as string).split(",");
+  if (params.sort) {
+    const fields = (params.sort as string).split(',');
     result.order = fields.reduce((acc, f) => {
-      if (f.startsWith("-")) {
-        return {...acc, [f.substring(1)]: "DESC"};
-      }
-      return {...acc, [f]: "ASC"}
-    }, {} as Record<keyof TEntity, 'ASC' | 'DESC'>);
+      if (f.startsWith('-')) acc[f.substring(1) as keyof TEntity] = 'DESC';
+      else acc[f as keyof TEntity] = 'ASC';
+      return acc;
+    }, {} as Partial<Record<keyof TEntity, 'ASC' | 'DESC'>>);
   }
-  if (allQueryParams.include) {
-    result.include = (allQueryParams.include as string).split(",") as any;
+
+  if (params.include) {
+    result.include = (params.include as string).split(',') as any;
   }
   return result;
-}
+};
 
-export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDto = Partial<TEntity>>({
- filterSchema, createDtoSchema, updateDtoSchema, ignore, publicRoutes,
+export function CrudController<TEntity, TCreateDto = TEntity, TUpdateDto = TEntity>({
+  allowedFilters = [],
+  allowedIncludes = [],
+  ignore = [],
+  publicRoutes = [],
 }: {
-  filterSchema: z.ZodType<FilterOptions<TEntity>>,
-  createDtoSchema?: z.ZodType<TCreateDto>,
-  updateDtoSchema?: z.ZodType<TUpdateDto>,
-  ignore?: Array<"find" | "findByID" | "create" | "update" | "delete">,
-  publicRoutes?: Array<string>,
+  allowedFilters?: (keyof TEntity)[];
+  allowedIncludes?: string[];
+  ignore?: Array<'find' | 'findByID' | 'create' | 'update' | 'delete'>;
+  publicRoutes?: string[];
 }) {
   abstract class Base {
     constructor(public readonly service: ICrudService<TEntity, TCreateDto, TUpdateDto>) {}
@@ -80,11 +84,8 @@ export function CrudController<TEntity, TCreateDto = Partial<TEntity>, TUpdateDt
       return new HttpContext(req, res);
     }
 
-    @HttpGet(":id", ignore?.includes("findByID"))
-    async findByID(
-      @Req() req: Request,
-      @ZodParam("id", idSchema) id: string
-    ): Promise<TEntity | null> {
+    @HttpGet(":id", ignore.includes("findByID"))
+    async findByID(@Req() req: Request, @ZodParam("id", idSchema) id: string): Promise<TEntity | null> {
       this.validateSchema(idSchema, id);
       return this.service.findByID(id, { http: this.loadContext(req) });
     }

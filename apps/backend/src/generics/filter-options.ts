@@ -1,8 +1,9 @@
-type PartialNullable<T> = { [P in keyof T]?: T[P] | null | undefined };   
 export type FilterOptions<TEntity> = {
   limit?: number;
   offset?: number;
-  filter?: PartialNullable<TEntity>;
+  filter?: {
+    [P in keyof TEntity]?: TEntity[P] | Array<TEntity[P]> | null | undefined
+  };
   order?: Partial<Record<keyof TEntity, 'ASC' | 'DESC'>>;
-  include?: string[]
+  include?: Array<keyof TEntity>;
 }

@@ -7,7 +7,7 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
-
+import { ClsModule } from "nestjs-cls";
 import { env } from './env';
 import { AuthGuard } from './guards/auth.guard';
 import { CacheModule } from './infra/cache/cache.module';
@@ -89,13 +89,21 @@ import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
     PluginRegistryModule.forRoot(env.PLUGINS_DIR),
     MemoryModule,
     CacheModule,
+    ClsModule.forRoot({
+      global: true,
+      middleware: {
+        mount: true,
+        saveReq: true,
+        saveRes: true
+      },
+    }),
     PromptModule,
     ...(env.SERVE_STATIC_PATH ? [
       ServeStaticModule.forRoot({ rootPath: env.SERVE_STATIC_PATH })
     ] : []),
   ],
   providers: [
-    { 
+    {
       provide: APP_GUARD,
       useClass: AuthGuard
     }
