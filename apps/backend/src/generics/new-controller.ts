@@ -90,7 +90,7 @@ export function CrudController<TEntity, TCreateDto = TEntity, TUpdateDto = TEnti
       return this.service.findByID(id, { http: this.loadContext(req) });
     }
 
-    @HttpGet("", ignore?.includes("find"))
+    @HttpGet("", ignore.includes("find"))
     async findMany(
       @Req() req: Request,
       @Query() allParams: Record<string, unknown>,

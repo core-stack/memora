@@ -9,17 +9,10 @@ import { NotFoundException } from '@nestjs/common';
 import { ROLES } from '@snipet/permission';
 
 import { RoleService } from '../role/role.service';
-import { UserEntity } from '../user/user.entity';
 import { AccountEntity, CreateAccountEntity } from './account.entity';
+import { Repository } from 'typeorm';
 
-export class AccountRepository extends DrizzleGenericRepository<
-  typeof account, AccountEntity
-> {
-  constructor(
-    private readonly roleService: RoleService
-  ) {
-    super(account);
-  }
+export class AccountRepository extends Repository<AccountEntity> {
 
   async createIfNotExists(data: CreateAccountEntity, opts: RepositoryOptions<TxType>): Promise<AccountEntity> {
     return this.run(async (db) => {
