@@ -94,7 +94,6 @@ export function FileTreeItem({
   }
   const handleRetryIndexing = async () => {
     await retryIndexing({ params: { id: item.id } });
-    console.log("retry indexing");
     
     invalidate("/api/tenant/:tenantId/knowledge/:knowledgeSlug/source");
     invalidate("/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder");

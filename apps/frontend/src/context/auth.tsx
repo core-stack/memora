@@ -9,10 +9,9 @@ import { useRouter } from '@/hooks/use-router';
 import { useToast } from '@/hooks/use-toast';
 import { publicRoutes, REDIRECT_WHEN_NOT_AUTHENTICATED_PATH } from '@/routes';
 import { can as canPermission } from '@snipet/permission';
+import { useQueryClient } from '@tanstack/react-query';
 
 import type { Permission } from "@snipet/permission";
-import { useQueryClient } from "@tanstack/react-query";
-
 type AuthContextType = {
   user: GetSelfUserSchema | undefined;
   currentMember: GetSelfUserSchema["members"][0] | undefined;
@@ -87,7 +86,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (isLoading) return;
     const publicRoute = publicRoutes.find(route => pathname.startsWith(route.path));
-    console.log(publicRoute, isAuthenticated);
 
     if (!isAuthenticated && publicRoute) {
       return;

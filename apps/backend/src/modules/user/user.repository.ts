@@ -51,15 +51,6 @@ export class UserRepository extends DrizzleGenericRepository<
         .limit(opts.limit)
         .offset(opts.offset)
         .orderBy(...order);
-      console.log(db.select().from(user)
-      .leftJoin(member, eq(member.userId, user.id))
-      .leftJoin(tenant, eq(tenant.id, member.tenantId))
-      .leftJoin(roleMember, eq(roleMember.id, member.roleId))
-      .leftJoin(roleUser, eq(roleUser.id, user.roleId))
-      .where(and(...filter))
-      .limit(opts.limit)
-      .offset(opts.offset)
-      .orderBy(...order).toSQL().sql);
       
       const users = Object.values(
         rows.reduce((acc, row) => {

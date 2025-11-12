@@ -138,12 +138,24 @@ export abstract class MilvusService<T extends BaseFragment>
   async search(knowledgeId: string, ...opts: WithSearchOptions[]): Promise<Fragments<T>> {
     const embeddingProvider = await this.llmManager.getEmbeddingByKnowledge(knowledgeId);
     if (!embeddingProvider) throw new VectorMutationError("Embedding service not found");
+    
     const collectionName = this.buildCollectionName(embeddingProvider.preset);
-
+    
     const options = this.buildSearchOptions(...opts);
 
+    const escapeFilterValue = (value: string) => value.replace(/['"]/g, "\\$&");
+
     let filter = this.buildFilters(options.filters);
-    if (options.term) filter += ` && TEXT_MATCH(content, '${options.term}')`;
+    if (options.term) {
+      if (typeof options.term !== "string" || options.term.length > 500) {
+        throw new InvalidVectorFiltersError("Invalid search term");
+      }
+
+      const term = escapeFilterValue(options.term.trim());
+      const textMatch = `TEXT_MATCH(content, '${term}')`;
+
+      filter = filter ? `${filter} && ${textMatch}` : textMatch;
+    }
 
     //#region search
     const data: HybridSearchSingleReq[] = [];
@@ -175,7 +187,7 @@ export abstract class MilvusService<T extends BaseFragment>
     //#endregion
 
     if (data.length === 0) throw new InvalidVectorFiltersError("No search data");
-
+    
     const result = await this.client.search({
       collection_name: collectionName,
       filter,

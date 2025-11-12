@@ -83,7 +83,6 @@ export function SearchDialog() {
 
   const handleResultClick = (frag: SourceFragment) => {
     // onResultSelect(result);
-    console.log(frag);
 
     closeDialog(DialogType.SEARCH);
   }
@@ -110,7 +109,7 @@ export function SearchDialog() {
       <ScrollArea className="max-h-96">
         <div className="p-2">
           {/* Recent Searches */}
-          {!query && recent.length > 0 && (
+          {!query && recent?.length > 0 && (
             <div className="mb-4">
               <div className="flex items-center gap-2 px-2 py-1 text-xs font-medium text-muted-foreground">
                 <Clock className="w-3 h-3" />

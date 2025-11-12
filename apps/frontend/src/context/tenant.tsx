@@ -46,8 +46,6 @@ export const TenantProvider = () => {
     if (!tenant && tenantId) return setTenantId(null);
     if (!tenant && isAuthenticated) {
       if (tenants && tenants?.length > 0) {
-        console.log(tenants);
-
         setTenant(tenants[0].id);
       } else if (!isOpenDialog) {
         setIsOpenDialog(true);

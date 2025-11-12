@@ -19,7 +19,6 @@ export function ActivateAccountPage() {
       activeAccount({ body: { token } }, {
         onSuccess: ()  => setIsLoading(false),
         onError: (error) => {
-          console.log("error", error);
           setIsLoading(false);
           errorMessage.current = error.message ?? "Invalid activation code"
         }, 

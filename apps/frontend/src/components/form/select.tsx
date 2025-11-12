@@ -24,11 +24,6 @@ export const FormSelect = (props: Props) => {
     throw new Error("help prop requires label prop");
   }
 
-  const log = (...args: any) => {
-    console.log(...args);
-    return true;
-  }
-
   return (
     <FormField
       control={form.control}
@@ -38,7 +33,6 @@ export const FormSelect = (props: Props) => {
       render={({ field }) => (
         <FormItem className={props.fieldclassname}>
           {
-            !log("field", field) &&
             props.label && (
               <FormLabel className='flex gap-0.5'>
                 { props.label }
