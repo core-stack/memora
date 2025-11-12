@@ -24,27 +24,31 @@ import { createInviteSchema } from '@snipet/schemas';
 import { DialogType } from './';
 
 import type { CreateInviteSchema } from "@snipet/schemas";
+import { useApiQuery } from '@/hooks/use-api-query';
+import { useCallback, useEffect, useMemo } from 'react';
 
 export function InviteMemberDialog() {
-  const defaultEmail = { email: "", role: ROLES.tenant.user.key };
   const form = useForm<CreateInviteSchema>({
     resolver: zodResolver(createInviteSchema),
     defaultValues: {
-      emails: [defaultEmail],
+      emails: [],
     },
   });
+  const { data: roles = [] } = useApiQuery("/api/tenant/:tenantId/role", { method: "GET" });
+
+  const defaultEmail = useMemo(()=> ({
+    email: "",
+    roleId: roles.find(role => role.key === ROLES.tenant.user.key)?.id
+  } as CreateInviteSchema["emails"][0]), [roles]);
 
   const isLoading = form.formState.isSubmitting;
   const invalidate = useApiInvalidate();
-  const { mutate } = useApiMutation("/api/tenant/:tenantId/invite", { method: "POST" });
+  const { mutate } = useApiMutation("/api/tenant/:tenantId/invite/send", { method: "POST" });
   const { closeDialog } = useDialog();
 
-  const { fields, remove, insert } = useFieldArray({
-    control: form.control,
-    name: "emails"
-  })
+  const { fields, remove, insert } = useFieldArray({ control: form.control, name: "emails" });
   const removeField = (index: number) => remove(index);
-  const addField = (index: number) => insert(index + 1, defaultEmail);
+  const addField = useCallback((index: number) => insert(index + 1, defaultEmail), [defaultEmail, insert]);
 
   async function onSubmit(body: CreateInviteSchema) {
     mutate({ body }, {
@@ -56,8 +60,12 @@ export function InviteMemberDialog() {
     });
   }
 
-  console.log(form.formState.errors);
-  
+  useEffect(() => {
+    if (fields.length === 0 && roles.length > 0) {
+      addField(0);
+    }
+  }, [addField, fields.length, roles])
+
   return (
     <DialogContent className="sm:max-w-[565px]">
       <DialogHeader>
@@ -86,7 +94,7 @@ export function InviteMemberDialog() {
 
                 <FormField
                   control={form.control}
-                  name={`emails.${index}.role`}
+                  name={`emails.${index}.roleId`}
                   render={({ field }) => (
                     <FormItem className='col-span-1'>
                       <FormLabel>Função</FormLabel>
@@ -97,8 +105,7 @@ export function InviteMemberDialog() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="WORKSPACE_ADMIN">Admin</SelectItem>
-                          <SelectItem value="WORKSPACE_MEMBER">Member</SelectItem>
+                          {roles.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
                         </SelectContent>
                       </Select>
                       <FormMessage />

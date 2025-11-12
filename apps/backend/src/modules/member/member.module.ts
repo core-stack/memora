@@ -8,6 +8,7 @@ import { MemberService } from "./member.service";
 @Module({
   controllers: [MemberController],
   providers: [MemberService, MemberRepository],
-  imports: [DatabaseModule]
+  imports: [DatabaseModule],
+  exports: [MemberService]
 })
 export class MemberModule {}

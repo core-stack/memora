@@ -45,7 +45,7 @@ export const InvitesTable = () => {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="p-0 hover:bg-transparent"
           >
-            Função
+            Role
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -63,7 +63,7 @@ export const InvitesTable = () => {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="p-0 hover:bg-transparent"
           >
-            Data do convite
+            Send at
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -85,7 +85,7 @@ export const InvitesTable = () => {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="p-0 hover:bg-transparent"
           >
-            Data de expiração
+            Expires at
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -118,7 +118,7 @@ export const InvitesTable = () => {
                 } });
               }}
             >
-              Cancelar
+              Cancel
             </Button>
           </div>
         ) : null
@@ -148,7 +148,7 @@ export const InvitesTable = () => {
   return (
     <>
       {invites.length === 0 ? (
-        <div className="text-center py-6 text-muted-foreground">Nenhum convite pendente</div>
+        <div className="text-center py-6 text-muted-foreground">No invites found</div>
       ) : (
         <>
           <div className="rounded-md border">
@@ -182,7 +182,7 @@ export const InvitesTable = () => {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={inviteColumns.length} className="h-24 text-center">
-                      Nenhum convite encontrado.
+                      No results.
                     </TableCell>
                   </TableRow>
                 )}
@@ -191,7 +191,7 @@ export const InvitesTable = () => {
           </div>
           <div className="flex items-center justify-end space-x-2 py-4">
             <div className="flex-1 text-sm text-muted-foreground">
-              {invitesTable.getFilteredRowModel().rows.length} convite(s) no total.
+              {invitesTable.getFilteredRowModel().rows.length} invite(s).
             </div>
             <div className="space-x-2">
               <Button
@@ -200,7 +200,7 @@ export const InvitesTable = () => {
                 onClick={() => invitesTable.previousPage()}
                 disabled={!invitesTable.getCanPreviousPage()}
               >
-                Anterior
+                Previous
               </Button>
               <Button
                 variant="outline"
@@ -208,7 +208,7 @@ export const InvitesTable = () => {
                 onClick={() => invitesTable.nextPage()}
                 disabled={!invitesTable.getCanNextPage()}
               >
-                Próximo
+                Next
               </Button>
             </div>
           </div>

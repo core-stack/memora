@@ -25,6 +25,9 @@ const envSchema = z.object({
   SERVE_STATIC_PATH: z.string().optional(),
   FRONTEND_URL: z.url().optional().default("http://localhost:3000"),
 
+  // INVITE
+  DEFAULT_INVITE_EXPIRES: z.coerce.number().optional().default(60 * 60 * 24), // 1 day
+
   // AUTH
   REQUIRE_EMAIL_VERIFICATION: z.coerce.boolean().optional().default(false),
   STORE: z.enum(["memory", "redis"]).default("redis"),

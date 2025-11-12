@@ -13,7 +13,7 @@ export class MemberService extends GenericTenantService<
   MemberEntity
 > {
   logger = new Logger(MemberService.name);
-  constructor(repository: MemberRepository) {
+  constructor(protected repository: MemberRepository) {
     super(repository);
   }
 
@@ -23,5 +23,14 @@ export class MemberService extends GenericTenantService<
       delete member.user?.password;
       return member;
     });
+  }
+
+  async findByUserEmail(email: string, opts?: ServiceOptions): Promise<MemberEntity | null>
+  async findByUserEmail(email: string[], opts?: ServiceOptions): Promise<MemberEntity[] | null>
+  async findByUserEmail(
+    email: string | string[],
+    opts?: ServiceOptions
+  ): Promise<MemberEntity | MemberEntity[] | null> {
+    return this.repository.findByUserEmail(email, { tx: opts?.tx });
   }
 }

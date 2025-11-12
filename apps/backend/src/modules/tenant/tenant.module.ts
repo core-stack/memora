@@ -9,6 +9,7 @@ import { AuthModule } from "../auth/auth.module";
 @Module({
   controllers: [TenantController],
   providers: [TenantService, TenantRepository],
-  imports: [DatabaseModule, AuthModule]
+  imports: [DatabaseModule, AuthModule],
+  exports: [TenantService]
 })
 export class TenantModule {}

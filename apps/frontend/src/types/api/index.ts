@@ -13,9 +13,10 @@ import type { UserRoutes } from "./user";
 import type { TenantRoutes } from "./tenant";
 import type { InviteRoutes } from "./invite";
 import type { MemberRoutes } from "./member";
+import type { RoleRoutes } from "./role";
 
 export type ApiRoutes =
   PluginRegistryRoutes & FolderRoutes & KnowledgeRoutes &
   SourceRoutes & ChatRoutes & MessageRoutes & AuthRoutes &
   PluginRoutes & TagRoutes & SearchRoutes & LLMRoutes & UserRoutes &
-  TenantRoutes & InviteRoutes & MemberRoutes;
+  TenantRoutes & InviteRoutes & MemberRoutes & RoleRoutes;

@@ -7,6 +7,8 @@ export interface InviteRoutes {
       params: { tenantId: string };
       response: InviteSchema[];
     },
+  },
+  "/api/tenant/:tenantId/invite/send": {
     POST: {
       body: CreateInviteSchema;
       params: { tenantId: string };

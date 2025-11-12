@@ -35,3 +35,15 @@ export const roleFilterSchema = z.object({
   }).strict().optional()
 }).strict();
 export type RoleFilterSchema = z.infer<typeof roleFilterSchema>;
+
+export const createRoleSchema = roleSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  creatorId: true,
+  tenantId: true
+});
+export type CreateRoleSchema = z.infer<typeof createRoleSchema>;
+
+export const updateRoleSchema = createRoleSchema.partial();
+export type UpdateRoleSchema = z.infer<typeof updateRoleSchema>;

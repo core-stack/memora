@@ -49,9 +49,10 @@ export abstract class CrudService<
     await this.repository.delete(id, { tx: opts?.tx });
   }
 
+  toSchema<T = TEntity>(entity: null): null
   toSchema<T = TEntity>(entity: T): TSchema
   toSchema<T = TEntity>(entity: T[]): TSchema[]
-  toSchema<T = TEntity>(entity: T | T[]): TSchema | TSchema[] {
+  toSchema<T = TEntity>(entity: T | null | T[]): TSchema | null | TSchema[] {
     if (Array.isArray(entity)) return entity.map(e => e as unknown as TSchema);
     return entity as unknown as TSchema;
   }

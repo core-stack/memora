@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 
 import { member } from '@/db/schema/member';
@@ -29,7 +29,7 @@ export class MemberRepository extends DrizzleGenericRepository<
       if (!opts.offset) opts.offset = 0;
 
       const { filter, order } = this.buildFilter(opts);
-     
+
       const query = db.select().from(this.table as PgTable)
         .where(and(...filter))
         .limit(opts.limit)
@@ -45,7 +45,7 @@ export class MemberRepository extends DrizzleGenericRepository<
       if (opts.include?.includes("role")) {
         query.leftJoin(role, eq(role.id, member.roleId));
       }
-  
+
       const rows = await query;
       let results = [] as MemberEntity[];
       if (opts.include && opts.include?.length > 0) {
@@ -67,6 +67,36 @@ export class MemberRepository extends DrizzleGenericRepository<
       }
 
       return results;
+    }, repoOpts);
+  }
+
+  findByUserEmail<T extends string | string[]>(
+    email: T,
+    repoOpts?: RepositoryOptions<TxType>
+  ): Promise<T extends string ? MemberEntity | null : MemberEntity[] | null> {
+    return this.run(async (db) => {
+      const query = db.select().from(member)
+        .leftJoin(user, eq(user.id, member.userId))
+        .where(
+          Array.isArray(email)
+          ? inArray(user.email, email)
+          : eq(user.email, email)
+        );
+
+      if (!Array.isArray(email)) {
+        query.limit(1);
+      }
+
+      const selectedMember = await query;
+      if (!selectedMember || selectedMember.length === 0) return null as any;
+      if (Array.isArray(email)) {
+        return selectedMember.map(({ members, users }) => ({...members, user: users})) as MemberEntity[];
+      }
+
+      return {
+        ...selectedMember[0].members,
+        user: selectedMember[0].users
+      } as MemberEntity;
     }, repoOpts);
   }
 }

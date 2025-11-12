@@ -51,7 +51,7 @@ export class UserRepository extends DrizzleGenericRepository<
         .limit(opts.limit)
         .offset(opts.offset)
         .orderBy(...order);
-      
+
       const users = Object.values(
         rows.reduce((acc, row) => {
           const userId = row.users.id;

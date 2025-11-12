@@ -3,17 +3,16 @@ import { z } from 'zod';
 import { filterSchema, orderSchema } from './shared';
 
 export const inviteSchema = z.object({
-  id: z.uuid().optional(),
+  id: z.uuid(),
   email: z.email(),
-  role: z.string().optional(),
-  token: z.string().min(1),
-  accepted: z.boolean().default(false),
 
+  roleId: z.uuid(),
   tenantId: z.uuid(),
-  invitedById: z.uuid().nullable().optional(),
-  memberId: z.uuid().nullable().optional(),
+  creatorId: z.uuid(),
+  userId: z.uuid().nullable().optional(),
 
-  createdAt: z.date().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date().optional(),
   expiresAt: z.date(),
 });
 
@@ -23,7 +22,7 @@ export const inviteFilterSchema = filterSchema.extend({
   filter: z.object({
     id: z.uuid().nullable().optional(),
     email: z.string().optional(),
-    role: z.uuid().nullable().optional(),
+    roleId: z.uuid().nullable().optional(),
   }).strict().optional(),
   order: z.object({
     email: orderSchema,
@@ -34,6 +33,6 @@ export type InviteFilterSchema = z.infer<typeof inviteFilterSchema>;
 
 
 export const createInviteSchema = z.object({
-  emails: inviteSchema.pick({ email: true, role: true }).array(),
+  emails: inviteSchema.pick({ email: true, roleId: true }).array(),
 });
 export type CreateInviteSchema = z.infer<typeof createInviteSchema>;

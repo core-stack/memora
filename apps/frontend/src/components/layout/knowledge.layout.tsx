@@ -65,7 +65,7 @@ export function KnowledgeLayout() {
             <div className='flex gap-4 h-full'>
               <div className="flex items-center gap-8">
                 <div className="flex items-center gap-2">
-                  <Link href='/' className="h-8 w-8 rounded-lg bg-foreground flex items-center justify-center">
+                  <Link href='/' className="h-8 w-8 rounded-lg bg-white flex items-center justify-center">
                     <img src="/logo.svg" className="h-5 w-5" />
                   </Link>
                 </div>

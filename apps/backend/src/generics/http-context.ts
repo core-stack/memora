@@ -57,14 +57,22 @@ export class Query extends Getter {
 }
 export class Auth {
   private readonly _session: Session | undefined;
+  private readonly _memberId: string | undefined;
 
   get session(): Session | undefined {
     if (!this._session) console.warn("Missing session in auth context, this is a public route?");
     return this._session;
   }
 
-  constructor(request: AuthRequest) {
+  get memberId(): string | undefined {
+    if (!this._memberId) console.warn("Missing member id in auth context, this is a public route?");
+    return this._memberId;
+  }
+
+  constructor(request: AuthRequest, params: Params = new Params(request.params)) {
     this._session = request.session;
+    const tenantId = params.getString("tenantId");
+    if (tenantId) this._memberId = this._session?.tenants.find(w => w.id === tenantId)?.memberId;
   }
 }
 
