@@ -32,7 +32,7 @@ export class KnowledgeService extends GenericTenantService<
     if (!context) throw new BadRequestException("http context is required");
     const knowledgeSlug = context.params.shouldGetString("knowledgeSlug");
     const knowledge = await this.findBySlug(knowledgeSlug, { http: context });
-    if (!knowledge) throw new BadRequestException("Knowledge not found");
+    if (!knowledge) throw new NotFoundException("Knowledge not found");
     return knowledge;
   }
 

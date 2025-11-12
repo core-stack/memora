@@ -17,7 +17,6 @@ import {
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
-import { useTenant } from '@/hooks/use-tenant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ROLES } from '@snipet/permission';
 import { createInviteSchema } from '@snipet/schemas';
@@ -25,13 +24,13 @@ import { createInviteSchema } from '@snipet/schemas';
 import { DialogType } from './';
 
 import type { CreateInviteSchema } from "@snipet/schemas";
+
 export function InviteMemberDialog() {
-  const { tenant } = useTenant();
-  const defaultEmail = { email: "", tenantId: tenant?.id ?? '', role: ROLES.tenant.user.key };
+  const defaultEmail = { email: "", role: ROLES.tenant.user.key };
   const form = useForm<CreateInviteSchema>({
     resolver: zodResolver(createInviteSchema),
     defaultValues: {
-      emails: [defaultEmail]
+      emails: [defaultEmail],
     },
   });
 
@@ -57,6 +56,8 @@ export function InviteMemberDialog() {
     });
   }
 
+  console.log(form.formState.errors);
+  
   return (
     <DialogContent className="sm:max-w-[565px]">
       <DialogHeader>

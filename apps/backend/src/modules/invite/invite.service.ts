@@ -1,3 +1,4 @@
+import { ServiceOptions } from '@/generics/service.interface';
 import { GenericTenantService } from '@/generics/tenant.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateInviteSchema, InviteSchema } from '@snipet/schemas';
@@ -14,5 +15,12 @@ export class InviteService extends GenericTenantService<
 
   constructor(repository: InviteRepository) {
     super(repository);
+  }
+
+  override async create(input: CreateInviteSchema, opts?: ServiceOptions): Promise<InviteEntity> {
+    this.repository.create({
+      emails: input.emails
+    })
+    return [];
   }
 }

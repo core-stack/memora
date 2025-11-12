@@ -34,6 +34,6 @@ export type InviteFilterSchema = z.infer<typeof inviteFilterSchema>;
 
 
 export const createInviteSchema = z.object({
-  emails: inviteSchema.pick({ email: true, role: true, tenantId: true }).array(),
+  emails: inviteSchema.pick({ email: true, role: true }).array(),
 });
 export type CreateInviteSchema = z.infer<typeof createInviteSchema>;
