@@ -1,11 +1,12 @@
-import { AuthRequest } from "@/@types/auth-request";
-import { Session } from "@/modules/auth/types";
-import { Injectable } from "@nestjs/common";
-import { CookieOptions, Response } from "express";
-import { CLS_REQ, CLS_RES, ClsService } from "nestjs-cls";
+import { CookieOptions, Response } from 'express';
+import { CLS_REQ, CLS_RES, ClsService } from 'nestjs-cls';
+
+import { AuthRequest } from '@/@types/auth-request';
+import { Session } from '@/modules/auth/types';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class ContextService<
+export class HTTPContext<
   Params = Record<string, string | number | boolean | undefined>,
   Query = Record<string, any>
 > extends ClsService {

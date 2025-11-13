@@ -1,18 +1,12 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  ManyToOne,
-  JoinColumn,
+  Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
+
+import { AccountEntity } from '@/modules/account/account.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { Account } from '@/modules/account/account.entity';
 
 @Entity('users')
-export class User {
+export class UserEntity {
   @ApiProperty({ example: '2b0a9e10-1d83-4f61-8a3f-bfdc62131d4a' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -54,8 +48,8 @@ export class User {
   // @JoinColumn({ name: 'role_id' })
   // role: Role;
 
-  @OneToMany(() => Account, (account) => account.user)
-  accounts: Account[];
+  @OneToMany(() => AccountEntity, (account) => account.user)
+  accounts?: AccountEntity[];
 
   // @OneToMany(() => Invite, (invite) => invite.user)
   // invites: Invite[];
@@ -65,4 +59,8 @@ export class User {
 
   // @OneToMany(() => VerificationToken, (token) => token.user)
   // verificationTokens: VerificationToken[];
+
+  constructor(user: Omit<UserEntity, "id" | "createdAt" | "updatedAt">) {
+    Object.assign(this, user);
+  }
 }

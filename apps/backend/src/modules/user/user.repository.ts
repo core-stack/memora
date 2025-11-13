@@ -1,33 +1,19 @@
 import { and, eq } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
+import { Repository } from 'typeorm';
 
 import { member } from '@/db/schema/member';
 import { role } from '@/db/schema/role';
 import { tenant } from '@/db/schema/tenant';
 import { user } from '@/db/schema/user';
-import { DrizzleGenericRepository } from '@/generics';
 import { FilterOptions } from '@/generics/filter-options';
 import { RepositoryOptions } from '@/generics/repository.interface';
 import { TxType } from '@/infra/database/types';
 
 import { MemberEntity } from '../member/member.entity';
-import { RoleEntity } from '../role/role.entity';
-import { TenantEntity } from '../tenant/tenant.entity';
-import { CreateUserEntity, UpdateUserEntity, UserEntity } from './user.entity';
+import { UserEntity } from './user.entity';
 
-export type UserWithMemberRoleTenant = UserEntity & {
-  members: Array<MemberEntity & { tenant: TenantEntity; role: RoleEntity }>;
-  role: RoleEntity;
-}
-export class UserRepository extends DrizzleGenericRepository<
-  typeof user,
-  UserEntity,
-  CreateUserEntity,
-  UpdateUserEntity
-> {
-  constructor() {
-    super(user);
-  }
+export class UserRepository extends Repository<UserEntity> {
 
   findWithMemberRoleTenant(
     opts: FilterOptions<UserEntity>,

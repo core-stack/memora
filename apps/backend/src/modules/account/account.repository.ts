@@ -1,20 +1,16 @@
 import { eq } from 'drizzle-orm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { account } from '@/db/schema/account';
 import { user } from '@/db/schema/user';
-import { DrizzleGenericRepository } from '@/generics';
-import { RepositoryOptions } from '@/generics/repository.interface';
-import { TxType } from '@/infra/database/types';
 import { NotFoundException } from '@nestjs/common';
 import { ROLES } from '@snipet/permission';
 
-import { RoleService } from '../role/role.service';
 import { AccountEntity, CreateAccountEntity } from './account.entity';
-import { Repository } from 'typeorm';
 
 export class AccountRepository extends Repository<AccountEntity> {
 
-  async createIfNotExists(data: CreateAccountEntity, opts: RepositoryOptions<TxType>): Promise<AccountEntity> {
+  async createIfNotExists(data: CreateAccountEntity, manager?: EntityManager): Promise<AccountEntity> {
     return this.run(async (db) => {
       const userList = await db.select().from(user).where(eq(user.email, data.email));
       let userData: UserEntity;

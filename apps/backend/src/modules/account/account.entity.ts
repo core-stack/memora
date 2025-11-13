@@ -1,13 +1,7 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  Unique,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+
+import { UserEntity } from '@/modules/user/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from '@/modules/user/user.entity';
 
 @Entity('accounts')
 @Unique(['provider', 'providerAccountId'])
@@ -28,8 +22,8 @@ export class AccountEntity {
   @Column({ name: 'user_id', length: 36 })
   userId: string;
 
-  // 🔗 Relation
-  @ManyToOne(() => User, (user) => user.accounts, { onDelete: 'CASCADE' })
+  // Relation
+  @ManyToOne(() => UserEntity, (user) => user.accounts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: UserEntity;
 }

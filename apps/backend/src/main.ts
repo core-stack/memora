@@ -1,9 +1,10 @@
+import cookieParser from 'cookie-parser';
+
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import { env } from './env';
 import { ErrorsInterceptor } from './interceptors/error.interceptor';
-import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,7 @@ async function bootstrap() {
     allowedHeaders: env.CORS_HEADERS,
     credentials: env.CORS_CREDENTIALS,
   });
+
   app.use(cookieParser());
   await app.listen(env.APP_PORT);
 }
