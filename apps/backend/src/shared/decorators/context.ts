@@ -11,3 +11,6 @@ export const MemberId = () =>
 
 export const FromQuery = (key: string) =>
   ContextField({ source: 'query', key });
+
+export const FromParams = (key: string) =>
+  ContextField({ source: 'params', key });

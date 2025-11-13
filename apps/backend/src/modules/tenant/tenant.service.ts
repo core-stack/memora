@@ -1,40 +1,45 @@
-import { CrudService } from '@/generics';
-import { ServiceOptions } from '@/generics/service.interface';
-import { TxManager } from '@/generics/tx-manager';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ROLES } from '@snipet/permission';
-import { CreateTenantSchema, TenantSchema, UpdateTenantSchema } from '@snipet/schemas';
+import { Service } from '@/shared/service';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { permissionsToNumber, ROLES } from '@snipet/permission';
+import { EntityManager } from 'typeorm';
 
 import { AuthManager } from '../auth/auth-manager.service';
-import { CreateTenantEntity, TenantEntity, UpdateTenantEntity } from './tenant.entity';
-import { TenantRepository } from './tenant.repository';
+import { TenantEntity } from './tenant.entity';
+import { RoleEntity, RoleScope } from '../role/role.entity';
+import { MemberService } from '../member/member.service';
+import { MemberEntity } from '../member/member.entity';
 
 @Injectable()
-export class TenantService extends CrudService<
-  TenantSchema, CreateTenantSchema, UpdateTenantSchema,
-  TenantEntity, CreateTenantEntity, UpdateTenantEntity
-> {
-  constructor(
-    protected readonly repository: TenantRepository,
-    private readonly authManager: AuthManager,
-    private readonly txManager: TxManager
-  ) {
-    super(repository);
-  }
+export class TenantService extends Service<TenantEntity> {
+  entity = TenantEntity;
+  logger = new Logger(TenantService.name);
 
-  override async create(input: CreateTenantSchema, opts?: ServiceOptions): Promise<TenantSchema> {
-    if (!opts?.http?.auth.session) throw new InternalServerErrorException("Error getting user info");
-    return this.txManager.runOrCreate(opts?.tx, async (tx) => {
-      const tenant = await super.create({
-        name: input.name,
-        description: input.description,
-        backgroundImage: input.backgroundImage,
-        userId: opts.http!.auth.session!.user.id,
-        defaultRoles: ROLES.tenant.default
-      }, { ...opts, tx });
-      await this.authManager.reloadSession(opts?.http?.auth.session?.id!);
-      opts.http?.setCookie("tenant-id", tenant.id);
+  @Inject() private readonly authManager: AuthManager;
+  @Inject() private readonly memberService: MemberService;
+
+  override async create(input: TenantEntity, manager?: EntityManager): Promise<TenantEntity> {
+    input.roles = ROLES.tenant.default.map((r) =>
+      new RoleEntity({
+        key: r.key,
+        name: r.name,
+        permissions: permissionsToNumber(r.permissions),
+        scope: RoleScope.TENANT,
+      })
+    );
+
+    return this.transaction(async (manager) => {
+      const tenant = await this.repository(manager).save(input);
+      tenant.members = [
+        new MemberEntity({
+          roleId: tenant.roles?.find(r => r.key === ROLES.tenant.admin.key)?.id!,
+          owner: true,
+          tenantId: tenant.id,
+          userId: this.context.user?.id!,
+        })
+      ]
+      await this.memberService.create(tenant.members![0], manager);
+      await this.authManager.reloadSession(this.context.session!.id);
       return tenant;
-    });
+    }, manager);
   }
 }

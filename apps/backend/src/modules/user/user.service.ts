@@ -1,19 +1,16 @@
 import { FilterOptions } from '@/generics/filter-options';
-import { CrudService } from '@/shared/crud.service';
+import { Service } from '@/shared/service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { UserEntity } from './user.entity';
-import { UserRepository } from './user.repository';
 
 @Injectable()
-export class UserService extends CrudService<UserEntity> {
-  constructor(repository: UserRepository) {
-    super(repository);
-  }
+export class UserService extends Service<UserEntity> {
+  entity = UserEntity;
 
   async findWithMemberRoleTenant(filterOpts: FilterOptions<UserEntity>): Promise<UserEntity[]> {
-    return await this.repository().find({ 
-      ...filterOpts, 
+    return await this.repository().find({
+      ...filterOpts,
       relations: ['role', 'member', 'member.role', 'member.tenant']
     });
   }

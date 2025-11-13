@@ -4,7 +4,7 @@ import z from 'zod';
 import { ZodParam } from '@/shared/decorators/zod-param';
 import { applyDecorators, Body, Delete, Get, Post, Put } from '@nestjs/common';
 
-import { CrudService } from './crud.service';
+import { Service } from './service';
 import { ControllerFilter, Filter } from './decorators/filter';
 import { Public } from './decorators/public';
 import { FilterOptions } from './filter-options';
@@ -34,7 +34,7 @@ export const HttpDelete = (path?: string, ignore?: boolean) => Http("DELETE", pa
 
 const idSchema = z.uuid();
 
-export function CrudController<
+export function BaseController<
   TEntity extends ObjectLiteral,
   TCreateDto extends TEntity = TEntity,
   TUpdateDto extends TEntity = TEntity
@@ -51,7 +51,7 @@ export function CrudController<
 }) {
   @ControllerFilter({ allowedFilters, allowedRelations })
   abstract class Base {
-    constructor(public readonly service: CrudService<TEntity>) {}
+    constructor(public readonly service: Service<TEntity>) {}
 
     @Public(publicRoutes.includes("findByID"))
     @HttpGet(":id", ignore.includes("findByID"))

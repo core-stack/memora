@@ -1,29 +1,30 @@
-import { EntityManager, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
+import { DataSource, EntityManager, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
 
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 
 import { FilterOptions } from './filter-options';
 import { HTTPContext } from './http-context';
 
-export abstract class CrudService<
+export abstract class Service<
   TEntity extends ObjectLiteral,
   TCreateDto extends TEntity = TEntity,
   TUpdateDto extends TEntity = TEntity
 > {
   @Inject() protected readonly context: HTTPContext;
+  @Inject() protected readonly dataSource: DataSource;
 
-  constructor(
-    private readonly _repository: Repository<TEntity>,
-    private readonly idField: keyof TEntity = "id"
-  ) {}
+  abstract readonly entity: new (...args: any) => TEntity;
+  abstract readonly logger: Logger;
+  readonly idField: keyof TEntity = "id";
+
 
   repository(manager?: EntityManager): Repository<TEntity> {
-    return manager ? manager.getRepository(this._repository.target as any) : this._repository;
+    return manager ? manager.getRepository(this.entity) : this.dataSource.getRepository(this.entity);
   }
 
   async transaction<T>(callback: (manager: EntityManager) => Promise<T>, manager?: EntityManager): Promise<T> {
     if (manager) return await callback(manager);
-    return await this._repository.manager.transaction(callback);
+    return await this.dataSource.transaction(callback);
   }
 
   async find(filterOptions: FilterOptions<TEntity>, manager?: EntityManager): Promise<TEntity[]> {
@@ -39,7 +40,7 @@ export abstract class CrudService<
     filterOptions.skip = 0;
 
     const data = await this.repository(manager).find(filterOptions);
-    
+
     return data.length === 0 ? null : data[0];
   }
 
@@ -49,7 +50,7 @@ export abstract class CrudService<
 
   async create(input: TCreateDto, manager?: EntityManager): Promise<TEntity> {
     return await this.repository(manager).save(input);
-  } 
+  }
 
   async update(id: string, input: TUpdateDto, manager?: EntityManager): Promise<void> {
     await this.repository(manager).update(id, input);

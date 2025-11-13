@@ -1,15 +1,31 @@
-import { chatSchema, updateChatSchema } from "@snipet/schemas";
-import z from "zod";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { KnowledgeEntity } from '../knowledge.entity';
+import { MessageEntity } from './message/message.entity';
 
-export const chatEntity = chatSchema;
-export type ChatEntity = z.infer<typeof chatSchema>;
+@Entity('chats')
+export class ChatEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-export const createChatEntity = chatEntity.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-export type CreateChatEntity = z.infer<typeof createChatEntity>;
+  @Column({ length: 50 })
+  name: string;
 
-export const updateChatEntity = updateChatSchema;
-export type UpdateChatEntity = z.infer<typeof updateChatEntity>;
+  @Column({ name: 'knowledge_id', type: 'uuid' })
+  knowledgeId: string;
+
+  @ManyToOne(() => KnowledgeEntity, (knowledge) => knowledge.chats, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'knowledge_id' })
+  knowledge: KnowledgeEntity;
+
+  @OneToMany(() => MessageEntity, (message) => message.chat)
+  messages: MessageEntity[];
+
+  @Column({ name: 'tenant_id', type: 'uuid' })
+  tenantId: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
+}

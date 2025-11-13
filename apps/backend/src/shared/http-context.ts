@@ -18,6 +18,8 @@ export class HTTPContext<
 
   get session(): Session | undefined { return this.req.session; }
 
+  get user(): Session["user"] | undefined { return this.session?.user; }
+
   get memberId(): string | undefined {
     const tenantId = this.params["tenantId"];
     return this.session?.tenants.find(w => w.id === tenantId)?.memberId;

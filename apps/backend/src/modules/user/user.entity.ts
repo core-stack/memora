@@ -1,9 +1,13 @@
 import {
-  Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn
+  Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
 
 import { AccountEntity } from '@/modules/account/account.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { VerificationTokenEntity } from '../verification-token/verification-token.entity';
+import { MemberEntity } from '../member/member.entity';
+import { RoleEntity } from '../role/role.entity';
+import { InviteEntity } from '../invite/invite.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -12,8 +16,8 @@ export class UserEntity {
   id: string;
 
   @ApiProperty({ example: 'Mayron Silva' })
-  @Column({ length: 255, nullable: true })
-  name?: string;
+  @Column({ length: 255 })
+  name: string;
 
   @ApiProperty({ example: 'mayron@example.com' })
   @Column({ unique: true, type: 'text', nullable: true })
@@ -43,22 +47,22 @@ export class UserEntity {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 
-  // 🔗 Relations
-  // @ManyToOne(() => Role, (role) => role.users, { eager: false })
-  // @JoinColumn({ name: 'role_id' })
-  // role: Role;
+  // Relations
+  @ManyToOne(() => RoleEntity, (role) => role.users, { eager: false })
+  @JoinColumn({ name: 'role_id' })
+  role?: RoleEntity;
 
   @OneToMany(() => AccountEntity, (account) => account.user)
   accounts?: AccountEntity[];
 
-  // @OneToMany(() => Invite, (invite) => invite.user)
-  // invites: Invite[];
+  @OneToMany(() => InviteEntity, (invite) => invite.user)
+  invites?: InviteEntity[];
 
-  // @OneToMany(() => Member, (member) => member.user)
-  // members: Member[];
+  @OneToMany(() => MemberEntity, (member) => member.user)
+  members?: MemberEntity[];
 
-  // @OneToMany(() => VerificationToken, (token) => token.user)
-  // verificationTokens: VerificationToken[];
+  @OneToMany(() => VerificationTokenEntity, (token) => token.user)
+  verificationTokens?: VerificationTokenEntity[];
 
   constructor(user: Omit<UserEntity, "id" | "createdAt" | "updatedAt">) {
     Object.assign(this, user);

@@ -1,19 +1,48 @@
-import z from "zod";
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-export const verificationTokenEnum = z.enum(["RESET_PASSWORD", "ACTIVE_ACCOUNT"]);
-export type VerificationTokenType = z.infer<typeof verificationTokenEnum>;
+import { UserEntity } from '../user/user.entity';
 
-export const verificationTokenEntity = z.object({
-  type: verificationTokenEnum,
-  token: z.uuid(),
-  expires: z.date(),
-  userId: z.uuid(),
-});
-export type VerificationTokenEntity = z.infer<typeof verificationTokenEntity>;
+export enum VerificationTokenTypeEnum {
+  ACTIVE_ACCOUNT = 'ACTIVE_ACCOUNT',
+  RESET_PASSWORD = 'RESET_PASSWORD',
+}
 
+@Entity('verification_tokens')
+export class VerificationTokenEntity {
+  @ApiProperty({ example: '2b0a9e10-1d83-4f61-8a3f-bfdc62131d4a' })
+  @PrimaryGeneratedColumn('uuid')
+  token: string;
 
-export const createVerificationTokenEntity = verificationTokenEntity.omit({ token: true });
-export type CreateVerificationTokenEntity = z.infer<typeof createVerificationTokenEntity>;
+  @ApiProperty({ enum: VerificationTokenTypeEnum })
+  @Column({ enum: VerificationTokenTypeEnum, type: 'enum' })
+  type: VerificationTokenTypeEnum;
 
-export const updateVerificationTokenEntity = verificationTokenEntity.omit({ token: true }).partial();
-export type UpdateVerificationTokenEntity = z.infer<typeof updateVerificationTokenEntity>;
+  @ApiProperty({ example: '2025-11-12T13:00:00Z' })
+  @Column({ type: 'timestamptz' })
+  expires: Date;
+
+  @ApiProperty()
+  @Column({ name: 'user_id', type: 'varchar', length: 36 })
+  userId: string;
+
+  @ApiProperty({ example: '2025-11-12T13:00:00Z' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  createdAt: Date;
+
+  @ApiProperty({ example: '2025-11-12T13:00:00Z' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  updatedAt: Date;
+
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user?: UserEntity;
+}

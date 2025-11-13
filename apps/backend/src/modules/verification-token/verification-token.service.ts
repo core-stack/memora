@@ -1,21 +1,19 @@
+import { Service } from '@/shared/service';
 import { Injectable } from '@nestjs/common';
 
-import { VerificationTokenRepository } from './verification-token.repository';
-import { CrudService } from '@/generics';
-import { CreateVerificationTokenEntity, UpdateVerificationTokenEntity, VerificationTokenEntity } from './verification-token.entity';
-import { ServiceOptions } from '@/generics/service.interface';
+import { VerificationTokenEntity } from './verification-token.entity';
 import { FilterOptions } from '@/generics/filter-options';
+import { EntityManager } from 'typeorm';
 
 @Injectable()
-export class VerificationTokenService extends CrudService<
-  VerificationTokenEntity, CreateVerificationTokenEntity, UpdateVerificationTokenEntity,
-  VerificationTokenEntity, CreateVerificationTokenEntity, UpdateVerificationTokenEntity
-> {
-  constructor(protected repository: VerificationTokenRepository) {
-    super(repository);
+export class VerificationTokenService extends Service<VerificationTokenEntity> {
+  entity = VerificationTokenEntity;
+
+  findWithUser(filterOpts: FilterOptions<VerificationTokenEntity>, manager?: EntityManager) {
+    return this.repository(manager).find({ ...filterOpts, relations: ['user'] });
   }
 
-  findUniqueWithUser(filterOpts: FilterOptions<VerificationTokenEntity>, opts?: ServiceOptions) {
-    return this.repository.findUniqueWithUser(filterOpts, { tx: opts?.tx });
+  findFirstWithUser(filterOpts: FilterOptions<VerificationTokenEntity>, manager?: EntityManager) {
+    return this.repository(manager).findOne({ ...filterOpts, relations: ['user'] });
   }
 }

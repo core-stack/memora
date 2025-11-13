@@ -19,6 +19,7 @@ import { MemoryModule } from './modules/memory/memory.module';
 import { UserModule } from './modules/user/user.module';
 import { PluginRegistryModule } from './plugin-registry/plugin-registry.module';
 import { ContextInterceptor } from './shared/interceptor/context';
+import { TenantModule } from './modules/tenant/tenant.module';
 
 @Module({
   imports: [
@@ -32,8 +33,8 @@ import { ContextInterceptor } from './shared/interceptor/context';
     AuthModule,
     // MemberModule,
     // RoleModule,
-    // TenantModule,
-    UserModule,
+    TenantModule,
+    // UserModule,
     // VerificationTokenModule,
     // SearchModule,
     // InviteModule,
