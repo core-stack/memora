@@ -1,36 +1,25 @@
-import { GenericTenantService } from '@/generics/tenant.service';
+import { Service } from '@/shared/service';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { permissionsToNumber, ROLES } from '@snipet/permission';
-import { RoleSchema } from '@snipet/schemas';
 
-import { RoleEntity } from './role.entity';
-import { RoleRepository } from './role.repository';
+import { RoleEntity, RoleScope } from './role.entity';
 
 @Injectable()
-export class RoleService extends GenericTenantService<
-  RoleSchema, Partial<RoleSchema>, Partial<RoleSchema>,
-  RoleEntity
-> implements OnModuleInit {
+export class RoleService extends Service<RoleEntity> implements OnModuleInit {
+  entity = RoleEntity;
   logger = new Logger(RoleService.name);
-  constructor(protected repository: RoleRepository) {
-    super(repository);
-  }
 
   async onModuleInit() {
-    const existingGlobalRoles = await this.repository.find({ filter: { scope: "GLOBAL" } });
+    const existingGlobalRoles = await this.repository().find({ where: { scope: RoleScope.GLOBAL } });
+    // create default global roles  
     for (const role of ROLES.global.default) {
       const existing = existingGlobalRoles.find(r => r.key === role.key);
       if (!existing) {
-        await this.repository.create({
-          key: role.key,
-          name: role.name,
-          permissions: permissionsToNumber(role.permissions),
-          scope: "GLOBAL"
-        });
-        this.logger.verbose(`Created role ${role.key}`);
+        await this.repository().save(RoleEntity.fromRoleSchema(role));
+        this.logger.verbose(`Created new role ${role.key}`);
       } else {
-        if (existing.name === role.name || existing.permissions === permissionsToNumber(role.permissions)) continue;
-        await this.repository.update(existing.id, {
+        if (existing.name === role.name && existing.permissions === permissionsToNumber(role.permissions)) continue;
+        await this.repository().update(existing.id, {
           name: role.name,
           permissions: permissionsToNumber(role.permissions)
         });

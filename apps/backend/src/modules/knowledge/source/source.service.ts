@@ -1,53 +1,46 @@
 import { Queue } from 'bullmq';
 import { randomUUID } from 'crypto';
+import { EntityManager } from 'typeorm';
 
-import { FilterOptions } from '@/generics/filter-options';
-import { ServiceOptions } from '@/generics/service.interface';
-import { GenericTenantService } from '@/generics/tenant.service';
 import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { JobType } from '@/jobs/types';
+import { IndexStatus } from '@/shared/enums';
+import { FilterOptions } from '@/shared/filter-options';
+import { Service } from '@/shared/service';
 import { InjectQueue } from '@nestjs/bullmq';
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { CreateSource, GetUploadUrl, Source, UpdateSource } from '@snipet/schemas';
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { FolderService } from '../folder/folder.service';
 import { KnowledgeService } from '../knowledge.service';
-import { CreateSourceEntity, SourceEntity, UpdateSourceEntity } from './source.entity';
-import { SourceRepository } from './source.repository';
+import { SourceEntity } from './source.entity';
 
 @Injectable()
-export class SourceService extends GenericTenantService<
-  Source, CreateSource, UpdateSource,
-  SourceEntity, CreateSourceEntity, UpdateSourceEntity
-> {
+export class SourceService extends Service<SourceEntity> {
   logger = new Logger(SourceService.name);
-  constructor(
-    protected readonly repository: SourceRepository,
-    private readonly knowledgeService: KnowledgeService,
-    private readonly folderService: FolderService,
-    private readonly storageService: PrivateStorageService,
-    @InjectQueue(JobType.INGEST) private readonly ingestQueue: Queue
-  ) {
-    super(repository);
+  entity = SourceEntity;
+
+  @Inject() private readonly knowledgeService: KnowledgeService;
+  @Inject() private readonly folderService: FolderService;
+  @Inject() private readonly storageService: PrivateStorageService;
+  @InjectQueue(JobType.INGEST) private readonly ingestQueue: Queue;
+
+  override async find(filterOpts: FilterOptions<SourceEntity>, manager?: EntityManager): Promise<SourceEntity[]> {
+    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
+    filterOpts.where = filterOpts.where ?? {};
+    filterOpts.where.knowledgeId = knowledgeId;
+    return super.find(filterOpts, manager);
   }
 
-  override async find(filterOpts: FilterOptions<Source>, opts?: ServiceOptions): Promise<Source[]> {
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
-    filterOpts.filter = filterOpts.filter ?? {};
-    filterOpts.filter.knowledgeId = knowledgeId;
-    return super.find(filterOpts, opts);
-  }
-
-  override async create(input: CreateSourceEntity, opts?: ServiceOptions) {
+  override async create(input: SourceEntity, manager?: EntityManager) {
     if (!input.key) throw new BadRequestException("Key is required");
 
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
+    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
     input.knowledgeId = knowledgeId;
-    input.indexStatus = 'PENDING';
+    input.indexStatus = IndexStatus.PENDING;
     input.path = await this.folderService.getPathByFolderId(
       input.originalName ?? input.name!,
       input.folderId,
-      opts
+      manager
     );
 
     try {
@@ -56,7 +49,7 @@ export class SourceService extends GenericTenantService<
       throw new BadRequestException("Invalid key");
     }
 
-    const createdSource = await super.create(input, opts);
+    const createdSource = await super.create(input, manager);
 
     await this.knowledgeService.increaseFileCount(knowledgeId);
     await this.knowledgeService.increaseStorageCount(knowledgeId, createdSource.metadata.size);
@@ -64,14 +57,14 @@ export class SourceService extends GenericTenantService<
     return createdSource;
   }
 
-  async getUploadUrl(input: GetUploadUrl, opts?: ServiceOptions) {
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
+  async getUploadUrl(input: GetUploadUrl, manager?: EntityManager) {
+    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
     const ext = input.fileName.split(".").pop();
     const key = `source/${opts?.http?.params.shouldGetString("tenantId")}/${knowledgeId}/${randomUUID()}.${ext}`;
     return this.storageService.getUploadUrl(key, input.contentType, { temp: true });
   }
 
-  async downloadUrl(sourceId: string, opts?: ServiceOptions) {
+  async downloadUrl(sourceId: string, manager?: EntityManager) {
     const source = await this.repository.findByID(sourceId, { tx: opts?.tx });
     if (!source) throw new NotFoundException("Source not found");
     return {
@@ -80,13 +73,13 @@ export class SourceService extends GenericTenantService<
     };
   }
 
-  async view(sourceId: string, opts?: ServiceOptions) {
+  async view(sourceId: string, manager?: EntityManager) {
     const source = (await this.repository.find({ filter: { id: sourceId } }, { tx: opts?.tx }))[0];
     if (!source) throw new NotFoundException("Source not found");
     return this.storageService.getVisualizationUrl(source.key);
   }
 
-  async retryIndex(sourceId: string, opts?: ServiceOptions) {
+  async retryIndex(sourceId: string, manager?: EntityManager) {
     const source = (await this.repository.find({ filter: { id: sourceId } }, { tx: opts?.tx }))[0];
     if (!source) throw new NotFoundException("Source not found");
     await this.repository.update(source.id, { indexStatus: 'PENDING' }, { tx: opts?.tx });

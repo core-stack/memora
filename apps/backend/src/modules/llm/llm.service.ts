@@ -1,32 +1,27 @@
 import { readdir } from 'fs/promises';
 import { join } from 'path';
+import { EntityManager } from 'typeorm';
 
 import { env } from '@/env';
-import { FilterOptions } from '@/generics/filter-options';
-import { ServiceOptions } from '@/generics/service.interface';
-import { GenericTenantService } from '@/generics/tenant.service';
 import { SecurityService } from '@/infra/security/security.service';
 import { __root } from '@/root';
-import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { CreateLLM, LLM, LLMPreset, llmPresetSchema, UpdateLLM } from '@snipet/schemas';
+import { Service } from '@/shared/service';
+import { Inject, Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { CreateLLM, LLM, LLMPreset, llmPresetSchema } from '@snipet/schemas';
 
-import { CreateLLMEntity, LLMEntity, UpdateLLMEntity } from './llm.entity';
-import { LLMRepository } from './llm.repository';
+import { KnowledgeService } from '../knowledge/knowledge.service';
+import { LLMEntity } from './llm.entity';
 
 @Injectable()
-export class LLMService extends GenericTenantService<
-  LLM, CreateLLM, UpdateLLM,
-  LLMEntity, CreateLLMEntity, UpdateLLMEntity
-> implements OnModuleInit {
+export class LLMService extends Service<LLMEntity> implements OnModuleInit {
   logger = new Logger(LLMService.name);
+  entity = LLMEntity;
+
   presets: LLMPreset[] = [];
 
-  constructor(
-    protected readonly repository: LLMRepository,
-    private readonly securityService: SecurityService
-  ) {
-    super(repository);
-  }
+  @Inject() private readonly securityService: SecurityService;
+  @Inject() private readonly knowledgeService: KnowledgeService;
+
 
   async onModuleInit() {
     const presetsPath = join(__root, 'dist', '@llm-presets');
@@ -53,9 +48,11 @@ export class LLMService extends GenericTenantService<
     return this.presets.map(preset => ({ ...preset, iconPath: `${env.AWS_PUBLIC_BASE_URL}/${preset.iconPath}` }));
   }
 
-  async findByKnowledge(knowledgeId: string): Promise<LLMEntity[]> {
-    const res = await this.repository.findByKnowledge(knowledgeId);
-    for (const llm of res) {
+  async findByKnowledge(knowledgeId: string, manager?: EntityManager): Promise<LLMEntity[]> {
+    const knowledge = await this.knowledgeService.findUnique({ where: { id: knowledgeId }, relations: ['llms'] }, manager);
+    if (!knowledge) throw new NotFoundException("Knowledge not found");
+    const llms = knowledge.llms;
+    for (const llm of llms) {
       const preset = this.presets.find(preset => preset.config.model === llm.model);
       if (!preset) throw new NotFoundException("Model not found");
       await Promise.all(Object.entries(llm.config).map(async ([key, value]) => {
@@ -63,14 +60,10 @@ export class LLMService extends GenericTenantService<
         if (isSecret) llm.config[key] = await this.securityService.decrypt(value as any, env.ENCRYPT_MASTER_PASSWORD);
       }))
     }
-    return res;
+    return llms;
   }
 
-  override async find(filterOpts: FilterOptions<LLM>, opts?: ServiceOptions): Promise<LLM[]> {
-    return (await this.repository.find(filterOpts, { tx: opts?.tx })).map(({ config: _, ...llm }) => (llm))
-  }
-
-  override async create(input: CreateLLM, opts?: ServiceOptions): Promise<LLM> {
+  override async create(input: CreateLLM, manager?: EntityManager): Promise<LLM> {
     const preset = this.presets.find(preset => preset.config.model === input.model);
     if (!preset) throw new NotFoundException("Model not found");
     await Promise.all(Object.entries(input.config).map(async ([key, value]) => {

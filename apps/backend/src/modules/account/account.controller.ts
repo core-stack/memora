@@ -1,11 +1,11 @@
-import { CrudController } from '@/generics';
+import { BaseController } from '@/shared/controller';
 import { Controller } from '@nestjs/common';
-import { accountFilterSchema, AccountSchema } from '@snipet/schemas';
 
+import { AccountEntity } from './account.entity';
 import { AccountService } from './account.service';
 
 @Controller('account')
-export class AccountController extends CrudController<AccountSchema>({ filterSchema: accountFilterSchema }) {
+export class AccountController extends BaseController<AccountEntity>() {
   constructor(service: AccountService) {
     super(service);
   }

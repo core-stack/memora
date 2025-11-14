@@ -2,8 +2,6 @@ import moment from 'moment';
 
 import { Fragments, SourceFragment } from '@/fragment';
 import { CacheService } from '@/infra/cache/cache.service';
-import { LLMService } from '@/infra/llm/llm.service';
-import { PromptService } from '@/infra/prompt/prompt.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
 import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
 import { PluginService } from '@/modules/plugin/plugin.service';
@@ -23,7 +21,6 @@ export type FindOptions = {
 
 export type Finder = (...args: any[]) => Partial<FindOptions>;
 
-
 @Injectable()
 export class SourceMemoryService {
   private readonly logger = new Logger(SourceMemoryService.name);
@@ -31,11 +28,9 @@ export class SourceMemoryService {
   constructor(
     private readonly vectorStore:      SourceVectorStoreService,
     private readonly knowledgeService: KnowledgeService,
-    private readonly llmService:       LLMService,
     private readonly pluginManager:    PluginManagerService,
     private readonly pluginService:    PluginService,
     private readonly cacheService:     CacheService,
-    private readonly promptService: PromptService
   ) {}
 
   private buildFindOptions(knowledgeId: string, userInput: string, ...opts: Finder[]): FindOptions {

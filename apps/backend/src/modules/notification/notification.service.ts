@@ -1,8 +1,10 @@
-import { CrudService } from "@/shared/service";
-import { NotificationEntity } from "./notification.entity";
-import { Injectable } from "@nestjs/common";
+import { Service } from '@/shared/service';
+import { Injectable, Logger } from '@nestjs/common';
+
+import { NotificationEntity } from './notification.entity';
 
 @Injectable()
-export class NotificationService extends CrudService<NotificationEntity> {
-
+export class NotificationService extends Service<NotificationEntity> {
+  entity = NotificationEntity;
+  logger = new Logger(NotificationService.name);
 }

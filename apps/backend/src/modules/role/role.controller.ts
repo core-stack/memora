@@ -1,11 +1,12 @@
-import { CrudController } from '@/generics';
-import { Controller } from '@nestjs/common';
-import { roleFilterSchema, RoleSchema } from '@snipet/schemas';
 
+import { BaseController } from '@/shared/controller';
+import { Controller } from '@nestjs/common';
+
+import { RoleEntity } from './role.entity';
 import { RoleService } from './role.service';
 
 @Controller('tenant/:tenantId/role')
-export class RoleController extends CrudController<RoleSchema>({ filterSchema: roleFilterSchema }) {
+export class RoleController extends BaseController<RoleEntity>() {
   constructor(service: RoleService) {
     super(service);
   }

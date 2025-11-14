@@ -1,22 +1,16 @@
-import { CreatedBy, TenantId } from '@/shared/decorators/context';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  Index,
-  Unique,
-  CreateDateColumn,
-  UpdateDateColumn,
+  Column, CreateDateColumn, Entity, Index, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique,
+  UpdateDateColumn
 } from 'typeorm';
 
-import { KnowledgeLLMEntity } from './knowledge-llm.entity';
-
+import { TenantId } from '@/shared/decorators/context';
 import { KnowledgeStatus } from '@/shared/enums';
-import { FolderEntity } from './folder/folder.entity';
-import { SourceEntity } from './source/source.entity';
+
+import { LLMEntity } from '../llm/llm.entity';
 import { ChatEntity } from './chat/chat.entity';
 import { MessageEntity } from './chat/message/message.entity';
+import { FolderEntity } from './folder/folder.entity';
+import { SourceEntity } from './source/source.entity';
 
 @Entity('knowledge')
 @Index('knowledge_tenant_idx', ['tenantId'])
@@ -33,9 +27,6 @@ export class KnowledgeEntity {
 
   @Column({ type: 'text', nullable: true })
   description?: string;
-
-  @Column({ type: 'text', nullable: true })
-  instructions?: string;
 
   @Column({ type: 'enum', enum: KnowledgeStatus, default: KnowledgeStatus.OK })
   status: KnowledgeStatus;
@@ -74,6 +65,6 @@ export class KnowledgeEntity {
   @OneToMany(() => MessageEntity, (c) => c.knowledge)
   messages: MessageEntity[];
 
-  @OneToMany(() => KnowledgeLLMEntity, (k) => k.knowledge)
-  llms: KnowledgeLLMEntity[];
+  @ManyToMany(() => LLMEntity, (k) => k.knowledges)
+  llms: LLMEntity[];
 }

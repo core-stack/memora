@@ -1,13 +1,16 @@
+import bcrypt from 'bcrypt';
 import {
-  Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn
+  Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
+  UpdateDateColumn
 } from 'typeorm';
 
 import { AccountEntity } from '@/modules/account/account.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { VerificationTokenEntity } from '../verification-token/verification-token.entity';
+
+import { InviteEntity } from '../invite/invite.entity';
 import { MemberEntity } from '../member/member.entity';
 import { RoleEntity } from '../role/role.entity';
-import { InviteEntity } from '../invite/invite.entity';
+import { VerificationTokenEntity } from '../verification-token/verification-token.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -20,8 +23,8 @@ export class UserEntity {
   name: string;
 
   @ApiProperty({ example: 'mayron@example.com' })
-  @Column({ unique: true, type: 'text', nullable: true })
-  email?: string;
+  @Column({ unique: true, type: 'text' })
+  email: string;
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
@@ -64,7 +67,29 @@ export class UserEntity {
   @OneToMany(() => VerificationTokenEntity, (token) => token.user)
   verificationTokens?: VerificationTokenEntity[];
 
-  constructor(user: Omit<UserEntity, "id" | "createdAt" | "updatedAt">) {
+  constructor(user: Omit<Partial<UserEntity>, "password">) {
     Object.assign(this, user);
+  }
+
+  async setPassword(password: string) {
+    this.password = await bcrypt.hash(password, 10);
+    return this;
+  }
+
+  async comparePassword(password: string): Promise<boolean> {
+    if (!this.password) return false;
+    return bcrypt.compare(password, this.password);
+  }
+
+  verifyEmail(verify: boolean = true) {
+    this.emailVerified = verify ? new Date() : undefined;
+    return this;
+  }
+
+  static async newWithPassword(data: Partial<UserEntity>) {
+    const user = new UserEntity(data);
+    if (!data.password) throw new Error("Password is required");
+    await user.setPassword(data.password);
+    return user
   }
 }

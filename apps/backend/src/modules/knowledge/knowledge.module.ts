@@ -4,13 +4,12 @@ import { forwardRef, Module } from '@nestjs/common';
 
 import { AuthModule } from '../auth/auth.module';
 import { KnowledgeController } from './knowledge.controller';
-import { KnowledgeRepository } from './knowledge.repository';
 import { KnowledgeService } from './knowledge.service';
 
 @Module({
   controllers: [KnowledgeController],
-  providers: [KnowledgeService, KnowledgeRepository],
+  providers: [KnowledgeService],
   imports: [DatabaseModule, forwardRef(() => DeleteKnowledgeModule), AuthModule],
-  exports: [KnowledgeService, KnowledgeRepository]
+  exports: [KnowledgeService]
 })
 export class KnowledgeModule {}

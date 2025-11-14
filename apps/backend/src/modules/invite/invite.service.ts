@@ -1,57 +1,47 @@
-import { ServiceOptions } from '@/generics/service.interface';
-import { GenericTenantService } from '@/generics/tenant.service';
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { CreateInviteSchema, InviteSchema } from '@snipet/schemas';
-
-import { CreateInviteEntity, InviteEntity } from './invite.entity';
-import { InviteRepository } from './invite.repository';
-import { MemberService } from '../member/member.service';
-import moment from 'moment';
-import { env } from '@/env';
-import { TxManager } from '@/generics/tx-manager';
-import { InjectQueue } from '@nestjs/bullmq';
-import { JobType } from '@/jobs/types';
 import { Queue } from 'bullmq';
+import moment from 'moment';
+import { EntityManager, In } from 'typeorm';
+
+import { env } from '@/env';
 import { EmailPayload, EmailTemplate } from '@/jobs/email/schemas';
-import { TenantService } from '../tenant/tenant.service';
+import { JobType } from '@/jobs/types';
+import { RoleScope } from '@/shared/enums';
+import { Service } from '@/shared/service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { CreateInviteSchema } from '@snipet/schemas';
+
+import { MemberService } from '../member/member.service';
 import { RoleEntity } from '../role/role.entity';
-import { role } from '@/db/schema/role';
 import { RoleService } from '../role/role.service';
+import { TenantService } from '../tenant/tenant.service';
 import { UserService } from '../user/user.service';
-import { randomUUID } from 'crypto';
+import { InviteEntity } from './invite.entity';
 
 @Injectable()
-export class InviteService extends GenericTenantService<
-  InviteSchema, CreateInviteSchema, Partial<InviteSchema>,
-  InviteEntity, CreateInviteEntity
-> {
+export class InviteService extends Service<InviteEntity> {
   logger = new Logger(InviteService.name);
-
-  constructor(
-    protected repository: InviteRepository,
-    private readonly memberService: MemberService,
-    private readonly txManager: TxManager,
-    private readonly tenantService: TenantService,
-    private readonly roleService: RoleService,
-    private readonly userService: UserService,
-    @InjectQueue(JobType.SEND_EMAIL) private readonly sendMail: Queue<EmailPayload>,
-  ) {
-    super(repository);
-  }
-
-  async send(invites: CreateInviteSchema, opts?: ServiceOptions) {
-    const tenantId = opts?.http?.params.shouldGetString("tenantId");
-    if (!tenantId) throw new BadRequestException("tenantId is required");
-    const tenant = await this.tenantService.findByID(tenantId, { tx: opts?.tx });
+  entity = InviteEntity;
+ 
+  @Inject() private readonly memberService: MemberService;
+  @Inject() private readonly tenantService: TenantService;
+  @Inject() private readonly roleService: RoleService;
+  @Inject() private readonly userService: UserService;
+  @InjectQueue(JobType.SEND_EMAIL) private readonly sendMail: Queue<EmailPayload>;
+  
+  async send(invites: CreateInviteSchema, manager?: EntityManager) {
+    const tenantId = this.context.params.shouldGetString("tenantId");
+  
+    const tenant = await this.tenantService.findByID(tenantId, manager);
     if (!tenant) throw new NotFoundException("Tenant not found");
 
-    const memberId = opts?.http?.auth.memberId;
-    if (!memberId) throw new BadRequestException("memberId is required");
+    const memberId = this.context.memberId;
+    if (!memberId) throw new NotFoundException("memberId is required");
 
     const emails = invites.emails.map(email => email.email);
 
     // verify if exists member with email
-    const membersWithEmail = await this.memberService.findByUserEmail(emails, { tx: opts?.tx });
+    const membersWithEmail = await this.memberService.findByUserEmail(emails, manager);
     if (membersWithEmail && membersWithEmail.length > 0) {
       const existingEmails = membersWithEmail.map(m => m.user?.email).filter(email => email) as string[];
       if (existingEmails.every(email => emails.includes(email))) {
@@ -60,7 +50,7 @@ export class InviteService extends GenericTenantService<
     }
 
     // verify if exists invite with email
-    const invitesWithEmail = await this.repository.findByEmail(emails, { tx: opts?.tx });
+    const invitesWithEmail = await this.repository(manager).find({ where: { email: In(emails) } });
     const rolesCache: RoleEntity[] = [];
     //#region Re send invites
     if (invitesWithEmail && invitesWithEmail.length > 0) {
@@ -68,31 +58,38 @@ export class InviteService extends GenericTenantService<
         const inviteWithEmail = invites.emails.find(email => email.email === invite.email);
         if (!inviteWithEmail) continue;
         if (!rolesCache.find(role => role.id === inviteWithEmail.roleId)) {
-          const role = await this.roleService.findByID(inviteWithEmail.roleId, { tx: opts?.tx });
+          const role = await this.roleService.findUnique({ 
+            where: {
+              id: inviteWithEmail.roleId,
+              scope: RoleScope.TENANT,
+              tenantId
+            }
+          }, manager);
+
           if (!role) throw new NotFoundException("Role not found");
           rolesCache.push(role);
         }
+
         if (invite.expiresAt < new Date()) { // if invite is expired
           invite.expiresAt = moment().add(env.DEFAULT_INVITE_EXPIRES).toDate();
-          await this.txManager.runOrCreate(opts?.tx, async (tx) => {
+          await this.transaction(async (manager) => {
             await this.sendMail.add("", {
               template: EmailTemplate.INVITE,
               context: {
                 tenantName: tenant.name,
                 inviteUrl: `${env.FRONTEND_URL}/invite/${invite.id}`,
                 role: rolesCache.find(role => role.id === inviteWithEmail.roleId)?.name ?? "",
-                inviterName: opts?.http?.auth.session?.user.name ?? "",
+                inviterName: this.context.user?.name ?? '',
                 expirationDate: moment(invite.expiresAt).format("MM/DD/YYYY HH:mm"),
               },
               to: invite.email,
               subject: "You have been invited to " + tenant.name,
             });
-            await this.repository.update(
+            await this.repository(manager).update(
               invite.id,
               { expiresAt: invite.expiresAt, roleId: inviteWithEmail.roleId },
-              { tx }
             );
-          });
+          }, manager);
         }
       }
     }
@@ -103,21 +100,21 @@ export class InviteService extends GenericTenantService<
       .filter(({ email }) => !invitesWithEmail?.find(invite => invite.email === email));
 
     for (const { email, roleId } of emailsToInvite) {
-      const userWithEmail = await this.userService.findFirst({ filter: { email }});
+      const userWithEmail = await this.userService.findFirst({ where: { email }}, manager);
       if (!rolesCache.find(role => role.id === roleId)) {
-        const role = await this.roleService.findByID(roleId, { tx: opts?.tx });
+        const role = await this.roleService.findByID(roleId, manager);
         if (!role) throw new NotFoundException("Role not found");
         rolesCache.push(role);
       }
-      await this.txManager.runOrCreate(opts?.tx, async (tx) => {
-        const invite = await this.repository.create({
+      await this.transaction(async (manager) => {
+        const invite = await this.repository(manager).save({
           email,
           expiresAt: moment().add(env.DEFAULT_INVITE_EXPIRES).toDate(),
           tenantId: tenant.id,
           roleId: rolesCache.find(role => role.id === roleId)?.id ?? "",
           creatorId: memberId,
           userId: userWithEmail?.id,
-        }, { tx });
+        });
 
         await this.sendMail.add("", {
           template: EmailTemplate.INVITE,
@@ -125,7 +122,7 @@ export class InviteService extends GenericTenantService<
             tenantName: tenant.name,
             inviteUrl: `${env.FRONTEND_URL}/invite/${invite.id}`,
             role: rolesCache.find(role => role.id === roleId)?.name ?? "",
-            inviterName: opts?.http?.auth.session?.user.name ?? "",
+            inviterName: this.context.user?.name ?? '',
             expirationDate: moment(invite.expiresAt).format("MM/DD/YYYY HH:mm"),
           },
           to: invite.email,

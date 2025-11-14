@@ -1,18 +1,15 @@
-import { CreatedBy, TenantId } from '@/shared/decorators/context';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  Unique,
-  CreateDateColumn,
-  UpdateDateColumn,
+  Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique,
+  UpdateDateColumn
 } from 'typeorm';
-import { TenantEntity } from '../tenant/tenant.entity';
-import { MemberEntity } from '../member/member.entity';
-import { UserEntity } from '../user/user.entity';
+
+import { CreatedBy, TenantId } from '@/shared/decorators/context';
+import { permissionsToNumber, RoleSchema } from '@snipet/permission';
+
 import { InviteEntity } from '../invite/invite.entity';
+import { MemberEntity } from '../member/member.entity';
+import { TenantEntity } from '../tenant/tenant.entity';
+import { UserEntity } from '../user/user.entity';
 
 export enum RoleScope {
   TENANT = 'TENANT',
@@ -68,5 +65,14 @@ export class RoleEntity {
 
   constructor(data: Omit<RoleEntity, "id" | "createdAt" | "updatedAt">) {
     Object.assign(this, data);
+  }
+
+  static fromRoleSchema(role: RoleSchema) {
+    return new RoleEntity({
+      key: role.key,
+      name: role.name,
+      permissions: permissionsToNumber(role.permissions),
+      scope: role.scope === "GLOBAL" ? RoleScope.GLOBAL : RoleScope.TENANT,
+    });
   }
 }

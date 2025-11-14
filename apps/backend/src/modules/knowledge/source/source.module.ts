@@ -6,13 +6,12 @@ import { forwardRef, Module } from '@nestjs/common';
 import { FolderModule } from '../folder/folder.module';
 import { KnowledgeModule } from '../knowledge.module';
 import { SourceController } from './source.controller';
-import { SourceRepository } from './source.repository';
 import { SourceService } from './source.service';
 
 @Module({
   controllers: [SourceController],
-  providers: [SourceService, SourceRepository],
+  providers: [SourceService],
   imports: [FolderModule, DatabaseModule, KnowledgeModule, StorageModule, forwardRef(() => IngestModule)],
-  exports: [SourceService, SourceRepository],
+  exports: [SourceService],
 })
 export class SourceModule {}

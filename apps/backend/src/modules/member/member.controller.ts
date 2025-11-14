@@ -1,11 +1,12 @@
-import { CrudController } from '@/generics';
-import { Controller } from '@nestjs/common';
-import { MemberSchema, tagFilterSchema } from '@snipet/schemas';
 
+import { BaseController } from '@/shared/controller';
+import { Controller } from '@nestjs/common';
+
+import { MemberEntity } from './member.entity';
 import { MemberService } from './member.service';
 
 @Controller('tenant/:tenantId/member')
-export class MemberController extends CrudController<MemberSchema>({ filterSchema: tagFilterSchema }) {
+export class MemberController extends BaseController<MemberEntity>() {
   constructor(service: MemberService) {
     super(service);
   }

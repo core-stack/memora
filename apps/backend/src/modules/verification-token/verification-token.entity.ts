@@ -1,20 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
 
-import { UserEntity } from '../user/user.entity';
+import { VerificationType } from '@/shared/enums';
+import { ApiProperty } from '@nestjs/swagger';
 
-export enum VerificationTokenTypeEnum {
-  ACTIVE_ACCOUNT = 'ACTIVE_ACCOUNT',
-  RESET_PASSWORD = 'RESET_PASSWORD',
-}
+import { UserEntity } from '../user/user.entity';
 
 @Entity('verification_tokens')
 export class VerificationTokenEntity {
@@ -22,9 +13,9 @@ export class VerificationTokenEntity {
   @PrimaryGeneratedColumn('uuid')
   token: string;
 
-  @ApiProperty({ enum: VerificationTokenTypeEnum })
-  @Column({ enum: VerificationTokenTypeEnum, type: 'enum' })
-  type: VerificationTokenTypeEnum;
+  @ApiProperty({ enum: VerificationType })
+  @Column({ enum: VerificationType, type: 'enum' })
+  type: VerificationType;
 
   @ApiProperty({ example: '2025-11-12T13:00:00Z' })
   @Column({ type: 'timestamptz' })
@@ -45,4 +36,8 @@ export class VerificationTokenEntity {
   @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
+
+  constructor(data: Omit<VerificationTokenEntity, 'token' | 'createdAt' | 'updatedAt'>) {
+    Object.assign(this, data);
+  }
 }

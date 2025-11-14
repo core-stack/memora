@@ -4,12 +4,11 @@ import z from 'zod';
 import { ZodParam } from '@/shared/decorators/zod-param';
 import { applyDecorators, Body, Delete, Get, Post, Put } from '@nestjs/common';
 
-import { Service } from './service';
 import { ControllerFilter, Filter } from './decorators/filter';
 import { Public } from './decorators/public';
 import { FilterOptions } from './filter-options';
+import { Service } from './service';
 
-import type { Request } from 'express';
 export const Http = (method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", path: string, ignore?: boolean) => {
   if (ignore) return applyDecorators();
   switch (method) {
@@ -48,7 +47,7 @@ export function BaseController<
   allowedRelations?: (keyof TEntity)[];
   ignore?: Array<'find' | 'findByID' | 'create' | 'update' | 'delete'>;
   publicRoutes?: Array<'find' | 'findByID' | 'create' | 'update' | 'delete'>;
-}) {
+} = {}) {
   @ControllerFilter({ allowedFilters, allowedRelations })
   abstract class Base {
     constructor(public readonly service: Service<TEntity>) {}

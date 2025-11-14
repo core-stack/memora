@@ -4,7 +4,7 @@ import { StorageDeleteError } from '@/infra/storage/errors/delete-error';
 import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
-import { KnowledgeRepository } from '@/modules/knowledge/knowledge.repository';
+import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { Knowledge, Source } from '@snipet/schemas';
@@ -16,7 +16,7 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
   private logger = new Logger(DeleteKnowledgeProcessor.name);
 
   constructor(
-    @Inject(forwardRef(() => KnowledgeRepository)) private readonly knowledgeRepository: KnowledgeRepository,
+    @Inject(forwardRef(() => KnowledgeService)) private readonly knowledgeService: KnowledgeService,
     private readonly sourceVectorStore: SourceVectorStoreService,
     private readonly chatVectorStore: ChatVectorStoreService,
     private readonly storageService: PrivateStorageService
@@ -24,7 +24,7 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
 
   async process(job: Job<Knowledge>) {
     const { id: knowledgeId, tenantId } = job.data;
-    const knowledge = await this.knowledgeRepository.findByID(knowledgeId);
+    const knowledge = await this.knowledgeService.findByID(knowledgeId);
     if (!knowledge) return;
     job.updateProgress(10);
     // delete data in vector store
@@ -46,7 +46,7 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
     }
 
     // delete knowledge in database
-    await this.knowledgeRepository.delete(knowledgeId);
+    await this.knowledgeService.delete(knowledgeId);
     job.updateProgress(100);
   }
 
@@ -54,13 +54,13 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
   async onStart(job: Job<Source>) {
     this.logger.log("ingest started");
     const knowledge = job.data;
-    await this.knowledgeRepository.update(knowledge.id, { status: "DELETING" });
+    await this.knowledgeService.update(knowledge.id, { status: "DELETING" });
   }
 
   @OnWorkerEvent("failed")
   async onFailed(job: Job<Source>) {
     const source = job.data;
-    await this.knowledgeRepository.update(source.id,
+    await this.knowledgeService.update(source.id,
       {
         status: "DELETE_ERROR",
         deleteError: "Error deleting knowledge, try again"

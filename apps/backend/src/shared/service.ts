@@ -1,30 +1,21 @@
-import { DataSource, EntityManager, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
+import { EntityManager, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
 
-import { Inject, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
 import { FilterOptions } from './filter-options';
-import { HTTPContext } from './http-context';
+import { GenericService } from './generic-service';
 
 export abstract class Service<
   TEntity extends ObjectLiteral,
   TCreateDto extends TEntity = TEntity,
-  TUpdateDto extends TEntity = TEntity
-> {
-  @Inject() protected readonly context: HTTPContext;
-  @Inject() protected readonly dataSource: DataSource;
-
+  TUpdateDto extends Partial<TEntity> = Partial<TEntity>
+> extends GenericService {
   abstract readonly entity: new (...args: any) => TEntity;
   abstract readonly logger: Logger;
   readonly idField: keyof TEntity = "id";
 
-
   repository(manager?: EntityManager): Repository<TEntity> {
     return manager ? manager.getRepository(this.entity) : this.dataSource.getRepository(this.entity);
-  }
-
-  async transaction<T>(callback: (manager: EntityManager) => Promise<T>, manager?: EntityManager): Promise<T> {
-    if (manager) return await callback(manager);
-    return await this.dataSource.transaction(callback);
   }
 
   async find(filterOptions: FilterOptions<TEntity>, manager?: EntityManager): Promise<TEntity[]> {

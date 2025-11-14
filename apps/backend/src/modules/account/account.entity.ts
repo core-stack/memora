@@ -20,10 +20,22 @@ export class AccountEntity {
 
   @ApiProperty({ example: '2b0a9e10-1d83-4f61-8a3f-bfdc62131d4a' })
   @Column({ name: 'user_id', length: 36 })
-  userId: string;
+  userId?: string;
 
   // Relation
   @ManyToOne(() => UserEntity, (user) => user.accounts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  user?: UserEntity;
+
+  @ApiProperty({ example: '2025-11-12T13:00:00Z' })
+  @Column({ name: 'created_at', type: 'timestamptz' })
+  createdAt: Date;
+
+  @ApiProperty({ example: '2025-11-12T13:00:00Z' })
+  @Column({ name: 'updated_at', type: 'timestamptz' })
+  updatedAt: Date;
+
+  constructor(data: Omit<AccountEntity, "id" | "createdAt" | "updatedAt">) {
+    Object.assign(this, data);
+  }
 }
