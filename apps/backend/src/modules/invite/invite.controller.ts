@@ -1,23 +1,17 @@
-import { CrudController } from '@/generics';
-import { Controller, Post, Req } from '@nestjs/common';
-import {
- createInviteSchema, inviteFilterSchema, InviteSchema
-} from '@snipet/schemas';
-import type { CreateInviteSchema } from "@snipet/schemas";
+import { Body, Controller, Post } from '@nestjs/common';
 import { InviteService } from './invite.service';
-import { ZodBody } from '@/shared/decorators/zod-body';
-import type { Request } from 'express';
+import { BaseController, HttpPost } from '@/shared/controller';
+import { InviteEntity } from './invite.entity';
+import { SendInviteDto } from './dto/send-invites.dto';
 
 @Controller('tenant/:tenantId/invite')
-export class InviteController extends CrudController<InviteSchema, CreateInviteSchema>(
-  { filterSchema: inviteFilterSchema, createDtoSchema: createInviteSchema }
-) {
+export class InviteController extends BaseController<InviteEntity>() {
   constructor(public service: InviteService) {
     super(service);
   }
 
-  @Post("send")
-  async send(@Req() req: Request, @ZodBody(createInviteSchema) invites: CreateInviteSchema) {
-    return this.service.send(invites, { http: this.loadContext(req) });
+  @HttpPost("send")
+  async send(@Body() invites: SendInviteDto) {
+    return this.service.send(invites);
   }
 }

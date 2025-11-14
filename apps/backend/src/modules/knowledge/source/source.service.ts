@@ -13,6 +13,7 @@ import { BadRequestException, Inject, Injectable, Logger, NotFoundException } fr
 import { FolderService } from '../folder/folder.service';
 import { KnowledgeService } from '../knowledge.service';
 import { SourceEntity } from './source.entity';
+import { GetUploadUrlDto } from './dto/get-upload-url.dto';
 
 @Injectable()
 export class SourceService extends Service<SourceEntity> {
@@ -53,19 +54,23 @@ export class SourceService extends Service<SourceEntity> {
 
     await this.knowledgeService.increaseFileCount(knowledgeId);
     await this.knowledgeService.increaseStorageCount(knowledgeId, createdSource.metadata.size);
-    await this.ingestQueue.add(JobType.INGEST, createdSource, { jobId: createdSource.id });
+    await this.ingestQueue.add(
+      JobType.INGEST,
+      createdSource,
+      { jobId: createdSource.id }
+    );
     return createdSource;
   }
 
-  async getUploadUrl(input: GetUploadUrl, manager?: EntityManager) {
+  async getUploadUrl(input: GetUploadUrlDto) {
     const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
     const ext = input.fileName.split(".").pop();
-    const key = `source/${opts?.http?.params.shouldGetString("tenantId")}/${knowledgeId}/${randomUUID()}.${ext}`;
+    const key = `source/${this.context.params.shouldGetString("tenantId")}/${knowledgeId}/${randomUUID()}.${ext}`;
     return this.storageService.getUploadUrl(key, input.contentType, { temp: true });
   }
 
   async downloadUrl(sourceId: string, manager?: EntityManager) {
-    const source = await this.repository.findByID(sourceId, { tx: opts?.tx });
+    const source = await this.repository(manager).findOneOrFail({ where: { id: sourceId } });
     if (!source) throw new NotFoundException("Source not found");
     return {
       url: await this.storageService.getPreSignedDownloadUrl(source.key),
@@ -74,15 +79,15 @@ export class SourceService extends Service<SourceEntity> {
   }
 
   async view(sourceId: string, manager?: EntityManager) {
-    const source = (await this.repository.find({ filter: { id: sourceId } }, { tx: opts?.tx }))[0];
+    const source = await this.repository(manager).findOneOrFail({ where: { id: sourceId } });
     if (!source) throw new NotFoundException("Source not found");
     return this.storageService.getVisualizationUrl(source.key);
   }
 
   async retryIndex(sourceId: string, manager?: EntityManager) {
-    const source = (await this.repository.find({ filter: { id: sourceId } }, { tx: opts?.tx }))[0];
+    const source = await this.repository(manager).findOneOrFail({ where: { id: sourceId } });
     if (!source) throw new NotFoundException("Source not found");
-    await this.repository.update(source.id, { indexStatus: 'PENDING' }, { tx: opts?.tx });
+    await this.repository(manager).update(source.id, { indexStatus: IndexStatus.PENDING });
     const failedJob = await this.ingestQueue.getJob(source.id);
     if (failedJob && await failedJob.isFailed()) {
       await failedJob.retry();

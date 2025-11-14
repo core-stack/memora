@@ -1,45 +1,33 @@
-import { CrudController } from '@/generics';
-import { ZodBody } from '@/shared/decorators/zod-body';
-import { ZodParam } from '@/shared/decorators/zod-param';
-import { Controller, Get, Post, Req } from '@nestjs/common';
-import {
-  createSourceSchema, getUploadUrlSchema, idSchema, Source, sourceFilterSchema, updateSourceSchema
-} from '@snipet/schemas';
-
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { SourceService } from './source.service';
 
-import type { GetUploadUrl } from '@snipet/schemas';
-import type { Request } from 'express';
+import { BaseController } from '@/shared/controller';
+import { SourceEntity } from './source.entity';
+import { GetUploadUrlDto } from './dto/get-upload-url.dto';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/source')
-export class SourceController extends CrudController<Source>(
-  {
-    filterSchema: sourceFilterSchema,
-    createDtoSchema: createSourceSchema,
-    updateDtoSchema: updateSourceSchema
-  },
-) {
+export class SourceController extends BaseController<SourceEntity>() {
   constructor(public service: SourceService) {
     super(service);
   }
 
-  @Get(":source_id/view")
-  async view(@Req() req: Request, @ZodParam("source_id", idSchema) sourceId: string) {
-    return this.service.view(sourceId, { http: this.loadContext(req) });
+  @Get(":id/view")
+  async view(@Param("id", ParseUUIDPipe) sourceId: string) {
+    return this.service.view(sourceId);
   }
 
-  @Get(":source_id/download-url")
-  async download(@Req() req: Request, @ZodParam("source_id", idSchema) sourceId: string) {
-    return this.service.downloadUrl(sourceId, { http: this.loadContext(req) });
+  @Get(":id/download-url")
+  async download(@Param("id", ParseUUIDPipe) sourceId: string) {
+    return this.service.downloadUrl(sourceId);
   }
 
   @Post("upload-url")
-  async upload(@Req() req: Request, @ZodBody(getUploadUrlSchema) body: GetUploadUrl) {
-    return this.service.getUploadUrl(body, { http: this.loadContext(req) });
+  async upload(@Body() body: GetUploadUrlDto) {
+    return this.service.getUploadUrl(body);
   }
 
-  @Post(":source_id/retry")
-  async retry(@Req() req: Request, @ZodParam("source_id", idSchema) sourceId: string) {
-    return this.service.retryIndex(sourceId, { http: this.loadContext(req) });
+  @Post(":id/retry")
+  async retry(@Param("id", ParseUUIDPipe) sourceId: string) {
+    return this.service.retryIndex(sourceId);
   }
 }

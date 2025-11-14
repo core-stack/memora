@@ -4,9 +4,6 @@ import { Fragments, SourceFragment } from '@/fragment';
 import { CacheService } from '@/infra/cache/cache.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
 import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
-import { PluginService } from '@/modules/plugin/plugin.service';
-import { PluginManagerService } from '@/plugin-registry/plugin-manager.service';
-import { mergeBy } from '@/utils/array';
 import { buildOptions } from '@/utils/build-options';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
@@ -28,8 +25,6 @@ export class SourceMemoryService {
   constructor(
     private readonly vectorStore:      SourceVectorStoreService,
     private readonly knowledgeService: KnowledgeService,
-    private readonly pluginManager:    PluginManagerService,
-    private readonly pluginService:    PluginService,
     private readonly cacheService:     CacheService,
   ) {}
 
@@ -43,19 +38,7 @@ export class SourceMemoryService {
     const knowledge = await this.knowledgeService.findByID(knowledgeId);
     if (!knowledge) throw new NotFoundException("Knowledge not found");
 
-
-    // heat up plugins
-    const forcedPlugins = opts.forceUsePlugins ? await this.pluginService.findByIDList(opts.forceUsePlugins) : [];
-    const relevantPlugins = await this.pluginService.getRelevantPlugins(userInput, knowledgeId, knowledge.instructions);
-    const plugins = mergeBy("id", forcedPlugins, relevantPlugins).filter(p => !opts.excludePlugins?.includes(p.id));
-    await this.pluginManager.preloadPlugins(plugins);
-
     const fragments = new Fragments<SourceFragment>();
-
-    for (const p of plugins) {
-      const pluginResponse = await this.pluginManager.executeFromQuery<string>(p, userInput);
-      this.logger.debug(`Plugin ${p.pluginRegistry} response: ${pluginResponse}`);
-    }
 
     return fragments.merge(await this.vectorStore.search(
       knowledgeId,

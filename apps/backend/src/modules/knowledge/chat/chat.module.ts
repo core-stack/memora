@@ -6,12 +6,11 @@ import { Module } from '@nestjs/common';
 
 import { KnowledgeModule } from '../knowledge.module';
 import { ChatController } from './chat.controller';
-import { ChatRepository } from './chat.repository';
 import { ChatService } from './chat.service';
 
 @Module({
   controllers: [ChatController],
-  providers: [ChatService, ChatRepository],
+  providers: [ChatService],
   imports: [
     DatabaseModule,
     KnowledgeModule,
@@ -19,6 +18,6 @@ import { ChatService } from './chat.service';
     LLMModule,
     PromptModule
   ],
-  exports: [ChatService, ChatRepository],
+  exports: [ChatService],
 })
 export class ChatModule {}

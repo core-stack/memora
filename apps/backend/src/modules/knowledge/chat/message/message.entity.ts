@@ -13,11 +13,7 @@ export class MessageEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({
-    name: 'message_role',
-    type: 'enum',
-    enum: MessageRole,
-  })
+  @Column({ name: 'message_role', type: 'enum', enum: MessageRole })
   messageRole: MessageRole;
 
   @Column({ type: 'text' })
@@ -28,14 +24,14 @@ export class MessageEntity {
 
   @ManyToOne(() => ChatEntity, (chat) => chat.messages, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'chat_id' })
-  chat: ChatEntity;
+  chat?: ChatEntity;
 
   @Column({ name: 'knowledge_id', type: 'uuid' })
   knowledgeId: string;
 
   @ManyToOne(() => KnowledgeEntity, (knowledge) => knowledge.messages, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'knowledge_id' })
-  knowledge: KnowledgeEntity;
+  knowledge?: KnowledgeEntity;
 
   @Column({ name: 'tenant_id', type: 'uuid' })
   tenantId: string;
@@ -45,4 +41,8 @@ export class MessageEntity {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  constructor(message: Partial<MessageEntity>) {
+    Object.assign(this, message);
+  }
 }

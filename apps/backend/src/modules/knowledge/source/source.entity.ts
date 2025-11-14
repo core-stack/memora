@@ -14,6 +14,8 @@ import { KnowledgeEntity } from '../knowledge.entity';
 import { FolderEntity } from '../folder/folder.entity';
 import { IndexStatus, SourceType } from '@/shared/enums';
 import { TenantEntity } from '@/modules/tenant/tenant.entity';
+import type { SourceMetadata } from './metadata.types';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('sources')
 @Index('sources_memory_idx', ['memoryId'])
@@ -38,8 +40,9 @@ export class SourceEntity {
   @Column({ name: 'original_name', length: 255, nullable: true })
   originalName?: string;
 
-  @Column({ type: 'jsonb', nullable: true })
-  metadata?: Record<string, any>;
+  @ApiProperty({ type: 'object', additionalProperties: true })
+  @Column({ type: 'jsonb' })
+  metadata: SourceMetadata;
 
   @Column({
     name: 'source_type',

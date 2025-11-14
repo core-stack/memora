@@ -41,4 +41,8 @@ export class LLMEntity {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
+
+  constructor(data: Partial<LLMEntity>) {
+    Object.assign(this, data);
+  }
 }

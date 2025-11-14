@@ -7,7 +7,7 @@ import { SecurityService } from '@/infra/security/security.service';
 import { __root } from '@/root';
 import { Service } from '@/shared/service';
 import { Inject, Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { CreateLLM, LLM, LLMPreset, llmPresetSchema } from '@snipet/schemas';
+import { LLMPreset, llmPresetSchema } from '@snipet/schemas';
 
 import { KnowledgeService } from '../knowledge/knowledge.service';
 import { LLMEntity } from './llm.entity';
@@ -40,7 +40,7 @@ export class LLMService extends Service<LLMEntity> implements OnModuleInit {
         throw error;
       }
     })
-  
+
     this.presets = presets;
   }
 
@@ -63,7 +63,7 @@ export class LLMService extends Service<LLMEntity> implements OnModuleInit {
     return llms;
   }
 
-  override async create(input: CreateLLM, manager?: EntityManager): Promise<LLM> {
+  override async create(input: LLMEntity, manager?: EntityManager): Promise<LLMEntity> {
     const preset = this.presets.find(preset => preset.config.model === input.model);
     if (!preset) throw new NotFoundException("Model not found");
     await Promise.all(Object.entries(input.config).map(async ([key, value]) => {
@@ -71,6 +71,6 @@ export class LLMService extends Service<LLMEntity> implements OnModuleInit {
       if (isSecret) input.config[key] = await this.securityService.encrypt(value as string, env.ENCRYPT_MASTER_PASSWORD);
     }))
 
-    return super.create(input, opts);
+    return super.create(input, manager);
   }
 }

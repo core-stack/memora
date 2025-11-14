@@ -10,6 +10,7 @@ import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { Knowledge, Source } from '@snipet/schemas';
 
 import { JobType } from '../types';
+import { KnowledgeStatus } from '@/shared/enums';
 
 @Processor(JobType.DELETE_KNOWLEDGE, { concurrency: 10 })
 export class DeleteKnowledgeProcessor extends WorkerHost {
@@ -54,7 +55,7 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
   async onStart(job: Job<Source>) {
     this.logger.log("ingest started");
     const knowledge = job.data;
-    await this.knowledgeService.update(knowledge.id, { status: "DELETING" });
+    await this.knowledgeService.update(knowledge.id, { status: KnowledgeStatus.DELETING });
   }
 
   @OnWorkerEvent("failed")
@@ -62,7 +63,7 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
     const source = job.data;
     await this.knowledgeService.update(source.id,
       {
-        status: "DELETE_ERROR",
+        status: KnowledgeStatus.DELETE_ERROR,
         deleteError: "Error deleting knowledge, try again"
       }
     );

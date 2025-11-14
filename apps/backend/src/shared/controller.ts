@@ -1,8 +1,7 @@
 import { ObjectLiteral } from 'typeorm';
 import z from 'zod';
 
-import { ZodParam } from '@/shared/decorators/zod-param';
-import { applyDecorators, Body, Delete, Get, Post, Put } from '@nestjs/common';
+import { applyDecorators, Body, Delete, Get, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
 
 import { ControllerFilter, Filter } from './decorators/filter';
 import { Public } from './decorators/public';
@@ -31,13 +30,11 @@ export const HttpPut = (path?: string, ignore?: boolean) => Http("PUT", path ?? 
 export const HttpPatch = (path?: string, ignore?: boolean) => Http("PATCH", path ?? "", ignore);
 export const HttpDelete = (path?: string, ignore?: boolean) => Http("DELETE", path ?? "", ignore);
 
-const idSchema = z.uuid();
-
 export function BaseController<
   TEntity extends ObjectLiteral,
-  TCreateDto extends TEntity = TEntity,
-  TUpdateDto extends TEntity = TEntity
-  >({
+  TCreateDto = TEntity,
+  TUpdateDto = Partial<TEntity>
+>({
   allowedFilters = [],
   allowedRelations = [],
   ignore = [],
@@ -54,7 +51,7 @@ export function BaseController<
 
     @Public(publicRoutes.includes("findByID"))
     @HttpGet(":id", ignore.includes("findByID"))
-    async findByID(@ZodParam("id", idSchema) id: string): Promise<TEntity | null> {
+    async findByID(@Param("id", ParseUUIDPipe) id: string): Promise<TEntity | null> {
       return this.service.findByID(id);
     }
 
@@ -67,19 +64,19 @@ export function BaseController<
     @Public(publicRoutes.includes("create"))
     @HttpPost("", ignore.includes("create"))
     async create(@Body() body: TCreateDto): Promise<TEntity> {
-      return this.service.create(body);
+      return this.service.create(body as unknown as TEntity);
     }
 
     @Public(publicRoutes.includes("update"))
     @HttpPut(":id", ignore.includes("update"))
-    async update(@ZodParam("id", idSchema) id: string, @Body() body: TUpdateDto) {
-      await this.service.update(id, body);
+    async update(@Param("id", ParseUUIDPipe) id: string, @Body() body: TUpdateDto) {
+      await this.service.update(id, body as unknown as TEntity);
       return { message: "Update successful" };
     }
 
     @Public(publicRoutes.includes("delete"))
     @HttpDelete(":id", ignore?.includes("delete"))
-    async delete(@ZodParam("id", idSchema) id: string) {
+    async delete(@Param("id", ParseUUIDPipe) id: string) {
       await this.service.delete(id);
       return { message: "Delete successful" };
     }

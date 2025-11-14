@@ -5,6 +5,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { env } from './env';
 import { ErrorsInterceptor } from './interceptors/error.interceptor';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +17,14 @@ async function bootstrap() {
     allowedHeaders: env.CORS_HEADERS,
     credentials: env.CORS_CREDENTIALS,
   });
+
+  const config = new DocumentBuilder()
+    .setTitle('Snipet')
+    .setDescription('The Snipet API description')
+    .setVersion('1.0')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   app.use(cookieParser());
   await app.listen(env.APP_PORT);

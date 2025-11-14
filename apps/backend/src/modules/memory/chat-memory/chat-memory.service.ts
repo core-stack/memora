@@ -4,7 +4,6 @@ import { MessageEntity } from '@/modules/knowledge/chat/message/message.entity';
 import { MessageService } from '@/modules/knowledge/chat/message/message.service';
 import { buildOptions } from '@/utils/build-options';
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
-import { Message } from '@snipet/schemas';
 
 export type ChatSearchOptions = {
   lastNMessages?: number;
@@ -24,7 +23,7 @@ export class ChatMemoryService {
     @Inject(forwardRef(() => MessageService)) private readonly messageService: MessageService
   ) {}
 
-  private async messageToFragment(message: Message): Promise<ChatFragment> {
+  private async messageToFragment(message: MessageEntity): Promise<ChatFragment> {
     return ChatFragment.fromObject({
       id: message.id,
       chatId: message.chatId,
@@ -38,11 +37,11 @@ export class ChatMemoryService {
     });
   }
 
-  async add(message: Message) {
+  async add(message: MessageEntity) {
     await this.chatVectorStore.addFragments(message.knowledgeId, await this.messageToFragment(message));
   }
 
-  async remove(message: Message) {
+  async remove(message: MessageEntity) {
     await this.chatVectorStore.deleteFragments(message.knowledgeId, await this.messageToFragment(message));
   }
 

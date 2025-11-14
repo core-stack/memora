@@ -1,56 +1,48 @@
-import { FilterOptions } from '@/generics/filter-options';
-import { ServiceOptions } from '@/generics/service.interface';
-import { GenericTenantService } from '@/generics/tenant.service';
-import { Injectable, Logger } from '@nestjs/common';
+
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateKnowledgeFolder, KnowledgeFolder, UpdateKnowledgeFolder } from '@snipet/schemas';
 
 import { KnowledgeService } from '../knowledge.service';
-import { CreateFolderEntity, FolderEntity, UpdateFolderEntity } from './folder.entity';
-import { FolderRepository } from './folder.repository';
+import { FolderEntity } from './folder.entity';
+import { Service } from '@/shared/service';
+import { FilterOptions } from '@/shared/filter-options';
+import { EntityManager } from 'typeorm';
 
 @Injectable()
-export class FolderService extends GenericTenantService<
-  KnowledgeFolder, CreateKnowledgeFolder, UpdateKnowledgeFolder,
-  FolderEntity, CreateFolderEntity, UpdateFolderEntity
-> {
+export class FolderService extends Service<FolderEntity> {
+  entity = FolderEntity;
   logger = new Logger(FolderService.name);
-  constructor(
-    protected readonly repository: FolderRepository,
-    private readonly knowledgeService: KnowledgeService
-  ) {
-    super(repository);
+
+  @Inject() private readonly knowledgeService: KnowledgeService
+
+  override async find(filterOpts: FilterOptions<FolderEntity>, manager?: EntityManager): Promise<FolderEntity[]> {
+    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug());
+    filterOpts.where = filterOpts.where ?? {};
+    filterOpts.where.knowledgeId = knowledgeId;
+    return super.find(filterOpts, manager);
   }
 
-  override async find(filterOpts: FilterOptions<KnowledgeFolder>, opts?: ServiceOptions): Promise<KnowledgeFolder[]> {
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
-    filterOpts.filter = filterOpts.filter ?? {};
-    filterOpts.filter.knowledgeId = knowledgeId;
-    return super.find(filterOpts, opts);
-  }
-
-  override async create(input: CreateKnowledgeFolder, opts?: ServiceOptions): Promise<KnowledgeFolder> {
-    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug(opts?.http));
-    const parentId = opts?.http?.query.getString("parentId");
+  override async create(input: FolderEntity, manager?: EntityManager): Promise<FolderEntity> {
+    const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug());
+    const parentId = this.context.query.getString("parentId");
 
     if (parentId) input.parentId = parentId;
 
-    return super.create({
-      ...input,
-      knowledgeId
-    }, opts);
+    return super.create({ ...input, knowledgeId }, manager);
   }
 
-  async getPathByFolderId(fileName: string, folderId?: string, opts?: ServiceOptions) {
+  async getPathByFolderId(fileName: string, folderId?: string, manager?: EntityManager) {
     if (!folderId) return "";
-    const folder = await this.repository.findByID(folderId, { tx: opts?.tx });
+    const folder = await this.repository(manager).findOneBy({ id: folderId });
     if (!folder) throw new Error("Folder not found");
     const path = [folder.name];
+
     if (folder.parentId) {
-      let parent = await this.repository.findByID(folder.parentId, { tx: opts?.tx });
+      let parent = await this.repository(manager).findOneBy({ id: folder.parentId });
       while (parent) {
         path.unshift(parent.name);
         if (!parent.parentId) break;
-        parent = await this.repository.findByID(parent.parentId, { tx: opts?.tx });
+        parent = await this.repository(manager).findOneBy({ id: folder.parentId });
       }
     }
     return path.join("/") + "/" + fileName;

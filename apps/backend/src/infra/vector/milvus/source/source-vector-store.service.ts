@@ -8,6 +8,7 @@ import { RowData, SearchResultData } from '@zilliz/milvus2-sdk-node';
 
 import { MilvusService } from '../base';
 import { sourceFields, sourceFunctions, sourceIndexSchema } from './source-schemas';
+import { SourceType } from '@/shared/enums';
 
 @Injectable()
 export class MilvusSourceVectorStoreService extends MilvusService<SourceFragment> {
@@ -22,7 +23,7 @@ export class MilvusSourceVectorStoreService extends MilvusService<SourceFragment
 
     return fragments.map<RowData>(c => ({
       id: c.id,
-      seqId: c.metadata.type === OriginType.FILE ? c.seqId : undefined,
+      seqId: c.metadata.type === SourceType.DOC ? c.seqId : undefined,
       content: c.content,
       sourceId: c.sourceId,
       knowledgeId: c.knowledgeId,

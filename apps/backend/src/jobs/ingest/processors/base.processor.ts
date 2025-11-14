@@ -1,8 +1,9 @@
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 import { Fragments, SourceFragment } from '@/fragment';
 import { SourceEntity } from '@/modules/knowledge/source/source.entity';
-import { FragmentFileMetadata, SourceType } from '@snipet/schemas';
+import { SourceType } from '@snipet/schemas';
 import { IProcessor } from './types';
+import { SourceMetadata } from '@/modules/knowledge/source/metadata.types';
 
 export abstract class BaseProcessor implements IProcessor {
   protected splitter = new RecursiveCharacterTextSplitter({
@@ -13,7 +14,7 @@ export abstract class BaseProcessor implements IProcessor {
   protected createFragments(
     docs: { pageContent: string }[],
     source: SourceEntity,
-    metadata: FragmentFileMetadata,
+    metadata: SourceMetadata,
     type: SourceType
   ): Fragments<SourceFragment> {
     const fragmentsArray = docs.map((chunk, seqId) => {
@@ -34,7 +35,7 @@ export abstract class BaseProcessor implements IProcessor {
   abstract process(
     source: SourceEntity,
     pathOrBlob: string | Blob,
-    metadata: FragmentFileMetadata
+    metadata: SourceMetadata
   ): Promise<Fragments<SourceFragment>>;
 }
 

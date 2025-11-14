@@ -1,4 +1,3 @@
-import { HttpContext } from '@/generics/http-context';
 import { Controller, Get, Req } from '@nestjs/common';
 
 import { SearchService } from './search.service';
@@ -10,12 +9,12 @@ export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 
   @Get()
-  async searchByTerm(@Req() req: Request) {
-    return this.searchService.searchByTerm(new HttpContext(req));
+  async searchByTerm() {
+    return this.searchService.searchByTerm();
   }
 
   @Get("recent")
-  async searchRecent(@Req() req: Request) {
-    return this.searchService.recent(new HttpContext(req));
+  async searchRecent() {
+    return this.searchService.recent();
   }
 }

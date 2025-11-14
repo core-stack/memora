@@ -1,24 +1,24 @@
-import { HttpContext } from '@/generics/http-context';
 import { SourceMemoryService } from '@/modules/memory/source-memory/source-memory.service';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { KnowledgeService } from '../knowledge.service';
+import { GenericService } from '@/shared/generic-service';
 
 @Injectable()
-export class SearchService {
-  constructor(
-    private knowledgeService: KnowledgeService,
-    private memoryService: SourceMemoryService,
-  ) {}
+export class SearchService extends GenericService {
+  logger = new Logger(SearchService.name);
 
-  async searchByTerm(ctx: HttpContext) {
-    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug(ctx);
-    const text = ctx.query.shouldGetString("text");
+  @Inject() private knowledgeService: KnowledgeService;
+  @Inject() private memoryService: SourceMemoryService;
+
+  async searchByTerm() {
+    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
+    const text = this.context.query.shouldGetString("text");
     return (await this.memoryService.findByTerm(knowledgeId, text)).toArray();
   }
 
-  async recent(ctx: HttpContext) {
-    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug(ctx);
+  async recent() {
+    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
     return this.memoryService.findRecent(knowledgeId);
   }
 }

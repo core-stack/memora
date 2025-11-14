@@ -1,5 +1,4 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { FragmentFileMetadata, OriginType } from '@snipet/schemas';
 import { Fragments, SourceFragment } from '@/fragment';
 import { SourceEntity } from '@/modules/knowledge/source/source.entity';
 
@@ -46,17 +45,8 @@ export class ProcessorManager {
 
     const processor = this.getProcessor(ext);
 
-    const metadata: FragmentFileMetadata = {
-      contentType: source.metadata.contentType,
-      extension: source.metadata.extension,
-      name: source.originalName,
-      size: source.metadata.size,
-      type: OriginType.FILE,
-      path: source.key,
-    };
+    this.logger.debug(`Processing file "${source.name}" with ${processor.constructor.name}`);
 
-    this.logger.debug(`Processing file "${metadata.name}" with ${processor.constructor.name}`);
-
-    return processor.process(source, input, metadata);
+    return processor.process(source, input, source.metadata);
   }
 }

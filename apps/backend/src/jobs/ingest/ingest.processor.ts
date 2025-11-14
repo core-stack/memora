@@ -3,7 +3,6 @@ import streamToBlob from 'stream-to-blob';
 
 import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
-import { SourceRepository } from '@/modules/knowledge/source/source.repository';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { Source } from '@snipet/schemas';
@@ -11,6 +10,8 @@ import { Source } from '@snipet/schemas';
 import { JobType } from '../types';
 import { ProcessorManager } from './processor-manager';
 import { SourceEntity } from '@/modules/knowledge/source/source.entity';
+import { SourceService } from '@/modules/knowledge/source/source.service';
+import { IndexStatus } from '@/shared/enums';
 
 @Processor(JobType.INGEST, { concurrency: 1 })
 export class IngestProcessor extends WorkerHost {
@@ -19,7 +20,7 @@ export class IngestProcessor extends WorkerHost {
   @Inject() private readonly vectorStore!: SourceVectorStoreService;
   @Inject() private readonly storage!: PrivateStorageService;
 
-  @Inject(forwardRef(() => SourceRepository)) private readonly sourceRepository: SourceRepository;
+  @Inject(forwardRef(() => SourceService)) private readonly sourceService: SourceService;
 
   async process(job: Job<SourceEntity>): Promise<any> {
     const source = job.data;
@@ -35,14 +36,14 @@ export class IngestProcessor extends WorkerHost {
   async onStart(job: Job<SourceEntity>) {
     this.logger.log("ingest started");
     const source = job.data;
-    await this.sourceRepository.update(source.id, { indexStatus: "INDEXING" });
+    await this.sourceService.update(source.id, { indexStatus: IndexStatus.INDEXING });
   }
 
   @OnWorkerEvent("completed")
   async onCompleted(job: Job<Source>) {
     this.logger.log("ingest completed");
     const source = job.data;
-    await this.sourceRepository.update(source.id, { indexStatus: "INDEXED" });
+    await this.sourceService.update(source.id, { indexStatus: IndexStatus.INDEXED });
   }
 
   @OnWorkerEvent("failed")
@@ -50,6 +51,6 @@ export class IngestProcessor extends WorkerHost {
     this.logger.log(error);
 
     const source = job.data;
-    await this.sourceRepository.update(source.id, { indexStatus: "ERROR", indexError: error.message });
+    await this.sourceService.update(source.id, { indexStatus: IndexStatus.ERROR, indexError: error.message });
   }
 }

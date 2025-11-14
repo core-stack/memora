@@ -28,4 +28,8 @@ export class ChatEntity {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  constructor(data: Partial<ChatEntity>) {
+    Object.assign(this, data);
+  }
 }

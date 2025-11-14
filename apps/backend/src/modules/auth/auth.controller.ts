@@ -1,13 +1,12 @@
-import { Controller, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import type { Request, Response } from "express";
-import { ZodBody } from "@/shared/decorators/zod-body";
-import { createAccountSchema, activeAccountSchema, forgetPasswordSchema, loginSchema } from "@snipet/schemas";
-import type { ActiveAccountSchema, CreateAccountSchema, ForgetPasswordSchema, LoginSchema } from "@snipet/schemas";
-import { HttpContext } from "@/generics/http-context";
-import { HttpPost } from "@/generics";
 import { env } from "@/env";
 import { Public } from "@/shared/decorators/public";
+import { HttpPost } from "@/shared/controller";
+import { ActiveAccountDto } from "./dto/active-account.dto";
+import { CreateAccountDto } from "./dto/create-account.dto";
+import { ForgetPasswordDto } from "./dto/forget-password.dto";
+import { LoginDto } from "./dto/login.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -15,32 +14,31 @@ export class AuthController {
 
   @Public(true)
   @Post("login")
-  async login(@Req() req: Request, @Res() res: Response, @ZodBody(loginSchema) body: LoginSchema) {
-    const result = await this.authService.login(body, { http: new HttpContext(req, res) });
-    return res.send(result);
+  async login(@Body() body: LoginDto) {
+    return await this.authService.login(body);
   }
 
   @Public(true)
   @Post("logout")
-  async logout(@Req() req: Request, @Res() res: Response) {
-    return res.send(this.authService.logout({ http: new HttpContext(req, res) }));
+  async logout() {
+    return this.authService.logout();
   }
 
   @Public(true)
   @Post("create-account")
-  async createAccount(@Req() req: Request, @ZodBody(createAccountSchema) body: CreateAccountSchema) {
-    return this.authService.createAccount(body, { http: new HttpContext(req) });
+  async createAccount(@Body() body: CreateAccountDto) {
+    return this.authService.createAccount(body);
   }
 
   @Public(true)
   @HttpPost("active-account", !env.REQUIRE_EMAIL_VERIFICATION)
-  async activeAccount(@Req() req: Request, @ZodBody(activeAccountSchema) body: ActiveAccountSchema) {
-    return this.authService.activeAccount(body, { http: new HttpContext(req) });
+  async activeAccount(@Body() body: ActiveAccountDto) {
+    return this.authService.activeAccount(body);
   }
 
   @Public(true)
   @Post("forget-password")
-  async forgetPassword(@Req() req: Request, @ZodBody(forgetPasswordSchema) body: ForgetPasswordSchema) {
-    return this.authService.forgetPassword(body, { http: new HttpContext(req) });
+  async forgetPassword(@Body() body: ForgetPasswordDto) {
+    return this.authService.forgetPassword(body);
   }
 }

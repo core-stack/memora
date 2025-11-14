@@ -17,40 +17,44 @@ import { RoleService } from '../role/role.service';
 import { TenantService } from '../tenant/tenant.service';
 import { UserService } from '../user/user.service';
 import { InviteEntity } from './invite.entity';
+import { SendInviteDto, SendInviteResponseDto } from './dto/send-invites.dto';
 
 @Injectable()
 export class InviteService extends Service<InviteEntity> {
   logger = new Logger(InviteService.name);
   entity = InviteEntity;
- 
+
   @Inject() private readonly memberService: MemberService;
   @Inject() private readonly tenantService: TenantService;
   @Inject() private readonly roleService: RoleService;
   @Inject() private readonly userService: UserService;
   @InjectQueue(JobType.SEND_EMAIL) private readonly sendMail: Queue<EmailPayload>;
-  
-  async send(invites: CreateInviteSchema, manager?: EntityManager) {
+
+  async send(invites: SendInviteDto, manager?: EntityManager) {
     const tenantId = this.context.params.shouldGetString("tenantId");
-  
+
     const tenant = await this.tenantService.findByID(tenantId, manager);
     if (!tenant) throw new NotFoundException("Tenant not found");
 
     const memberId = this.context.memberId;
     if (!memberId) throw new NotFoundException("memberId is required");
 
-    const emails = invites.emails.map(email => email.email);
+    const sendedInvites: InviteEntity[] = [];
+    const reSendedInvites: InviteEntity[] = [];
 
     // verify if exists member with email
-    const membersWithEmail = await this.memberService.findByUserEmail(emails, manager);
-    if (membersWithEmail && membersWithEmail.length > 0) {
-      const existingEmails = membersWithEmail.map(m => m.user?.email).filter(email => email) as string[];
-      if (existingEmails.every(email => emails.includes(email))) {
-        throw new BadRequestException("Members already exist");
-      }
-    }
+    const alreadyInTenant = await this.memberService.findByUserEmail(tenantId, invites.getEmails(), manager);
+
+    // remove already in tenant
+    invites.emails = invites.emails.filter(
+      ({ email }) => !alreadyInTenant.some(member => member.user?.email === email)
+    );
 
     // verify if exists invite with email
-    const invitesWithEmail = await this.repository(manager).find({ where: { email: In(emails) } });
+    const invitesWithEmail = await this.repository(manager).find({
+      where: { email: In(invites.getEmails()), tenantId }
+    });
+
     const rolesCache: RoleEntity[] = [];
     //#region Re send invites
     if (invitesWithEmail && invitesWithEmail.length > 0) {
@@ -58,7 +62,7 @@ export class InviteService extends Service<InviteEntity> {
         const inviteWithEmail = invites.emails.find(email => email.email === invite.email);
         if (!inviteWithEmail) continue;
         if (!rolesCache.find(role => role.id === inviteWithEmail.roleId)) {
-          const role = await this.roleService.findUnique({ 
+          const role = await this.roleService.findUnique({
             where: {
               id: inviteWithEmail.roleId,
               scope: RoleScope.TENANT,
@@ -70,7 +74,8 @@ export class InviteService extends Service<InviteEntity> {
           rolesCache.push(role);
         }
 
-        if (invite.expiresAt < new Date()) { // if invite is expired
+        // if invite is expired
+        if (invite.expiresAt < new Date()) {
           invite.expiresAt = moment().add(env.DEFAULT_INVITE_EXPIRES).toDate();
           await this.transaction(async (manager) => {
             await this.sendMail.add("", {
@@ -87,8 +92,9 @@ export class InviteService extends Service<InviteEntity> {
             });
             await this.repository(manager).update(
               invite.id,
-              { expiresAt: invite.expiresAt, roleId: inviteWithEmail.roleId },
+              invite.setExpiresAt().setRoleId(inviteWithEmail.roleId),
             );
+            reSendedInvites.push(invite);
           }, manager);
         }
       }
@@ -96,10 +102,11 @@ export class InviteService extends Service<InviteEntity> {
     //#endregion
 
     // send invites
-    const emailsToInvite = invites.emails
-      .filter(({ email }) => !invitesWithEmail?.find(invite => invite.email === email));
+    invites.emails = invites.emails.filter(
+      ({ email }) => !invitesWithEmail?.find(invite => invite.email === email)
+    );
 
-    for (const { email, roleId } of emailsToInvite) {
+    for (const { email, roleId } of invites.emails) {
       const userWithEmail = await this.userService.findFirst({ where: { email }}, manager);
       if (!rolesCache.find(role => role.id === roleId)) {
         const role = await this.roleService.findByID(roleId, manager);
@@ -128,7 +135,15 @@ export class InviteService extends Service<InviteEntity> {
           to: invite.email,
           subject: "You have been invited to " + tenant.name,
         });
+
+        sendedInvites.push(invite);
       })
     }
+
+    return new SendInviteResponseDto({
+      sendedInvites,
+      reSendedInvites,
+      alreadyInTenant
+    });
   }
 }

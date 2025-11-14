@@ -8,12 +8,11 @@ import { Module } from '@nestjs/common';
 import { KnowledgeModule } from '../../knowledge.module';
 import { ChatModule } from '../chat.module';
 import { MessageController } from './message.controller';
-import { MessageRepository } from './message.repository';
 import { MessageService } from './message.service';
 
 @Module({
   controllers: [MessageController],
-  providers: [MessageService, MessageRepository],
+  providers: [MessageService],
   imports: [
     DatabaseModule,
     KnowledgeModule,
@@ -23,6 +22,6 @@ import { MessageService } from './message.service';
     PromptModule,
     ChatModule
   ],
-  exports: [MessageService, MessageRepository],
+  exports: [MessageService],
 })
 export class MessageModule {}

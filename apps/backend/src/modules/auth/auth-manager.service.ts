@@ -2,12 +2,12 @@ import { isUUID } from '@/utils/uuid';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { AccountService } from '../account/account.service';
-import { UserWithMemberRoleTenant } from '../user/user.repository';
 import { UserService } from '../user/user.service';
 import { AccessToken, JWTService, RefreshToken } from './jwt.service';
 import { Provider } from './providers/types';
 import { Store } from './store/types';
 import { Session } from './types';
+import { UserEntity } from '../user/user.entity';
 
 export const PROVIDERS = Symbol("providers");
 
@@ -37,12 +37,12 @@ export class AuthManager {
       providerAccountId,
     })
 
-    const user = await this.userService.findFirstWithMemberRoleTenant({ filter: { id: acc.userId } })
+    const user = await this.userService.findFirstWithMemberRoleTenant({ where: { id: acc.userId } })
     if (!user) throw new UnauthorizedException();
     return await this.createSessionAndTokens(user);
   }
 
-  async createSessionAndTokens(user: UserWithMemberRoleTenant) {
+  async createSessionAndTokens(user: UserEntity) {
     const sessionId = crypto.randomUUID();
 
     const token = this.jwt.generateTokens(sessionId, user.id);
@@ -52,7 +52,7 @@ export class AuthManager {
         id: user.id,
         email: user.email || "",
         name: user.name || "",
-        permissions: user.role?.permissions,
+        permissions: user.role?.permissions ?? 0,
       },
       refreshToken: token.refreshToken,
       createdAt: new Date(),
@@ -60,8 +60,8 @@ export class AuthManager {
       tenants: user.members?.map((m) => ({
         id: m.tenantId,
         memberId: m.id,
-        permissions: m.role?.permissions,
-      })),
+        permissions: m.role?.permissions ?? 0,
+      })) ?? [],
       lastSeen: new Date(),
       id: sessionId,
     };
@@ -85,14 +85,14 @@ export class AuthManager {
   async reloadSession(sessionId: string) {
     const session = await this.store.get(sessionId);
     if (!session) throw new UnauthorizedException();
-    const user = await this.userService.findFirstWithMemberRoleTenant({ filter: { id: session.user.id } });
+    const user = await this.userService.findFirstWithMemberRoleTenant({ where: { id: session.user.id } });
 
     if (!user) throw new UnauthorizedException();
-    session.tenants = user.members.map((m) => ({
+    session.tenants = user.members?.map((m) => ({
       id: m.tenantId,
       memberId: m.id,
-      permissions: m.role.permissions,
-    }));
+      permissions: m.role?.permissions ?? 0,
+    })) ?? [];
     session.status = "active";
     session.user.permissions = user.role?.permissions ?? 0;
     session.lastSeen = new Date();
@@ -127,7 +127,7 @@ export class AuthManager {
     if (!session) throw new UnauthorizedException();
     if (session.refreshToken !== refreshToken) throw new UnauthorizedException();
 
-    const user = await this.userService.findFirstWithMemberRoleTenant({ filter: { id: session.user.id } });
+    const user = await this.userService.findFirstWithMemberRoleTenant({ where: { id: session.user.id } });
     if (!user) throw new UnauthorizedException();
     return await this.createSessionAndTokens(user);
   }

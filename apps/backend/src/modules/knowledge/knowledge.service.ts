@@ -16,7 +16,7 @@ export class KnowledgeService extends Service<KnowledgeEntity> {
   @InjectQueue(JobType.DELETE_KNOWLEDGE) private readonly deleteKnowledgeQueue: Queue
 
   async findBySlug(slug: string, tenantId: string, manager?: EntityManager): Promise<KnowledgeEntity | null> {
-    return this.repository(manager).findOne({ 
+    return this.repository(manager).findOne({
       where: { slug, tenantId },
     });
   }
@@ -31,7 +31,11 @@ export class KnowledgeService extends Service<KnowledgeEntity> {
   override async delete(id: string, manager?: EntityManager): Promise<void> {
     const knowledge = await this.repository(manager).findOneOrFail({ where: { id } });
     if (!knowledge) throw new NotFoundException("Knowledge not found");
-    await this.deleteKnowledgeQueue.add(JobType.DELETE_KNOWLEDGE, knowledge, { backoff: { type: "exponential", delay: 1000 } });
+    await this.deleteKnowledgeQueue.add(
+      JobType.DELETE_KNOWLEDGE,
+      knowledge,
+      { backoff: { type: "exponential", delay: 1000 } }
+    );
   }
 
   increaseFileCount(knowledgeId: string, count: number = 1, manager?: EntityManager) {

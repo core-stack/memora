@@ -1,29 +1,18 @@
-import type { Request, Response } from 'express';
-
-import { CrudController } from '@/generics';
-import { ZodBody } from '@/shared/decorators/zod-body';
-import { Controller, Post, Req } from '@nestjs/common';
-import {
-  createMessageSchema, Message, messageFilterSchema, updateMessageSchema
-} from '@snipet/schemas';
+import { Body, Controller, Post } from '@nestjs/common';
 
 import { MessageService } from './message.service';
 
-import type { CreateMessage } from "@snipet/schemas";
+import { MessageEntity } from './message.entity';
+import { BaseController } from '@/shared/controller';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message')
-export class MessageController extends CrudController<Message>(
-  { filterSchema: messageFilterSchema, createDtoSchema: createMessageSchema, updateDtoSchema: updateMessageSchema}
-) {
+export class MessageController extends BaseController<MessageEntity>() {
   constructor(public service: MessageService) {
     super(service);
   }
 
   @Post("new")
-  async newMessage(
-    @Req() req: Request,
-    @ZodBody(createMessageSchema) body: CreateMessage,
-  ) {
-    return this.service.sendMessage(body.content, { http: this.loadContext(req) });
+  async newMessage(@Body() body: MessageEntity) {
+    return this.service.sendMessage(body.content);
   }
 }

@@ -12,6 +12,8 @@ import { TenantEntity } from '../tenant/tenant.entity';
 import { RoleEntity } from '../role/role.entity';
 import { UserEntity } from '../user/user.entity';
 import { MemberEntity } from '../member/member.entity';
+import moment from 'moment';
+import { env } from '@/env';
 
 @Entity('invites')
 @Unique('invites_tenant_email_unique', ['tenantId', 'email'])
@@ -56,4 +58,18 @@ export class InviteEntity {
 
   @ManyToOne(() => MemberEntity, (m) => m.invites)
   creator: MemberEntity;
+
+  constructor(invite: Partial<InviteEntity>) {
+    Object.assign(this, invite);
+  }
+
+  setExpiresAt(expiresAt: Date = moment().add(env.DEFAULT_INVITE_EXPIRES).toDate()): this {
+    this.expiresAt = expiresAt;
+    return this;
+  }
+
+  setRoleId(roleId: string): this {
+    this.roleId = roleId;
+    return this;
+  }
 }

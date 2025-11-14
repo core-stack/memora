@@ -7,8 +7,8 @@ import { GenericService } from './generic-service';
 
 export abstract class Service<
   TEntity extends ObjectLiteral,
-  TCreateDto extends TEntity = TEntity,
-  TUpdateDto extends Partial<TEntity> = Partial<TEntity>
+  TCreateDto = TEntity,
+  TUpdateDto = Partial<TEntity>
 > extends GenericService {
   abstract readonly entity: new (...args: any) => TEntity;
   abstract readonly logger: Logger;
@@ -40,11 +40,11 @@ export abstract class Service<
   }
 
   async create(input: TCreateDto, manager?: EntityManager): Promise<TEntity> {
-    return await this.repository(manager).save(input);
+    return await this.repository(manager).save(input as unknown as TEntity);
   }
 
   async update(id: string, input: TUpdateDto, manager?: EntityManager): Promise<void> {
-    await this.repository(manager).update(id, input);
+    await this.repository(manager).update(id, input as unknown as TEntity);
   }
 
   async delete(id: string, manager?: EntityManager): Promise<void> {

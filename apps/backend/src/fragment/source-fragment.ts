@@ -1,6 +1,7 @@
-import { SourceFragmentMetadata, sourceFragmentSchema, SourceType } from '@snipet/schemas';
+import { sourceFragmentSchema, SourceType } from '@snipet/schemas';
 
 import { BaseFragment } from './fragment';
+import { SourceMetadata } from '@/modules/knowledge/source/metadata.types';
 
 export class SourceFragment extends BaseFragment {
   seqId?: number;
@@ -8,7 +9,7 @@ export class SourceFragment extends BaseFragment {
   tenantId: string;
   sourceId: string;
   sourceType: SourceType;
-  metadata: SourceFragmentMetadata;
+  metadata: SourceMetadata;
 
   constructor(
     f: Omit<SourceFragment, "id" | "createdAt" | "updatedAt"> & { id?: string, createdAt?: Date, updatedAt?: Date }
@@ -24,6 +25,6 @@ export class SourceFragment extends BaseFragment {
   }
 
   static fromObject(obj: any): SourceFragment {
-    return new SourceFragment(sourceFragmentSchema.parse(obj));
+    return new SourceFragment(obj);
   }
 }

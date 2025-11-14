@@ -1,35 +1,34 @@
-import { ServiceOptions } from '@/generics/service.interface';
-import { GenericTenantService } from '@/generics/tenant.service';
-import { Injectable, Logger } from '@nestjs/common';
-import { Chat, CreateChat, UpdateChat } from '@snipet/schemas';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { KnowledgeService } from '../knowledge.service';
-import { ChatEntity, CreateChatEntity, UpdateChatEntity } from './chat.entity';
-import { ChatRepository } from './chat.repository';
+import { ChatEntity } from './chat.entity';
+import { Service } from '@/shared/service';
+import { EntityManager } from 'typeorm';
 
 @Injectable()
-export class ChatService extends GenericTenantService<
-  Chat, CreateChat, UpdateChat,
-  ChatEntity, CreateChatEntity, UpdateChatEntity
-> {
+export class ChatService extends Service<ChatEntity> {
   logger = new Logger(ChatService.name);
-  constructor(
-    protected readonly repository: ChatRepository,
-    private readonly knowledgeService: KnowledgeService
-  ) {
-    super(repository);
+  entity = ChatEntity;
+
+  @Inject() private readonly knowledgeService: KnowledgeService;
+
+  override async create(data: ChatEntity, manager?: EntityManager): Promise<ChatEntity> {
+    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
+    data.knowledgeId = knowledgeId;
+    if (!data.name) data.name = "New Chat";
+    return super.create(data, manager);
   }
 
-  override async create(input: CreateChat, opts?: ServiceOptions): Promise<Chat> {
-    if (!opts?.http) throw new Error("http context is required");
-    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug(opts.http);
+  async findWithCountMessages(
+    chatId: string,
+    manager?: EntityManager
+  ): Promise<(ChatEntity & { messageCount: number }) | null> {
+    const chat = await this.repository(manager)
+      .createQueryBuilder("chat")
+      .loadRelationCountAndMap("chat.messageCount", "chat.messages")
+      .where("chat.id = :id", { id: chatId })
+      .getOne();
 
-    if (!input.name) input.name = "New Chat";
-
-    return super.create({ ...input, knowledgeId }, opts);
-  }
-
-  async findWithCountMessages(chatId: string, opts?: ServiceOptions) {
-    return this.repository.findWithCountMessages(chatId, { tx: opts?.tx });
+    return chat as (ChatEntity & { messageCount: number }) | null;
   }
 }
