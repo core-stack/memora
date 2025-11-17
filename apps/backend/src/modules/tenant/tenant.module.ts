@@ -1,10 +1,12 @@
 import { DatabaseModule } from '@/infra/database/database.module';
+import { HTTPContextModule } from '@/shared/http-context/http-context.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { TenantEntity } from '../../entities/tenant.entity';
 import { AuthModule } from '../auth/auth.module';
+import { MemberModule } from '../member/member.module';
 import { TenantController } from './tenant.controller';
-import { TenantEntity } from './tenant.entity';
 import { TenantService } from './tenant.service';
 
 @Module({
@@ -14,6 +16,8 @@ import { TenantService } from './tenant.service';
     DatabaseModule,
     AuthModule,
     TypeOrmModule.forFeature([TenantEntity]),
+    HTTPContextModule,
+    MemberModule
   ],
   exports: [TenantService],
 })

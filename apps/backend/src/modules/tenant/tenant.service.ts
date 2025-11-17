@@ -1,13 +1,14 @@
+import { EntityManager } from 'typeorm';
+
 import { Service } from '@/shared/service';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { permissionsToNumber, ROLES } from '@snipet/permission';
-import { EntityManager } from 'typeorm';
 
+import { MemberEntity } from '../../entities/member.entity';
+import { RoleEntity, RoleScope } from '../../entities/role.entity';
+import { TenantEntity } from '../../entities/tenant.entity';
 import { AuthManager } from '../auth/auth-manager.service';
-import { TenantEntity } from './tenant.entity';
-import { RoleEntity, RoleScope } from '../role/role.entity';
 import { MemberService } from '../member/member.service';
-import { MemberEntity } from '../member/member.entity';
 
 @Injectable()
 export class TenantService extends Service<TenantEntity> {

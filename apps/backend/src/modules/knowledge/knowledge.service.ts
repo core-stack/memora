@@ -6,7 +6,7 @@ import { Service } from '@/shared/service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import { KnowledgeEntity } from './knowledge.entity';
+import { KnowledgeEntity } from '../../entities/knowledge.entity';
 
 @Injectable()
 export class KnowledgeService extends Service<KnowledgeEntity> {

@@ -1,8 +1,9 @@
+import path from 'path';
+
 import { env } from '@/env';
+import { __root } from '@/root';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { VerificationTokenEntity } from '@/modules/verification-token/verification-token.entity';
-import { TenantEntity } from '@/modules/tenant/tenant.entity';
 
 @Module({
   imports: [
@@ -10,12 +11,11 @@ import { TenantEntity } from '@/modules/tenant/tenant.entity';
       useFactory: () => ({
         type: 'postgres',
         url: env.DATABASE_URL,
-        autoLoadEntities: true,
         synchronize: false,
-        logging: true,
+        logging: env.NODE_ENV === "development",
+        entities: [path.join(__root, '**/entities/*.entity.js')],
       }),
     }),
-    TypeOrmModule.forFeature([VerificationTokenEntity, TenantEntity]),
   ],
 })
 export class DatabaseModule {}

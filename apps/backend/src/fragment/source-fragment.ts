@@ -1,7 +1,7 @@
+import { SourceMetadata } from '@/entities/metadata.types';
 import { sourceFragmentSchema, SourceType } from '@snipet/schemas';
 
 import { BaseFragment } from './fragment';
-import { SourceMetadata } from '@/modules/knowledge/source/metadata.types';
 
 export class SourceFragment extends BaseFragment {
   seqId?: number;

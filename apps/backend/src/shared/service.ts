@@ -1,4 +1,6 @@
-import { EntityManager, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
+import {
+  EntityManager, FindOneOptions, FindOptionsWhere, ObjectLiteral, Repository
+} from 'typeorm';
 
 import { Logger } from '@nestjs/common';
 
@@ -35,8 +37,8 @@ export abstract class Service<
     return data.length === 0 ? null : data[0];
   }
 
-  async findByID(id: string, manager?: EntityManager): Promise<TEntity | null> {
-    return await this.repository(manager).findOneBy({ [this.idField]: id } as FindOptionsWhere<TEntity>);
+  async findByID(id: string, opts?: Omit<FindOneOptions<TEntity>, "where"> & { manager?: EntityManager }): Promise<TEntity | null> {
+    return await this.repository(opts?.manager).findOne({ ...opts, where: { [this.idField]: id } as FindOptionsWhere<TEntity> } );
   }
 
   async create(input: TCreateDto, manager?: EntityManager): Promise<TEntity> {

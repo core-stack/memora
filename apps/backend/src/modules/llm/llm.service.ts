@@ -1,70 +1,58 @@
-import { readdir } from 'fs/promises';
-import { join } from 'path';
 import { EntityManager } from 'typeorm';
 
+import { LLMEntity } from '@/entities/llm.entity';
 import { env } from '@/env';
+import { LLMManagerService } from '@/infra/llm-manager/llm-manager.service';
+import { EmbeddingProvider } from '@/infra/llm-manager/provider/embedding/base';
+import { TextProvider } from '@/infra/llm-manager/provider/text/base';
 import { SecurityService } from '@/infra/security/security.service';
-import { __root } from '@/root';
 import { Service } from '@/shared/service';
-import { Inject, Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { LLMPreset, llmPresetSchema } from '@snipet/schemas';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 
+import { KnowledgeLLMEntity } from '../../entities/knowledge-llm.entity';
+import { KnowledgeEntity } from '../../entities/knowledge.entity';
 import { KnowledgeService } from '../knowledge/knowledge.service';
-import { LLMEntity } from './llm.entity';
 
 @Injectable()
-export class LLMService extends Service<LLMEntity> implements OnModuleInit {
+export class LLMService extends Service<LLMEntity> {
   logger = new Logger(LLMService.name);
   entity = LLMEntity;
 
-  presets: LLMPreset[] = [];
-
+  @Inject() manager: LLMManagerService;
   @Inject() private readonly securityService: SecurityService;
   @Inject() private readonly knowledgeService: KnowledgeService;
 
-
-  async onModuleInit() {
-    const presetsPath = join(__root, 'dist', '@llm-presets');
-    const dir = await readdir(presetsPath);
-    const presets = dir.filter((file) => file.endsWith(".json")).reduce<Array<LLMPreset>>((acc, file) => {
-      const presets = require(`${presetsPath}/${file}`);
-      return [...acc, ...presets];
-    }, [] as LLMPreset[]);
-
-    presets.forEach(preset => {
-      try {
-        llmPresetSchema.parse(preset);
-      } catch (error) {
-        console.error(`Invalid preset: ${JSON.stringify(preset)}`);
-        console.error(error);
-        throw error;
-      }
-    })
-
-    this.presets = presets;
-  }
-
-  getPresets() {
-    return this.presets.map(preset => ({ ...preset, iconPath: `${env.AWS_PUBLIC_BASE_URL}/${preset.iconPath}` }));
-  }
-
-  async findByKnowledge(knowledgeId: string, manager?: EntityManager): Promise<LLMEntity[]> {
-    const knowledge = await this.knowledgeService.findUnique({ where: { id: knowledgeId }, relations: ['llms'] }, manager);
+  async findByKnowledge(knowledgeId: string, manager?: EntityManager): Promise<KnowledgeLLMEntity[]> {
+    const knowledge = await this.knowledgeService.findUnique({
+      where: { id: knowledgeId },
+      relations: ['knowledgeLLMs.llm']
+    }, manager);
     if (!knowledge) throw new NotFoundException("Knowledge not found");
-    const llms = knowledge.llms;
-    for (const llm of llms) {
-      const preset = this.presets.find(preset => preset.config.model === llm.model);
+    const llms = knowledge.knowledgeLLMs;
+    for (const kLLM of llms) {
+      const preset = this.manager.getPresets().find(preset => preset.config.model === kLLM.llm.model);
       if (!preset) throw new NotFoundException("Model not found");
-      await Promise.all(Object.entries(llm.config).map(async ([key, value]) => {
+      await Promise.all(Object.entries(kLLM.llm.config).map(async ([key, value]) => {
         const isSecret = preset.fields?.[key] === "secret-string";
-        if (isSecret) llm.config[key] = await this.securityService.decrypt(value as any, env.ENCRYPT_MASTER_PASSWORD);
-      }))
+        if (isSecret) kLLM.llm.config[key] = await this.securityService.decrypt(value as any, env.ENCRYPT_MASTER_PASSWORD);
+      }));
     }
     return llms;
   }
 
+  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: 'EMBEDDING', manager?: EntityManager): Promise<EmbeddingProvider | null>
+  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: 'TEXT', manager?: EntityManager): Promise<TextProvider | null>
+  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: 'EMBEDDING' | 'TEXT', manager?: EntityManager): Promise<EmbeddingProvider | TextProvider | null> {
+    const knowledgeId = typeof entityOrId === "string" ? entityOrId : entityOrId.id;
+    const llms = await this.findByKnowledge(knowledgeId, manager);
+    const llm = llms.find(llm => llm.llm.type === type && llm.default);
+    if (!llm) return null;
+    if (type == "EMBEDDING") return this.manager.getEmbedding(llm.llm);
+    return this.manager.getInstance(llm.llm);
+  }
+
   override async create(input: LLMEntity, manager?: EntityManager): Promise<LLMEntity> {
-    const preset = this.presets.find(preset => preset.config.model === input.model);
+    const preset = this.manager.getPresets().find(preset => preset.config.model === input.model);
     if (!preset) throw new NotFoundException("Model not found");
     await Promise.all(Object.entries(input.config).map(async ([key, value]) => {
       const isSecret = preset.fields?.[key] === "secret-string";

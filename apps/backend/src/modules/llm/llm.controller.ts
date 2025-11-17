@@ -1,7 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
-import { LLMService } from './llm.service';
+import { LLMEntity } from '@/entities/llm.entity';
 import { BaseController } from '@/shared/controller';
-import { LLMEntity } from './llm.entity';
+import { Controller, Get } from '@nestjs/common';
+
+import { LLMService } from './llm.service';
 
 @Controller('tenant/:tenantId/llm')
 export class LLMController extends BaseController<LLMEntity>() {
@@ -11,6 +12,6 @@ export class LLMController extends BaseController<LLMEntity>() {
 
   @Get('presets')
   getPresets() {
-    return this.service.getPresets();
+    return this.service.manager.getPresets();
   }
 }

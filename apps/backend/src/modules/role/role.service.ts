@@ -2,7 +2,7 @@ import { Service } from '@/shared/service';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { permissionsToNumber, ROLES } from '@snipet/permission';
 
-import { RoleEntity, RoleScope } from './role.entity';
+import { RoleEntity, RoleScope } from '../../entities/role.entity';
 
 @Injectable()
 export class RoleService extends Service<RoleEntity> implements OnModuleInit {

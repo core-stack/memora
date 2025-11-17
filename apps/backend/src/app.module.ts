@@ -11,23 +11,17 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { env } from './env';
 import { AuthGuard } from './guards/auth.guard';
-import { CacheModule } from './infra/cache/cache.module';
-import { PromptModule } from './infra/prompt/prompt.module';
-import { SecurityModule } from './infra/security/security.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { MemoryModule } from './modules/memory/memory.module';
-import { UserModule } from './modules/user/user.module';
-import { ContextInterceptor } from './shared/interceptor/context';
-import { TenantModule } from './modules/tenant/tenant.module';
 import { DatabaseModule } from './infra/database/database.module';
 import { LLMManagerModule } from './infra/llm-manager/llm-manager.module';
-import { LLMModule } from './infra/llm/llm.module';
+import { PromptModule } from './infra/prompt/prompt.module';
+import { SecurityModule } from './infra/security/security.module';
 import { StorageModule } from './infra/storage/storage.module';
 import { VectorModule } from './infra/vector/vector.module';
 import { DeleteKnowledgeModule } from './jobs/delete-knowledge/delete-knowledge.module';
 import { EmailModule } from './jobs/email/email.module';
 import { IngestModule } from './jobs/ingest/ingest.module';
 import { AccountModule } from './modules/account/account.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { InviteModule } from './modules/invite/invite.module';
 import { ChatModule } from './modules/knowledge/chat/chat.module';
 import { MessageModule } from './modules/knowledge/chat/message/message.module';
@@ -36,13 +30,18 @@ import { KnowledgeModule } from './modules/knowledge/knowledge.module';
 import { SearchModule } from './modules/knowledge/search/search.module';
 import { SourceModule } from './modules/knowledge/source/source.module';
 import { MemberModule } from './modules/member/member.module';
+import { ChatMemoryModule } from './modules/memory/chat-memory/chat-memory.module';
+import { SourceMemoryModule } from './modules/memory/source-memory/source-memory.module';
 import { RoleModule } from './modules/role/role.module';
+import { TenantModule } from './modules/tenant/tenant.module';
+import { UserModule } from './modules/user/user.module';
 import { VerificationTokenModule } from './modules/verification-token/verification-token.module';
+import { HTTPContextModule } from './shared/http-context/http-context.module';
+import { ContextInterceptor } from './shared/interceptor/context';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    LLMModule,
     LLMManagerModule,
     IngestModule,
     DeleteKnowledgeModule,
@@ -65,6 +64,7 @@ import { VerificationTokenModule } from './modules/verification-token/verificati
     SourceModule,
     ChatModule,
     MessageModule,
+    HTTPContextModule,
     BullModule.forRoot({
       connection: {
         host: env.REDIS_HOST,
@@ -83,8 +83,8 @@ import { VerificationTokenModule } from './modules/verification-token/verificati
       }),
     }),
     SecurityModule,
-    MemoryModule,
-    CacheModule,
+    SourceMemoryModule,
+    ChatMemoryModule,
     ClsModule.forRoot({
       global: true,
       middleware: {

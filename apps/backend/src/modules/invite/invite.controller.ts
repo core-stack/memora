@@ -1,8 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { InviteService } from './invite.service';
+import { InviteEntity } from '@/entities/invite.entity';
 import { BaseController, HttpPost } from '@/shared/controller';
-import { InviteEntity } from './invite.entity';
+import { Body, Controller } from '@nestjs/common';
+
 import { SendInviteDto } from './dto/send-invites.dto';
+import { InviteService } from './invite.service';
 
 @Controller('tenant/:tenantId/invite')
 export class InviteController extends BaseController<InviteEntity>() {

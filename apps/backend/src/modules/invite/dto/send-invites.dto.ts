@@ -1,8 +1,9 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsUUID, IsArray, ValidateNested } from "class-validator";
-import { Type } from "class-transformer";
-import { InviteEntity } from "../invite.entity";
-import { MemberEntity } from "@/modules/member/member.entity";
+import { Type } from 'class-transformer';
+import { IsArray, IsEmail, IsUUID, ValidateNested } from 'class-validator';
+
+import { InviteEntity } from '@/entities/invite.entity';
+import { MemberEntity } from '@/entities/member.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SendInviteItemDto {
   @ApiProperty()

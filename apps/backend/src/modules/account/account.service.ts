@@ -4,11 +4,11 @@ import { Service } from '@/shared/service';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ROLES } from '@snipet/permission';
 
-import { RoleScope } from '../role/role.entity';
+import { AccountEntity } from '../../entities/account.entity';
+import { RoleScope } from '../../entities/role.entity';
+import { UserEntity } from '../../entities/user.entity';
 import { RoleService } from '../role/role.service';
-import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
-import { AccountEntity } from './account.entity';
 import { CreateAccountDto } from './dto/crete-account.dto';
 
 @Injectable()

@@ -1,17 +1,17 @@
 import { Job } from 'bullmq';
 import streamToBlob from 'stream-to-blob';
 
+import { SourceEntity } from '@/entities/source.entity';
 import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
+import { SourceService } from '@/modules/knowledge/source/source.service';
+import { IndexStatus } from '@/shared/enums';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { Source } from '@snipet/schemas';
 
 import { JobType } from '../types';
 import { ProcessorManager } from './processor-manager';
-import { SourceEntity } from '@/modules/knowledge/source/source.entity';
-import { SourceService } from '@/modules/knowledge/source/source.service';
-import { IndexStatus } from '@/shared/enums';
 
 @Processor(JobType.INGEST, { concurrency: 1 })
 export class IngestProcessor extends WorkerHost {

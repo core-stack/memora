@@ -5,7 +5,7 @@ import { EntityManager } from 'typeorm';
 import { env } from '@/env';
 import { EmailPayload, EmailTemplate } from '@/jobs/email/schemas';
 import { JobType } from '@/jobs/types';
-import { RoleScope, VerificationType } from '@/shared/enums';
+import { RoleScope } from '@/shared/enums';
 import { GenericService } from '@/shared/generic-service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
@@ -14,10 +14,12 @@ import {
   ActiveAccountSchema, CreateAccountSchema, ForgetPasswordSchema, LoginSchema, ResetPasswordSchema
 } from '@snipet/schemas';
 
+import { UserEntity } from '../../entities/user.entity';
+import {
+  VerificationTokenEntity, VerificationType
+} from '../../entities/verification-token.entity';
 import { RoleService } from '../role/role.service';
-import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
-import { VerificationTokenEntity } from '../verification-token/verification-token.entity';
 import { VerificationTokenService } from '../verification-token/verification-token.service';
 import { AuthManager } from './auth-manager.service';
 
@@ -107,7 +109,7 @@ export class AuthService extends GenericService {
       throw new BadRequestException("Activation link invalid");
     }
 
-    const user = await this.userService.findByID(verificationToken.userId, manager);
+    const user = await this.userService.findByID(verificationToken.userId, { manager });
     if (!user) throw new BadRequestException("User not found");
 
     if (moment().isAfter(verificationToken.expires)) {

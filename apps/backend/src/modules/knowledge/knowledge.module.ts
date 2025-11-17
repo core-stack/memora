@@ -1,5 +1,6 @@
 import { DatabaseModule } from '@/infra/database/database.module';
 import { DeleteKnowledgeModule } from '@/jobs/delete-knowledge/delete-knowledge.module';
+import { HTTPContextModule } from '@/shared/http-context/http-context.module';
 import { forwardRef, Module } from '@nestjs/common';
 
 import { AuthModule } from '../auth/auth.module';
@@ -9,7 +10,7 @@ import { KnowledgeService } from './knowledge.service';
 @Module({
   controllers: [KnowledgeController],
   providers: [KnowledgeService],
-  imports: [DatabaseModule, forwardRef(() => DeleteKnowledgeModule), AuthModule],
+  imports: [DatabaseModule, forwardRef(() => DeleteKnowledgeModule), AuthModule, HTTPContextModule],
   exports: [KnowledgeService]
 })
 export class KnowledgeModule {}

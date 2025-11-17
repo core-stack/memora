@@ -1,9 +1,8 @@
+import { MessageEntity } from '@/entities/message.entity';
+import { BaseController } from '@/shared/controller';
 import { Body, Controller, Post } from '@nestjs/common';
 
 import { MessageService } from './message.service';
-
-import { MessageEntity } from './message.entity';
-import { BaseController } from '@/shared/controller';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message')
 export class MessageController extends BaseController<MessageEntity>() {

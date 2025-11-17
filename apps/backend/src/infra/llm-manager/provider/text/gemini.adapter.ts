@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import { output, ZodObject } from 'zod';
 
 import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 
@@ -54,6 +55,67 @@ export class GeminiTextAdapter extends TextProvider {
     }
     onChunk({ delta: "", finishReason: "stop" });
   }
+
+  iterableStream(params: GenerateParams): AsyncIterable<string> {
+    return {
+      async *[Symbol.asyncIterator]() {
+        const { prompt, maxTokens, temperature } = params;
+
+        const res = await this.model.generateContentStream({
+          contents: [{
+            role: "user",
+            parts: [{ text: prompt }]
+          }],
+          generationConfig: { temperature, maxOutputTokens: maxTokens },
+        });
+
+        for await (const chunk of res.stream) {
+          const chunkText = chunk.text();
+          if (chunkText) yield chunkText;
+        }
+      }
+    };
+  }
+
+  async withStructuredOutput<S extends ZodObject<any>>(
+    query: string,
+    schema: S
+  ): Promise<output<S>> {
+    const jsonSchema = schema._zod.toJSONSchema?.();
+
+    const prompt = `
+      You are a helpful assistant.
+      Your task is to answer a question based on the following JSON schema:
+
+      ${JSON.stringify(jsonSchema, null, 2)}
+      Note: The output must be a valid JSON object that matches the schema above.
+
+      Here is the query:
+      "${query}"
+    `.trim();
+
+    const res = await this.model.generateContent({
+      contents: [{
+        role: "user",
+        parts: [{ text: prompt }]
+      }],
+      generationConfig: {
+        temperature: 0,
+      }
+    });
+
+    const text = res.response.text();
+
+    let parsed: any;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      throw new Error(`Failed to parse JSON: ${err}\nText: ${text}`);
+    }
+
+    return schema.parse(parsed);
+  }
+
   
   async healthCheck(): Promise<ProviderHealth> {
     const start = Date.now();

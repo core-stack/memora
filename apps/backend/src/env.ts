@@ -24,6 +24,7 @@ const envSchema = z.object({
   API_URL: z.url().optional().default("http://localhost:3000/api"),
   SERVE_STATIC_PATH: z.string().optional(),
   FRONTEND_URL: z.url().optional().default("http://localhost:3000"),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 
   // INVITE
   DEFAULT_INVITE_EXPIRES: z.coerce.number().optional().default(60 * 60 * 24), // 1 day
@@ -58,10 +59,8 @@ const envSchema = z.object({
   ACTIVE_ACCOUNT_TOKEN_EXPIRES_IN: z.coerce.number().optional().default(60 * 60 * 24), // 1 day
   RESET_PASSWORD_TOKEN_EXPIRES_IN: z.coerce.number().optional().default(60 * 60), // 1 hour
 
-  ENCRYPT_KEY_MASTER_PASSWORD: z.string().optional().default("change-me"),
-
   // SECURITY
-  ENCRYPT_MASTER_PASSWORD: z.string().optional().default("snipet"),
+  ENCRYPT_MASTER_PASSWORD: z.string().optional().default("change-me"),
 
   // PLUGIN
   PLUGINS_DIR: z.string().optional().default(path.join(__dirname, "..", "..", "plugins")),

@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { TextLoader } from '@langchain/classic/document_loaders/fs/text';
-import { IProcessor } from './types';
-import { BaseProcessor } from './base.processor';
+import { SourceMetadata } from '@/entities/metadata.types';
+import { SourceEntity } from '@/entities/source.entity';
 import { Fragments, SourceFragment } from '@/fragment';
-import { SourceEntity } from '@/modules/knowledge/source/source.entity';
+import { TextLoader } from '@langchain/classic/document_loaders/fs/text';
+import { Injectable } from '@nestjs/common';
 import { SourceType } from '@snipet/schemas';
-import { SourceMetadata } from '@/modules/knowledge/source/metadata.types';
+
+import { BaseProcessor } from './base.processor';
+import { IProcessor } from './types';
 
 @Injectable()
 export class TextProcessor extends BaseProcessor implements IProcessor {

@@ -1,17 +1,16 @@
 import { Redis } from 'ioredis';
 
 import { env } from '@/env';
-import { Inject, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 
-import { CACHE_PREFIX_KEY } from '../cache.module';
 import { CacheService, GetCacheOptions, SetCacheOptions } from '../cache.service';
+import { CACHE_PREFIX_KEY } from '../prefix';
 
+@Injectable()
 export class RedisService extends CacheService implements OnModuleInit {
   client: Redis;
 
-  constructor(
-    @Inject(CACHE_PREFIX_KEY) private readonly prefix: string
-  ) {
+  constructor(@Inject(CACHE_PREFIX_KEY) private readonly prefix: string) {
     super();
   }
 

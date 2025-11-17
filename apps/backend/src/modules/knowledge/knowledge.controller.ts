@@ -2,7 +2,7 @@ import { TenantGuard } from '@/guards/tenant.guard';
 import { BaseController } from '@/shared/controller';
 import { Controller, UseGuards } from '@nestjs/common';
 
-import { KnowledgeEntity } from './knowledge.entity';
+import { KnowledgeEntity } from '../../entities/knowledge.entity';
 import { KnowledgeService } from './knowledge.service';
 
 @UseGuards(TenantGuard)

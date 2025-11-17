@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
-import { BaseProcessor } from './base.processor';
+import { SourceMetadata } from '@/entities/metadata.types';
+import { SourceEntity } from '@/entities/source.entity';
 import { Fragments, SourceFragment } from '@/fragment';
-import { SourceEntity } from '@/modules/knowledge/source/source.entity';
+import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
+import { Injectable } from '@nestjs/common';
 import { SourceType } from '@snipet/schemas';
-import { SourceMetadata } from '@/modules/knowledge/source/metadata.types';
+
+import { BaseProcessor } from './base.processor';
 
 @Injectable()
 export class PDFProcessor extends BaseProcessor {

@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { CallHandler, Injectable, NestInterceptor } from '@nestjs/common';
 
 import { CONTEXT_FIELDS_KEY } from '../decorators/context-field';
-import { HTTPContext } from '../http-context';
+import { HTTPContext } from '../http-context/http-context';
 
 @Injectable()
 export class ContextInterceptor implements NestInterceptor {

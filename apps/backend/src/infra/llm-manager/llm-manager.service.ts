@@ -1,9 +1,8 @@
 import { readdir, readFile } from 'fs/promises';
 import { join } from 'path';
 
+import { LLMEntity } from '@/entities/llm.entity';
 import { env } from '@/env';
-import { LLMEntity } from '@/modules/llm/llm.entity';
-import { LLMService } from '@/modules/llm/llm.service';
 import { __root } from '@/root';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -22,10 +21,7 @@ export class LLMManagerService {
 
   instances: Map<string, { instance: EmbeddingProvider | TextProvider, lastUse: number }> = new Map();
 
-  constructor(
-    private readonly loader: LLMLoaderService,
-    private readonly llmService: LLMService
-  ) {}
+  constructor(private readonly loader: LLMLoaderService) {}
 
   async onModuleInit() {
     try {
@@ -70,11 +66,16 @@ export class LLMManagerService {
     return this.presets.map(preset => ({ ...preset, iconPath: `${env.AWS_PUBLIC_BASE_URL}/${preset.iconPath}` }));
   }
 
-  async getEmbeddingByKnowledge(knowledgeId: string): Promise<EmbeddingProvider | null> {
-    const llms = await this.llmService.findByKnowledge(knowledgeId);
-    const embeddingLLM = llms.find(llm => llm.type === "EMBEDDING");
-    if (!embeddingLLM) return null;
-    return this.getInstance(embeddingLLM) as unknown as EmbeddingProvider;
+  async getEmbedding(entityOrId: LLMEntity | string): Promise<EmbeddingProvider | null> {
+    if (typeof entityOrId === 'string') {
+      const instance = this.instances.get(entityOrId)?.instance;
+      if (!instance) return null;
+      if (instance instanceof TextProvider) throw new Error("Invalid provider type");
+      return instance;
+    }
+
+    if (entityOrId.type !== 'EMBEDDING') throw new Error("Invalid provider type");
+    return this.getInstance(entityOrId) as unknown as EmbeddingProvider;
   }
 
   async getInstance<T extends LLMEntity>(

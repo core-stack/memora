@@ -1,0 +1,122 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class Initial1763287324123 implements MigrationInterface {
+    name = 'Initial1763287324123'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE TABLE "accounts" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "provider" character varying(255) NOT NULL, "provider_account_id" character varying(255) NOT NULL, "user_id" uuid NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL, CONSTRAINT "UQ_06f1ce45cbf093e57b824205565" UNIQUE ("provider", "provider_account_id"), CONSTRAINT "PK_5a7a02c20412299d198e097a8fe" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."roles_scope_enum" AS ENUM('TENANT', 'GLOBAL')`);
+        await queryRunner.query(`CREATE TABLE "roles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "key" character varying NOT NULL, "name" character varying NOT NULL, "permissions" integer NOT NULL, "scope" "public"."roles_scope_enum" NOT NULL DEFAULT 'TENANT', "tenant_id" character varying, "created_by" character varying, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "tenantId" uuid, "createdById" uuid, CONSTRAINT "roles_key_scope_tenant_id_unique" UNIQUE ("key", "scope", "tenant_id"), CONSTRAINT "PK_c1433d71a4838793a49dcad46ab" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."messages_message_role_enum" AS ENUM('user', 'assistant', 'system')`);
+        await queryRunner.query(`CREATE TABLE "messages" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "message_role" "public"."messages_message_role_enum" NOT NULL, "content" text NOT NULL, "chat_id" uuid NOT NULL, "knowledge_id" uuid NOT NULL, "tenant_id" uuid NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_18325f38ae6de43878487eff986" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "chats" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(50) NOT NULL, "knowledge_id" uuid NOT NULL, "tenant_id" uuid NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_0117647b3c4a4e5ff198aeb6206" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."llms_type_enum" AS ENUM('EMBEDDING', 'TEXT')`);
+        await queryRunner.query(`CREATE TABLE "llms" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "default" boolean NOT NULL DEFAULT false, "name" character varying(255) NOT NULL, "model" character varying(255) NOT NULL, "config" jsonb NOT NULL DEFAULT '{}', "type" "public"."llms_type_enum" NOT NULL, "tenant_id" character varying(36) NOT NULL, "creator_id" character varying(36), "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "llms_default_tenant_type_unique" UNIQUE ("default", "tenant_id", "type"), CONSTRAINT "llms_name_tenant_unique" UNIQUE ("name", "tenant_id"), CONSTRAINT "PK_2ec003633cdb2e9b49777105b3f" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "knowledge_llms" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "default" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "knowledgeId" uuid, "llmId" uuid, CONSTRAINT "knowledge_llm_unique" UNIQUE ("knowledgeId", "llmId"), CONSTRAINT "PK_e100f76dd9002009335b064a6e9" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "knowledge_llm_llm_idx" ON "knowledge_llms" ("llmId") `);
+        await queryRunner.query(`CREATE INDEX "knowledge_llm_knowledge_idx" ON "knowledge_llms" ("knowledgeId") `);
+        await queryRunner.query(`CREATE TYPE "public"."knowledge_status_enum" AS ENUM('DELETING', 'DELETE_ERROR', 'OK')`);
+        await queryRunner.query(`CREATE TABLE "knowledge" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "slug" character varying(255) NOT NULL, "title" character varying(255) NOT NULL, "description" text, "status" "public"."knowledge_status_enum" NOT NULL DEFAULT 'OK', "delete_error" text, "file_count" integer NOT NULL DEFAULT '0', "storage" bigint NOT NULL DEFAULT '0', "tenant_id" character varying(36) NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "knowledge_tenant_slug_unique" UNIQUE ("tenant_id", "slug"), CONSTRAINT "PK_4159ba98b65a20a8d1f257bc514" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "knowledge_tenant_idx" ON "knowledge" ("tenant_id") `);
+        await queryRunner.query(`CREATE TABLE "folders" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "knowledge_id" uuid NOT NULL, "name" character varying(100) NOT NULL, "root" boolean, "parent_id" uuid, "tenant_id" uuid NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_8578bd31b0e7f6d6c2480dbbca8" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."sources_source_type_enum" AS ENUM('TEXT', 'DOC', 'LINK', 'VIDEO', 'AUDIO', 'IMAGE')`);
+        await queryRunner.query(`CREATE TYPE "public"."sources_index_status_enum" AS ENUM('PENDING', 'INDEXING', 'INDEXED', 'ERROR')`);
+        await queryRunner.query(`CREATE TABLE "sources" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "key" text NOT NULL, "path" text NOT NULL, "name" character varying(255) NOT NULL, "description" text, "original_name" character varying(255), "metadata" jsonb NOT NULL, "source_type" "public"."sources_source_type_enum" NOT NULL, "index_status" "public"."sources_index_status_enum" NOT NULL, "index_error" text, "memory_id" character varying(36), "knowledge_id" character varying(36) NOT NULL, "tenant_id" character varying(36) NOT NULL, "folder_id" character varying(36), "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "knowledgeId" uuid, "folderId" uuid, "tenantId" uuid, CONSTRAINT "PK_85523beafe5a2a6b90b02096443" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "sources_index_status_idx" ON "sources" ("index_status") `);
+        await queryRunner.query(`CREATE INDEX "sources_key_idx" ON "sources" ("key") `);
+        await queryRunner.query(`CREATE INDEX "sources_memory_idx" ON "sources" ("memory_id") `);
+        await queryRunner.query(`CREATE TABLE "tenants" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "description" character varying, "background_image" character varying NOT NULL, "disabled_at" TIMESTAMP WITH TIME ZONE, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_53be67a04681c66b87ee27c9321" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "notifications" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "title" character varying NOT NULL, "description" character varying NOT NULL, "link" character varying, "read" boolean NOT NULL DEFAULT false, "tenantId" uuid NOT NULL, "created_by_id" character varying, "destination_id" character varying NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "read_at" TIMESTAMP WITH TIME ZONE, "createdById" uuid, "destinationId" uuid, CONSTRAINT "PK_6a72c3c0f683f6462415e653c3a" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "members" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "owner" boolean NOT NULL DEFAULT false, "user_id" character varying NOT NULL, "tenant_id" character varying NOT NULL, "role_id" character varying NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "userId" uuid, "tenantId" uuid, "roleId" uuid, CONSTRAINT "PK_28b53062261b996d9c99fa12404" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "member_tenant_idx" ON "members" ("tenant_id") `);
+        await queryRunner.query(`CREATE INDEX "member_user_idx" ON "members" ("user_id") `);
+        await queryRunner.query(`CREATE TABLE "invites" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tenantId" uuid NOT NULL, "email" character varying NOT NULL, "roleId" uuid NOT NULL, "userId" uuid, "creator_id" character varying NOT NULL, "expires_at" TIMESTAMP WITH TIME ZONE NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "creatorId" uuid, CONSTRAINT "invites_tenant_email_unique" UNIQUE ("tenantId", "email"), CONSTRAINT "PK_aa52e96b44a714372f4dd31a0af" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "email" text NOT NULL, "password" text, "email_verified" TIMESTAMP WITH TIME ZONE, "image" text, "role_id" uuid NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."verification_tokens_type_enum" AS ENUM('ACTIVE_ACCOUNT', 'RESET_PASSWORD')`);
+        await queryRunner.query(`CREATE TABLE "verification_tokens" ("token" uuid NOT NULL DEFAULT uuid_generate_v4(), "type" "public"."verification_tokens_type_enum" NOT NULL, "expires" TIMESTAMP WITH TIME ZONE NOT NULL, "user_id" uuid NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_b00b1be0e5a820594d7c07a3dfb" PRIMARY KEY ("token"))`);
+        await queryRunner.query(`ALTER TABLE "accounts" ADD CONSTRAINT "FK_3000dad1da61b29953f07476324" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "roles" ADD CONSTRAINT "FK_c954ae3b1156e075ccd4e9ce3e6" FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "roles" ADD CONSTRAINT "FK_cec119ce18936c7b6c24142be3e" FOREIGN KEY ("createdById") REFERENCES "members"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "messages" ADD CONSTRAINT "FK_7540635fef1922f0b156b9ef74f" FOREIGN KEY ("chat_id") REFERENCES "chats"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "messages" ADD CONSTRAINT "FK_c8c855f76c8a3d10aa3d0c09884" FOREIGN KEY ("knowledge_id") REFERENCES "knowledge"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "chats" ADD CONSTRAINT "FK_ba607a517223a0649d07471c004" FOREIGN KEY ("knowledge_id") REFERENCES "knowledge"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "knowledge_llms" ADD CONSTRAINT "FK_3744e0c59072b73fbec3e0e8f49" FOREIGN KEY ("knowledgeId") REFERENCES "knowledge"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "knowledge_llms" ADD CONSTRAINT "FK_1d91bfab51635446b4b8cb34d1a" FOREIGN KEY ("llmId") REFERENCES "llms"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "folders" ADD CONSTRAINT "FK_b697ebfd61eef6ffcd13e85dfd9" FOREIGN KEY ("knowledge_id") REFERENCES "knowledge"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "folders" ADD CONSTRAINT "FK_938a930768697b6ece215667d8e" FOREIGN KEY ("parent_id") REFERENCES "folders"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "sources" ADD CONSTRAINT "FK_be449c57e0145ed6b9d6fb82c65" FOREIGN KEY ("knowledgeId") REFERENCES "knowledge"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "sources" ADD CONSTRAINT "FK_cc4195595faec287ef5c42ec30e" FOREIGN KEY ("folderId") REFERENCES "folders"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "sources" ADD CONSTRAINT "FK_5f8e49b135d69dffe86fe449afc" FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "notifications" ADD CONSTRAINT "FK_d5b86bc522af7cc9e3e13960ffb" FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "notifications" ADD CONSTRAINT "FK_fcce8c50a375466676d82dcbadd" FOREIGN KEY ("createdById") REFERENCES "members"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "notifications" ADD CONSTRAINT "FK_1211bc46eb9e6342b7b678ebf79" FOREIGN KEY ("destinationId") REFERENCES "members"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "members" ADD CONSTRAINT "FK_839756572a2c38eb5a3b563126e" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "members" ADD CONSTRAINT "FK_774934f0ba644476c69b41b706d" FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "members" ADD CONSTRAINT "FK_cd453dd56273a142fb4baf62d19" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE SET NULL ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "invites" ADD CONSTRAINT "FK_9e4706c91f694baa7674ec3c1d5" FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "invites" ADD CONSTRAINT "FK_ed2fb45d6edb72be56fd189261f" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "invites" ADD CONSTRAINT "FK_f53061a24b71fb0f54cfb1629ae" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "invites" ADD CONSTRAINT "FK_393c23ed252d1eab2e98c3d30ec" FOREIGN KEY ("creatorId") REFERENCES "members"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "users" ADD CONSTRAINT "FK_a2cecd1a3531c0b041e29ba46e1" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "verification_tokens" ADD CONSTRAINT "FK_31d2079dc4079b80517d31cf4f2" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "verification_tokens" DROP CONSTRAINT "FK_31d2079dc4079b80517d31cf4f2"`);
+        await queryRunner.query(`ALTER TABLE "users" DROP CONSTRAINT "FK_a2cecd1a3531c0b041e29ba46e1"`);
+        await queryRunner.query(`ALTER TABLE "invites" DROP CONSTRAINT "FK_393c23ed252d1eab2e98c3d30ec"`);
+        await queryRunner.query(`ALTER TABLE "invites" DROP CONSTRAINT "FK_f53061a24b71fb0f54cfb1629ae"`);
+        await queryRunner.query(`ALTER TABLE "invites" DROP CONSTRAINT "FK_ed2fb45d6edb72be56fd189261f"`);
+        await queryRunner.query(`ALTER TABLE "invites" DROP CONSTRAINT "FK_9e4706c91f694baa7674ec3c1d5"`);
+        await queryRunner.query(`ALTER TABLE "members" DROP CONSTRAINT "FK_cd453dd56273a142fb4baf62d19"`);
+        await queryRunner.query(`ALTER TABLE "members" DROP CONSTRAINT "FK_774934f0ba644476c69b41b706d"`);
+        await queryRunner.query(`ALTER TABLE "members" DROP CONSTRAINT "FK_839756572a2c38eb5a3b563126e"`);
+        await queryRunner.query(`ALTER TABLE "notifications" DROP CONSTRAINT "FK_1211bc46eb9e6342b7b678ebf79"`);
+        await queryRunner.query(`ALTER TABLE "notifications" DROP CONSTRAINT "FK_fcce8c50a375466676d82dcbadd"`);
+        await queryRunner.query(`ALTER TABLE "notifications" DROP CONSTRAINT "FK_d5b86bc522af7cc9e3e13960ffb"`);
+        await queryRunner.query(`ALTER TABLE "sources" DROP CONSTRAINT "FK_5f8e49b135d69dffe86fe449afc"`);
+        await queryRunner.query(`ALTER TABLE "sources" DROP CONSTRAINT "FK_cc4195595faec287ef5c42ec30e"`);
+        await queryRunner.query(`ALTER TABLE "sources" DROP CONSTRAINT "FK_be449c57e0145ed6b9d6fb82c65"`);
+        await queryRunner.query(`ALTER TABLE "folders" DROP CONSTRAINT "FK_938a930768697b6ece215667d8e"`);
+        await queryRunner.query(`ALTER TABLE "folders" DROP CONSTRAINT "FK_b697ebfd61eef6ffcd13e85dfd9"`);
+        await queryRunner.query(`ALTER TABLE "knowledge_llms" DROP CONSTRAINT "FK_1d91bfab51635446b4b8cb34d1a"`);
+        await queryRunner.query(`ALTER TABLE "knowledge_llms" DROP CONSTRAINT "FK_3744e0c59072b73fbec3e0e8f49"`);
+        await queryRunner.query(`ALTER TABLE "chats" DROP CONSTRAINT "FK_ba607a517223a0649d07471c004"`);
+        await queryRunner.query(`ALTER TABLE "messages" DROP CONSTRAINT "FK_c8c855f76c8a3d10aa3d0c09884"`);
+        await queryRunner.query(`ALTER TABLE "messages" DROP CONSTRAINT "FK_7540635fef1922f0b156b9ef74f"`);
+        await queryRunner.query(`ALTER TABLE "roles" DROP CONSTRAINT "FK_cec119ce18936c7b6c24142be3e"`);
+        await queryRunner.query(`ALTER TABLE "roles" DROP CONSTRAINT "FK_c954ae3b1156e075ccd4e9ce3e6"`);
+        await queryRunner.query(`ALTER TABLE "accounts" DROP CONSTRAINT "FK_3000dad1da61b29953f07476324"`);
+        await queryRunner.query(`DROP TABLE "verification_tokens"`);
+        await queryRunner.query(`DROP TYPE "public"."verification_tokens_type_enum"`);
+        await queryRunner.query(`DROP TABLE "users"`);
+        await queryRunner.query(`DROP TABLE "invites"`);
+        await queryRunner.query(`DROP INDEX "public"."member_user_idx"`);
+        await queryRunner.query(`DROP INDEX "public"."member_tenant_idx"`);
+        await queryRunner.query(`DROP TABLE "members"`);
+        await queryRunner.query(`DROP TABLE "notifications"`);
+        await queryRunner.query(`DROP TABLE "tenants"`);
+        await queryRunner.query(`DROP INDEX "public"."sources_memory_idx"`);
+        await queryRunner.query(`DROP INDEX "public"."sources_key_idx"`);
+        await queryRunner.query(`DROP INDEX "public"."sources_index_status_idx"`);
+        await queryRunner.query(`DROP TABLE "sources"`);
+        await queryRunner.query(`DROP TYPE "public"."sources_index_status_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."sources_source_type_enum"`);
+        await queryRunner.query(`DROP TABLE "folders"`);
+        await queryRunner.query(`DROP INDEX "public"."knowledge_tenant_idx"`);
+        await queryRunner.query(`DROP TABLE "knowledge"`);
+        await queryRunner.query(`DROP TYPE "public"."knowledge_status_enum"`);
+        await queryRunner.query(`DROP INDEX "public"."knowledge_llm_knowledge_idx"`);
+        await queryRunner.query(`DROP INDEX "public"."knowledge_llm_llm_idx"`);
+        await queryRunner.query(`DROP TABLE "knowledge_llms"`);
+        await queryRunner.query(`DROP TABLE "llms"`);
+        await queryRunner.query(`DROP TYPE "public"."llms_type_enum"`);
+        await queryRunner.query(`DROP TABLE "chats"`);
+        await queryRunner.query(`DROP TABLE "messages"`);
+        await queryRunner.query(`DROP TYPE "public"."messages_message_role_enum"`);
+        await queryRunner.query(`DROP TABLE "roles"`);
+        await queryRunner.query(`DROP TYPE "public"."roles_scope_enum"`);
+        await queryRunner.query(`DROP TABLE "accounts"`);
+    }
+
+}

@@ -1,6 +1,6 @@
+import { MessageEntity } from '@/entities/message.entity';
 import { ChatFragment, Fragments } from '@/fragment';
 import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
-import { MessageEntity } from '@/modules/knowledge/chat/message/message.entity';
 import { MessageService } from '@/modules/knowledge/chat/message/message.service';
 import { buildOptions } from '@/utils/build-options';
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';

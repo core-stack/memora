@@ -1,8 +1,10 @@
 import { DatabaseModule } from '@/infra/database/database.module';
-import { LLMModule } from '@/infra/llm/llm.module';
 import { PromptModule } from '@/infra/prompt/prompt.module';
 import { StorageModule } from '@/infra/storage/storage.module';
-import { MemoryModule } from '@/modules/memory/memory.module';
+import { LLMModule } from '@/modules/llm/llm.module';
+import { ChatMemoryModule } from '@/modules/memory/chat-memory/chat-memory.module';
+import { SourceMemoryModule } from '@/modules/memory/source-memory/source-memory.module';
+import { HTTPContextModule } from '@/shared/http-context/http-context.module';
 import { Module } from '@nestjs/common';
 
 import { KnowledgeModule } from '../../knowledge.module';
@@ -17,10 +19,12 @@ import { MessageService } from './message.service';
     DatabaseModule,
     KnowledgeModule,
     StorageModule,
-    LLMModule,
-    MemoryModule,
     PromptModule,
-    ChatModule
+    ChatModule,
+    HTTPContextModule,
+    LLMModule,
+    ChatMemoryModule,
+    SourceMemoryModule
   ],
   exports: [MessageService],
 })

@@ -1,13 +1,13 @@
 import { isUUID } from '@/utils/uuid';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
+import { UserEntity } from '../../entities/user.entity';
 import { AccountService } from '../account/account.service';
 import { UserService } from '../user/user.service';
 import { AccessToken, JWTService, RefreshToken } from './jwt.service';
 import { Provider } from './providers/types';
 import { Store } from './store/types';
 import { Session } from './types';
-import { UserEntity } from '../user/user.entity';
 
 export const PROVIDERS = Symbol("providers");
 

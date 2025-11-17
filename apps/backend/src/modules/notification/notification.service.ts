@@ -1,7 +1,6 @@
+import { NotificationEntity } from '@/entities/notification.entity';
 import { Service } from '@/shared/service';
 import { Injectable, Logger } from '@nestjs/common';
-
-import { NotificationEntity } from './notification.entity';
 
 @Injectable()
 export class NotificationService extends Service<NotificationEntity> {

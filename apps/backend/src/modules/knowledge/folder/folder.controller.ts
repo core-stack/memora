@@ -1,12 +1,8 @@
-import { Controller } from '@nestjs/common';
-import {
-  createKnowledgeFolderSchema, KnowledgeFolder, knowledgeFolderFilterSchema,
-  updateKnowledgeFolderSchema
-} from '@snipet/schemas';
-
-import { FolderService } from './folder.service';
 import { BaseController } from '@/shared/controller';
-import { FolderEntity } from './folder.entity';
+import { Controller } from '@nestjs/common';
+
+import { FolderEntity } from '../../../entities/folder.entity';
+import { FolderService } from './folder.service';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/folder')
 export class FolderController extends BaseController<FolderEntity>() {

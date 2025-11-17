@@ -1,12 +1,12 @@
 
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { CreateKnowledgeFolder, KnowledgeFolder, UpdateKnowledgeFolder } from '@snipet/schemas';
-
-import { KnowledgeService } from '../knowledge.service';
-import { FolderEntity } from './folder.entity';
-import { Service } from '@/shared/service';
-import { FilterOptions } from '@/shared/filter-options';
 import { EntityManager } from 'typeorm';
+
+import { FilterOptions } from '@/shared/filter-options';
+import { Service } from '@/shared/service';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+
+import { FolderEntity } from '../../../entities/folder.entity';
+import { KnowledgeService } from '../knowledge.service';
 
 @Injectable()
 export class FolderService extends Service<FolderEntity> {

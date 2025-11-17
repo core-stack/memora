@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { PPTXLoader } from '@langchain/community/document_loaders/fs/pptx';
-import { BaseProcessor } from './base.processor';
+import { SourceMetadata } from '@/entities/metadata.types';
+import { SourceEntity } from '@/entities/source.entity';
 import { Fragments, SourceFragment } from '@/fragment';
-import { SourceEntity } from '@/modules/knowledge/source/source.entity';
+import { PPTXLoader } from '@langchain/community/document_loaders/fs/pptx';
+import { Injectable } from '@nestjs/common';
 import { SourceType } from '@snipet/schemas';
-import { SourceMetadata } from '@/modules/knowledge/source/metadata.types';
+
+import { BaseProcessor } from './base.processor';
 
 @Injectable()
 export class PPTProcessor extends BaseProcessor {

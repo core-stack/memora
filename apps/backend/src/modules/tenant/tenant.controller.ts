@@ -1,7 +1,7 @@
 import { BaseController } from '@/shared/controller';
 import { Controller } from '@nestjs/common';
 
-import { TenantEntity } from './tenant.entity';
+import { TenantEntity } from '../../entities/tenant.entity';
 import { TenantService } from './tenant.service';
 
 @Controller('tenant')

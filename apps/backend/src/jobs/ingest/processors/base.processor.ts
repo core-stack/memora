@@ -1,9 +1,10 @@
-import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
+import { SourceMetadata } from '@/entities/metadata.types';
+import { SourceEntity } from '@/entities/source.entity';
 import { Fragments, SourceFragment } from '@/fragment';
-import { SourceEntity } from '@/modules/knowledge/source/source.entity';
+import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 import { SourceType } from '@snipet/schemas';
+
 import { IProcessor } from './types';
-import { SourceMetadata } from '@/modules/knowledge/source/metadata.types';
 
 export abstract class BaseProcessor implements IProcessor {
   protected splitter = new RecursiveCharacterTextSplitter({

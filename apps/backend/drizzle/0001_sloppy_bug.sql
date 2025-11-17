@@ -1,2 +1,0 @@
-ALTER TABLE "sources" ADD COLUMN "tenant_id" varchar(36) NOT NULL;--> statement-breakpoint
-ALTER TABLE "sources" ADD CONSTRAINT "sources_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;

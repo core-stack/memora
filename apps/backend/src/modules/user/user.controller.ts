@@ -1,9 +1,8 @@
-import { Controller, Get, Req } from '@nestjs/common';
-
-import { UserService } from './user.service';
-
 import { BaseController } from '@/shared/controller';
-import { UserEntity } from './user.entity';
+import { Controller, Get } from '@nestjs/common';
+
+import { UserEntity } from '../../entities/user.entity';
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController extends BaseController<UserEntity>({ ignore: [ 'create', "update", "delete" ] }) {

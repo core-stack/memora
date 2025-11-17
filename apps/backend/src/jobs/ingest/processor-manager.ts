@@ -1,15 +1,10 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { SourceEntity } from '@/entities/source.entity';
 import { Fragments, SourceFragment } from '@/fragment';
-import { SourceEntity } from '@/modules/knowledge/source/source.entity';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import {
-  PDFProcessor,
-  DocxProcessor,
-  PPTProcessor,
-  TextProcessor,
-  CSVProcessor,
-  JSONProcessor,
-  JSONLProcessor,
+  CSVProcessor, DocxProcessor, JSONLProcessor, JSONProcessor, PDFProcessor, PPTProcessor,
+  TextProcessor
 } from './processors';
 import { IProcessor } from './processors/types';
 

@@ -2,21 +2,20 @@ import { Queue } from 'bullmq';
 import moment from 'moment';
 import { EntityManager, In } from 'typeorm';
 
+import { InviteEntity } from '@/entities/invite.entity';
 import { env } from '@/env';
 import { EmailPayload, EmailTemplate } from '@/jobs/email/schemas';
 import { JobType } from '@/jobs/types';
 import { RoleScope } from '@/shared/enums';
 import { Service } from '@/shared/service';
 import { InjectQueue } from '@nestjs/bullmq';
-import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { CreateInviteSchema } from '@snipet/schemas';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 
+import { RoleEntity } from '../../entities/role.entity';
 import { MemberService } from '../member/member.service';
-import { RoleEntity } from '../role/role.entity';
 import { RoleService } from '../role/role.service';
 import { TenantService } from '../tenant/tenant.service';
 import { UserService } from '../user/user.service';
-import { InviteEntity } from './invite.entity';
 import { SendInviteDto, SendInviteResponseDto } from './dto/send-invites.dto';
 
 @Injectable()
@@ -33,7 +32,7 @@ export class InviteService extends Service<InviteEntity> {
   async send(invites: SendInviteDto, manager?: EntityManager) {
     const tenantId = this.context.params.shouldGetString("tenantId");
 
-    const tenant = await this.tenantService.findByID(tenantId, manager);
+    const tenant = await this.tenantService.findByID(tenantId, { manager });
     if (!tenant) throw new NotFoundException("Tenant not found");
 
     const memberId = this.context.memberId;
@@ -109,7 +108,7 @@ export class InviteService extends Service<InviteEntity> {
     for (const { email, roleId } of invites.emails) {
       const userWithEmail = await this.userService.findFirst({ where: { email }}, manager);
       if (!rolesCache.find(role => role.id === roleId)) {
-        const role = await this.roleService.findByID(roleId, manager);
+        const role = await this.roleService.findByID(roleId, { manager });
         if (!role) throw new NotFoundException("Role not found");
         rolesCache.push(role);
       }

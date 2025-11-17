@@ -2,6 +2,7 @@ import { env } from '@/env';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { SecurityModule } from '@/infra/security/security.module';
 import { EmailModule } from '@/jobs/email/email.module';
+import { HTTPContextModule } from '@/shared/http-context/http-context.module';
 import { Module } from '@nestjs/common';
 
 import { AccountModule } from '../account/account.module';
@@ -56,7 +57,8 @@ const useProvider = (name: string, provider: Provider, use: boolean) => {
     VerificationTokenModule,
     SecurityModule,
     DatabaseModule,
-    RoleModule
+    RoleModule,
+    HTTPContextModule
   ],
 })
 export class AuthModule {}

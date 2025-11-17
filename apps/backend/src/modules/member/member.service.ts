@@ -1,8 +1,9 @@
+import { EntityManager, In } from 'typeorm';
+
+import { Service } from '@/shared/service';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { MemberEntity } from './member.entity';
-import { Service } from '@/shared/service';
-import { EntityManager, In } from 'typeorm';
+import { MemberEntity } from '../../entities/member.entity';
 
 @Injectable()
 export class MemberService extends Service<MemberEntity> {

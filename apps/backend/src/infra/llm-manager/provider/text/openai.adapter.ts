@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { output, ZodObject } from 'zod';
 
 import { ProviderHealth } from '../types';
 import { GenerateParams, GenerateResult, StreamChunk, TextProvider } from './base';
@@ -62,6 +63,69 @@ export class OpenAILLMTextAdapter extends TextProvider {
       }
     }
   }
+
+  iterableStream(params: GenerateParams): AsyncIterable<string> {
+    const self = this;
+
+    return {
+      async *[Symbol.asyncIterator]() {
+        const { prompt, maxTokens, temperature } = params;
+
+        const stream = await self.client.chat.completions.create({
+          model: self.opts.model,
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: maxTokens,
+          temperature,
+          stream: true,
+        });
+
+        for await (const part of stream) {
+          const delta = part.choices[0]?.delta?.content;
+          if (delta) yield delta;
+        }
+      },
+    };
+  }
+
+  async withStructuredOutput<S extends ZodObject<any>>(
+    query: string,
+    schema: S
+  ): Promise<output<S>> {
+    const schemaJSON = schema._zod.toJSONSchema?.();
+
+    const prompt = `
+      You are a helpful assistant.
+      Your task is to answer a question based on the following JSON schema:
+
+      ${JSON.stringify(schemaJSON, null, 2)}
+      Note: The output must be a valid JSON object that matches the schema above.
+    `.trim();
+
+    const res = await this.client.chat.completions.create({
+      model: this.opts.model,
+      messages: [
+        { role: "system", content: prompt },
+        { role: "user", content: query },
+      ],
+      response_format: { type: "json_object" }, // JSON MODE
+      temperature: 0,
+      stream: false,
+    });
+
+    const text = res.choices[0].message?.content ?? "";
+
+    let parsed: any;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      throw new Error(
+        `Falha ao fazer parse do JSON retornado pelo modelo: ${err}\nConteúdo recebido:\n${text}`
+      );
+    }
+
+    return schema.parse(parsed);
+  }
+
 
   async healthCheck(): Promise<ProviderHealth> {
     const start = Date.now();

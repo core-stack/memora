@@ -1,9 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
 import { CacheService } from './cache.service';
+import { CACHE_PREFIX_KEY } from './prefix';
 import { RedisService } from './redis/redis.service';
-
-export const CACHE_PREFIX_KEY = Symbol("cache_prefix_key");
 
 @Module({})
 export class CacheModule {
@@ -17,8 +16,7 @@ export class CacheModule {
         },
         {
           provide: CacheService,
-          inject: [CACHE_PREFIX_KEY],
-          useFactory: (prefix: string) => new RedisService(prefix)
+          useClass: RedisService,
         }
       ],
       exports: [CacheService]

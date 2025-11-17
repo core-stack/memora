@@ -9,8 +9,10 @@ import { forwardRef, Module } from '@nestjs/common';
 import { JobType } from '../types';
 import { IngestProcessor } from './ingest.processor';
 import { ProcessorManager } from './processor-manager';
+import {
+  CSVProcessor, DocxProcessor, JSONLProcessor, JSONProcessor, PPTProcessor, TextProcessor
+} from './processors';
 import { PDFProcessor } from './processors/pdf.processor';
-import { CSVProcessor, DocxProcessor, JSONLProcessor, JSONProcessor, PPTProcessor, TextProcessor } from './processors';
 
 @Module({
   providers: [

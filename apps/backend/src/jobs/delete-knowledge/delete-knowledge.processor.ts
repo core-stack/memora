@@ -1,16 +1,18 @@
 import { Job } from 'bullmq';
+import { DataSource } from 'typeorm';
 
+import { KnowledgeEntity } from '@/entities/knowledge.entity';
 import { StorageDeleteError } from '@/infra/storage/errors/delete-error';
 import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
 import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
+import { KnowledgeStatus, LLMType } from '@/shared/enums';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { Knowledge, Source } from '@snipet/schemas';
 
 import { JobType } from '../types';
-import { KnowledgeStatus } from '@/shared/enums';
 
 @Processor(JobType.DELETE_KNOWLEDGE, { concurrency: 10 })
 export class DeleteKnowledgeProcessor extends WorkerHost {
@@ -20,13 +22,15 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
     @Inject(forwardRef(() => KnowledgeService)) private readonly knowledgeService: KnowledgeService,
     private readonly sourceVectorStore: SourceVectorStoreService,
     private readonly chatVectorStore: ChatVectorStoreService,
-    private readonly storageService: PrivateStorageService
+    private readonly storageService: PrivateStorageService,
+    private readonly dataSource: DataSource
   ) { super(); }
 
   async process(job: Job<Knowledge>) {
     const { id: knowledgeId, tenantId } = job.data;
-    const knowledge = await this.knowledgeService.findByID(knowledgeId);
+    const knowledge = await this.knowledgeService.findByID(knowledgeId, { relations: ['knowledgeLLMs.llm'] });
     if (!knowledge) return;
+    const knEmbeddings = knowledge.knowledgeLLMs.find(kllm => kllm.default && kllm.llm.type === LLMType.EMBEDDING);
     job.updateProgress(10);
     // delete data in vector store
     await this.sourceVectorStore.deleteByFilter(knowledgeId, {});
@@ -47,7 +51,7 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
     }
 
     // delete knowledge in database
-    await this.knowledgeService.delete(knowledgeId);
+    await this.dataSource.getRepository(KnowledgeEntity).delete({ id: knowledgeId });
     job.updateProgress(100);
   }
 

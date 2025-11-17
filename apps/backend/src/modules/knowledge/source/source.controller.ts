@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
-import { SourceService } from './source.service';
-
+import { SourceEntity } from '@/entities/source.entity';
 import { BaseController } from '@/shared/controller';
-import { SourceEntity } from './source.entity';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+
 import { GetUploadUrlDto } from './dto/get-upload-url.dto';
+import { SourceService } from './source.service';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/source')
 export class SourceController extends BaseController<SourceEntity>() {

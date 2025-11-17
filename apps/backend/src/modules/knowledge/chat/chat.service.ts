@@ -1,9 +1,10 @@
+import { EntityManager } from 'typeorm';
+
+import { Service } from '@/shared/service';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
+import { ChatEntity } from '../../../entities/chat.entity';
 import { KnowledgeService } from '../knowledge.service';
-import { ChatEntity } from './chat.entity';
-import { Service } from '@/shared/service';
-import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class ChatService extends Service<ChatEntity> {

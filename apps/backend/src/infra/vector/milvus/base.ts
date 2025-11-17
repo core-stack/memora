@@ -103,9 +103,9 @@ export abstract class MilvusService<T extends BaseFragment>
     return fragments;
   }
 
-  async addFragments(knowledgeId: string, c: T[] | T | Fragments<T>): Promise<void> {
+  async addFragments(llmId: string, c: T[] | T | Fragments<T>): Promise<void> {
     // add embeddings
-    const embeddingProvider = await this.llmManager.getEmbeddingByKnowledge(knowledgeId);
+    const embeddingProvider = await this.llmManager.getEmbedding(llmId);
     if (!embeddingProvider) throw new VectorMutationError("Embedding service not found");
     const collectionName = this.buildCollectionName(embeddingProvider.preset);
 
@@ -119,8 +119,8 @@ export abstract class MilvusService<T extends BaseFragment>
     await this.client.flushSync({ collection_names: [collectionName] });
   }
 
-  async deleteFragments(knowledgeId: string, c: T | T[] | Fragments<T>): Promise<void> {
-    const embeddingProvider = await this.llmManager.getEmbeddingByKnowledge(knowledgeId);
+  async deleteFragments(llmId: string, c: T | T[] | Fragments<T>): Promise<void> {
+    const embeddingProvider = await this.llmManager.getEmbedding(llmId);
     if (!embeddingProvider) throw new VectorMutationError("Embedding service not found");
     const collectionName = this.buildCollectionName(embeddingProvider.preset);
 
@@ -135,8 +135,8 @@ export abstract class MilvusService<T extends BaseFragment>
     await this.client.flushSync({ collection_names: [collectionName] });
   }
 
-  async search(knowledgeId: string, ...opts: WithSearchOptions[]): Promise<Fragments<T>> {
-    const embeddingProvider = await this.llmManager.getEmbeddingByKnowledge(knowledgeId);
+  async search(llmId: string, ...opts: WithSearchOptions[]): Promise<Fragments<T>> {
+    const embeddingProvider = await this.llmManager.getEmbedding(llmId);
     if (!embeddingProvider) throw new VectorMutationError("Embedding service not found");
     
     const collectionName = this.buildCollectionName(embeddingProvider.preset);
@@ -201,8 +201,8 @@ export abstract class MilvusService<T extends BaseFragment>
     return this.searchResultToFragment(result.results);
   }
 
-  async deleteByFilter(knowledgeId: string, filter: Record<string, string | number | boolean>): Promise<void> {
-    const embeddingProvider = await this.llmManager.getEmbeddingByKnowledge(knowledgeId);
+  async deleteByFilter(llmId: string, filter: Record<string, string | number | boolean>): Promise<void> {
+    const embeddingProvider = await this.llmManager.getEmbedding(llmId);
     if (!embeddingProvider) throw new VectorMutationError("Embedding service not found");
     const collectionName = this.buildCollectionName(embeddingProvider.preset);
 

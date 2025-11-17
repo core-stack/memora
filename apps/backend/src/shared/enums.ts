@@ -34,8 +34,3 @@ export enum RoleScope {
   TENANT = 'TENANT',
   GLOBAL = 'GLOBAL',
 }
-
-export enum VerificationType {
-  ACTIVE_ACCOUNT = 'ACTIVE_ACCOUNT',
-  RESET_PASSWORD = 'RESET_PASSWORD',
-}

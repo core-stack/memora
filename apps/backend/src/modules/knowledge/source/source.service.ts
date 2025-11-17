@@ -2,6 +2,7 @@ import { Queue } from 'bullmq';
 import { randomUUID } from 'crypto';
 import { EntityManager } from 'typeorm';
 
+import { SourceEntity } from '@/entities/source.entity';
 import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { JobType } from '@/jobs/types';
 import { IndexStatus } from '@/shared/enums';
@@ -12,7 +13,6 @@ import { BadRequestException, Inject, Injectable, Logger, NotFoundException } fr
 
 import { FolderService } from '../folder/folder.service';
 import { KnowledgeService } from '../knowledge.service';
-import { SourceEntity } from './source.entity';
 import { GetUploadUrlDto } from './dto/get-upload-url.dto';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { BaseController } from '@/shared/controller';
 import { Controller } from '@nestjs/common';
 
-import { AccountEntity } from './account.entity';
+import { AccountEntity } from '../../entities/account.entity';
 import { AccountService } from './account.service';
 
 @Controller('account')

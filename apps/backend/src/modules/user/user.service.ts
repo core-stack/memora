@@ -4,7 +4,7 @@ import { FilterOptions } from '@/shared/filter-options';
 import { Service } from '@/shared/service';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../../entities/user.entity';
 
 @Injectable()
 export class UserService extends Service<UserEntity> {

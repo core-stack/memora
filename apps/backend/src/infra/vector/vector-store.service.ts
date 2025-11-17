@@ -13,11 +13,11 @@ export type SearchOptions = {
 export type WithSearchOptions = (currentOpts: Partial<SearchOptions>) =>  Partial<SearchOptions>;
 
 export abstract class VectorStore<T extends BaseFragment> {
-  abstract addFragments(knowledgeId: string, fragments: T[] | T | Fragments<T>): Promise<void>;
-  abstract deleteFragments(knowledgeId: string, fragments: T[] | T | Fragments<T>): Promise<void>;
-  abstract search(knowledgeId: string, ...options: Array<WithSearchOptions | undefined>): Promise<Fragments<T>>;
+  abstract addFragments(llmId: string, fragments: T[] | T | Fragments<T>): Promise<void>;
+  abstract deleteFragments(llmId: string, fragments: T[] | T | Fragments<T>): Promise<void>;
+  abstract search(llmId: string, ...options: Array<WithSearchOptions | undefined>): Promise<Fragments<T>>;
 
-  abstract deleteByFilter(knowledgeId: string, filter: Record<string, string | number | boolean>): Promise<void>;
+  abstract deleteByFilter(llmId: string, filter: Record<string, string | number | boolean>): Promise<void>;
 
   static withFilters(filters: Record<string, string | number | boolean>): WithSearchOptions {
     return (currentOpts: Partial<SearchOptions>) => {

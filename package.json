@@ -6,9 +6,9 @@
   "scripts": {
     "generate:prompts": "cd apps/backend && npm run generate:prompts",
 
-    "db:generate": "cd apps/backend && npx drizzle-kit generate",
-    "db:migrate": "cd apps/backend && npx drizzle-kit migrate",
-    "db:migrate:prod": "cd apps/backend && npm run migrate:prod",
+    "db:generate": "cd apps/backend && pnpm db:generate",
+    "db:migrate": "cd apps/backend && pnpm typeorm migration:run",
+    "db:migrate:prod": "cd apps/backend && npm run typeorm migration:run",
 
     "start:frontend": "turbo run start --filter=@snipet/frontend",
     "start:backend": "turbo run start --filter=@snipet/backend",

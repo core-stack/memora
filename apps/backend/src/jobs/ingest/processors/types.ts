@@ -1,6 +1,6 @@
+import { SourceMetadata } from '@/entities/metadata.types';
+import { SourceEntity } from '@/entities/source.entity';
 import { Fragments, SourceFragment } from '@/fragment';
-import { SourceMetadata } from '@/modules/knowledge/source/metadata.types';
-import { SourceEntity } from '@/modules/knowledge/source/source.entity';
 
 export interface IProcessor {
   process(
