@@ -1,9 +1,8 @@
-import { SourceMetadata } from '@/entities/metadata.types';
+import { SourceMetadata, SourceType } from '@/entities';
 import { SourceEntity } from '@/entities/source.entity';
 import { Fragments, SourceFragment } from '@/fragment';
 import { TextLoader } from '@langchain/classic/document_loaders/fs/text';
 import { Injectable } from '@nestjs/common';
-import { SourceType } from '@snipet/schemas';
 
 import { BaseProcessor } from './base.processor';
 import { IProcessor } from './types';

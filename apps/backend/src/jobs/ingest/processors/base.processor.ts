@@ -1,8 +1,7 @@
-import { SourceMetadata } from '@/entities/metadata.types';
+import { SourceMetadata, SourceType } from '@/entities/metadata.types';
 import { SourceEntity } from '@/entities/source.entity';
 import { Fragments, SourceFragment } from '@/fragment';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
-import { SourceType } from '@snipet/schemas';
 
 import { IProcessor } from './types';
 

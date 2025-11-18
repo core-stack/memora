@@ -10,9 +10,6 @@ import { GenericService } from '@/shared/generic-service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ROLES } from '@snipet/permission';
-import {
-  ActiveAccountSchema, ForgetPasswordSchema, LoginSchema, ResetPasswordSchema
-} from '@snipet/schemas';
 
 import { UserEntity } from '../../entities/user.entity';
 import {
@@ -23,6 +20,10 @@ import { UserService } from '../user/user.service';
 import { VerificationTokenService } from '../verification-token/verification-token.service';
 import { AuthManager } from './auth-manager.service';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { ActiveAccountDto } from './dto/active-account.dto';
+import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { LoginDto } from './dto/login.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService extends GenericService {
@@ -101,7 +102,7 @@ export class AuthService extends GenericService {
     }, manager);
   }
 
-  async activeAccount(data: ActiveAccountSchema, manager?: EntityManager) {
+  async activeAccount(data: ActiveAccountDto, manager?: EntityManager) {
     const verificationToken = await this.verificationTokenService.findFirst({
       where: { token: data.token, type: VerificationType.ACTIVE_ACCOUNT }
     }, manager);
@@ -137,7 +138,7 @@ export class AuthService extends GenericService {
     }, manager)
   }
 
-  async forgetPassword(data: ForgetPasswordSchema, manager?: EntityManager) {
+  async forgetPassword(data: ForgetPasswordDto, manager?: EntityManager) {
     const { email } = data;
     const user = await this.userService.findUnique({ where: { email } }, manager);
     if (!user) throw new NotFoundException("User not found");
@@ -160,7 +161,7 @@ export class AuthService extends GenericService {
     });
   }
 
-  async login(data: LoginSchema, manager?: EntityManager) {
+  async login(data: LoginDto, manager?: EntityManager) {
     const user = await this.userService.findFirstWithMemberRoleTenant(
       { where: { email: data.email } },
       manager
@@ -192,7 +193,7 @@ export class AuthService extends GenericService {
     this.context.deleteCookies(["access-token", "refresh-token"]);
   }
 
-  async resetPassword(data: ResetPasswordSchema, manager?: EntityManager) {
+  async resetPassword(data: ResetPasswordDto, manager?: EntityManager) {
     await this.transaction(async (manager) => {
       const verificationToken = await this.verificationTokenService.findFirst({
         where: { token: data.token, type: VerificationType.RESET_PASSWORD },

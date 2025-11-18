@@ -1,4 +1,4 @@
-import { AuthRequest } from '@/@types/auth-request';
+import { AuthRequest } from '@/types/auth-request';
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 
 import { CONTEXT_FIELDS_KEY } from '../decorators/context-field';

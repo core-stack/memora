@@ -5,6 +5,7 @@ export * from "./invite.entity";
 export * from "./knowledge-llm.entity";
 export * from "./knowledge.entity";
 export * from "./llm.entity";
+export * from "./metadata.types";
 export * from "./member.entity";
 export * from "./message.entity";
 export * from "./notification.entity";

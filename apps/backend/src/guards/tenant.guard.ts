@@ -1,4 +1,4 @@
-import { AuthRequest } from '@/@types/auth-request';
+import { AuthRequest } from '@/types/auth-request';
 import { AuthManager } from '@/modules/auth/auth-manager.service';
 import { Session } from '@/modules/auth/types';
 import { isUUID } from '@/utils/uuid';
@@ -13,7 +13,7 @@ export class TenantGuard implements CanActivate {
 
     let { session } = request;
     if (!session) throw new UnauthorizedException();
-    
+
     if (this.checkTenantAccess(session, request.params.tenantId)) return true;
     session = await this.authManager.reloadSession(session.id);
     return this.checkTenantAccess(session, request.params.tenantId);

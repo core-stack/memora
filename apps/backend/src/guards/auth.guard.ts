@@ -1,6 +1,6 @@
 import { Response } from 'express';
 
-import { AuthRequest } from '@/@types/auth-request';
+import { AuthRequest } from '@/types/auth-request';
 import { AuthManager } from '@/modules/auth/auth-manager.service';
 import { Session } from '@/modules/auth/types';
 import { Public } from '@/shared/decorators/public';

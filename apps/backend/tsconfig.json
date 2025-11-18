@@ -13,6 +13,7 @@
     "target": "ES2023",
     "resolveJsonModule": true,
     "sourceMap": true,
+    "baseUrl": "./",
     "outDir": "./dist",
     "incremental": true,
     "skipLibCheck": true,
@@ -23,7 +24,8 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@/*": ["./src/*"],
-      "@generated/*": ["./src/@generated/*"]
+      "@/types/*": ["src/types/*"],
+      "@generated/*": ["src/@generated/*"]
     },
   },
   "references": [

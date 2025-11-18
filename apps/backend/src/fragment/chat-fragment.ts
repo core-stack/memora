@@ -1,4 +1,3 @@
-import { chatFragmentSchema } from '@snipet/schemas';
 
 import { BaseFragment } from './fragment';
 
@@ -17,10 +16,9 @@ export class ChatFragment extends BaseFragment {
     this.role = f.role;
     this.tenantId = f.tenantId;
     this.metadata = f.metadata;
-    chatFragmentSchema.parse(this);
   }
 
   static fromObject(obj: ChatFragment): ChatFragment {
-    return new ChatFragment(chatFragmentSchema.parse(obj));
+    return new ChatFragment(obj);
   }
 }

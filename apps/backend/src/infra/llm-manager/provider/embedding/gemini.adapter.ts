@@ -1,5 +1,5 @@
 import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
-import { LLMPreset } from '@snipet/schemas';
+import { LLMPreset } from "@/types/llm-preset";
 
 import { EmbeddingProvider } from './base';
 

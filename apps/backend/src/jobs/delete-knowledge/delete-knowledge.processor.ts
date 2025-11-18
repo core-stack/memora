@@ -10,9 +10,9 @@ import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.ser
 import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
-import { Knowledge, Source } from '@snipet/schemas';
 
 import { JobType } from '../types';
+import { SourceEntity } from '@/entities';
 
 @Processor(JobType.DELETE_KNOWLEDGE, { concurrency: 10 })
 export class DeleteKnowledgeProcessor extends WorkerHost {
@@ -26,7 +26,7 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
     private readonly dataSource: DataSource
   ) { super(); }
 
-  async process(job: Job<Knowledge>) {
+  async process(job: Job<KnowledgeEntity>) {
     const { id: knowledgeId, tenantId } = job.data;
     const knowledge = await this.knowledgeService.findByID(knowledgeId, { relations: ['knowledgeLLMs.llm'] });
     if (!knowledge) return;
@@ -57,14 +57,14 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
   }
 
   @OnWorkerEvent("active")
-  async onStart(job: Job<Source>) {
+  async onStart(job: Job<KnowledgeEntity>) {
     this.logger.log("ingest started");
     const knowledge = job.data;
     await this.knowledgeService.update(knowledge.id, { status: KnowledgeStatus.DELETING });
   }
 
   @OnWorkerEvent("failed")
-  async onFailed(job: Job<Source>) {
+  async onFailed(job: Job<KnowledgeEntity>) {
     const source = job.data;
     await this.knowledgeService.update(source.id,
       {

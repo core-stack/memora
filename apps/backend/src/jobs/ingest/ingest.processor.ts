@@ -7,7 +7,6 @@ import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.ser
 import { SourceService } from '@/modules/knowledge/source/source.service';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
-import { Source } from '@snipet/schemas';
 
 import { JobType } from '../types';
 import { ProcessorManager } from './processor-manager';
@@ -39,14 +38,14 @@ export class IngestProcessor extends WorkerHost {
   }
 
   @OnWorkerEvent("completed")
-  async onCompleted(job: Job<Source>) {
+  async onCompleted(job: Job<SourceEntity>) {
     this.logger.log("ingest completed");
     const source = job.data;
     await this.sourceService.update(source.id, { indexStatus: IndexStatus.INDEXED });
   }
 
   @OnWorkerEvent("failed")
-  async onFailed(job: Job<Source>, error: Error) {
+  async onFailed(job: Job<SourceEntity>, error: Error) {
     this.logger.log(error);
 
     const source = job.data;

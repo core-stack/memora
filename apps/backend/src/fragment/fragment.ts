@@ -1,11 +1,7 @@
 import { randomUUID } from 'crypto';
 import moment from 'moment';
 
-import { BaseFragment as FragmentType, baseFragmentSchema } from '@snipet/schemas';
-
-export interface IFragment extends FragmentType {};
-
-export abstract class BaseFragment implements IFragment {
+export abstract class BaseFragment {
   id: string;
   createdAt: Date;
   updatedAt: Date;
@@ -20,7 +16,5 @@ export abstract class BaseFragment implements IFragment {
     this.createdAt = moment(f.createdAt).toDate();
     this.updatedAt = moment(f.updatedAt).toDate();
     this.metadata = f.metadata;
-    
-    baseFragmentSchema.parse(this);
   }
 }

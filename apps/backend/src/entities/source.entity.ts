@@ -9,6 +9,7 @@ import { FolderEntity } from './folder.entity';
 import { KnowledgeEntity } from './knowledge.entity';
 import { TenantEntity } from './tenant.entity';
 
+import { SourceType } from './metadata.types';
 import type { SourceMetadata } from './metadata.types';
 
 export enum IndexStatus {
@@ -18,14 +19,6 @@ export enum IndexStatus {
   ERROR = 'ERROR',
 }
 
-export enum SourceType {
-  TEXT = 'TEXT',
-  DOC = 'DOC',
-  LINK = 'LINK',
-  VIDEO = 'VIDEO',
-  AUDIO = 'AUDIO',
-  IMAGE = 'IMAGE',
-}
 @Entity('sources')
 @Index('sources_memory_idx', ['memoryId'])
 @Index('sources_key_idx', ['key'])

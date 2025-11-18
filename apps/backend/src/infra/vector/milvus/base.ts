@@ -1,10 +1,9 @@
-import { Constructor } from '@/@types/constructor';
+import { Constructor } from '@/types/constructor';
 import { env } from '@/env';
 import { BaseFragment, Fragments } from '@/fragment';
 import { InvalidPresetError } from '@/infra/llm-manager/errors/invalid-preset.error';
 import { LLMManagerService } from '@/infra/llm-manager/llm-manager.service';
 import { Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { LLMPreset } from '@snipet/schemas';
 import {
   CreateIndexesReq, FieldType, FunctionObject, HybridSearchSingleReq, MilvusClient, RerankerObj,
   RowData, RRFRanker, SearchResultData
@@ -15,6 +14,7 @@ import { InvalidVectorFiltersError } from '../errors/invalid-vector-filters';
 import { VectorMutationError } from '../errors/vector-mutation';
 import { VectorSearchError } from '../errors/vector-search';
 import { VectorStore, WithSearchOptions } from '../vector-store.service';
+import { LLMPreset } from '@/types/llm-preset';
 
 export abstract class MilvusService<T extends BaseFragment>
   extends VectorStore<T> implements OnModuleInit, OnModuleDestroy {
@@ -59,9 +59,9 @@ export abstract class MilvusService<T extends BaseFragment>
     if (preset.config.type === "TEXT") return;
     const { dimension, model } = preset.config;
     const collectionName = this.buildCollectionName(preset);
-    
+
     const existsCollection = (await this.client.hasCollection({ collection_name: collectionName })).value;
-    
+
     if (!env.MILVUS_RECREATE_COLLECTION && existsCollection) return;
     if (env.MILVUS_RECREATE_COLLECTION && existsCollection) {
       this.logger.warn("Env var MILVUS_RECREATE_COLLECTION is true, dropping collection");
@@ -138,9 +138,9 @@ export abstract class MilvusService<T extends BaseFragment>
   async search(llmId: string, ...opts: WithSearchOptions[]): Promise<Fragments<T>> {
     const embeddingProvider = await this.llmManager.getEmbedding(llmId);
     if (!embeddingProvider) throw new VectorMutationError("Embedding service not found");
-    
+
     const collectionName = this.buildCollectionName(embeddingProvider.preset);
-    
+
     const options = this.buildSearchOptions(...opts);
 
     const escapeFilterValue = (value: string) => value.replace(/['"]/g, "\\$&");
@@ -187,7 +187,7 @@ export abstract class MilvusService<T extends BaseFragment>
     //#endregion
 
     if (data.length === 0) throw new InvalidVectorFiltersError("No search data");
-    
+
     const result = await this.client.search({
       collection_name: collectionName,
       filter,

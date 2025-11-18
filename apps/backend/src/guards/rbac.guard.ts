@@ -1,6 +1,6 @@
 
 
-import { AuthRequest } from '@/@types/auth-request';
+import { AuthRequest } from '@/types/auth-request';
 import { Permissions } from '@/shared/decorators/role';
 import {
   CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException

@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 
-import { LLMPreset } from '@snipet/schemas';
+import { LLMPreset } from "@/types/llm-preset";
 
 import { ProviderHealth } from '../types';
 import { EmbeddingProvider } from './base';

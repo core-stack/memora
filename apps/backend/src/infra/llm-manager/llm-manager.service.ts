@@ -6,12 +6,12 @@ import { env } from '@/env';
 import { __root } from '@/root';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { LLMPreset, llmPresetSchema } from '@snipet/schemas';
 
 import { NotFoundError } from './errors/not-found.error';
 import { LLMLoaderService } from './llm-loader.service';
 import { EmbeddingProvider } from './provider/embedding/base';
 import { TextProvider } from './provider/text/base';
+import { LLMPreset } from '@/types/llm-preset';
 
 @Injectable()
 export class LLMManagerService {
@@ -25,7 +25,7 @@ export class LLMManagerService {
 
   async onModuleInit() {
     try {
-      const presetsPath = join(__root, 'dist', '@llm-presets');
+      const presetsPath = join(__root, 'llm-presets');
 
       try {
         await readdir(presetsPath);
@@ -42,10 +42,9 @@ export class LLMManagerService {
         const filePath = join(presetsPath, file);
         try {
           const content = await readFile(filePath, 'utf8');
-          const parsedData = JSON.parse(content);
+          const parsedData = JSON.parse(content) as any[];
 
-          const validatedPresets = llmPresetSchema.array().parse(parsedData);
-          presets.push(...validatedPresets);
+          presets.push(...LLMPreset.fromObject(parsedData));
         } catch (err) {
           this.logger.error(`Error loading preset ${file}:`, err);
         }
@@ -84,7 +83,7 @@ export class LLMManagerService {
     if (this.instances.has(llm.id)) return this.instances.get(llm.id)!.instance as any;
 
     const preset = this.presets.find(preset => preset.config.model === llm.model);
-    if (!preset) throw new NotFoundError("LLM not found");    
+    if (!preset) throw new NotFoundError("LLM not found");
     const instance = await this.loader.load(llm, preset);
 
     this.addInstance(llm, instance);

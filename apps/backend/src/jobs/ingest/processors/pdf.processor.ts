@@ -3,7 +3,7 @@ import { SourceEntity } from '@/entities/source.entity';
 import { Fragments, SourceFragment } from '@/fragment';
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
 import { Injectable } from '@nestjs/common';
-import { SourceType } from '@snipet/schemas';
+import { SourceType } from '@/entities';
 
 import { BaseProcessor } from './base.processor';
 

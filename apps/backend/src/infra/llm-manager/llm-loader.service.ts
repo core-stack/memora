@@ -1,6 +1,6 @@
 import { LLMEntity } from '@/entities/llm.entity';
 import { Injectable } from '@nestjs/common';
-import { LLMPreset } from '@snipet/schemas';
+import { LLMPreset } from "@/types/llm-preset";
 
 import { EmbeddingProvider } from './provider/embedding/base';
 import { GeminiLLMEmbeddingAdapter } from './provider/embedding/gemini.adapter';
@@ -27,7 +27,7 @@ export class LLMLoaderService {
       case "openai":
         AdapterClass = OpenAILLMTextAdapter;
         break;
-      case "gemini":        
+      case "gemini":
         AdapterClass = GeminiTextAdapter;
         break;
       default:

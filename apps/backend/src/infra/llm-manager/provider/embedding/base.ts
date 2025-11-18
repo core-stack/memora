@@ -1,4 +1,4 @@
-import { LLMPreset } from '@snipet/schemas';
+import { LLMPreset } from "@/types/llm-preset";
 
 export abstract class EmbeddingProvider {
   constructor(public preset: LLMPreset) {}

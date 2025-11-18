@@ -6,8 +6,8 @@ import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.ser
 import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
 import { buildOptions } from '@/utils/build-options';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { RecentMemory } from '../types/recent';
 
-import type { Recent } from "@snipet/schemas";
 export type FindOptions = {
   knowledgeId: string;
   userInput: string;
@@ -64,7 +64,7 @@ export class SourceMemoryService {
   }
 
   private async saveInputToRecents(knowledgeId: string, text: string) {
-    const recents = (await this.cacheService.get<Recent[]>("recent", { namespace: knowledgeId })) ?? [];
+    const recents = (await this.cacheService.get<RecentMemory[]>("recent", { namespace: knowledgeId })) ?? [];
     const index = recents.findIndex(p => p.text === text);
     if (index !== -1) {
       recents[index].count += 1;
@@ -75,7 +75,7 @@ export class SourceMemoryService {
     recents.sort((a, b) => moment(b.lastUsed).valueOf() - moment(a.lastUsed).valueOf());
     while(recents.length > 5) recents.pop();
 
-    await this.cacheService.set<Recent[]>("recent", recents, { namespace: knowledgeId });
+    await this.cacheService.set<RecentMemory[]>("recent", recents, { namespace: knowledgeId });
   }
 
   async findByTerm(knowledgeId: string, userInput: string): Promise<Fragments<SourceFragment>> {

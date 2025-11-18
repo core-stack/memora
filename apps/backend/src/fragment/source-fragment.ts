@@ -1,7 +1,7 @@
 import { SourceMetadata } from '@/entities/metadata.types';
-import { sourceFragmentSchema, SourceType } from '@snipet/schemas';
 
 import { BaseFragment } from './fragment';
+import { SourceType } from '@/entities';
 
 export class SourceFragment extends BaseFragment {
   seqId?: number;
@@ -21,7 +21,6 @@ export class SourceFragment extends BaseFragment {
     this.metadata = f.metadata;
     this.sourceId = f.sourceId;
     this.seqId = f.seqId;
-    sourceFragmentSchema.parse(this);
   }
 
   static fromObject(obj: any): SourceFragment {
