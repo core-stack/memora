@@ -51,16 +51,20 @@ export class UserEntity {
   updatedAt: Date;
 
   // Relations
+  @ApiProperty({ type: () => RoleEntity, required: false })
   @ManyToOne(() => RoleEntity, (role) => role.users, { eager: false })
   @JoinColumn({ name: 'role_id' })
   role?: RoleEntity;
 
+  @ApiProperty({ type: () => AccountEntity, required: false, isArray: true })
   @OneToMany(() => AccountEntity, (account) => account.user)
   accounts?: AccountEntity[];
 
+  @ApiProperty({ type: () => InviteEntity, required: false, isArray: true })
   @OneToMany(() => InviteEntity, (invite) => invite.user)
   invites?: InviteEntity[];
 
+  @ApiProperty({ type: () => MemberEntity, required: false, isArray: true })
   @OneToMany(() => MemberEntity, (member) => member.user)
   members?: MemberEntity[];
 

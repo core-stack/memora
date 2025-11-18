@@ -7,7 +7,7 @@ import { ControllerFilter, Filter } from './decorators/filter';
 import { Public } from './decorators/public';
 import { FilterOptions } from './filter-options';
 import { Service } from './service';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { Constructor } from '@/types/constructor';
 import { GenericResponse } from './generic-response';
 
@@ -37,17 +37,23 @@ export function BaseController<
   TEntity extends ObjectLiteral,
   TCreateDto = TEntity,
   TUpdateDto = Partial<TEntity>
->(entity: Constructor<TEntity>, {
+>({
+  entity,
+  createDto,
+  updateDto,
   allowedFilters = [],
   allowedRelations = [],
   ignore = [],
   publicRoutes = [],
 }: {
+  entity: Constructor<TEntity>,
+  createDto?: Constructor<TCreateDto>,
+  updateDto?: Constructor<TUpdateDto>,
   allowedFilters?: (keyof TEntity)[];
   allowedRelations?: (keyof TEntity)[];
   ignore?: Array<'find' | 'findByID' | 'create' | 'update' | 'delete'>;
   publicRoutes?: Array<'find' | 'findByID' | 'create' | 'update' | 'delete'>;
-} = {}) {
+}) {
   @ControllerFilter({ allowedFilters, allowedRelations })
   abstract class Base {
     constructor(public readonly service: Service<TEntity>) {}
@@ -69,6 +75,7 @@ export function BaseController<
     @Public(publicRoutes.includes("create"))
     @HttpPost("", ignore.includes("create"))
     @ApiResponse({ status: 201, description: 'The created record', type: entity })
+    @ApiBody({ type: createDto })
     async create(@Body() body: TCreateDto): Promise<TEntity> {
       return this.service.create(body as unknown as TEntity);
     }
@@ -76,6 +83,7 @@ export function BaseController<
     @Public(publicRoutes.includes("update"))
     @HttpPut(":id", ignore.includes("update"))
     @ApiResponse({ status: 200, description: 'The updated record', type: GenericResponse })
+    @ApiBody({ type: updateDto })
     async update(@Param("id", ParseUUIDPipe) id: string, @Body() body: TUpdateDto) {
       await this.service.update(id, body as unknown as TEntity);
       return new GenericResponse("Update successful");

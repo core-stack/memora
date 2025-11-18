@@ -5,7 +5,7 @@ import { ChatEntity } from '../../../entities/chat.entity';
 import { ChatService } from './chat.service';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/chat')
-export class ChatController extends BaseController(ChatEntity) {
+export class ChatController extends BaseController({ entity: ChatEntity }) {
   constructor(public service: ChatService) {
     super(service);
   }

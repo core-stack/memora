@@ -7,15 +7,15 @@ import { UserEntity } from './user.entity';
 @Entity('accounts')
 @Unique(['provider', 'providerAccountId'])
 export class AccountEntity {
-  @ApiProperty({ example: '92b8a15b-13b2-4a1a-bf41-bba3e7d64d9a' })
+  @ApiProperty({ example: '92b8a15b-13b2-4a1a-bf41-bba3e7d64d9a', readOnly: true })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ example: 'google' })
+  @ApiProperty({ example: 'google', readOnly: true })
   @Column({ length: 255 })
   provider: string;
 
-  @ApiProperty({ example: '11786321736412' })
+  @ApiProperty({ example: '11786321736412', readOnly: true })
   @Column({ name: 'provider_account_id', length: 255 })
   providerAccountId: string;
 
@@ -24,15 +24,16 @@ export class AccountEntity {
   userId?: string;
 
   // Relation
+  @ApiProperty({ type: () => UserEntity, required: false })
   @ManyToOne(() => UserEntity, (user) => user.accounts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 
-  @ApiProperty({ example: '2025-11-12T13:00:00Z' })
+  @ApiProperty({ example: '2025-11-12T13:00:00Z', readOnly: true })
   @Column({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
-  @ApiProperty({ example: '2025-11-12T13:00:00Z' })
+  @ApiProperty({ example: '2025-11-12T13:00:00Z', readOnly: true })
   @Column({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 

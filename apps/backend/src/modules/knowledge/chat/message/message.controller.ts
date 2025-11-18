@@ -5,7 +5,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { MessageService } from './message.service';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message')
-export class MessageController extends BaseController(MessageEntity) {
+export class MessageController extends BaseController({ entity: MessageEntity }) {
   constructor(public service: MessageService) {
     super(service);
   }

@@ -10,6 +10,7 @@ import { TenantEntity } from '../../entities/tenant.entity';
 import { AuthManager } from '../auth/auth-manager.service';
 import { MemberService } from '../member/member.service';
 import { RoleService } from '../role/role.service';
+import { CreateTenantDto } from './dto/create-tenant.dto';
 
 @Injectable()
 export class TenantService extends Service<TenantEntity> {
@@ -20,9 +21,13 @@ export class TenantService extends Service<TenantEntity> {
   @Inject() private readonly memberService: MemberService;
   @Inject() private readonly roleService: RoleService;
 
-  override async create(input: TenantEntity, manager?: EntityManager): Promise<TenantEntity> {
+  override async create(input: CreateTenantDto, manager?: EntityManager): Promise<TenantEntity> {
     return this.transaction(async (manager) => {
-      const tenant = await this.repository(manager).save(input);
+      const tenant = await this.repository(manager).save({
+        name: input.name,
+        description: input.description,
+        backgroundImage: input.backgroundImage,
+      });
       const roles = await manager.getRepository(RoleEntity).save(ROLES.tenant.default.map((r) =>
         new RoleEntity({
           key: r.key,
@@ -33,7 +38,7 @@ export class TenantService extends Service<TenantEntity> {
         })
       ));
       console.log(this.context.user);
-      
+
       const member = await manager.getRepository(MemberEntity).save(
         new MemberEntity({
           roleId: roles.find(r => r.key === ROLES.tenant.admin.key)?.id!,

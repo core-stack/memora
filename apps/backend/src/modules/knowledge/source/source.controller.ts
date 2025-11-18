@@ -6,7 +6,7 @@ import { GetUploadUrlDto } from './dto/get-upload-url.dto';
 import { SourceService } from './source.service';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/source')
-export class SourceController extends BaseController(SourceEntity) {
+export class SourceController extends BaseController({ entity: SourceEntity }) {
   constructor(public service: SourceService) {
     super(service);
   }

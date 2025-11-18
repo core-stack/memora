@@ -6,7 +6,7 @@ import { RoleEntity } from '../../entities/role.entity';
 import { RoleService } from './role.service';
 
 @Controller('tenant/:tenantId/role')
-export class RoleController extends BaseController(RoleEntity) {
+export class RoleController extends BaseController({ entity: RoleEntity }) {
   constructor(service: RoleService) {
     super(service);
   }

@@ -5,7 +5,7 @@ import { Controller, Get } from '@nestjs/common';
 import { LLMService } from './llm.service';
 
 @Controller('tenant/:tenantId/llm')
-export class LLMController extends BaseController(LLMEntity) {
+export class LLMController extends BaseController({ entity: LLMEntity }) {
   constructor(public service: LLMService) {
     super(service);
   }

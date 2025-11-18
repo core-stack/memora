@@ -6,7 +6,7 @@ import { SendInviteDto } from './dto/send-invites.dto';
 import { InviteService } from './invite.service';
 
 @Controller('tenant/:tenantId/invite')
-export class InviteController extends BaseController(InviteEntity) {
+export class InviteController extends BaseController({ entity: InviteEntity }) {
   constructor(public service: InviteService) {
     super(service);
   }

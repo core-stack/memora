@@ -37,6 +37,7 @@ export class VerificationTokenEntity {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 
+  @ApiProperty({ type: () => UserEntity, required: false })
   @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
