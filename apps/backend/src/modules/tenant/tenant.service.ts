@@ -9,6 +9,7 @@ import { RoleEntity, RoleScope } from '../../entities/role.entity';
 import { TenantEntity } from '../../entities/tenant.entity';
 import { AuthManager } from '../auth/auth-manager.service';
 import { MemberService } from '../member/member.service';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class TenantService extends Service<TenantEntity> {
@@ -17,28 +18,32 @@ export class TenantService extends Service<TenantEntity> {
 
   @Inject() private readonly authManager: AuthManager;
   @Inject() private readonly memberService: MemberService;
+  @Inject() private readonly roleService: RoleService;
 
   override async create(input: TenantEntity, manager?: EntityManager): Promise<TenantEntity> {
-    input.roles = ROLES.tenant.default.map((r) =>
-      new RoleEntity({
-        key: r.key,
-        name: r.name,
-        permissions: permissionsToNumber(r.permissions),
-        scope: RoleScope.TENANT,
-      })
-    );
-
     return this.transaction(async (manager) => {
       const tenant = await this.repository(manager).save(input);
-      tenant.members = [
+      const roles = await manager.getRepository(RoleEntity).save(ROLES.tenant.default.map((r) =>
+        new RoleEntity({
+          key: r.key,
+          name: r.name,
+          permissions: permissionsToNumber(r.permissions),
+          scope: RoleScope.TENANT,
+          tenantId: tenant.id
+        })
+      ));
+      console.log(this.context.user);
+      
+      const member = await manager.getRepository(MemberEntity).save(
         new MemberEntity({
-          roleId: tenant.roles?.find(r => r.key === ROLES.tenant.admin.key)?.id!,
+          roleId: roles.find(r => r.key === ROLES.tenant.admin.key)?.id!,
           owner: true,
           tenantId: tenant.id,
           userId: this.context.user?.id!,
         })
-      ]
-      await this.memberService.create(tenant.members![0], manager);
+      );
+
+      await this.memberService.create(member, manager);
       await this.authManager.reloadSession(this.context.session!.id);
       return tenant;
     }, manager);

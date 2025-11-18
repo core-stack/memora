@@ -1,11 +1,10 @@
 import { Job } from 'bullmq';
 import streamToBlob from 'stream-to-blob';
 
-import { SourceEntity } from '@/entities/source.entity';
+import { IndexStatus, SourceEntity } from '@/entities/source.entity';
 import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
 import { SourceService } from '@/modules/knowledge/source/source.service';
-import { IndexStatus } from '@/shared/enums';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { Source } from '@snipet/schemas';

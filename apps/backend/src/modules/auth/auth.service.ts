@@ -2,10 +2,10 @@ import { Queue } from 'bullmq';
 import moment from 'moment';
 import { EntityManager } from 'typeorm';
 
+import { RoleScope } from '@/entities/role.entity';
 import { env } from '@/env';
 import { EmailPayload, EmailTemplate } from '@/jobs/email/schemas';
 import { JobType } from '@/jobs/types';
-import { RoleScope } from '@/shared/enums';
 import { GenericService } from '@/shared/generic-service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
@@ -165,8 +165,10 @@ export class AuthService extends GenericService {
       manager
     );
 
+    console.log(user);
     if (!user) throw new NotFoundException("Email or password invalid");
     if (!user.password) throw new NotFoundException("Email or password invalid");
+    
     const valid = await user.comparePassword(data.password);
     if (!valid) throw new NotFoundException("Email or password invalid");
 

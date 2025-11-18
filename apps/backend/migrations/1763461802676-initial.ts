@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Initial1763287324123 implements MigrationInterface {
-    name = 'Initial1763287324123'
+export class Initial1763461802676 implements MigrationInterface {
+    name = 'Initial1763461802676'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "accounts" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "provider" character varying(255) NOT NULL, "provider_account_id" character varying(255) NOT NULL, "user_id" uuid NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL, CONSTRAINT "UQ_06f1ce45cbf093e57b824205565" UNIQUE ("provider", "provider_account_id"), CONSTRAINT "PK_5a7a02c20412299d198e097a8fe" PRIMARY KEY ("id"))`);
@@ -27,9 +27,8 @@ export class Initial1763287324123 implements MigrationInterface {
         await queryRunner.query(`CREATE INDEX "sources_memory_idx" ON "sources" ("memory_id") `);
         await queryRunner.query(`CREATE TABLE "tenants" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "description" character varying, "background_image" character varying NOT NULL, "disabled_at" TIMESTAMP WITH TIME ZONE, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_53be67a04681c66b87ee27c9321" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "notifications" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "title" character varying NOT NULL, "description" character varying NOT NULL, "link" character varying, "read" boolean NOT NULL DEFAULT false, "tenantId" uuid NOT NULL, "created_by_id" character varying, "destination_id" character varying NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "read_at" TIMESTAMP WITH TIME ZONE, "createdById" uuid, "destinationId" uuid, CONSTRAINT "PK_6a72c3c0f683f6462415e653c3a" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "members" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "owner" boolean NOT NULL DEFAULT false, "user_id" character varying NOT NULL, "tenant_id" character varying NOT NULL, "role_id" character varying NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "userId" uuid, "tenantId" uuid, "roleId" uuid, CONSTRAINT "PK_28b53062261b996d9c99fa12404" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE INDEX "member_tenant_idx" ON "members" ("tenant_id") `);
-        await queryRunner.query(`CREATE INDEX "member_user_idx" ON "members" ("user_id") `);
+        await queryRunner.query(`CREATE TABLE "members" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "owner" boolean NOT NULL DEFAULT false, "user_id" uuid NOT NULL, "tenant_id" uuid NOT NULL, "role_id" uuid NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_28b53062261b996d9c99fa12404" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_a554f50aa421c895a5d6df6fc7" ON "members" ("tenant_id", "user_id") `);
         await queryRunner.query(`CREATE TABLE "invites" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tenantId" uuid NOT NULL, "email" character varying NOT NULL, "roleId" uuid NOT NULL, "userId" uuid, "creator_id" character varying NOT NULL, "expires_at" TIMESTAMP WITH TIME ZONE NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "creatorId" uuid, CONSTRAINT "invites_tenant_email_unique" UNIQUE ("tenantId", "email"), CONSTRAINT "PK_aa52e96b44a714372f4dd31a0af" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "email" text NOT NULL, "password" text, "email_verified" TIMESTAMP WITH TIME ZONE, "image" text, "role_id" uuid NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "public"."verification_tokens_type_enum" AS ENUM('ACTIVE_ACCOUNT', 'RESET_PASSWORD')`);
@@ -50,9 +49,9 @@ export class Initial1763287324123 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "notifications" ADD CONSTRAINT "FK_d5b86bc522af7cc9e3e13960ffb" FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "notifications" ADD CONSTRAINT "FK_fcce8c50a375466676d82dcbadd" FOREIGN KEY ("createdById") REFERENCES "members"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "notifications" ADD CONSTRAINT "FK_1211bc46eb9e6342b7b678ebf79" FOREIGN KEY ("destinationId") REFERENCES "members"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "members" ADD CONSTRAINT "FK_839756572a2c38eb5a3b563126e" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "members" ADD CONSTRAINT "FK_774934f0ba644476c69b41b706d" FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "members" ADD CONSTRAINT "FK_cd453dd56273a142fb4baf62d19" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE SET NULL ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "members" ADD CONSTRAINT "FK_da404b5fd9c390e25338996e2d1" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "members" ADD CONSTRAINT "FK_844f9f34eaefdb094ef9664dc65" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "members" ADD CONSTRAINT "FK_274c5ebb3c595f5a56f1f8fba9a" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE SET NULL ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "invites" ADD CONSTRAINT "FK_9e4706c91f694baa7674ec3c1d5" FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "invites" ADD CONSTRAINT "FK_ed2fb45d6edb72be56fd189261f" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "invites" ADD CONSTRAINT "FK_f53061a24b71fb0f54cfb1629ae" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -68,9 +67,9 @@ export class Initial1763287324123 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "invites" DROP CONSTRAINT "FK_f53061a24b71fb0f54cfb1629ae"`);
         await queryRunner.query(`ALTER TABLE "invites" DROP CONSTRAINT "FK_ed2fb45d6edb72be56fd189261f"`);
         await queryRunner.query(`ALTER TABLE "invites" DROP CONSTRAINT "FK_9e4706c91f694baa7674ec3c1d5"`);
-        await queryRunner.query(`ALTER TABLE "members" DROP CONSTRAINT "FK_cd453dd56273a142fb4baf62d19"`);
-        await queryRunner.query(`ALTER TABLE "members" DROP CONSTRAINT "FK_774934f0ba644476c69b41b706d"`);
-        await queryRunner.query(`ALTER TABLE "members" DROP CONSTRAINT "FK_839756572a2c38eb5a3b563126e"`);
+        await queryRunner.query(`ALTER TABLE "members" DROP CONSTRAINT "FK_274c5ebb3c595f5a56f1f8fba9a"`);
+        await queryRunner.query(`ALTER TABLE "members" DROP CONSTRAINT "FK_844f9f34eaefdb094ef9664dc65"`);
+        await queryRunner.query(`ALTER TABLE "members" DROP CONSTRAINT "FK_da404b5fd9c390e25338996e2d1"`);
         await queryRunner.query(`ALTER TABLE "notifications" DROP CONSTRAINT "FK_1211bc46eb9e6342b7b678ebf79"`);
         await queryRunner.query(`ALTER TABLE "notifications" DROP CONSTRAINT "FK_fcce8c50a375466676d82dcbadd"`);
         await queryRunner.query(`ALTER TABLE "notifications" DROP CONSTRAINT "FK_d5b86bc522af7cc9e3e13960ffb"`);
@@ -91,8 +90,7 @@ export class Initial1763287324123 implements MigrationInterface {
         await queryRunner.query(`DROP TYPE "public"."verification_tokens_type_enum"`);
         await queryRunner.query(`DROP TABLE "users"`);
         await queryRunner.query(`DROP TABLE "invites"`);
-        await queryRunner.query(`DROP INDEX "public"."member_user_idx"`);
-        await queryRunner.query(`DROP INDEX "public"."member_tenant_idx"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_a554f50aa421c895a5d6df6fc7"`);
         await queryRunner.query(`DROP TABLE "members"`);
         await queryRunner.query(`DROP TABLE "notifications"`);
         await queryRunner.query(`DROP TABLE "tenants"`);

@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TenantEntity } from '../../entities/tenant.entity';
 import { AuthModule } from '../auth/auth.module';
 import { MemberModule } from '../member/member.module';
+import { RoleModule } from '../role/role.module';
 import { TenantController } from './tenant.controller';
 import { TenantService } from './tenant.service';
 
@@ -17,7 +18,8 @@ import { TenantService } from './tenant.service';
     AuthModule,
     TypeOrmModule.forFeature([TenantEntity]),
     HTTPContextModule,
-    MemberModule
+    MemberModule,
+    RoleModule
   ],
   exports: [TenantService],
 })

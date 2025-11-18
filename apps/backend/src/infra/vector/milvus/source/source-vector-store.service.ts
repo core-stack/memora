@@ -1,14 +1,13 @@
 import moment from 'moment';
 
+import { SourceType } from '@/entities/source.entity';
 import { Fragments, SourceFragment } from '@/fragment';
 import { LLMManagerService } from '@/infra/llm-manager/llm-manager.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { OriginType } from '@snipet/schemas';
 import { RowData, SearchResultData } from '@zilliz/milvus2-sdk-node';
 
 import { MilvusService } from '../base';
 import { sourceFields, sourceFunctions, sourceIndexSchema } from './source-schemas';
-import { SourceType } from '@/shared/enums';
 
 @Injectable()
 export class MilvusSourceVectorStoreService extends MilvusService<SourceFragment> {

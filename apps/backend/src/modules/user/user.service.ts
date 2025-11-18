@@ -14,16 +14,15 @@ export class UserService extends Service<UserEntity> {
   async findWithMemberRoleTenant(filterOpts: FilterOptions<UserEntity>, manager?: EntityManager): Promise<UserEntity[]> {
     return await this.repository(manager).find({
       ...filterOpts,
-      relations: ['role', 'member', 'member.role', 'member.tenant']
+      relations: ['role', 'members', 'members.role', 'members.tenant']
     });
   }
 
   async findFirstWithMemberRoleTenant(filterOpts: FilterOptions<UserEntity>, manager?: EntityManager): Promise<UserEntity | null> {
-    return await this.repository(manager).find({
+    return await this.repository(manager).findOne({
       ...filterOpts,
-      relations: ['role', 'member', 'member.role', 'member.tenant'],
-      take: 1
-    })[0];
+      relations: ['role', 'members', 'members.role', 'members.tenant'],
+    });
   }
 
   async self() {

@@ -1,13 +1,13 @@
 import { Job } from 'bullmq';
 import { DataSource } from 'typeorm';
 
-import { KnowledgeEntity } from '@/entities/knowledge.entity';
+import { KnowledgeEntity, KnowledgeStatus } from '@/entities/knowledge.entity';
+import { LLMType } from '@/entities/llm.entity';
 import { StorageDeleteError } from '@/infra/storage/errors/delete-error';
 import { PrivateStorageService } from '@/infra/storage/private-storage.service';
 import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
 import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
 import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
-import { KnowledgeStatus, LLMType } from '@/shared/enums';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { Knowledge, Source } from '@snipet/schemas';
@@ -31,12 +31,13 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
     const knowledge = await this.knowledgeService.findByID(knowledgeId, { relations: ['knowledgeLLMs.llm'] });
     if (!knowledge) return;
     const knEmbeddings = knowledge.knowledgeLLMs.find(kllm => kllm.default && kllm.llm.type === LLMType.EMBEDDING);
+    if (!knEmbeddings) return;
     job.updateProgress(10);
     // delete data in vector store
-    await this.sourceVectorStore.deleteByFilter(knowledgeId, {});
+    await this.sourceVectorStore.deleteByFilter(knEmbeddings.llmId, {});
     job.updateProgress(30);
 
-    await this.chatVectorStore.deleteByFilter(knowledgeId, {});
+    await this.chatVectorStore.deleteByFilter(knEmbeddings.llmId, {});
     job.updateProgress(50);
 
     // delete files in storage

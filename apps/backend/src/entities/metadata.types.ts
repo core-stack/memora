@@ -1,4 +1,11 @@
-import { SourceType } from "@/shared/enums";
+export enum SourceType {
+  TEXT = 'TEXT',
+  DOC = 'DOC',
+  LINK = 'LINK',
+  VIDEO = 'VIDEO',
+  AUDIO = 'AUDIO',
+  IMAGE = 'IMAGE',
+}
 
 export class BaseFileMetadata {
   extension: string;

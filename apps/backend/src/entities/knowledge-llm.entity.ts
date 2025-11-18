@@ -24,6 +24,14 @@ export class KnowledgeLLMEntity {
   @ManyToOne(() => LLMEntity, (llm) => llm.knowledgeLLMs, { onDelete: 'CASCADE' })
   llm: LLMEntity;
 
+  get knowledgeId() {
+    return this.knowledge.id;
+  };
+
+  get llmId() {
+    return this.llm.id;
+  };
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 

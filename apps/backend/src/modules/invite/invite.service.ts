@@ -6,12 +6,11 @@ import { InviteEntity } from '@/entities/invite.entity';
 import { env } from '@/env';
 import { EmailPayload, EmailTemplate } from '@/jobs/email/schemas';
 import { JobType } from '@/jobs/types';
-import { RoleScope } from '@/shared/enums';
 import { Service } from '@/shared/service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import { RoleEntity } from '../../entities/role.entity';
+import { RoleEntity, RoleScope } from '../../entities/role.entity';
 import { MemberService } from '../member/member.service';
 import { RoleService } from '../role/role.service';
 import { TenantService } from '../tenant/tenant.service';

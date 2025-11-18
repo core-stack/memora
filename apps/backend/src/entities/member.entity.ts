@@ -1,5 +1,5 @@
 import {
-  Column, CreateDateColumn, Entity, Index, ManyToOne, OneToMany, PrimaryGeneratedColumn,
+  Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 
@@ -11,8 +11,7 @@ import { TenantEntity } from './tenant.entity';
 import { UserEntity } from './user.entity';
 
 @Entity('members')
-@Index('member_user_idx', ['userId'])
-@Index('member_tenant_idx', ['tenantId'])
+@Index(['tenantId', 'userId'], { unique: true })
 export class MemberEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,7 +25,7 @@ export class MemberEntity {
   @TenantId()
   @Column({ name: 'tenant_id' })
   tenantId: string;
-
+  
   @Column({ name: 'role_id' })
   roleId: string;
 
@@ -37,12 +36,15 @@ export class MemberEntity {
   updatedAt: Date;
 
   @ManyToOne(() => UserEntity, (u) => u.members, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 
   @ManyToOne(() => TenantEntity, (t) => t.members, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'tenant_id' })
   tenant?: TenantEntity;
 
   @ManyToOne(() => RoleEntity, (r) => r.members, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'role_id' })
   role?: RoleEntity;
 
   @OneToMany(() => NotificationEntity, (n) => n.destination)

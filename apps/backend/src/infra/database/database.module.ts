@@ -12,7 +12,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         type: 'postgres',
         url: env.DATABASE_URL,
         synchronize: false,
-        logging: env.NODE_ENV === "development",
         entities: [path.join(__root, '**/entities/*.entity.js')],
       }),
     }),
