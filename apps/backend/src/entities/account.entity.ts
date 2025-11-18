@@ -36,7 +36,7 @@ export class AccountEntity {
   @Column({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 
-  constructor(data: Omit<AccountEntity, "id" | "createdAt" | "updatedAt">) {
+  constructor(data: Partial<AccountEntity>) {
     Object.assign(this, data);
   }
 }

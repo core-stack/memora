@@ -85,11 +85,4 @@ export class UserEntity {
     this.emailVerified = verify ? new Date() : undefined;
     return this;
   }
-
-  static async newWithPassword(data: Partial<UserEntity>) {
-    const user = new UserEntity(data);
-    if (!data.password) throw new Error("Password is required");
-    await user.setPassword(data.password);
-    return user
-  }
 }

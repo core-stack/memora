@@ -41,7 +41,7 @@ export class VerificationTokenEntity {
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 
-  constructor(data: Omit<VerificationTokenEntity, 'token' | 'createdAt' | 'updatedAt'>) {
+  constructor(data: Partial<VerificationTokenEntity>) {
     Object.assign(this, data);
   }
 }

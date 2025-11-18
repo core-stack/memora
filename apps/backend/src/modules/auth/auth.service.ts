@@ -11,7 +11,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ROLES } from '@snipet/permission';
 import {
-  ActiveAccountSchema, CreateAccountSchema, ForgetPasswordSchema, LoginSchema, ResetPasswordSchema
+  ActiveAccountSchema, ForgetPasswordSchema, LoginSchema, ResetPasswordSchema
 } from '@snipet/schemas';
 
 import { UserEntity } from '../../entities/user.entity';
@@ -22,6 +22,7 @@ import { RoleService } from '../role/role.service';
 import { UserService } from '../user/user.service';
 import { VerificationTokenService } from '../verification-token/verification-token.service';
 import { AuthManager } from './auth-manager.service';
+import { CreateAccountDto } from './dto/create-account.dto';
 
 @Injectable()
 export class AuthService extends GenericService {
@@ -72,20 +73,20 @@ export class AuthService extends GenericService {
     });
   }
 
-  async createAccount(data: CreateAccountSchema, manager?: EntityManager) {
+  async createAccount(data: CreateAccountDto, manager?: EntityManager) {
     // verify if user exists by email
     const userWithEmail = await this.userService.find({ where: { email: data.email } }, manager);
     if (userWithEmail.length > 0) throw new BadRequestException("Email already in use");
 
-    let user = await UserEntity.newWithPassword({
+    let user = new UserEntity({
       name: data.name,
       email: data.email,
-      password: data.password,
       emailVerified: env.REQUIRE_EMAIL_VERIFICATION ? undefined : new Date(),
     });
+    await user.setPassword(data.password);
 
     this.transaction(async (manager) => {
-      const role = await this.roleService.findUnique({ 
+      const role = await this.roleService.findUnique({
         where: { key: ROLES.global.user.key, scope: RoleScope.GLOBAL }
       }, manager);
       if (!role) throw new NotFoundException("Role not found");
@@ -165,10 +166,9 @@ export class AuthService extends GenericService {
       manager
     );
 
-    console.log(user);
     if (!user) throw new NotFoundException("Email or password invalid");
     if (!user.password) throw new NotFoundException("Email or password invalid");
-    
+
     const valid = await user.comparePassword(data.password);
     if (!valid) throw new NotFoundException("Email or password invalid");
 

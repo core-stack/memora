@@ -63,7 +63,7 @@ export class RoleEntity {
   @OneToMany(() => InviteEntity, (i) => i.role)
   invites?: InviteEntity[];
 
-  constructor(data: Omit<RoleEntity, "id" | "createdAt" | "updatedAt">) {
+  constructor(data: Partial<RoleEntity>) {
     Object.assign(this, data);
   }
 
