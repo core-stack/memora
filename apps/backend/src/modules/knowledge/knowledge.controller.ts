@@ -7,7 +7,7 @@ import { KnowledgeService } from './knowledge.service';
 
 @UseGuards(TenantGuard)
 @Controller('tenant/:tenantId/knowledge')
-export class KnowledgeController extends BaseController<KnowledgeEntity>() {
+export class KnowledgeController extends BaseController(KnowledgeEntity) {
 
   constructor(service: KnowledgeService) {
     super(service);

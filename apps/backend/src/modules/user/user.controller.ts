@@ -5,7 +5,7 @@ import { UserEntity } from '../../entities/user.entity';
 import { UserService } from './user.service';
 
 @Controller('user')
-export class UserController extends BaseController<UserEntity>({ ignore: [ 'create', "update", "delete" ] }) {
+export class UserController extends BaseController(UserEntity, { ignore: [ 'create', "update", "delete" ] }) {
   constructor(public service: UserService) {
     super(service);
   }
