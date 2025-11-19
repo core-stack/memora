@@ -11,6 +11,7 @@ import { Public } from './decorators/public';
 import { FilterOptions } from './filter-options';
 import { GenericResponse } from './generic-response';
 import { Service } from './service';
+import { Auth } from './plugins/swagger-auth';
 
 export const Http = (method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", path: string, ignore?: boolean) => {
   if (ignore) return applyDecorators();
@@ -45,35 +46,30 @@ export function BaseController<
   allowedFilters = [],
   allowedRelations = [],
   ignore = [],
-  publicRoutes = [],
 }: {
   entity: Constructor<TEntity>,
   createDto?: Constructor<TCreateDto>,
   updateDto?: Constructor<TUpdateDto>,
   allowedFilters?: (keyof TEntity)[];
   allowedRelations?: (keyof TEntity)[];
-  ignore?: Array<'find' | 'findByID' | 'create' | 'update' | 'delete'>;
-  publicRoutes?: Array<'find' | 'findByID' | 'create' | 'update' | 'delete'>;
+  ignore?: Array<'find' | 'findByID' | 'create' | 'update' | 'delete'>
 }) {
   @ControllerFilter({ allowedFilters, allowedRelations })
   abstract class Base {
     constructor(public readonly service: Service<TEntity>) {}
 
-    @Public(publicRoutes.includes("findByID"))
     @HttpGet(":id", ignore.includes("findByID"))
     @ApiResponse({ status: 200, description: 'The found record', type: entity })
     async findByID(@Param("id", ParseUUIDPipe) id: string): Promise<TEntity | null> {
       return this.service.findByID(id);
     }
 
-    @Public(publicRoutes.includes("find"))
     @HttpGet("", ignore.includes("find"))
     @ApiResponse({ status: 200, description: 'A list of records', type: entity, isArray: true })
     async findMany(@Filter() filterOpts: FilterOptions<TEntity>): Promise<TEntity[]> {
       return this.service.find(filterOpts);
     }
 
-    @Public(publicRoutes.includes("create"))
     @HttpPost("", ignore.includes("create"))
     @ApiResponse({ status: 201, description: 'The created record', type: entity })
     @ApiBody({ type: createDto })
@@ -81,7 +77,6 @@ export function BaseController<
       return this.service.create(body as unknown as TEntity);
     }
 
-    @Public(publicRoutes.includes("update"))
     @HttpPut(":id", ignore.includes("update"))
     @ApiResponse({ status: 200, description: 'The updated record', type: GenericResponse })
     @ApiBody({ type: updateDto })
@@ -90,7 +85,6 @@ export function BaseController<
       return new GenericResponse("Update successful");
     }
 
-    @Public(publicRoutes.includes("delete"))
     @HttpDelete(":id", ignore?.includes("delete"))
     @ApiResponse({ status: 200, description: 'The updated record', type: GenericResponse })
     async delete(@Param("id", ParseUUIDPipe) id: string) {

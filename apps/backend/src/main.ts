@@ -22,7 +22,17 @@ async function bootstrap() {
     .setTitle('Snipet')
     .setDescription('The Snipet API description')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Enter JWT token',
+      },
+      'access-token',
+    )
     .build();
+
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);

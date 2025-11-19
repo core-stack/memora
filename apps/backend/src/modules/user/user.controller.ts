@@ -1,8 +1,10 @@
 import { BaseController } from '@/shared/controller';
-import { Controller, Get } from '@nestjs/common';
+import { Get } from '@nestjs/common';
 
 import { UserEntity } from '../../entities/user.entity';
 import { UserService } from './user.service';
+import { Controller } from '@/shared/decorators/controller';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('user')
 export class UserController extends BaseController({
@@ -14,6 +16,7 @@ export class UserController extends BaseController({
   }
 
   @Get("self")
+  @ApiResponse({ type: UserEntity, status: 200 })
   async self() {
     return await this.service.self();
   }

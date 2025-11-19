@@ -1,7 +1,8 @@
-import { Controller as NestController } from '@nestjs/common';
+import { applyDecorators, Controller as NestController } from '@nestjs/common';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
+import { Auth } from '../plugins/swagger-auth';
 
-export function ApiParamsInherit(params: Array<{ name: string; type?: any; required?: boolean }>, log: boolean = false) {
+export function ApiParamsInherit(params: Array<{ name: string; type?: any; required?: boolean }>) {
   return (target: any) => {
     setImmediate(() => {
       let proto = target.prototype;
@@ -12,14 +13,13 @@ export function ApiParamsInherit(params: Array<{ name: string; type?: any; requi
               typeof proto[prop] === 'function' &&
               prop !== 'constructor'
           );
-        if (log) console.log(methodNames, params);
-        
+
         for (const methodName of methodNames) {
           const method = proto[methodName];
-  
+
           for (const p of params) {
             const existing = Reflect.getMetadata(DECORATORS.API_PARAMETERS, method) || [];
-  
+
             Reflect.defineMetadata(
               DECORATORS.API_PARAMETERS,
               [
@@ -35,8 +35,7 @@ export function ApiParamsInherit(params: Array<{ name: string; type?: any; requi
             );
           }
         }
-  
-        // vai para o próximo nível da cadeia
+
         proto = Object.getPrototypeOf(proto);
       }
     })
@@ -50,9 +49,10 @@ export function Controller(path: string, params: Array<{ name: string; type?: an
   while ((match = regex.exec(path)) !== null) {
     params.push({ name: match[1], type: String });
   }
-  
-  return function (target: any) {
-    NestController(path)(target);
-    ApiParamsInherit(params, path === "tenant/:tenantId/knowledge")(target);
-  };
+
+  return applyDecorators(
+    Auth(),
+    NestController(path),
+    ApiParamsInherit(params),
+  )
 }

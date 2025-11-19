@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { AuthRequest } from '@/types/auth-request';
 import { AuthManager } from '@/modules/auth/auth-manager.service';
 import { Session } from '@/modules/auth/types';
-import { Public } from '@/shared/decorators/public';
+import { IS_PUBLIC_KEY, Public } from '@/shared/decorators/public';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
@@ -17,7 +17,10 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: AuthRequest = context.switchToHttp().getRequest();
     const response: Response = context.switchToHttp().getResponse();
-    const publicRoute = this.reflector.get(Public, context.getHandler());
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     const accessToken: string | undefined = request.cookies?.["access-token"];
     const refreshToken: string | undefined = request.cookies?.["refresh-token"];
@@ -25,7 +28,8 @@ export class AuthGuard implements CanActivate {
     let session: Session | undefined;
     try {
       if (accessToken) session = await this.authManager.getSession(accessToken);
-      if (!session && refreshToken) {
+      if (session) request.session = session;
+      if (!session && refreshToken && !isPublic) {
         const refreshResult = await this.authManager.refreshToken(refreshToken);
         session = refreshResult.session;
 
@@ -42,10 +46,10 @@ export class AuthGuard implements CanActivate {
         });
       }
     } catch {
-      if (publicRoute) return true;
+      if (isPublic) return true;
       throw new UnauthorizedException();
     }
-    if (publicRoute) return true;
+    if (isPublic) return true;
 
     if (!session) throw new UnauthorizedException();
     request.session = session;
