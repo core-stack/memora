@@ -10,6 +10,7 @@ import { useTenant } from '@/hooks/use-tenant';
 export default function Home() {
   const { openDialog } = useDialog();
   const { tenant } = useTenant();
+  if (!tenant) return null;
 
   return (
     <>

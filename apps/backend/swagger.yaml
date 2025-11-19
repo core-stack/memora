@@ -1,0 +1,3612 @@
+openapi: 3.0.0
+paths:
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source/{id}/view":
+    get:
+      operationId: SourceController_view
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileURLResponseDto"
+      security:
+        - access-token: []
+      tags:
+        &a1
+        - Source
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source/{id}/download-url":
+    get:
+      operationId: SourceController_download
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileURLResponseDto"
+      security:
+        - access-token: []
+      tags: *a1
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source/upload-url":
+    post:
+      operationId: SourceController_upload
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetUploadUrlDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileURLResponseDto"
+      security:
+        - access-token: []
+      tags: *a1
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source/{id}/retry":
+    post:
+      operationId: SourceController_retry
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SourceEntity"
+      security:
+        - access-token: []
+      tags: *a1
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source/{id}":
+    get:
+      operationId: SourceController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SourceEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a1
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source":
+    get:
+      operationId: SourceController_findMany
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SourceEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a1
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/folder/{id}":
+    get:
+      operationId: FolderController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FolderEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags:
+        &a2
+        - Folder
+    put:
+      operationId: FolderController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFolderDto"
+      responses:
+        "200":
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FolderEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a2
+    delete:
+      operationId: FolderController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FolderEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a2
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/folder":
+    get:
+      operationId: FolderController_findMany
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FolderEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a2
+    post:
+      operationId: FolderController_create
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFolderDto"
+      responses:
+        "201":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FolderEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - duplicate record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a2
+  "/api/tenant/{tenantId}/knowledge/{id}":
+    get:
+      operationId: KnowledgeController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags:
+        &a3
+        - Knowledge
+    put:
+      operationId: KnowledgeController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateKnowledgeDto"
+      responses:
+        "200":
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a3
+    delete:
+      operationId: KnowledgeController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a3
+  "/api/tenant/{tenantId}/knowledge":
+    get:
+      operationId: KnowledgeController_findMany
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KnowledgeEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a3
+    post:
+      operationId: KnowledgeController_create
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateKnowledgeDto"
+      responses:
+        "201":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - duplicate record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a3
+  /api/auth/login:
+    post:
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginDto"
+      responses:
+        "201":
+          description: ""
+      tags:
+        &a4
+        - Auth
+  /api/auth/logout:
+    post:
+      operationId: AuthController_logout
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: *a4
+  /api/auth/create-account:
+    post:
+      operationId: AuthController_createAccount
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAccountDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
+  /api/auth/forget-password:
+    post:
+      operationId: AuthController_forgetPassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgetPasswordDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
+  /api/user/self:
+    get:
+      operationId: UserController_self
+      parameters: []
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags:
+        &a5
+        - User
+  "/api/user/{id}":
+    get:
+      operationId: UserController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a5
+  /api/user:
+    get:
+      operationId: UserController_findMany
+      parameters: []
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a5
+  "/api/account/{id}":
+    get:
+      operationId: AccountController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags:
+        &a6
+        - Account
+    put:
+      operationId: AccountController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a6
+    delete:
+      operationId: AccountController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a6
+  /api/account:
+    get:
+      operationId: AccountController_findMany
+      parameters: []
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AccountEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a6
+    post:
+      operationId: AccountController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "201":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - duplicate record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a6
+  "/api/tenant/{tenantId}/role/{id}":
+    get:
+      operationId: RoleController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags:
+        &a7
+        - Role
+    put:
+      operationId: RoleController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoleDto"
+      responses:
+        "200":
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a7
+    delete:
+      operationId: RoleController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a7
+  "/api/tenant/{tenantId}/role":
+    get:
+      operationId: RoleController_findMany
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoleEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a7
+    post:
+      operationId: RoleController_create
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRoleDto"
+      responses:
+        "201":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - duplicate record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a7
+  "/api/tenant/{tenantId}/member/{id}":
+    get:
+      operationId: MemberController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemberEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags:
+        &a8
+        - Member
+    put:
+      operationId: MemberController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMemberDto"
+      responses:
+        "200":
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemberEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a8
+    delete:
+      operationId: MemberController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemberEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a8
+  "/api/tenant/{tenantId}/member":
+    get:
+      operationId: MemberController_findMany
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MemberEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a8
+  "/api/tenant/{id}":
+    get:
+      operationId: TenantController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags:
+        &a9
+        - Tenant
+    delete:
+      operationId: TenantController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a9
+  /api/tenant:
+    get:
+      operationId: TenantController_findMany
+      parameters: []
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TenantEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a9
+    post:
+      operationId: TenantController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTenantDto"
+      responses:
+        "201":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - duplicate record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a9
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/search":
+    get:
+      operationId: SearchController_searchByTerm
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      security:
+        - access-token: []
+      tags:
+        &a10
+        - Search
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/search/recent":
+    get:
+      operationId: SearchController_searchRecent
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      security:
+        - access-token: []
+      tags: *a10
+  "/api/tenant/{tenantId}/invite/send":
+    post:
+      operationId: InviteController_send
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendInviteDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SendInviteResponseDto"
+      security:
+        - access-token: []
+      tags:
+        &a11
+        - Invite
+  "/api/tenant/{tenantId}/invite/{id}":
+    get:
+      operationId: InviteController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InviteEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a11
+    put:
+      operationId: InviteController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InviteEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a11
+    delete:
+      operationId: InviteController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InviteEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a11
+  "/api/tenant/{tenantId}/invite":
+    get:
+      operationId: InviteController_findMany
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InviteEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a11
+    post:
+      operationId: InviteController_create
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "201":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InviteEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - duplicate record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a11
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat/{id}":
+    get:
+      operationId: ChatController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags:
+        &a12
+        - Chat
+    put:
+      operationId: ChatController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateChatDto"
+      responses:
+        "200":
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a12
+    delete:
+      operationId: ChatController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a12
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat":
+    get:
+      operationId: ChatController_findMany
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a12
+    post:
+      operationId: ChatController_create
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateChatDto"
+      responses:
+        "201":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - duplicate record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a12
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat/{chatId}/message/new":
+    post:
+      operationId: MessageController_newMessage
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMessageDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateMessageResponseDto"
+      tags:
+        &a13
+        - Message
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat/{chatId}/message/{id}":
+    get:
+      operationId: MessageController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      tags: *a13
+    put:
+      operationId: MessageController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      tags: *a13
+    delete:
+      operationId: MessageController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      tags: *a13
+  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat/{chatId}/message":
+    get:
+      operationId: MessageController_findMany
+      parameters: []
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MessageEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      tags: *a13
+    post:
+      operationId: MessageController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "201":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - duplicate record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      tags: *a13
+  "/api/tenant/{tenantId}/llm/presets":
+    get:
+      operationId: LLMController_getPresets
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LLMPreset"
+      security:
+        - access-token: []
+      tags:
+        &a14
+        - LLM
+  "/api/tenant/{tenantId}/llm/{id}":
+    get:
+      operationId: LLMController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LLMEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a14
+    put:
+      operationId: LLMController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LLMEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a14
+    delete:
+      operationId: LLMController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LLMEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a14
+  "/api/tenant/{tenantId}/llm":
+    get:
+      operationId: LLMController_findMany
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LLMEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a14
+    post:
+      operationId: LLMController_create
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "201":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LLMEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - duplicate record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a14
+info:
+  title: Snipet
+  description: The Snipet API description
+  version: "1.0"
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    access-token:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: Enter JWT token
+  schemas:
+    FileURLResponseDto:
+      type: object
+      properties:
+        url:
+          type: string
+          example: https://example.com/file.pdf
+        key:
+          type: string
+          example: path/to/my-file.pdf
+      required:
+        - url
+        - key
+    GetUploadUrlDto:
+      type: object
+      properties:
+        fileName:
+          type: string
+          example: my-file.pdf
+        contentType:
+          type: string
+          example: application/pdf
+        fileSize:
+          type: number
+          example: 104857600
+          description: "File size in bytes (max: 100.00 MB"
+      required:
+        - fileName
+        - contentType
+        - fileSize
+    InviteEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the invite
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        tenantId:
+          type: string
+          description: The ID of the tenant this invite belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        email:
+          type: string
+          description: The email address of the person being invited
+          example: user@example.com
+        roleId:
+          type: string
+          description: The ID of the role assigned to the invited person
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        userId:
+          type: string
+          description: The ID of the user being invited, if they already exist
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        creatorId:
+          type: string
+          description: The ID of the user who created the invite
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        expiresAt:
+          format: date-time
+          type: string
+          description: The timestamp when the invite expires
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the invite was created
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the invite was last updated
+        tenant:
+          $ref: "#/components/schemas/TenantEntity"
+        role:
+          $ref: "#/components/schemas/RoleEntity"
+        user:
+          $ref: "#/components/schemas/UserEntity"
+        creator:
+          $ref: "#/components/schemas/MemberEntity"
+      required:
+        - id
+        - tenantId
+        - email
+        - roleId
+        - creatorId
+        - expiresAt
+        - createdAt
+        - updatedAt
+        - tenant
+        - role
+        - user
+        - creator
+    RoleEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the role
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        key:
+          type: string
+          description: The key of the role
+          example: admin
+        name:
+          type: string
+          description: The name of the role
+          example: Administrator
+        permissions:
+          type: number
+          description: The permissions of the role as a bitmask
+          example: 65535
+        scope:
+          type: string
+          description: The scope of the role
+          enum:
+            - TENANT
+            - GLOBAL
+          example: TENANT
+        tenantId:
+          type: string
+          description: The ID of the tenant this role belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        createdById:
+          type: string
+          description: The ID of the user who created the role
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the role was created
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the role was last updated
+        tenant:
+          $ref: "#/components/schemas/TenantEntity"
+        createdBy:
+          $ref: "#/components/schemas/MemberEntity"
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserEntity"
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/MemberEntity"
+        invites:
+          type: array
+          items:
+            $ref: "#/components/schemas/InviteEntity"
+      required:
+        - id
+        - key
+        - name
+        - permissions
+        - scope
+        - createdAt
+        - updatedAt
+    AccountEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 92b8a15b-13b2-4a1a-bf41-bba3e7d64d9a
+          readOnly: true
+        provider:
+          type: string
+          example: google
+          readOnly: true
+        providerAccountId:
+          type: string
+          example: "11786321736412"
+          readOnly: true
+        userId:
+          type: string
+          example: 2b0a9e10-1d83-4f61-8a3f-bfdc62131d4a
+        user:
+          $ref: "#/components/schemas/UserEntity"
+        createdAt:
+          format: date-time
+          type: string
+          example: 2025-11-12T13:00:00Z
+          readOnly: true
+        updatedAt:
+          format: date-time
+          type: string
+          example: 2025-11-12T13:00:00Z
+          readOnly: true
+      required:
+        - id
+        - provider
+        - providerAccountId
+        - userId
+        - createdAt
+        - updatedAt
+    UserEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 2b0a9e10-1d83-4f61-8a3f-bfdc62131d4a
+        name:
+          type: string
+          example: Mayron Silva
+        email:
+          type: string
+          example: mayron@example.com
+        password:
+          type: string
+        emailVerified:
+          format: date-time
+          type: string
+          example: 2025-11-12T13:00:00Z
+        image:
+          type: string
+          example: https://example.com/avatar.png
+        roleId:
+          type: string
+          example: f41b4f7e-27b1-4569-a1cd-3bcb5f94a520
+        createdAt:
+          format: date-time
+          type: string
+          example: 2025-11-12T13:00:00Z
+        updatedAt:
+          format: date-time
+          type: string
+          example: 2025-11-12T13:00:00Z
+        role:
+          $ref: "#/components/schemas/RoleEntity"
+        accounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/AccountEntity"
+        invites:
+          type: array
+          items:
+            $ref: "#/components/schemas/InviteEntity"
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/MemberEntity"
+      required:
+        - id
+        - name
+        - email
+        - password
+        - emailVerified
+        - image
+        - roleId
+        - createdAt
+        - updatedAt
+    NotificationEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the notification
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        title:
+          type: string
+          description: The title of the notification
+          example: New Message
+        description:
+          type: string
+          description: The description of the notification
+          example: You have a new message from John Doe.
+        link:
+          type: string
+          description: A link associated with the notification
+          example: /messages/123
+        read:
+          type: boolean
+          description: Indicates if the notification has been read
+          example: false
+        tenantId:
+          type: string
+          description: The ID of the tenant this notification belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        createdById:
+          type: string
+          description: The ID of the user who created the notification
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        destinationId:
+          type: string
+          description: The ID of the user who should receive the notification
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the notification was created
+        readAt:
+          format: date-time
+          type: string
+          description: The timestamp when the notification was read
+        tenant:
+          $ref: "#/components/schemas/TenantEntity"
+        createdBy:
+          $ref: "#/components/schemas/MemberEntity"
+        destination:
+          $ref: "#/components/schemas/MemberEntity"
+      required:
+        - id
+        - title
+        - description
+        - read
+        - tenantId
+        - destinationId
+        - createdAt
+        - tenant
+        - destination
+    MemberEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the member
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        owner:
+          type: boolean
+          description: Indicates if the member is the owner of the tenant
+          example: false
+        userId:
+          type: string
+          description: The ID of the user
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        tenantId:
+          type: string
+          description: The ID of the tenant
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        roleId:
+          type: string
+          description: The ID of the role assigned to the member
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the member was created
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the member was last updated
+        user:
+          $ref: "#/components/schemas/UserEntity"
+        tenant:
+          $ref: "#/components/schemas/TenantEntity"
+        role:
+          $ref: "#/components/schemas/RoleEntity"
+        notifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/NotificationEntity"
+        invites:
+          type: array
+          items:
+            $ref: "#/components/schemas/InviteEntity"
+      required:
+        - id
+        - owner
+        - userId
+        - tenantId
+        - roleId
+        - createdAt
+        - updatedAt
+        - user
+        - tenant
+        - role
+        - notifications
+        - invites
+    TenantEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the tenant
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          readOnly: true
+        name:
+          type: string
+          description: The name of the tenant
+          example: My Awesome Tenant
+        description:
+          type: string
+          description: A brief description of the tenant
+          example: This is a tenant for managing various services.
+        backgroundImage:
+          type: string
+          description: The URL of the background image for the tenant
+          example: https://example.com/background.jpg
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the tenant was created
+          example: 2022-12-31T23:59:59.000Z
+          readOnly: true
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the tenant was last updated
+          example: 2023-01-01T10:30:00.000Z
+          readOnly: true
+        members:
+          description: The members associated with this tenant
+          type: array
+          items:
+            $ref: "#/components/schemas/MemberEntity"
+        invites:
+          description: The invites associated with this tenant
+          type: array
+          items:
+            $ref: "#/components/schemas/InviteEntity"
+        notifications:
+          description: The notifications associated with this tenant
+          type: array
+          items:
+            $ref: "#/components/schemas/NotificationEntity"
+        roles:
+          description: The roles defined within this tenant
+          type: array
+          items:
+            $ref: "#/components/schemas/RoleEntity"
+        sources:
+          description: The sources associated with this tenant
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceEntity"
+      required:
+        - id
+        - name
+        - backgroundImage
+        - createdAt
+        - updatedAt
+        - members
+        - invites
+        - notifications
+        - roles
+        - sources
+    SourceEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the source
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        key:
+          type: string
+          description: The key of the source file in the storage
+          example: documents/mydoc.pdf
+        path:
+          type: string
+          description: The path of the source file
+          example: /documents/mydoc.pdf
+        name:
+          type: string
+          description: The name of the source
+          example: mydoc.pdf
+        description:
+          type: string
+          description: A brief description of the source
+          example: This document contains the project specifications.
+        originalName:
+          type: string
+          description: The original name of the file
+          example: My Document.pdf
+        metadata:
+          type: object
+          additionalProperties: true
+        sourceType:
+          type: string
+          description: The type of the source
+          enum:
+            - TEXT
+            - DOC
+            - LINK
+            - VIDEO
+            - AUDIO
+            - IMAGE
+          example: DOC
+        indexStatus:
+          type: string
+          description: The indexing status of the source
+          enum:
+            - PENDING
+            - INDEXING
+            - INDEXED
+            - ERROR
+          example: INDEXED
+        indexError:
+          type: string
+          description: The error message if indexing fails
+          example: Could not extract text from the document.
+        memoryId:
+          type: string
+          description: The ID of the memory associated with this source
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        knowledgeId:
+          type: string
+          description: The ID of the knowledge base this source belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        tenantId:
+          type: string
+          description: The ID of the tenant this source belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        folderId:
+          type: string
+          description: The ID of the folder this source belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        knowledge:
+          $ref: "#/components/schemas/KnowledgeEntity"
+        folder:
+          $ref: "#/components/schemas/FolderEntity"
+        tenant:
+          $ref: "#/components/schemas/TenantEntity"
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the source was created
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the source was last updated
+      required:
+        - id
+        - key
+        - path
+        - name
+        - metadata
+        - sourceType
+        - indexStatus
+        - knowledgeId
+        - tenantId
+        - createdAt
+        - updatedAt
+    FolderEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the folder
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        knowledgeId:
+          type: string
+          description: The ID of the associated knowledge base
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        knowledge:
+          $ref: "#/components/schemas/KnowledgeEntity"
+        name:
+          type: string
+          description: The name of the folder
+          example: My Documents
+        root:
+          type: boolean
+          description: Indicates if the folder is a root folder
+          example: true
+        parentId:
+          type: string
+          description: The ID of the parent folder
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        parent:
+          $ref: "#/components/schemas/FolderEntity"
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/FolderEntity"
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceEntity"
+        tenantId:
+          type: string
+          description: The ID of the tenant this folder belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the folder was created
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the folder was last updated
+      required:
+        - id
+        - knowledgeId
+        - knowledge
+        - name
+        - parent
+        - children
+        - sources
+        - tenantId
+        - createdAt
+        - updatedAt
+    MessageEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the message
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        messageRole:
+          type: string
+          description: The role of the message sender
+          enum:
+            - user
+            - assistant
+            - system
+          example: user
+        content:
+          type: string
+          description: The content of the message
+          example: Hello, world!
+        chatId:
+          type: string
+          description: The ID of the chat this message belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        chat:
+          $ref: "#/components/schemas/ChatEntity"
+        knowledgeId:
+          type: string
+          description: The ID of the knowledge base associated with this message
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        knowledge:
+          $ref: "#/components/schemas/KnowledgeEntity"
+        tenantId:
+          type: string
+          description: The ID of the tenant this message belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the message was created
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the message was last updated
+      required:
+        - id
+        - messageRole
+        - content
+        - chatId
+        - chat
+        - knowledgeId
+        - knowledge
+        - tenantId
+        - createdAt
+        - updatedAt
+    ChatEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the chat
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          readOnly: true
+        name:
+          type: string
+          description: The name of the chat
+          example: My Chat
+        knowledgeId:
+          type: string
+          description: The ID of the associated knowledge base
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          readOnly: true
+        knowledge:
+          $ref: "#/components/schemas/KnowledgeEntity"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/MessageEntity"
+        tenantId:
+          type: string
+          description: The ID of the tenant this chat belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          readOnly: true
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the chat was created
+          readOnly: true
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the chat was last updated
+          readOnly: true
+      required:
+        - id
+        - name
+        - knowledgeId
+        - knowledge
+        - messages
+        - tenantId
+        - createdAt
+        - updatedAt
+    LLMEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the LLM
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        default:
+          type: boolean
+          description: Indicates if this is the default LLM for its type
+          example: true
+        name:
+          type: string
+          description: The name of the LLM
+          example: My Text Model
+        model:
+          type: string
+          description: The model identifier
+          example: gpt-3.5-turbo
+        config:
+          type: object
+          description: The configuration for the LLM
+          example:
+            temperature: 0.7
+        type:
+          type: string
+          description: The type of the LLM
+          enum:
+            - EMBEDDING
+            - TEXT
+          example: TEXT
+        tenantId:
+          type: string
+          description: The ID of the tenant this LLM belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        creatorId:
+          type: string
+          description: The ID of the user who created the LLM
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        knowledgeLLMs:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeLLMEntity"
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the LLM was created
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the LLM was last updated
+      required:
+        - id
+        - default
+        - name
+        - model
+        - config
+        - type
+        - tenantId
+        - knowledgeLLMs
+        - createdAt
+        - updatedAt
+    KnowledgeLLMEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the knowledge-llm link
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        default:
+          type: boolean
+          description: Indicates if this is the default LLM for the knowledge base
+          example: true
+        knowledge:
+          $ref: "#/components/schemas/KnowledgeEntity"
+        llm:
+          $ref: "#/components/schemas/LLMEntity"
+        knowledgeId:
+          type: object
+          description: The ID of the associated knowledge base
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        llmId:
+          type: object
+          description: The ID of the associated LLM
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the link was created
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the link was last updated
+      required:
+        - id
+        - default
+        - knowledge
+        - llm
+        - knowledgeId
+        - llmId
+        - createdAt
+        - updatedAt
+    KnowledgeEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the knowledge base
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        slug:
+          type: string
+          description: The URL-friendly slug for the knowledge base
+          example: my-knowledge-base
+        title:
+          type: string
+          description: The title of the knowledge base
+          example: My Knowledge Base
+        description:
+          type: string
+          description: A brief description of the knowledge base
+          example: This knowledge base contains documents about our products.
+        status:
+          type: string
+          description: The status of the knowledge base
+          enum:
+            - DELETING
+            - DELETE_ERROR
+            - OK
+          example: OK
+        deleteError:
+          type: string
+          description: The error message if deletion fails
+          example: Could not delete all associated files.
+        files:
+          type: number
+          description: The number of files in the knowledge base
+          example: 10
+        storage:
+          type: object
+          description: The total storage used by the knowledge base in bytes
+          example: 1048576
+        tenantId:
+          type: string
+          description: The ID of the tenant this knowledge base belongs to
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+        createdAt:
+          format: date-time
+          type: string
+          description: The timestamp when the knowledge base was created
+        updatedAt:
+          format: date-time
+          type: string
+          description: The timestamp when the knowledge base was last updated
+        folders:
+          type: array
+          items:
+            $ref: "#/components/schemas/FolderEntity"
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceEntity"
+        chats:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChatEntity"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/MessageEntity"
+        knowledgeLLMs:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeLLMEntity"
+      required:
+        - id
+        - slug
+        - title
+        - status
+        - files
+        - storage
+        - tenantId
+        - createdAt
+        - updatedAt
+        - folders
+        - sources
+        - chats
+        - messages
+        - knowledgeLLMs
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        code:
+          type: string
+        timestamp:
+          format: date-time
+          type: string
+      required:
+        - error
+        - code
+        - timestamp
+    CreateFolderDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the folder
+          example: My Documents
+        parentId:
+          type: string
+          description: The ID of the parent folder
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+      required:
+        - name
+    UpdateFolderDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the folder
+          example: My Documents
+      required:
+        - name
+    CreateKnowledgeDto:
+      type: object
+      properties:
+        slug:
+          type: string
+          description: The URL-friendly slug for the knowledge base
+          example: my-knowledge-base
+        title:
+          type: string
+          description: The title of the knowledge base
+          example: My Knowledge Base
+        description:
+          type: string
+          description: A brief description of the knowledge base
+          example: This knowledge base contains documents about our products.
+      required:
+        - slug
+        - title
+    UpdateKnowledgeDto:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the knowledge base
+          example: My Knowledge Base
+        description:
+          type: string
+          description: A brief description of the knowledge base
+          example: This knowledge base contains documents about our products.
+    LoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        redirect:
+          type: string
+      required:
+        - email
+        - password
+    CreateAccountDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+          minLength: 6
+          maxLength: 100
+      required:
+        - name
+        - email
+        - password
+    ActiveAccountDto:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+    ForgetPasswordDto:
+      type: object
+      properties:
+        email:
+          type: string
+      required:
+        - email
+    CreateRoleDto:
+      type: object
+      properties:
+        key:
+          type: string
+          description: The key of the role
+          example: admin
+        name:
+          type: string
+          description: The name of the role
+          example: Administrator
+        permissions:
+          type: number
+          description: The permissions of the role as a bitmask
+          example: 65535
+      required:
+        - key
+        - name
+        - permissions
+    UpdateRoleDto:
+      type: object
+      properties:
+        key:
+          type: string
+          description: The key of the role
+          example: admin
+        name:
+          type: string
+          description: The name of the role
+          example: Administrator
+        permissions:
+          type: number
+          description: The permissions of the role as a bitmask
+          example: 65535
+      required:
+        - key
+        - name
+        - permissions
+    UpdateMemberDto:
+      type: object
+      properties:
+        roleId:
+          type: string
+          description: The ID of the role assigned to the member
+          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+    CreateTenantDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the tenant
+          example: My Awesome Tenant
+        description:
+          type: string
+          description: A brief description of the tenant
+          example: This is a tenant for managing various services.
+        backgroundImage:
+          type: string
+          description: The URL of the background image for the tenant
+          example: https://example.com/background.jpg
+      required:
+        - name
+        - backgroundImage
+    SendInviteItemDto:
+      type: object
+      properties:
+        email:
+          type: string
+        roleId:
+          type: string
+      required:
+        - email
+        - roleId
+    SendInviteDto:
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/SendInviteItemDto"
+      required:
+        - emails
+    SendInviteResponseDto:
+      type: object
+      properties:
+        sendedInvites:
+          type: array
+          items:
+            $ref: "#/components/schemas/InviteEntity"
+        reSendedInvites:
+          type: array
+          items:
+            $ref: "#/components/schemas/InviteEntity"
+        alreadyInTenant:
+          type: array
+          items:
+            $ref: "#/components/schemas/MemberEntity"
+      required:
+        - sendedInvites
+        - reSendedInvites
+        - alreadyInTenant
+    CreateChatDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the chat
+          example: My Chat
+      required:
+        - name
+    UpdateChatDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the chat
+          example: My Chat
+      required:
+        - name
+    CreateMessageDto:
+      type: object
+      properties:
+        content:
+          type: string
+          description: The content of the message
+          example: Hello, world!
+      required:
+        - content
+    CreateMessageResponseDto:
+      type: object
+      properties:
+        userMessage:
+          $ref: "#/components/schemas/MessageEntity"
+        aiMessage:
+          $ref: "#/components/schemas/MessageEntity"
+      required:
+        - userMessage
+        - aiMessage
+    LLMPreset:
+      type: object
+      properties:
+        name:
+          type: string
+          example: OpenAI GPT-4
+          description: The name of the LLM preset.
+        description:
+          type: string
+          example: A state-of-the-art LLM for general reasoning.
+          description: A description of the LLM preset.
+        iconPath:
+          type: string
+          example: https://cdn.example.com/icons/gpt4.png
+          description: The URL or path of the icon representing the LLM.
+        fields:
+          type: object
+          description: Fields required to configure this LLM.
+          example:
+            apiKey: secret-string
+            model: string
+          additionalProperties:
+            type: string
+            enum:
+              - string
+              - secret-string
+        defaults:
+          type: object
+          description: Default values for any configuration fields.
+          example:
+            model: gpt-4
+            temperature: 0.7
+          additionalProperties: true
+        required:
+          type: array
+          description: List of required field names.
+          example:
+            - apiKey
+            - model
+          items:
+            type: string
+        adapter:
+          type: string
+          description: Name of the adapter responsible for executing the LLM.
+          example: openai
+        config:
+          type: object
+          description: Adapter configuration.
+          example:
+            baseUrl: https://api.openai.com/v1
+            timeout: 30000
+          additionalProperties: true
+      required:
+        - name
+        - description
+        - iconPath
+        - fields
+        - defaults
+        - required
+        - adapter
+        - config

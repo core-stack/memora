@@ -1,7 +1,9 @@
-import { defineConfig } from '@kubb/core'
-import { pluginReactQuery } from '@kubb/plugin-react-query'
-import { pluginOas } from '@kubb/plugin-oas'
-import { pluginTs } from '@kubb/plugin-ts'
+import { defineConfig } from '@kubb/core';
+import { pluginReactQuery } from '@kubb/plugin-react-query';
+import { pluginOas } from '@kubb/plugin-oas';
+import { pluginTs } from '@kubb/plugin-ts';
+import { pluginZod } from "@kubb/plugin-zod";
+
 export default defineConfig(() => {
   return {
     root: '.',
@@ -17,7 +19,14 @@ export default defineConfig(() => {
       pluginReactQuery({
         output: {
           path: "./hooks"
-        }
+        },
+      }),
+      pluginZod({
+        output: {
+          path: "./zod",
+        },
+        typed: true,
+        dateType: 'date',
       })
     ],
   }

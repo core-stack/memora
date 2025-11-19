@@ -16,24 +16,35 @@ export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
     this.relations = options.relations;
   }
 
-  static fromRequest<TEntity>(request: Request): FilterOptions<TEntity> {
+  static fromRequest<TEntity>(
+    request: Request,
+    allowedFilters: (keyof TEntity)[] = [],
+    allowedRelations: (keyof TEntity)[] = []
+  ): FilterOptions<TEntity> {
     const query = request.query;
     const params = request.params;
     const where: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(query)) {
-      if (key === 'limit' || key === 'offset') continue;
+      if (key === 'limit' || key === 'offset' || key === 'sort' || key === 'relations') continue;
 
       const match = key.match(/^filter\[(.+)\]$/);
       if (match) {
-        const field = match[1];
-        where[field] = value === 'null' ? null : value;
+        const field = match[1] as keyof TEntity;
+
+        if (allowedFilters.length === 0 || allowedFilters.includes(field)) {
+          where[field as string] = value === 'null' ? null : value;
+        }
       }
+
     }
 
     if (params) {
       for (const [key, value] of Object.entries(params)) {
-        where[key] = value === 'null' ? null : value;
+        const field = key as keyof TEntity;
+        if (allowedFilters.length === 0 || allowedFilters.includes(field)) {
+          where[key] = value === 'null' ? null : value;
+        }
       }
     }
 
@@ -41,9 +52,11 @@ export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
     if (query.sort) {
       const fields = (query.sort as string).split(',');
       for (const f of fields) {
-        const key = f.startsWith('-') ? f.substring(1) : f;
+        const key = (f.startsWith('-') ? f.substring(1) : f) as keyof TEntity;
         const direction = f.startsWith('-') ? 'DESC' : 'ASC';
-        (order as any)[key] = direction;
+        if (allowedFilters.length === 0 || allowedFilters.includes(key)) {
+          (order as any)[key] = direction;
+        }
       }
     }
 
@@ -51,12 +64,16 @@ export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
       ? (query.relations as string).split(',').map(r => r.trim())
       : [];
 
+    const filteredRelations = allowedRelations.length > 0
+      ? relations.filter(relation => allowedRelations.includes(relation as keyof TEntity))
+      : relations;
+
     return new FilterOptions<TEntity>({
       take: query.limit ? parseInt(query.limit as string) : undefined,
       skip: query.offset ? parseInt(query.offset as string) : undefined,
       where: where as FindOptionsWhere<TEntity>,
       order,
-      relations,
+      relations: filteredRelations,
     });
   }
 }

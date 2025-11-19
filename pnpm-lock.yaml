@@ -415,6 +415,9 @@ importers:
       '@kubb/plugin-react-query':
         specifier: ^4.5.9
         version: 4.5.9(@kubb/react-fabric@0.3.1)(ajv@8.17.1)(axios@1.13.1)
+      '@kubb/plugin-zod':
+        specifier: ^4.5.9
+        version: 4.5.9(ajv@8.17.1)
       '@types/react':
         specifier: ^19.1.10
         version: 19.2.2

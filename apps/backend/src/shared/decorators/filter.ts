@@ -31,7 +31,11 @@ export const Filter = <TEntity>(config?: {
       ],
     };
 
-    const options = FilterOptions.fromRequest<TEntity>(request);
+    const options = FilterOptions.fromRequest<TEntity>(
+      request,
+      mergedConfig.allowedFilters,
+      mergedConfig.allowedRelations
+    );
 
     if (mergedConfig.allowedFilters.length && options.where) {
       for (const key of Object.keys(options.where)) {

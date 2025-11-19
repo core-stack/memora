@@ -16,6 +16,7 @@ import {
   getDefaultFindResponses,
   getDefaultUpdateResponses
 } from "./default-response";
+import { ApiFilterQuery } from "./decorators/api-filter-options";
 
 export function BaseController<
   TEntity extends ObjectLiteral,
@@ -48,11 +49,13 @@ export function BaseController<
   abstract class Base {
     constructor(public readonly service: Service<TEntity>) {}
 
+    @ApiFilterQuery(allowedFilters, allowedRelations)
     @HttpGet(":id", { ignore: ignore.includes("findByID"), responses: responses.findByID })
     async findByID(@Param("id", ParseUUIDPipe) id: string): Promise<TEntity | null> {
       return this.service.findByID(id);
     }
 
+    @ApiFilterQuery([], allowedRelations)
     @HttpGet("", { ignore: ignore.includes("find"), responses: responses.find })
     async findMany(@Filter() filterOpts: FilterOptions<TEntity>): Promise<TEntity[]> {
       return this.service.find(filterOpts);
