@@ -1,7 +1,6 @@
 import { applyDecorators, Delete, Get, Post, Put } from '@nestjs/common';
-import { ResponseConfig } from './types';
+import { ResponseConfig } from '../types';
 import { ApiResponse } from '@nestjs/swagger';
-import { getDefaultFindResponses } from './default-response';
 
 export const ApiResponses = (responseConfigs: ResponseConfig[] = []) => {
   return applyDecorators(...responseConfigs.map(config => ApiResponse(config)));
