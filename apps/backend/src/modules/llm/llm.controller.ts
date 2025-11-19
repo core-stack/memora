@@ -6,6 +6,7 @@ import { Get } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 
 import { LLMService } from './llm.service';
+import { HttpGet } from '@/shared/controller/decorators';
 
 @Controller('tenant/:tenantId/llm')
 export class LLMController extends BaseController({ entity: LLMEntity }) {
@@ -13,7 +14,7 @@ export class LLMController extends BaseController({ entity: LLMEntity }) {
     super(service);
   }
 
-  @Get('presets')
+  @HttpGet('presets')
   @ApiResponse({ status: 200, type: LLMPreset, isArray: true })
   getPresets() {
     return this.service.manager.getPresets();

@@ -1,22 +1,20 @@
 import { BaseController } from '@/shared/controller';
-import { Get } from '@nestjs/common';
-
 import { UserEntity } from '../../entities/user.entity';
 import { UserService } from './user.service';
 import { Controller } from '@/shared/decorators/controller';
-import { ApiResponse } from '@nestjs/swagger';
+import { HttpGet } from '@/shared/controller/decorators';
+import { getDefaultFindByIDResponses } from '@/shared/controller/default-response';
 
 @Controller('user')
 export class UserController extends BaseController({
-  entity: UserEntity,
-  ignore: [ 'create', "update", "delete" ]
+ entity: UserEntity,
+ ignore: [ 'create', "update", "delete" ]
 }) {
   constructor(public service: UserService) {
     super(service);
   }
 
-  @Get("self")
-  @ApiResponse({ type: UserEntity, status: 200 })
+  @HttpGet("self", { responses: getDefaultFindByIDResponses(UserEntity) })
   async self() {
     return await this.service.self();
   }

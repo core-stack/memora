@@ -13,8 +13,6 @@ export function SwaggerAuth() {
       if (!publicMethods.includes(methodName)) {
         let proto = target.prototype;
         while (proto && proto !== Object.prototype) {
-          console.log("loop");
-
           const descriptor = Object.getOwnPropertyDescriptor(proto, methodName);
           if (descriptor) {
             ApiBearerAuth('access-token')(target.prototype, methodName, descriptor);

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "check-types": "tsc --noEmit",
+    "generate:api": "kubb generate",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -59,6 +60,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@kubb/cli": "^4.5.9",
+    "@kubb/core": "^4.5.9",
+    "@kubb/plugin-react-query": "^4.5.9",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@types/react-syntax-highlighter": "^15.5.13",

@@ -14,10 +14,10 @@ import { cn } from '@/lib/utils';
 import { DateFormat, formatBytes, formatDate } from '@/utils/format';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
 
-import type { Knowledge } from "@snipet/schemas";
 import type { ConfirmDialogProps } from '@/dialogs/confirm';
+import type { KnowledgeEntity } from '@/gen';
 interface KnowledgeCardProps {
-  knowledge: Knowledge;
+  knowledge: KnowledgeEntity;
 }
 
 export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {

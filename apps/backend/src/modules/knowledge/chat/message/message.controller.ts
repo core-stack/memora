@@ -5,6 +5,7 @@ import { ApiResponse } from '@nestjs/swagger';
 
 import { CreateMessageDto, CreateMessageResponseDto } from './dto/create-message.dto';
 import { MessageService } from './message.service';
+import { HttpPost } from '@/shared/controller/decorators';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message')
 export class MessageController extends BaseController({ entity: MessageEntity }) {
@@ -12,7 +13,7 @@ export class MessageController extends BaseController({ entity: MessageEntity })
     super(service);
   }
 
-  @Post("new")
+  @HttpPost("new")
   @ApiResponse({ type: CreateMessageResponseDto, status: 200 })
   async newMessage(@Body() body: CreateMessageDto) {
     return this.service.sendMessage(body.content);

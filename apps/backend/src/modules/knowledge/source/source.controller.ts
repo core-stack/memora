@@ -7,6 +7,7 @@ import { ApiResponse } from '@nestjs/swagger';
 import { FileURLResponseDto } from './dto/file-url-response.dto';
 import { GetUploadUrlDto } from './dto/get-upload-url.dto';
 import { SourceService } from './source.service';
+import { HttpGet, HttpPost } from '@/shared/controller/decorators';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/source')
 export class SourceController extends BaseController({
@@ -17,25 +18,25 @@ export class SourceController extends BaseController({
     super(service);
   }
 
-  @Get(":id/view")
+  @HttpGet(":id/view")
   @ApiResponse({ type: FileURLResponseDto, status: 200 })
   async view(@Param("id", ParseUUIDPipe) sourceId: string) {
     return this.service.view(sourceId);
   }
 
-  @Get(":id/download-url")
+  @HttpGet(":id/download-url")
   @ApiResponse({ type: FileURLResponseDto, status: 200 })
   async download(@Param("id", ParseUUIDPipe) sourceId: string) {
     return this.service.downloadUrl(sourceId);
   }
 
-  @Post("upload-url")
+  @HttpPost("upload-url")
   @ApiResponse({ type: FileURLResponseDto, status: 200 })
   async upload(@Body() body: GetUploadUrlDto) {
     return this.service.getUploadUrl(body);
   }
 
-  @Post(":id/retry")
+  @HttpPost(":id/retry")
   @ApiResponse({ type: SourceEntity, status: 200 })
   async retry(@Param("id", ParseUUIDPipe) sourceId: string) {
     return this.service.retryIndex(sourceId);

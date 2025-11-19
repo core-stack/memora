@@ -5,9 +5,11 @@ import { DialogType } from '@/dialogs';
 import { useDialog } from '@/hooks/use-dialog';
 
 import { KnowledgeList } from './components/knowledge-list';
+import { useTenant } from '@/hooks/use-tenant';
 
 export default function Home() {
   const { openDialog } = useDialog();
+  const { tenant } = useTenant();
 
   return (
     <>
@@ -21,7 +23,7 @@ export default function Home() {
           icon: <Plus className="h-5 w-5 mr-2" />
         }}
       />
-      <KnowledgeList />
+      <KnowledgeList tenantId={tenant.id} />
     </>
   )
 }

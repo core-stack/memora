@@ -1,5 +1,5 @@
 export class GenericResponse<T = {}> {
-  message: string;
+  message?: string;
   data?: T;
 
   constructor(message: string, data?: T) {
