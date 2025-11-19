@@ -1,8 +1,11 @@
+import { EntityManager } from 'typeorm';
+
 import { Service } from '@/shared/service';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { permissionsToNumber, ROLES } from '@snipet/permission';
 
 import { RoleEntity, RoleScope } from '../../entities/role.entity';
+import { CreateRoleDto } from './dto/create-role.dto';
 
 @Injectable()
 export class RoleService extends Service<RoleEntity> implements OnModuleInit {
@@ -26,5 +29,13 @@ export class RoleService extends Service<RoleEntity> implements OnModuleInit {
         this.logger.verbose(`Updated role ${role.key}`);
       }
     }
+  }
+  override create(input: CreateRoleDto, manager?: EntityManager): Promise<RoleEntity> {
+    return super.create(new RoleEntity({
+      key: input.key,
+      name: input.name,
+      permissions: input.permissions,
+      scope: RoleScope.TENANT
+    }), manager);
   }
 }

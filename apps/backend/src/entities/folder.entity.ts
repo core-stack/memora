@@ -2,6 +2,7 @@ import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+
 import { ApiProperty } from '@nestjs/swagger';
 
 import { KnowledgeEntity } from './knowledge.entity';
@@ -58,4 +59,8 @@ export class FolderEntity {
   @ApiProperty({ description: 'The timestamp when the folder was last updated' })
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  constructor(data: Partial<FolderEntity>) {
+    Object.assign(this, data);
+  }
 }

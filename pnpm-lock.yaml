@@ -77,6 +77,9 @@ importers:
       '@nestjs/typeorm':
         specifier: ^11.0.0
         version: 11.0.0(@nestjs/common@11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.8)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.27(ioredis@5.8.2)(pg@8.16.3)(reflect-metadata@0.2.2)(ts-node@10.9.2(@swc/core@1.13.5(@swc/helpers@0.5.17))(@types/node@22.18.13)(typescript@5.8.3)))
+      '@snipet/common':
+        specifier: workspace:*
+        version: link:../../packages/common
       '@snipet/permission':
         specifier: workspace:*
         version: link:../../packages/permission
@@ -439,6 +442,25 @@ importers:
       vite:
         specifier: ^7.1.2
         version: 7.1.12(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+
+  packages/common:
+    dependencies:
+      dotenv:
+        specifier: ^16.5.0
+        version: 16.6.1
+    devDependencies:
+      '@types/node':
+        specifier: ^20.17.24
+        version: 20.19.24
+      bunchee:
+        specifier: ^6.4.0
+        version: 6.6.2(typescript@5.8.3)
+      eslint:
+        specifier: ^9.26.0
+        version: 9.38.0(jiti@2.6.1)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
 
   packages/permission:
     dependencies:

@@ -1,10 +1,10 @@
 
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@nestjs/common';
+import { Controller } from '@/shared/decorators/controller';
 
 import { MemberEntity } from '../../entities/member.entity';
-import { MemberService } from './member.service';
 import { UpdateMemberDto } from './dto/update-member.dto';
+import { MemberService } from './member.service';
 
 @Controller('tenant/:tenantId/member')
 export class MemberController extends BaseController({

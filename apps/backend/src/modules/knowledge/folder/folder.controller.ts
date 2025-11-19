@@ -1,11 +1,17 @@
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@nestjs/common';
+import { Controller } from '@/shared/decorators/controller';
 
 import { FolderEntity } from '../../../entities/folder.entity';
+import { CreateFolderDto } from './dto/create-folder.dto';
+import { UpdateFolderDto } from './dto/update-folder.dto';
 import { FolderService } from './folder.service';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/folder')
-export class FolderController extends BaseController({ entity: FolderEntity }) {
+export class FolderController extends BaseController({ 
+  entity: FolderEntity,
+  createDto: CreateFolderDto,
+  updateDto: UpdateFolderDto
+}) {
   constructor(folderService: FolderService) {
     super(folderService);
   }

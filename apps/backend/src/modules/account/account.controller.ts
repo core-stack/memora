@@ -1,5 +1,5 @@
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@nestjs/common';
+import { Controller } from '@/shared/decorators/controller';
 
 import { AccountEntity } from '../../entities/account.entity';
 import { AccountService } from './account.service';

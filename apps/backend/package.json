@@ -61,6 +61,7 @@
     "@nestjs/swagger": "^11.2.1",
     "@nestjs/typeorm": "^11.0.0",
     "@snipet/permission": "workspace:*",
+    "@snipet/common": "workspace:*",
     "@zilliz/milvus2-sdk-node": "^2.6.0",
     "argon2": "^0.44.0",
     "bcrypt": "^6.0.0",

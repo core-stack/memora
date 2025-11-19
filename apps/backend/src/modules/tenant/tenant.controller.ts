@@ -1,9 +1,9 @@
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@nestjs/common';
+import { Controller } from '@/shared/decorators/controller';
 
 import { TenantEntity } from '../../entities/tenant.entity';
-import { TenantService } from './tenant.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
+import { TenantService } from './tenant.service';
 
 @Controller('tenant')
 export class TenantController extends BaseController({

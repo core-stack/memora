@@ -1,8 +1,7 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller } from '@/shared/decorators/controller';
+import { Get } from '@nestjs/common';
 
 import { SearchService } from './search.service';
-
-import type { Request } from "express";
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/search')
 export class SearchController {

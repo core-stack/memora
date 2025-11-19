@@ -1,6 +1,9 @@
 import { LLMEntity } from '@/entities/llm.entity';
 import { BaseController } from '@/shared/controller';
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@/shared/decorators/controller';
+import { LLMPreset } from '@/types/llm-preset';
+import { Get } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 
 import { LLMService } from './llm.service';
 
@@ -11,6 +14,7 @@ export class LLMController extends BaseController({ entity: LLMEntity }) {
   }
 
   @Get('presets')
+  @ApiResponse({ status: 200, type: LLMPreset, isArray: true })
   getPresets() {
     return this.service.manager.getPresets();
   }

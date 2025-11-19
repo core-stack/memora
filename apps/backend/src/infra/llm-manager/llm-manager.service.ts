@@ -4,6 +4,7 @@ import { join } from 'path';
 import { LLMEntity } from '@/entities/llm.entity';
 import { env } from '@/env';
 import { __root } from '@/root';
+import { LLMPreset } from '@/types/llm-preset';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
@@ -11,7 +12,6 @@ import { NotFoundError } from './errors/not-found.error';
 import { LLMLoaderService } from './llm-loader.service';
 import { EmbeddingProvider } from './provider/embedding/base';
 import { TextProvider } from './provider/text/base';
-import { LLMPreset } from '@/types/llm-preset';
 
 @Injectable()
 export class LLMManagerService {
@@ -61,7 +61,7 @@ export class LLMManagerService {
     }
   }
 
-  getPresets() {
+  getPresets(): LLMPreset[] {
     return this.presets.map(preset => ({ ...preset, iconPath: `${env.AWS_PUBLIC_BASE_URL}/${preset.iconPath}` }));
   }
 

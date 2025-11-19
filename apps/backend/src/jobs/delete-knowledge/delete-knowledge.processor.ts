@@ -12,7 +12,6 @@ import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
 
 import { JobType } from '../types';
-import { SourceEntity } from '@/entities';
 
 @Processor(JobType.DELETE_KNOWLEDGE, { concurrency: 10 })
 export class DeleteKnowledgeProcessor extends WorkerHost {

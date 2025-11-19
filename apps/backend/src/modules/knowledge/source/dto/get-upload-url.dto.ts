@@ -1,19 +1,23 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNumber, Max, MinLength } from "class-validator";
+import { IsNumber, IsString, Max, MinLength } from 'class-validator';
+
+import { ApiProperty } from '@nestjs/swagger';
+import { formatBytes } from '@snipet/common';
+
+import { maxUploadFileSize } from '../constants';
 
 export class GetUploadUrlDto {
-  @ApiProperty()
+  @ApiProperty({ example: "my-file.pdf" })
   @IsString()
   @MinLength(1)
   fileName: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: "application/pdf" })
   @IsString()
   @MinLength(1)
   contentType: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: maxUploadFileSize, description: `File size in bytes (max: ${formatBytes(maxUploadFileSize)}` })
   @IsNumber()
-  @Max(100 * 1024 * 1024)
+  @Max(maxUploadFileSize)
   fileSize: number;
 }

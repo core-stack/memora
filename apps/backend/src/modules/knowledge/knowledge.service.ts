@@ -13,7 +13,7 @@ export class KnowledgeService extends Service<KnowledgeEntity> {
   logger = new Logger(KnowledgeService.name);
   entity = KnowledgeEntity;
 
-  @InjectQueue(JobType.DELETE_KNOWLEDGE) private readonly deleteKnowledgeQueue: Queue
+  @InjectQueue(JobType.DELETE_KNOWLEDGE) private readonly deleteKnowledgeQueue: Queue;
 
   async findBySlug(slug: string, tenantId: string, manager?: EntityManager): Promise<KnowledgeEntity | null> {
     return this.repository(manager).findOne({

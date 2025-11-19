@@ -1,15 +1,16 @@
 import { ObjectLiteral } from 'typeorm';
-import z from 'zod';
 
-import { applyDecorators, Body, Delete, Get, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
+import { Constructor } from '@/types/constructor';
+import {
+  applyDecorators, Body, Delete, Get, Param, ParseUUIDPipe, Post, Put
+} from '@nestjs/common';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 
 import { ControllerFilter, Filter } from './decorators/filter';
 import { Public } from './decorators/public';
 import { FilterOptions } from './filter-options';
-import { Service } from './service';
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { Constructor } from '@/types/constructor';
 import { GenericResponse } from './generic-response';
+import { Service } from './service';
 
 export const Http = (method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", path: string, ignore?: boolean) => {
   if (ignore) return applyDecorators();

@@ -11,6 +11,7 @@ import { forwardRef, Inject, Injectable, Logger, NotFoundException } from '@nest
 
 import { KnowledgeService } from '../../knowledge.service';
 import { ChatService } from '../chat.service';
+import { CreateMessageResponseDto } from './dto/create-message.dto';
 
 @Injectable()
 export class MessageService extends Service<MessageEntity> {
@@ -27,7 +28,7 @@ export class MessageService extends Service<MessageEntity> {
   async sendMessage(
     content: string,
     manager?: EntityManager
-  ): Promise<{ userMessage: MessageEntity; aiMessage: MessageEntity; }> {
+  ): Promise<CreateMessageResponseDto> {
     const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
 
     //#region get chat
@@ -94,7 +95,7 @@ export class MessageService extends Service<MessageEntity> {
     await this.chatMemoryService.add(aiMessage);
     //#endregion
 
-    return { userMessage, aiMessage };
+    return new CreateMessageResponseDto(userMessage, aiMessage);
   }
 
   async findLastNMessages(chatId: string, lastNMessages: number, manager?: EntityManager) {

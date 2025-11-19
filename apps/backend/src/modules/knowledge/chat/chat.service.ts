@@ -5,6 +5,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { ChatEntity } from '../../../entities/chat.entity';
 import { KnowledgeService } from '../knowledge.service';
+import { CreateChatDto } from './dto/create-chat.dto';
 
 @Injectable()
 export class ChatService extends Service<ChatEntity> {
@@ -13,11 +14,13 @@ export class ChatService extends Service<ChatEntity> {
 
   @Inject() private readonly knowledgeService: KnowledgeService;
 
-  override async create(data: ChatEntity, manager?: EntityManager): Promise<ChatEntity> {
+  override async create(data: CreateChatDto, manager?: EntityManager): Promise<ChatEntity> {
     const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
-    data.knowledgeId = knowledgeId;
-    if (!data.name) data.name = "New Chat";
-    return super.create(data, manager);
+    const chat = new ChatEntity({
+      name: data.name ?? "New Chat",
+      knowledgeId
+    })
+    return super.create(chat, manager);
   }
 
   async findWithCountMessages(

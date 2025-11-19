@@ -7,6 +7,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { FolderEntity } from '../../../entities/folder.entity';
 import { KnowledgeService } from '../knowledge.service';
+import { CreateFolderDto } from './dto/create-folder.dto';
 
 @Injectable()
 export class FolderService extends Service<FolderEntity> {
@@ -22,13 +23,14 @@ export class FolderService extends Service<FolderEntity> {
     return super.find(filterOpts, manager);
   }
 
-  override async create(input: FolderEntity, manager?: EntityManager): Promise<FolderEntity> {
+  override async create(input: CreateFolderDto, manager?: EntityManager): Promise<FolderEntity> {
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug());
-    const parentId = this.context.query.getString("parentId");
 
-    if (parentId) input.parentId = parentId;
-
-    return super.create({ ...input, knowledgeId }, manager);
+    return super.create(new FolderEntity({
+      name: input.name,
+      parentId: input.parentId,
+      knowledgeId: knowledgeId
+    }), manager);
   }
 
   async getPathByFolderId(fileName: string, folderId?: string, manager?: EntityManager) {
