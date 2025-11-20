@@ -1,5 +1,5 @@
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@/shared/decorators/controller';
+import { Controller } from '@/shared/controller/decorators';
 
 import { ChatEntity } from '../../../entities/chat.entity';
 import { ChatService } from './chat.service';

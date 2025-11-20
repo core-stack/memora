@@ -1,13 +1,12 @@
 import { SourceEntity } from '@/entities/source.entity';
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@/shared/decorators/controller';
-import { Body, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Controller, HttpGet, HttpPost } from '@/shared/controller/decorators';
+import { Body, Param, ParseUUIDPipe } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 
 import { FileURLResponseDto } from './dto/file-url-response.dto';
 import { GetUploadUrlDto } from './dto/get-upload-url.dto';
 import { SourceService } from './source.service';
-import { HttpGet, HttpPost } from '@/shared/controller/decorators';
 
 @Controller('tenant/:tenantId/knowledge/:knowledgeSlug/source')
 export class SourceController extends BaseController({

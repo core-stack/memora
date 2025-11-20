@@ -2,7 +2,7 @@ import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
 
-import { ApiProperty } from '@nestjs/swagger';
+import { Field } from '@/shared/model';
 
 import { UserEntity } from './user.entity';
 
@@ -13,31 +13,31 @@ export enum VerificationType {
 
 @Entity('verification_tokens')
 export class VerificationTokenEntity {
-  @ApiProperty({ example: '2b0a9e10-1d83-4f61-8a3f-bfdc62131d4a' })
+  @Field({ type: 'string', uuid: true })
   @PrimaryGeneratedColumn('uuid')
   token: string;
 
-  @ApiProperty({ enum: VerificationType })
+  @Field({ type: 'enum', enum: VerificationType })
   @Column({ enum: VerificationType, type: 'enum' })
   type: VerificationType;
 
-  @ApiProperty({ example: '2025-11-12T13:00:00Z' })
+  @Field({ type: 'date' })
   @Column({ type: 'timestamptz' })
   expires: Date;
 
-  @ApiProperty()
+  @Field({ type: 'string', uuid: true })
   @Column({ name: 'user_id' })
   userId: string;
 
-  @ApiProperty({ example: '2025-11-12T13:00:00Z' })
+  @Field({ type: 'date' })
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
-  @ApiProperty({ example: '2025-11-12T13:00:00Z' })
+  @Field({ type: 'date' })
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 
-  @ApiProperty({ type: () => UserEntity, required: false })
+  @Field({ type: 'class', class: () => UserEntity, required: false })
   @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;

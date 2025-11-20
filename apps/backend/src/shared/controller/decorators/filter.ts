@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/common';
 
-import { FilterOptions } from '../filter-options';
+import { FilterOptions } from '../../filter-options';
 
 const FILTER_METADATA_KEY = Symbol('filter_options');
 

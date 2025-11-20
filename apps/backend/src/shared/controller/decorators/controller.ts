@@ -1,6 +1,6 @@
+import { Auth } from '@/shared/plugins/swagger-auth';
 import { applyDecorators, Controller as NestController } from '@nestjs/common';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
-import { Auth } from '../plugins/swagger-auth';
 
 export function ApiParamsInherit(params: Array<{ name: string; type?: any; required?: boolean }>) {
   return (target: any) => {

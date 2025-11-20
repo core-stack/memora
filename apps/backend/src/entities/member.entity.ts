@@ -2,9 +2,9 @@ import {
   Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
 
-import { TenantId } from '../shared/decorators/context';
+import { Field } from '@/shared/model';
+import { TenantId } from '../shared/controller/decorators/context';
 import { InviteEntity } from './invite.entity';
 import { NotificationEntity } from './notification.entity';
 import { RoleEntity } from './role.entity';
@@ -14,55 +14,55 @@ import { UserEntity } from './user.entity';
 @Entity('members')
 @Index(['tenantId', 'userId'], { unique: true })
 export class MemberEntity {
-  @ApiProperty({ description: 'The unique identifier of the member', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
+  @Field({ type: 'string', uuid: true, description: 'The unique identifier of the member' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ description: 'Indicates if the member is the owner of the tenant', example: false })
+  @Field({ type: 'boolean', default: false, description: 'Indicates if the member is the owner of the tenant' })
   @Column({ default: false })
   owner: boolean;
 
-  @ApiProperty({ description: 'The ID of the user', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
+  @Field({ type: 'string', uuid: true, description: 'The ID of the user' })
   @Column({ name: 'user_id' })
   userId: string;
 
   @TenantId()
-  @ApiProperty({ description: 'The ID of the tenant', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
+  @Field({ type: 'string', uuid: true, description: 'The ID of the tenant' })
   @Column({ name: 'tenant_id' })
   tenantId: string;
 
-  @ApiProperty({ description: 'The ID of the role assigned to the member', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
+  @Field({ type: 'string', uuid: true, description: 'The ID of the role assigned to the member' })
   @Column({ name: 'role_id' })
   roleId: string;
 
-  @ApiProperty({ description: 'The timestamp when the member was created' })
+  @Field({ type: 'date', description: 'The timestamp when the member was created' })
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
-  @ApiProperty({ description: 'The timestamp when the member was last updated' })
+  @Field({ type: 'date', description: 'The timestamp when the member was last updated' })
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 
-  @ApiProperty({ type: () => UserEntity })
+  @Field({ type: 'class', class: () => UserEntity, required: false })
   @ManyToOne(() => UserEntity, (u) => u.members, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 
-  @ApiProperty({ type: () => TenantEntity })
+  @Field({ type: 'class', class: () => TenantEntity, required: false })
   @ManyToOne(() => TenantEntity, (t) => t.members, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tenant_id' })
   tenant?: TenantEntity;
 
-  @ApiProperty({ type: () => RoleEntity })
+  @Field({ type: 'class', class: () => RoleEntity, required: false })
   @ManyToOne(() => RoleEntity, (r) => r.members, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'role_id' })
   role?: RoleEntity;
 
-  @ApiProperty({ type: () => NotificationEntity, isArray: true })
+  @Field({ type: 'class', class: () => NotificationEntity, isArray: true, required: false })
   @OneToMany(() => NotificationEntity, (n) => n.destination)
   notifications?: NotificationEntity[];
 
-  @ApiProperty({ type: () => InviteEntity, isArray: true })
+  @Field({ type: 'class', class: () => InviteEntity, isArray: true, required: false })
   @OneToMany(() => InviteEntity, (i) => i.creator)
   invites?: InviteEntity[];
 

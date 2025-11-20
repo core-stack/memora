@@ -1,9 +1,9 @@
 import { Response } from 'express';
 
-import { AuthRequest } from '@/types/auth-request';
 import { AuthManager } from '@/modules/auth/auth-manager.service';
 import { Session } from '@/modules/auth/types';
-import { IS_PUBLIC_KEY, Public } from '@/shared/decorators/public';
+import { IS_PUBLIC_KEY } from '@/shared/controller/decorators/public';
+import { AuthRequest } from '@/types/auth-request';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 

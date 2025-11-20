@@ -2,14 +2,13 @@ import {
   Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
 
-import { ApiProperty } from '@nestjs/swagger';
-
-import { FromParams, TenantId } from '../shared/decorators/context';
+import { Field } from '@/shared/model';
+import { FromParams, TenantId } from '../shared/controller/decorators/context';
 import { FolderEntity } from './folder.entity';
 import { KnowledgeEntity } from './knowledge.entity';
+import { SourceType } from './metadata.types';
 import { TenantEntity } from './tenant.entity';
 
-import { SourceType } from './metadata.types';
 import type { SourceMetadata } from './metadata.types';
 
 export enum IndexStatus {
@@ -24,35 +23,35 @@ export enum IndexStatus {
 @Index('sources_key_idx', ['key'])
 @Index('sources_index_status_idx', ['indexStatus'])
 export class SourceEntity {
-  @ApiProperty({ description: 'The unique identifier of the source', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
+  @Field({ type: 'string', uuid: true, description: 'The unique identifier of the source' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ description: 'The key of the source file in the storage', example: 'documents/mydoc.pdf' })
+  @Field({ type: 'string', description: 'The key of the source file in the storage' })
   @Column({ type: 'text' })
   key: string;
 
-  @ApiProperty({ description: 'The path of the source file', example: '/documents/mydoc.pdf' })
+  @Field({ type: 'string', description: 'The path of the source file' })
   @Column({ type: 'text' })
   path: string;
 
-  @ApiProperty({ description: 'The name of the source', example: 'mydoc.pdf' })
+  @Field({ type: 'string', min: 1, max: 255, description: 'The name of the source' })
   @Column({ length: 255 })
   name: string;
 
-  @ApiProperty({ description: 'A brief description of the source', example: 'This document contains the project specifications.', required: false })
+  @Field({ type: 'string', required: false, description: 'A brief description of the source' })
   @Column({ type: 'text', nullable: true })
   description?: string;
 
-  @ApiProperty({ description: 'The original name of the file', example: 'My Document.pdf', required: false })
+  @Field({ type: 'string', required: false, min: 1, max: 255, description: 'The original name of the file' })
   @Column({ name: 'original_name', length: 255, nullable: true })
   originalName?: string;
 
-  @ApiProperty({ type: 'object', additionalProperties: true })
+  @Field({ type: 'class', class: () => Object, description: 'The metadata of the source' })
   @Column({ type: 'jsonb' })
   metadata: SourceMetadata;
 
-  @ApiProperty({ description: 'The type of the source', enum: SourceType, example: SourceType.DOC })
+  @Field({ type: 'enum', enum: SourceType, description: 'The type of the source' })
   @Column({
     name: 'source_type',
     type: 'enum',
@@ -60,7 +59,7 @@ export class SourceEntity {
   })
   sourceType: SourceType;
 
-  @ApiProperty({ description: 'The indexing status of the source', enum: IndexStatus, example: IndexStatus.INDEXED })
+  @Field({ type: 'enum', enum: IndexStatus, description: 'The indexing status of the source' })
   @Column({
     name: 'index_status',
     type: 'enum',
@@ -68,45 +67,45 @@ export class SourceEntity {
   })
   indexStatus: IndexStatus;
 
-  @ApiProperty({ description: 'The error message if indexing fails', example: 'Could not extract text from the document.', required: false })
+  @Field({ type: 'string', required: false, description: 'The error message if indexing fails' })
   @Column({ name: 'index_error', type: 'text', nullable: true })
   indexError?: string;
 
-  @ApiProperty({ description: 'The ID of the memory associated with this source', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef', required: false })
+  @Field({ type: 'string', uuid: true, required: false, description: 'The ID of the memory associated with this source' })
   @Column({ name: 'memory_id', length: 36, nullable: true })
   memoryId?: string;
 
   @FromParams('knowledgeId')
-  @ApiProperty({ description: 'The ID of the knowledge base this source belongs to', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
+  @Field({ type: 'string', uuid: true, description: 'The ID of the knowledge base this source belongs to' })
   @Column({ name: 'knowledge_id', length: 36 })
   knowledgeId: string;
 
   @TenantId()
-  @ApiProperty({ description: 'The ID of the tenant this source belongs to', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
+  @Field({ type: 'string', uuid: true, description: 'The ID of the tenant this source belongs to' })
   @Column({ name: 'tenant_id', length: 36 })
   tenantId: string;
 
-  @ApiProperty({ description: 'The ID of the folder this source belongs to', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef', required: false })
+  @Field({ type: 'string', uuid: true, required: false, description: 'The ID of the folder this source belongs to' })
   @Column({ name: 'folder_id', length: 36, nullable: true })
   folderId?: string;
 
-  @ApiProperty({ type: () => KnowledgeEntity, required: false })
+  @Field({ type: 'class', class: () => KnowledgeEntity, required: false })
   @ManyToOne(() => KnowledgeEntity, (knowledge) => knowledge.sources, { onDelete: 'CASCADE' })
   knowledge?: KnowledgeEntity;
 
-  @ApiProperty({ type: () => FolderEntity, required: false })
+  @Field({ type: 'class', class: () => FolderEntity, required: false })
   @ManyToOne(() => FolderEntity, (folder) => folder.sources, { onDelete: 'CASCADE', nullable: true })
   folder?: FolderEntity;
 
-  @ApiProperty({ type: () => TenantEntity, required: false })
+  @Field({ type: 'class', class: () => TenantEntity, required: false })
   @ManyToOne(() => TenantEntity, (tenant) => tenant.sources, { onDelete: 'CASCADE' })
   tenant?: TenantEntity;
 
-  @ApiProperty({ description: 'The timestamp when the source was created' })
+  @Field({ type: 'date', description: 'The timestamp when the source was created' })
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
-  @ApiProperty({ description: 'The timestamp when the source was last updated' })
+  @Field({ type: 'date', description: 'The timestamp when the source was last updated' })
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 }

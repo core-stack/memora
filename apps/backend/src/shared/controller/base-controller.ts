@@ -1,22 +1,20 @@
-import { ObjectLiteral } from "typeorm";
-import { GenericResponse } from "./generic-response";
-import { Constructor } from "@/types/constructor";
-import { ControllerResponses } from "./types";
-import { Body, Param, ParseUUIDPipe } from "@nestjs/common";
-import { ApiBody } from "@nestjs/swagger";
-import { HttpGet } from "./decorators";
-import { Service } from "../service";
-import { ControllerFilter, Filter } from "../decorators/filter";
-import { FilterOptions } from "../filter-options";
-import { HttpDelete, HttpPost, HttpPut } from "./decorators";
+import { ObjectLiteral } from 'typeorm';
+
+import { Constructor } from '@/types/constructor';
+import { Body, Param, ParseUUIDPipe } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
+
+import { FilterOptions } from '../filter-options';
+import { Service } from '../service';
+import { HttpDelete, HttpGet, HttpPost, HttpPut } from './decorators';
+import { ApiFilterQuery } from './decorators/api-filter-options';
+import { ControllerFilter, Filter } from './decorators/filter';
 import {
-  getDefaultCreateResponses,
-  getDefaultDeleteResponses,
-  getDefaultFindByIDResponses,
-  getDefaultFindResponses,
-  getDefaultUpdateResponses
-} from "./default-response";
-import { ApiFilterQuery } from "./decorators/api-filter-options";
+  getDefaultCreateResponses, getDefaultDeleteResponses, getDefaultFindByIDResponses,
+  getDefaultFindResponses, getDefaultUpdateResponses
+} from './default-response';
+import { GenericResponse } from './generic-response';
+import { ControllerResponses } from './types';
 
 export function BaseController<
   TEntity extends ObjectLiteral,

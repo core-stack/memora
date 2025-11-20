@@ -30,6 +30,7 @@ export class RoleService extends Service<RoleEntity> implements OnModuleInit {
       }
     }
   }
+
   override create(input: CreateRoleDto, manager?: EntityManager): Promise<RoleEntity> {
     return super.create(new RoleEntity({
       key: input.key,

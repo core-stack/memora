@@ -1,12 +1,10 @@
 import { LLMEntity } from '@/entities/llm.entity';
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@/shared/decorators/controller';
+import { Controller, HttpGet } from '@/shared/controller/decorators';
 import { LLMPreset } from '@/types/llm-preset';
-import { Get } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 
 import { LLMService } from './llm.service';
-import { HttpGet } from '@/shared/controller/decorators';
 
 @Controller('tenant/:tenantId/llm')
 export class LLMController extends BaseController({ entity: LLMEntity }) {

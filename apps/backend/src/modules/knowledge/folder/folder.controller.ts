@@ -1,5 +1,5 @@
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@/shared/decorators/controller';
+import { Controller } from '@/shared/controller/decorators';
 
 import { FolderEntity } from '../../../entities/folder.entity';
 import { CreateFolderDto } from './dto/create-folder.dto';

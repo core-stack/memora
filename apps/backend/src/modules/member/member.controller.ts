@@ -1,6 +1,6 @@
 
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@/shared/decorators/controller';
+import { Controller } from '@/shared/controller/decorators';
 
 import { MemberEntity } from '../../entities/member.entity';
 import { UpdateMemberDto } from './dto/update-member.dto';

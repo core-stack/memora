@@ -1,12 +1,13 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { AuthService } from "./auth.service";
-import { env } from "@/env";
-import { Public } from "@/shared/decorators/public";
-import { HttpPost } from "@/shared/controller/decorators";
-import { ActiveAccountDto } from "./dto/active-account.dto";
-import { CreateAccountDto } from "./dto/create-account.dto";
-import { ForgetPasswordDto } from "./dto/forget-password.dto";
-import { LoginDto } from "./dto/login.dto";
+import { env } from '@/env';
+import { HttpPost } from '@/shared/controller/decorators';
+import { Public } from '@/shared/controller/decorators/public';
+import { Body, Controller } from '@nestjs/common';
+
+import { AuthService } from './auth.service';
+import { ActiveAccountDto } from './dto/active-account.dto';
+import { CreateAccountDto } from './dto/create-account.dto';
+import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Public('login', 'logout', 'createAccount', 'activeAccount', 'forgetPassword')
 @Controller("auth")

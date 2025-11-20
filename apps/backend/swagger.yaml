@@ -681,6 +681,20 @@ paths:
         "201":
           description: ""
       tags: *a4
+  /api/auth/active-account:
+    post:
+      operationId: AuthController_activeAccount
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActiveAccountDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
   /api/auth/forget-password:
     post:
       operationId: AuthController_forgetPassword
@@ -1999,7 +2013,22 @@ paths:
   "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat/{chatId}/message/new":
     post:
       operationId: MessageController_newMessage
-      parameters: []
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -2013,6 +2042,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateMessageResponseDto"
+      security:
+        - access-token: []
       tags:
         &a13
         - Message
@@ -2023,6 +2054,21 @@ paths:
         - name: id
           required: true
           in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: chatId
+          in: path
+          required: true
           schema:
             type: string
       responses:
@@ -2050,6 +2096,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
       tags: *a13
     put:
       operationId: MessageController_update
@@ -2057,6 +2105,21 @@ paths:
         - name: id
           required: true
           in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: chatId
+          in: path
+          required: true
           schema:
             type: string
       requestBody:
@@ -2090,6 +2153,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
       tags: *a13
     delete:
       operationId: MessageController_delete
@@ -2097,6 +2162,21 @@ paths:
         - name: id
           required: true
           in: path
+          schema:
+            type: string
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: chatId
+          in: path
+          required: true
           schema:
             type: string
       responses:
@@ -2124,11 +2204,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
       tags: *a13
   "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat/{chatId}/message":
     get:
       operationId: MessageController_findMany
-      parameters: []
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Records found successfully
@@ -2150,10 +2247,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
       tags: *a13
     post:
       operationId: MessageController_create
-      parameters: []
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: knowledgeSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -2185,6 +2299,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
       tags: *a13
   "/api/tenant/{tenantId}/llm/presets":
     get:
@@ -2464,27 +2580,27 @@ components:
         id:
           type: string
           description: The unique identifier of the invite
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         tenantId:
           type: string
           description: The ID of the tenant this invite belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         email:
           type: string
           description: The email address of the person being invited
-          example: user@example.com
+          format: email
         roleId:
           type: string
           description: The ID of the role assigned to the invited person
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         userId:
           type: string
           description: The ID of the user being invited, if they already exist
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         creatorId:
           type: string
           description: The ID of the user who created the invite
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         expiresAt:
           format: date-time
           type: string
@@ -2516,7 +2632,6 @@ components:
         - updatedAt
         - tenant
         - role
-        - user
         - creator
     RoleEntity:
       type: object
@@ -2524,34 +2639,30 @@ components:
         id:
           type: string
           description: The unique identifier of the role
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         key:
           type: string
           description: The key of the role
-          example: admin
         name:
           type: string
           description: The name of the role
-          example: Administrator
         permissions:
           type: number
           description: The permissions of the role as a bitmask
-          example: 65535
         scope:
           type: string
           description: The scope of the role
           enum:
             - TENANT
             - GLOBAL
-          example: TENANT
         tenantId:
           type: string
           description: The ID of the tenant this role belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         createdById:
           type: string
           description: The ID of the user who created the role
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         createdAt:
           format: date-time
           type: string
@@ -2589,35 +2700,69 @@ components:
       properties:
         id:
           type: string
-          example: 92b8a15b-13b2-4a1a-bf41-bba3e7d64d9a
-          readOnly: true
+          description: The unique identifier of the account
+          format: uuid
         provider:
           type: string
+          description: The provider of the account
           example: google
-          readOnly: true
         providerAccountId:
           type: string
+          description: The provider account id of the account
           example: "11786321736412"
-          readOnly: true
         userId:
           type: string
-          example: 2b0a9e10-1d83-4f61-8a3f-bfdc62131d4a
+          description: The unique identifier of the user
+          format: uuid
         user:
           $ref: "#/components/schemas/UserEntity"
         createdAt:
           format: date-time
           type: string
-          example: 2025-11-12T13:00:00Z
-          readOnly: true
+          description: The date the account was created
+          example: 2025-11-20T10:55:58.696Z
         updatedAt:
           format: date-time
           type: string
-          example: 2025-11-12T13:00:00Z
-          readOnly: true
+          description: The date the account was updated
+          example: 2025-11-20T10:55:58.696Z
       required:
         - id
         - provider
         - providerAccountId
+        - userId
+        - user
+        - createdAt
+        - updatedAt
+    VerificationTokenEntity:
+      type: object
+      properties:
+        token:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - ACTIVE_ACCOUNT
+            - RESET_PASSWORD
+        expires:
+          format: date-time
+          type: string
+        userId:
+          type: string
+          format: uuid
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        user:
+          $ref: "#/components/schemas/UserEntity"
+      required:
+        - token
+        - type
+        - expires
         - userId
         - createdAt
         - updatedAt
@@ -2626,33 +2771,42 @@ components:
       properties:
         id:
           type: string
-          example: 2b0a9e10-1d83-4f61-8a3f-bfdc62131d4a
+          description: The unique identifier of the user
+          format: uuid
         name:
           type: string
-          example: Mayron Silva
+          description: The name of the user
         email:
           type: string
-          example: mayron@example.com
+          description: The email of the user
+          format: email
         password:
           type: string
+          description: The password of the user
+          format: password
         emailVerified:
           format: date-time
           type: string
-          example: 2025-11-12T13:00:00Z
+          description: The date the user email was verified
+          example: 2025-11-20T10:55:58.696Z
         image:
           type: string
-          example: https://example.com/avatar.png
+          description: The image of the user
+          format: uri
         roleId:
           type: string
-          example: f41b4f7e-27b1-4569-a1cd-3bcb5f94a520
+          description: The unique identifier of the role
+          format: uuid
         createdAt:
           format: date-time
           type: string
-          example: 2025-11-12T13:00:00Z
+          description: The date the user was created
+          example: 2025-11-20T10:55:58.696Z
         updatedAt:
           format: date-time
           type: string
-          example: 2025-11-12T13:00:00Z
+          description: The date the user was updated
+          example: 2025-11-20T10:55:58.696Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:
@@ -2667,6 +2821,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/MemberEntity"
+        verificationTokens:
+          type: array
+          items:
+            $ref: "#/components/schemas/VerificationTokenEntity"
       required:
         - id
         - name
@@ -2677,41 +2835,43 @@ components:
         - roleId
         - createdAt
         - updatedAt
+        - role
+        - accounts
+        - invites
+        - members
+        - verificationTokens
     NotificationEntity:
       type: object
       properties:
         id:
           type: string
           description: The unique identifier of the notification
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         title:
           type: string
           description: The title of the notification
-          example: New Message
         description:
           type: string
           description: The description of the notification
-          example: You have a new message from John Doe.
         link:
           type: string
           description: A link associated with the notification
-          example: /messages/123
         read:
           type: boolean
           description: Indicates if the notification has been read
-          example: false
+          default: false
         tenantId:
           type: string
           description: The ID of the tenant this notification belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         createdById:
           type: string
           description: The ID of the user who created the notification
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         destinationId:
           type: string
           description: The ID of the user who should receive the notification
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         createdAt:
           format: date-time
           type: string
@@ -2742,23 +2902,23 @@ components:
         id:
           type: string
           description: The unique identifier of the member
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         owner:
           type: boolean
           description: Indicates if the member is the owner of the tenant
-          example: false
+          default: false
         userId:
           type: string
           description: The ID of the user
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         tenantId:
           type: string
           description: The ID of the tenant
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         roleId:
           type: string
           description: The ID of the role assigned to the member
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         createdAt:
           format: date-time
           type: string
@@ -2789,43 +2949,34 @@ components:
         - roleId
         - createdAt
         - updatedAt
-        - user
-        - tenant
-        - role
-        - notifications
-        - invites
     TenantEntity:
       type: object
       properties:
         id:
           type: string
           description: The unique identifier of the tenant
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
-          readOnly: true
+          format: uuid
         name:
           type: string
           description: The name of the tenant
-          example: My Awesome Tenant
         description:
           type: string
           description: A brief description of the tenant
-          example: This is a tenant for managing various services.
         backgroundImage:
           type: string
           description: The URL of the background image for the tenant
-          example: https://example.com/background.jpg
+          format: uri
+        disabledAt:
+          format: date-time
+          type: string
         createdAt:
           format: date-time
           type: string
           description: The timestamp when the tenant was created
-          example: 2022-12-31T23:59:59.000Z
-          readOnly: true
         updatedAt:
           format: date-time
           type: string
           description: The timestamp when the tenant was last updated
-          example: 2023-01-01T10:30:00.000Z
-          readOnly: true
         members:
           description: The members associated with this tenant
           type: array
@@ -2857,41 +3008,31 @@ components:
         - backgroundImage
         - createdAt
         - updatedAt
-        - members
-        - invites
-        - notifications
-        - roles
-        - sources
     SourceEntity:
       type: object
       properties:
         id:
           type: string
           description: The unique identifier of the source
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         key:
           type: string
           description: The key of the source file in the storage
-          example: documents/mydoc.pdf
         path:
           type: string
           description: The path of the source file
-          example: /documents/mydoc.pdf
         name:
           type: string
           description: The name of the source
-          example: mydoc.pdf
         description:
           type: string
           description: A brief description of the source
-          example: This document contains the project specifications.
         originalName:
           type: string
           description: The original name of the file
-          example: My Document.pdf
         metadata:
           type: object
-          additionalProperties: true
+          description: The metadata of the source
         sourceType:
           type: string
           description: The type of the source
@@ -2902,7 +3043,6 @@ components:
             - VIDEO
             - AUDIO
             - IMAGE
-          example: DOC
         indexStatus:
           type: string
           description: The indexing status of the source
@@ -2911,27 +3051,25 @@ components:
             - INDEXING
             - INDEXED
             - ERROR
-          example: INDEXED
         indexError:
           type: string
           description: The error message if indexing fails
-          example: Could not extract text from the document.
         memoryId:
           type: string
           description: The ID of the memory associated with this source
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         knowledgeId:
           type: string
           description: The ID of the knowledge base this source belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         tenantId:
           type: string
           description: The ID of the tenant this source belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         folderId:
           type: string
           description: The ID of the folder this source belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         knowledge:
           $ref: "#/components/schemas/KnowledgeEntity"
         folder:
@@ -2964,25 +3102,23 @@ components:
         id:
           type: string
           description: The unique identifier of the folder
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         knowledgeId:
           type: string
           description: The ID of the associated knowledge base
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         knowledge:
           $ref: "#/components/schemas/KnowledgeEntity"
         name:
           type: string
           description: The name of the folder
-          example: My Documents
         root:
           type: boolean
           description: Indicates if the folder is a root folder
-          example: true
         parentId:
           type: string
           description: The ID of the parent folder
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         parent:
           $ref: "#/components/schemas/FolderEntity"
         children:
@@ -2996,7 +3132,7 @@ components:
         tenantId:
           type: string
           description: The ID of the tenant this folder belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         createdAt:
           format: date-time
           type: string
@@ -3010,7 +3146,6 @@ components:
         - knowledgeId
         - knowledge
         - name
-        - parent
         - children
         - sources
         - tenantId
@@ -3022,7 +3157,7 @@ components:
         id:
           type: string
           description: The unique identifier of the message
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         messageRole:
           type: string
           description: The role of the message sender
@@ -3030,27 +3165,25 @@ components:
             - user
             - assistant
             - system
-          example: user
         content:
           type: string
           description: The content of the message
-          example: Hello, world!
         chatId:
           type: string
           description: The ID of the chat this message belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         chat:
           $ref: "#/components/schemas/ChatEntity"
         knowledgeId:
           type: string
           description: The ID of the knowledge base associated with this message
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         knowledge:
           $ref: "#/components/schemas/KnowledgeEntity"
         tenantId:
           type: string
           description: The ID of the tenant this message belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         createdAt:
           format: date-time
           type: string
@@ -3064,9 +3197,7 @@ components:
         - messageRole
         - content
         - chatId
-        - chat
         - knowledgeId
-        - knowledge
         - tenantId
         - createdAt
         - updatedAt
@@ -3076,17 +3207,14 @@ components:
         id:
           type: string
           description: The unique identifier of the chat
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
-          readOnly: true
+          format: uuid
         name:
           type: string
           description: The name of the chat
-          example: My Chat
         knowledgeId:
           type: string
           description: The ID of the associated knowledge base
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
-          readOnly: true
+          format: uuid
         knowledge:
           $ref: "#/components/schemas/KnowledgeEntity"
         messages:
@@ -3096,18 +3224,15 @@ components:
         tenantId:
           type: string
           description: The ID of the tenant this chat belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
-          readOnly: true
+          format: uuid
         createdAt:
           format: date-time
           type: string
           description: The timestamp when the chat was created
-          readOnly: true
         updatedAt:
           format: date-time
           type: string
           description: The timestamp when the chat was last updated
-          readOnly: true
       required:
         - id
         - name
@@ -3123,39 +3248,34 @@ components:
         id:
           type: string
           description: The unique identifier of the LLM
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         default:
           type: boolean
           description: Indicates if this is the default LLM for its type
-          example: true
+          default: false
         name:
           type: string
           description: The name of the LLM
-          example: My Text Model
         model:
           type: string
           description: The model identifier
-          example: gpt-3.5-turbo
         config:
           type: object
           description: The configuration for the LLM
-          example:
-            temperature: 0.7
         type:
           type: string
           description: The type of the LLM
           enum:
             - EMBEDDING
             - TEXT
-          example: TEXT
         tenantId:
           type: string
           description: The ID of the tenant this LLM belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         creatorId:
           type: string
           description: The ID of the user who created the LLM
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         knowledgeLLMs:
           type: array
           items:
@@ -3185,23 +3305,23 @@ components:
         id:
           type: string
           description: The unique identifier of the knowledge-llm link
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         default:
           type: boolean
           description: Indicates if this is the default LLM for the knowledge base
-          example: true
+          default: false
         knowledge:
           $ref: "#/components/schemas/KnowledgeEntity"
         llm:
           $ref: "#/components/schemas/LLMEntity"
         knowledgeId:
-          type: object
+          type: string
           description: The ID of the associated knowledge base
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         llmId:
-          type: object
+          type: string
           description: The ID of the associated LLM
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         createdAt:
           format: date-time
           type: string
@@ -3225,19 +3345,16 @@ components:
         id:
           type: string
           description: The unique identifier of the knowledge base
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         slug:
           type: string
           description: The URL-friendly slug for the knowledge base
-          example: my-knowledge-base
         title:
           type: string
           description: The title of the knowledge base
-          example: My Knowledge Base
         description:
           type: string
           description: A brief description of the knowledge base
-          example: This knowledge base contains documents about our products.
         status:
           type: string
           description: The status of the knowledge base
@@ -3245,23 +3362,19 @@ components:
             - DELETING
             - DELETE_ERROR
             - OK
-          example: OK
         deleteError:
           type: string
           description: The error message if deletion fails
-          example: Could not delete all associated files.
         files:
           type: number
           description: The number of files in the knowledge base
-          example: 10
         storage:
-          type: object
+          type: number
           description: The total storage used by the knowledge base in bytes
-          example: 1048576
         tenantId:
           type: string
           description: The ID of the tenant this knowledge base belongs to
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
         createdAt:
           format: date-time
           type: string
@@ -3325,11 +3438,10 @@ components:
         name:
           type: string
           description: The name of the folder
-          example: My Documents
         parentId:
           type: string
           description: The ID of the parent folder
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
       required:
         - name
     UpdateFolderDto:
@@ -3338,7 +3450,6 @@ components:
         name:
           type: string
           description: The name of the folder
-          example: My Documents
       required:
         - name
     CreateKnowledgeDto:
@@ -3347,15 +3458,12 @@ components:
         slug:
           type: string
           description: The URL-friendly slug for the knowledge base
-          example: my-knowledge-base
         title:
           type: string
           description: The title of the knowledge base
-          example: My Knowledge Base
         description:
           type: string
           description: A brief description of the knowledge base
-          example: This knowledge base contains documents about our products.
       required:
         - slug
         - title
@@ -3365,11 +3473,9 @@ components:
         title:
           type: string
           description: The title of the knowledge base
-          example: My Knowledge Base
         description:
           type: string
           description: A brief description of the knowledge base
-          example: This knowledge base contains documents about our products.
     LoginDto:
       type: object
       properties:
@@ -3417,15 +3523,12 @@ components:
         key:
           type: string
           description: The key of the role
-          example: admin
         name:
           type: string
           description: The name of the role
-          example: Administrator
         permissions:
           type: number
           description: The permissions of the role as a bitmask
-          example: 65535
       required:
         - key
         - name
@@ -3436,15 +3539,12 @@ components:
         key:
           type: string
           description: The key of the role
-          example: admin
         name:
           type: string
           description: The name of the role
-          example: Administrator
         permissions:
           type: number
           description: The permissions of the role as a bitmask
-          example: 65535
       required:
         - key
         - name
@@ -3455,22 +3555,20 @@ components:
         roleId:
           type: string
           description: The ID of the role assigned to the member
-          example: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          format: uuid
     CreateTenantDto:
       type: object
       properties:
         name:
           type: string
           description: The name of the tenant
-          example: My Awesome Tenant
         description:
           type: string
           description: A brief description of the tenant
-          example: This is a tenant for managing various services.
         backgroundImage:
           type: string
           description: The URL of the background image for the tenant
-          example: https://example.com/background.jpg
+          format: uri
       required:
         - name
         - backgroundImage
@@ -3518,7 +3616,6 @@ components:
         name:
           type: string
           description: The name of the chat
-          example: My Chat
       required:
         - name
     UpdateChatDto:
@@ -3527,7 +3624,6 @@ components:
         name:
           type: string
           description: The name of the chat
-          example: My Chat
       required:
         - name
     CreateMessageDto:
@@ -3536,7 +3632,6 @@ components:
         content:
           type: string
           description: The content of the message
-          example: Hello, world!
       required:
         - content
     CreateMessageResponseDto:

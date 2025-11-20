@@ -1,4 +1,4 @@
-import z, { config } from 'zod';
+import z from 'zod';
 
 import { filterSchema, orderSchema } from './shared';
 

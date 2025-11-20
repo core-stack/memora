@@ -1,5 +1,5 @@
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@/shared/decorators/controller';
+import { Controller } from '@/shared/controller/decorators';
 
 import { TenantEntity } from '../../entities/tenant.entity';
 import { CreateTenantDto } from './dto/create-tenant.dto';

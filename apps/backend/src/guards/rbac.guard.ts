@@ -1,7 +1,5 @@
-
-
+import { Permissions } from '@/shared/controller/decorators/permissions';
 import { AuthRequest } from '@/types/auth-request';
-import { Permissions } from '@/shared/decorators/role';
 import {
   CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException
 } from '@nestjs/common';

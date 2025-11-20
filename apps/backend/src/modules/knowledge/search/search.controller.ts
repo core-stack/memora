@@ -1,4 +1,4 @@
-import { Controller } from '@/shared/decorators/controller';
+import { Controller } from '@/shared/controller/decorators';
 import { Get } from '@nestjs/common';
 
 import { SearchService } from './search.service';

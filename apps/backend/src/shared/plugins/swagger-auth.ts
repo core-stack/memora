@@ -1,7 +1,8 @@
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { applyDecorators } from '@nestjs/common';
-import { IS_PUBLIC_KEY } from '../decorators/public';
 import { getAllClassMethods } from '@/utils/get-all-class-methods';
+import { applyDecorators } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
+
+import { IS_PUBLIC_KEY } from '../controller/decorators/public';
 
 export function SwaggerAuth() {
   return (target: any) => {

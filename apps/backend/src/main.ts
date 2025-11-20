@@ -1,10 +1,10 @@
 import cookieParser from 'cookie-parser';
+import * as fs from 'fs';
+import * as yaml from 'yaml';
 
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
-import * as yaml from 'yaml';
-import * as fs from 'fs';
+import { apiReference } from '@scalar/nestjs-api-reference';
 
 import { AppModule } from './app.module';
 import { env } from './env';
@@ -26,22 +26,19 @@ async function bootstrap() {
     .setDescription('The Snipet API description')
     .setVersion('1.0')
     .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'Enter JWT token',
-      },
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', description: 'Enter JWT token' },
       'access-token',
     )
     .build();
 
 
   const document = SwaggerModule.createDocument(app, config);
+
   const yamlDocument = yaml.stringify(document);
   fs.writeFileSync('./swagger.yaml', yamlDocument);
 
-  SwaggerModule.setup('api', app, document);
+  app.use('/api', apiReference({ content: document }));
+  SwaggerModule.setup('swagger', app, document);
 
   app.use(cookieParser());
   await app.listen(env.APP_PORT);

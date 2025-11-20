@@ -1,6 +1,6 @@
 import { TenantGuard } from '@/guards/tenant.guard';
 import { BaseController } from '@/shared/controller';
-import { Controller } from '@/shared/decorators/controller';
+import { Controller } from '@/shared/controller/decorators';
 import { UseGuards } from '@nestjs/common';
 
 import { KnowledgeEntity } from '../../entities/knowledge.entity';

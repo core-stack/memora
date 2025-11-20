@@ -1,9 +1,9 @@
 import { BaseController } from '@/shared/controller';
+import { Controller, HttpGet } from '@/shared/controller/decorators';
+import { getDefaultFindByIDResponses } from '@/shared/controller/default-response';
+
 import { UserEntity } from '../../entities/user.entity';
 import { UserService } from './user.service';
-import { Controller } from '@/shared/decorators/controller';
-import { HttpGet } from '@/shared/controller/decorators';
-import { getDefaultFindByIDResponses } from '@/shared/controller/default-response';
 
 @Controller('user')
 export class UserController extends BaseController({
