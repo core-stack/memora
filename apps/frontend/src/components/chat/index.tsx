@@ -1,9 +1,13 @@
 import { ChatProvider } from './context';
 import { ChatRoot } from './root';
-
-export const Chat = ({ chatId }: { chatId?: string }) => {
+type ChatProps = {
+  tenantId: string;
+  knowledgeId: string;
+  chatId?: string;
+}
+export const Chat = (props: ChatProps) => {
   return (
-    <ChatProvider chatId={chatId}>
+    <ChatProvider {...props}>
       <ChatRoot />
     </ChatProvider>
   )

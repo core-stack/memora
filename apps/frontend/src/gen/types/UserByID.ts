@@ -13,24 +13,6 @@ export type UserByIDPathParams = {
     id: string;
 };
 
-export type UserByIDQueryParams = {
-    /**
-     * @description Maximum number of records to return
-     * @type number | undefined
-    */
-    limit?: number;
-    /**
-     * @description Number of records to skip
-     * @type number | undefined
-    */
-    offset?: number;
-    /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields:
-     * @type array | undefined
-    */
-    sort?: string[];
-};
-
 /**
  * @description Record found successfully
 */
@@ -56,6 +38,5 @@ export type UserByIDQueryResponse = UserByID200;
 export type UserByIDQuery = {
     Response: UserByID200;
     PathParams: UserByIDPathParams;
-    QueryParams: UserByIDQueryParams;
     Errors: UserByID400 | UserByID404 | UserByID500;
 };

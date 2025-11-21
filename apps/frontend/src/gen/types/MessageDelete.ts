@@ -18,7 +18,7 @@ export type MessageDeletePathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
     /**
      * @type string
     */

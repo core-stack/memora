@@ -8,7 +8,7 @@ import { FileURLResponseDto } from "./dto/file-url-response.dto";
 import { GetUploadUrlDto } from "./dto/get-upload-url.dto";
 import { SourceService } from "./source.service";
 
-@Controller("tenant/:tenantId/knowledge/:knowledgeSlug/source")
+@Controller("tenant/:tenantId/knowledge/:knowledgeId/source")
 export class SourceController extends BaseController({
   entity: SourceEntity,
   ignore: [ "create", "update", "delete" ],
@@ -24,7 +24,7 @@ export class SourceController extends BaseController({
     return this.service.view(sourceId);
   }
 
-  @HttpGet(":id/download-url")
+  @HttpPost(":id/download-url")
   @ApiResponse({ type: FileURLResponseDto, status: 200 })
   async download(@Param("id", ParseUUIDPipe) sourceId: string) {
     return this.service.downloadUrl(sourceId);

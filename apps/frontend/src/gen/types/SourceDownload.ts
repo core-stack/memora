@@ -17,14 +17,14 @@ export type SourceDownloadPathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 export type SourceDownload200 = FileURLResponseDto;
 
-export type SourceDownloadQueryResponse = SourceDownload200;
+export type SourceDownloadMutationResponse = SourceDownload200;
 
-export type SourceDownloadQuery = {
+export type SourceDownloadMutation = {
     Response: SourceDownload200;
     PathParams: SourceDownloadPathParams;
     Errors: any;

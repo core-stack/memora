@@ -18,25 +18,7 @@ export type SourceByIDPathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
-};
-
-export type SourceByIDQueryParams = {
-    /**
-     * @description Maximum number of records to return
-     * @type number | undefined
-    */
-    limit?: number;
-    /**
-     * @description Number of records to skip
-     * @type number | undefined
-    */
-    offset?: number;
-    /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields:
-     * @type array | undefined
-    */
-    sort?: string[];
+    knowledgeId: string;
 };
 
 /**
@@ -64,6 +46,5 @@ export type SourceByIDQueryResponse = SourceByID200;
 export type SourceByIDQuery = {
     Response: SourceByID200;
     PathParams: SourceByIDPathParams;
-    QueryParams: SourceByIDQueryParams;
     Errors: SourceByID400 | SourceByID404 | SourceByID500;
 };

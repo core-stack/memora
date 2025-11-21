@@ -9,7 +9,7 @@ import { z } from "zod/v4";
 export const sourceRetryPathParamsSchema = z.object({
     "id": z.string(),
 "tenantId": z.string(),
-"knowledgeSlug": z.string()
+"knowledgeId": z.string()
     })
 
 export type SourceRetryPathParamsSchema = z.infer<typeof sourceRetryPathParamsSchema>

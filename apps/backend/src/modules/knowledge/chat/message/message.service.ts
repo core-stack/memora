@@ -19,7 +19,6 @@ export class MessageService extends Service<MessageEntity> {
   entity = MessageEntity;
 
   @Inject() private readonly llmService: LLMService;
-  @Inject() private readonly knowledgeService: KnowledgeService;
   @Inject(forwardRef(() => ChatMemoryService)) private readonly chatMemoryService: ChatMemoryService;
   @Inject() private readonly sourceMemoryService: SourceMemoryService;
   @Inject() private readonly promptService: PromptService;
@@ -29,8 +28,7 @@ export class MessageService extends Service<MessageEntity> {
     content: string,
     manager?: EntityManager
   ): Promise<CreateMessageResponseDto> {
-    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
-
+    const knowledgeId = this.context.params.shouldGetString("knowledgeId");
     //#region get chat
     const chatId = this.context.params.shouldGetString("chatId");
     const chat = await this.chatService.findWithCountMessages(chatId, manager);

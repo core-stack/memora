@@ -15,10 +15,7 @@ export const memberByIDPathParamsSchema = z.object({
 export type MemberByIDPathParamsSchema = z.infer<typeof memberByIDPathParamsSchema>
 
 export const memberByIDQueryParamsSchema = z.object({
-    "relations": z.optional(z.array(z.string()).describe("Relations. Allowed fields: user, role, tenant")),
-"limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
-"offset": z.optional(z.coerce.number().describe("Number of records to skip")),
-"sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: "))
+    "relations": z.optional(z.array(z.string()).describe("Relations. Allowed fields: user, role, tenant"))
     }).optional()
 
 export type MemberByIDQueryParamsSchema = z.infer<typeof memberByIDQueryParamsSchema>

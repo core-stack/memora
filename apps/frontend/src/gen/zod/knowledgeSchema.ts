@@ -16,7 +16,10 @@ export type KnowledgePathParamsSchema = z.infer<typeof knowledgePathParamsSchema
 export const knowledgeQueryParamsSchema = z.object({
     "limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
 "offset": z.optional(z.coerce.number().describe("Number of records to skip")),
-"sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: "))
+"sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: slug, storage, title")),
+"filter[slug]": z.optional(z.string().describe("Filter by slug")),
+"filter[storage]": z.optional(z.string().describe("Filter by storage")),
+"filter[title]": z.optional(z.string().describe("Filter by title"))
     }).optional()
 
 export type KnowledgeQueryParamsSchema = z.infer<typeof knowledgeQueryParamsSchema>

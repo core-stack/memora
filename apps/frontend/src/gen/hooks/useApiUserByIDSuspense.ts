@@ -4,34 +4,34 @@
 */
 
 import fetch from "@kubb/plugin-client/clients/axios";
-import type { UserByIDQueryResponse, UserByIDPathParams, UserByIDQueryParams, UserByID400, UserByID404, UserByID500 } from "../types/UserByID.ts";
+import type { UserByIDQueryResponse, UserByIDPathParams, UserByID400, UserByID404, UserByID500 } from "../types/UserByID.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
 import { useApirByIDQueryResponseSchema } from "../zod/useApirByIDSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const useApirByIDSuspenseQueryKeyFn = (id: UserByIDPathParams["id"], params?: UserByIDQueryParams) => [{ url: '/api/user/:id', params: {id:id} }, ...(params ? [params] : [])] as const
+export const useApirByIDSuspenseQueryKeyFn = (id: UserByIDPathParams["id"]) => [{ url: '/api/user/:id', params: {id:id} }] as const
 
 export type UserByIDSuspenseQueryKey = ReturnType<typeof useApirByIDSuspenseQueryKeyFn>
 
 /**
  * {@link /api/user/:id}
  */
-export async function useApirByIDSuspense(id: UserByIDPathParams["id"], params?: UserByIDQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function useApirByIDSuspense(id: UserByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<UserByIDQueryResponse, ResponseErrorConfig<UserByID400 | UserByID404 | UserByID500>, unknown>({ method : "GET", url : `/api/user/${id}`, baseURL : "/", params, ... requestConfig })  
+  const res = await request<UserByIDQueryResponse, ResponseErrorConfig<UserByID400 | UserByID404 | UserByID500>, unknown>({ method : "GET", url : `/api/user/${id}`, baseURL : "/", ... requestConfig })  
   return useApirByIDQueryResponseSchema.parse(res.data)
 }
 
-export function useApirByIDSuspenseQueryOptions(id: UserByIDPathParams["id"], params?: UserByIDQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = useApirByIDSuspenseQueryKeyFn(id, params)
+export function useApirByIDSuspenseQueryOptions(id: UserByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = useApirByIDSuspenseQueryKeyFn(id)
   return queryOptions<UserByIDQueryResponse, ResponseErrorConfig<UserByID400 | UserByID404 | UserByID500>, UserByIDQueryResponse, typeof queryKey>({
    enabled: !!(id),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return useApirByIDSuspense(id, params, config)
+      return useApirByIDSuspense(id, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function useApirByIDSuspenseQueryOptions(id: UserByIDPathParams["id"], pa
 /**
  * {@link /api/user/:id}
  */
-export function useApiUserByIDSuspense<TData = UserByIDQueryResponse, TQueryKey extends QueryKey = UserByIDSuspenseQueryKey>(id: UserByIDPathParams["id"], params?: UserByIDQueryParams, options: 
+export function useApiUserByIDSuspense<TData = UserByIDQueryResponse, TQueryKey extends QueryKey = UserByIDSuspenseQueryKey>(id: UserByIDPathParams["id"], options: 
 {
   query?: Partial<UseSuspenseQueryOptions<UserByIDQueryResponse, ResponseErrorConfig<UserByID400 | UserByID404 | UserByID500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiUserByIDSuspense<TData = UserByIDQueryResponse, TQueryKey 
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? useApirByIDSuspenseQueryKeyFn(id, params)
+  const queryKey = queryOptions?.queryKey ?? useApirByIDSuspenseQueryKeyFn(id)
 
   const query = useSuspenseQuery({
-   ...useApirByIDSuspenseQueryOptions(id, params, config),
+   ...useApirByIDSuspenseQueryOptions(id, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<UserByID400 | UserByID404 | UserByID500>> & { queryKey: TQueryKey }

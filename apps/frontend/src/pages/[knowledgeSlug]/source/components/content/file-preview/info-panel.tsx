@@ -15,10 +15,10 @@ import { SourceType } from '@snipet/schemas';
 
 import { IndexStatusBadge } from './index-status-badge';
 
-import type { Source } from '@snipet/schemas';
+import type { SourceEntity } from '@/gen';
 
 interface FileInfoPanelProps {
-  item?: Source;
+  item?: SourceEntity;
   isLoading: boolean;
   onClose?: () => void
   onEdit?: (id: string) => void;

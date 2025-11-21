@@ -7,7 +7,7 @@ import { z } from "zod/v4";
 
 export const searchSearchByTermPathParamsSchema = z.object({
     "tenantId": z.string(),
-"knowledgeSlug": z.string()
+"knowledgeIdearch": z.string()
     })
 
 export type SearchSearchByTermPathParamsSchema = z.infer<typeof searchSearchByTermPathParamsSchema>

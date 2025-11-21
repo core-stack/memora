@@ -10,7 +10,7 @@ import { z } from "zod/v4";
 
 export const folderCreatePathParamsSchema = z.object({
     "tenantId": z.string(),
-"knowledgeSlug": z.string()
+"knowledgeId": z.string()
     })
 
 export type FolderCreatePathParamsSchema = z.infer<typeof folderCreatePathParamsSchema>

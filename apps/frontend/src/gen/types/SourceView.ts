@@ -17,7 +17,7 @@ export type SourceViewPathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 export type SourceView200 = FileURLResponseDto;

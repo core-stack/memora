@@ -10,38 +10,38 @@ import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tansta
 import { folderCreateMutationResponseSchema, folderCreateMutationRequestSchema } from "../zod/folderCreateSchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
-export const folderCreateMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder' }] as const
+export const folderCreateMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/folder' }] as const
 
 export type FolderCreateMutationKey = ReturnType<typeof folderCreateMutationKey>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/folder}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder}
  */
-export async function folderCreate(tenantId: FolderCreatePathParams["tenantId"], knowledgeSlug: FolderCreatePathParams["knowledgeSlug"], data: FolderCreateMutationRequest, config: Partial<RequestConfig<FolderCreateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function folderCreate(tenantId: FolderCreatePathParams["tenantId"], knowledgeId: FolderCreatePathParams["knowledgeId"], data: FolderCreateMutationRequest, config: Partial<RequestConfig<FolderCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = folderCreateMutationRequestSchema.parse(data)  
   
-  const res = await request<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, FolderCreateMutationRequest>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/folder`, baseURL : "/", data : requestData, ... requestConfig })  
+  const res = await request<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, FolderCreateMutationRequest>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/folder`, baseURL : "/", data : requestData, ... requestConfig })  
   return folderCreateMutationResponseSchema.parse(res.data)
 }
 
 export function folderCreateMutationOptions(config: Partial<RequestConfig<FolderCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = folderCreateMutationKey()
-  return mutationOptions<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeSlug: FolderCreatePathParams["knowledgeSlug"], data: FolderCreateMutationRequest}, typeof mutationKey>({
+  return mutationOptions<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeId: FolderCreatePathParams["knowledgeId"], data: FolderCreateMutationRequest}, typeof mutationKey>({
     mutationKey,
-    mutationFn: async({ tenantId, knowledgeSlug, data }) => {
-      return folderCreate(tenantId, knowledgeSlug, data, config)
+    mutationFn: async({ tenantId, knowledgeId, data }) => {
+      return folderCreate(tenantId, knowledgeId, data, config)
     },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/folder}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder}
  */
 export function useApiFolderCreate<TContext>(options: 
 {
-  mutation?: UseMutationOptions<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeSlug: FolderCreatePathParams["knowledgeSlug"], data: FolderCreateMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeId: FolderCreatePathParams["knowledgeId"], data: FolderCreateMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<FolderCreateMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -49,11 +49,11 @@ export function useApiFolderCreate<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? folderCreateMutationKey()
 
-  const baseOptions = folderCreateMutationOptions(config) as UseMutationOptions<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeSlug: FolderCreatePathParams["knowledgeSlug"], data: FolderCreateMutationRequest}, TContext>
+  const baseOptions = folderCreateMutationOptions(config) as UseMutationOptions<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeId: FolderCreatePathParams["knowledgeId"], data: FolderCreateMutationRequest}, TContext>
 
-  return useMutation<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeSlug: FolderCreatePathParams["knowledgeSlug"], data: FolderCreateMutationRequest}, TContext>({
+  return useMutation<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeId: FolderCreatePathParams["knowledgeId"], data: FolderCreateMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeSlug: FolderCreatePathParams["knowledgeSlug"], data: FolderCreateMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeId: FolderCreatePathParams["knowledgeId"], data: FolderCreateMutationRequest}, TContext>
 }

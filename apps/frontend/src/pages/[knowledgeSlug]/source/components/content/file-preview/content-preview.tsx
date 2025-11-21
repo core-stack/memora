@@ -1,10 +1,10 @@
 "use client"
 
 import { FileViewer } from '@/components/file-viewer';
+import type { SourceEntity } from '@/gen';
 
-import type { Source } from "@snipet/schemas";
 type Props = {
-  data?: Source;
+  data?: SourceEntity;
   isLoading: boolean;
 }
 export function ContentPreview({ isLoading, data }: Props) {

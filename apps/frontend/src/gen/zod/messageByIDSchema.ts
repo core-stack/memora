@@ -10,19 +10,11 @@ import { z } from "zod/v4";
 export const messageByIDPathParamsSchema = z.object({
     "id": z.string(),
 "tenantId": z.string(),
-"knowledgeSlug": z.string(),
+"knowledgeId": z.string(),
 "chatId": z.string()
     })
 
 export type MessageByIDPathParamsSchema = z.infer<typeof messageByIDPathParamsSchema>
-
-export const messageByIDQueryParamsSchema = z.object({
-    "limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
-"offset": z.optional(z.coerce.number().describe("Number of records to skip")),
-"sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: "))
-    }).optional()
-
-export type MessageByIDQueryParamsSchema = z.infer<typeof messageByIDQueryParamsSchema>
 
 /**
  * @description Record found successfully

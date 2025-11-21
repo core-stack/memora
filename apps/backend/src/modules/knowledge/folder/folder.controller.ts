@@ -6,7 +6,7 @@ import { CreateFolderDto } from "./dto/create-folder.dto";
 import { UpdateFolderDto } from "./dto/update-folder.dto";
 import { FolderService } from "./folder.service";
 
-@Controller("tenant/:tenantId/knowledge/:knowledgeSlug/folder")
+@Controller("tenant/:tenantId/knowledge/:knowledgeId/folder")
 export class FolderController extends BaseController({
   entity: FolderEntity,
   createDto: CreateFolderDto,

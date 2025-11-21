@@ -9,7 +9,7 @@ import { z } from "zod/v4";
 
 export const chatPathParamsSchema = z.object({
     "tenantId": z.string(),
-"knowledgeSlug": z.string()
+"knowledgeId": z.string()
     })
 
 export type ChatPathParamsSchema = z.infer<typeof chatPathParamsSchema>

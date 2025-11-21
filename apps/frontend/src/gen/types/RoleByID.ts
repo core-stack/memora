@@ -17,24 +17,6 @@ export type RoleByIDPathParams = {
     tenantId: string;
 };
 
-export type RoleByIDQueryParams = {
-    /**
-     * @description Maximum number of records to return
-     * @type number | undefined
-    */
-    limit?: number;
-    /**
-     * @description Number of records to skip
-     * @type number | undefined
-    */
-    offset?: number;
-    /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields:
-     * @type array | undefined
-    */
-    sort?: string[];
-};
-
 /**
  * @description Record found successfully
 */
@@ -60,6 +42,5 @@ export type RoleByIDQueryResponse = RoleByID200;
 export type RoleByIDQuery = {
     Response: RoleByID200;
     PathParams: RoleByIDPathParams;
-    QueryParams: RoleByIDQueryParams;
     Errors: RoleByID400 | RoleByID404 | RoleByID500;
 };

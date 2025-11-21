@@ -18,7 +18,7 @@ export type FolderDeletePathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 /**

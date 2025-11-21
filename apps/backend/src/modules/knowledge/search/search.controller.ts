@@ -3,7 +3,7 @@ import { Get } from "@nestjs/common";
 
 import { SearchService } from "./search.service";
 
-@Controller("tenant/:tenantId/knowledge/:knowledgeSlug/search")
+@Controller("tenant/:tenantId/knowledge/:knowledgeIdearch")
 export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 

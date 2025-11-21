@@ -6,7 +6,8 @@
 import { z } from "zod/v4";
 
 export const createFolderDtoSchema = z.object({
-    "name": z.string().describe("The name of the folder"),
+    "knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
+"name": z.string().describe("The name of the folder"),
 "parentId": z.optional(z.uuid().describe("The ID of the parent folder"))
     })
 

@@ -10,36 +10,36 @@ import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tansta
 import { sourceRetryMutationResponseSchema } from "../zod/sourceRetrySchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
-export const sourceRetryMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/retry' }] as const
+export const sourceRetryMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/retry' }] as const
 
 export type SourceRetryMutationKey = ReturnType<typeof sourceRetryMutationKey>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/retry}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/retry}
  */
-export async function sourceRetry(id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeSlug: SourceRetryPathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function sourceRetry(id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeId: SourceRetryPathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<SourceRetryMutationResponse, ResponseErrorConfig<Error>, unknown>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/source/${id}/retry`, baseURL : "/", ... requestConfig })  
+  const res = await request<SourceRetryMutationResponse, ResponseErrorConfig<Error>, unknown>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/source/${id}/retry`, baseURL : "/", ... requestConfig })  
   return sourceRetryMutationResponseSchema.parse(res.data)
 }
 
 export function sourceRetryMutationOptions(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const mutationKey = sourceRetryMutationKey()
-  return mutationOptions<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeSlug: SourceRetryPathParams["knowledgeSlug"]}, typeof mutationKey>({
+  return mutationOptions<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeId: SourceRetryPathParams["knowledgeId"]}, typeof mutationKey>({
     mutationKey,
-    mutationFn: async({ id, tenantId, knowledgeSlug }) => {
-      return sourceRetry(id, tenantId, knowledgeSlug, config)
+    mutationFn: async({ id, tenantId, knowledgeId }) => {
+      return sourceRetry(id, tenantId, knowledgeId, config)
     },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/retry}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/retry}
  */
 export function useApiSourceRetry<TContext>(options: 
 {
-  mutation?: UseMutationOptions<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeSlug: SourceRetryPathParams["knowledgeSlug"]}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeId: SourceRetryPathParams["knowledgeId"]}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch },
 }
  = {}) {
@@ -47,11 +47,11 @@ export function useApiSourceRetry<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? sourceRetryMutationKey()
 
-  const baseOptions = sourceRetryMutationOptions(config) as UseMutationOptions<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeSlug: SourceRetryPathParams["knowledgeSlug"]}, TContext>
+  const baseOptions = sourceRetryMutationOptions(config) as UseMutationOptions<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeId: SourceRetryPathParams["knowledgeId"]}, TContext>
 
-  return useMutation<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeSlug: SourceRetryPathParams["knowledgeSlug"]}, TContext>({
+  return useMutation<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeId: SourceRetryPathParams["knowledgeId"]}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeSlug: SourceRetryPathParams["knowledgeSlug"]}, TContext>
+  }, queryClient) as UseMutationResult<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeId: SourceRetryPathParams["knowledgeId"]}, TContext>
 }

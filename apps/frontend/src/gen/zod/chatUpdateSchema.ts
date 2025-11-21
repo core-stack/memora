@@ -11,7 +11,7 @@ import { z } from "zod/v4";
 export const chatUpdatePathParamsSchema = z.object({
     "id": z.string(),
 "tenantId": z.string(),
-"knowledgeSlug": z.string()
+"knowledgeId": z.string()
     })
 
 export type ChatUpdatePathParamsSchema = z.infer<typeof chatUpdatePathParamsSchema>

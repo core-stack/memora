@@ -1,6 +1,6 @@
 openapi: 3.0.0
 paths:
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source/{id}/view":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/source/{id}/view":
     get:
       operationId: SourceController_view
       parameters:
@@ -14,7 +14,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -31,8 +31,8 @@ paths:
       tags:
         &a1
         - Source
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source/{id}/download-url":
-    get:
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/source/{id}/download-url":
+    post:
       operationId: SourceController_download
       parameters:
         - name: id
@@ -45,7 +45,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -60,7 +60,7 @@ paths:
       security:
         - access-token: []
       tags: *a1
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source/upload-url":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/source/upload-url":
     post:
       operationId: SourceController_upload
       parameters:
@@ -69,7 +69,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -90,7 +90,7 @@ paths:
       security:
         - access-token: []
       tags: *a1
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source/{id}/retry":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/source/{id}/retry":
     post:
       operationId: SourceController_retry
       parameters:
@@ -104,7 +104,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -119,7 +119,7 @@ paths:
       security:
         - access-token: []
       tags: *a1
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source/{id}":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/source/{id}":
     get:
       operationId: SourceController_findByID
       parameters:
@@ -128,34 +128,12 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
         - name: tenantId
           in: path
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -188,7 +166,7 @@ paths:
       security:
         - access-token: []
       tags: *a1
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/source":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/source":
     get:
       operationId: SourceController_findMany
       parameters:
@@ -250,7 +228,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -279,7 +257,7 @@ paths:
       security:
         - access-token: []
       tags: *a1
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/folder/{id}":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/folder/{id}":
     get:
       operationId: FolderController_findByID
       parameters:
@@ -288,34 +266,12 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
         - name: tenantId
           in: path
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -363,7 +319,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -415,7 +371,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -448,7 +404,7 @@ paths:
       security:
         - access-token: []
       tags: *a2
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/folder":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/folder":
     get:
       operationId: FolderController_findMany
       parameters:
@@ -504,7 +460,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -541,7 +497,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -589,28 +545,6 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
         - name: tenantId
           in: path
           required: true
@@ -755,11 +689,29 @@ paths:
         - name: sort
           required: false
           in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          description: 'Sort order. Use "-" to DESC. Allowed fields: slug, storage, title'
           schema:
             type: array
             items:
               type: string
+        - name: filter[slug]
+          required: false
+          in: query
+          description: Filter by slug
+          schema:
+            type: string
+        - name: filter[storage]
+          required: false
+          in: query
+          description: Filter by storage
+          schema:
+            type: string
+        - name: filter[title]
+          required: false
+          in: query
+          description: Filter by title
+          schema:
+            type: string
         - name: tenantId
           in: path
           required: true
@@ -940,28 +892,6 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
       responses:
         "200":
           description: Record found successfully
@@ -1049,28 +979,6 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
       responses:
         "200":
           description: Record found successfully
@@ -1275,28 +1183,6 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
         - name: tenantId
           in: path
           required: true
@@ -1526,28 +1412,6 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
       responses:
         "200":
           description: Record found successfully
@@ -1716,28 +1580,6 @@ paths:
           description: "Relations. Allowed fields: user, role, tenant"
           schema:
             example: user,role
-            type: array
-            items:
-              type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
             type: array
             items:
               type: string
@@ -1934,7 +1776,7 @@ paths:
       security:
         - access-token: []
       tags: *a9
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/search":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeIdearch}":
     get:
       operationId: SearchController_searchByTerm
       parameters:
@@ -1943,7 +1785,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeIdearch
           in: path
           required: true
           schema:
@@ -1956,7 +1798,7 @@ paths:
       tags:
         &a10
         - Search
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/search/recent":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeIdearch}/recent":
     get:
       operationId: SearchController_searchRecent
       parameters:
@@ -1965,7 +1807,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeIdearch
           in: path
           required: true
           schema:
@@ -2014,28 +1856,6 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
         - name: tenantId
           in: path
           required: true
@@ -2254,7 +2074,7 @@ paths:
       security:
         - access-token: []
       tags: *a11
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat/{id}":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/chat/{id}":
     get:
       operationId: ChatController_findByID
       parameters:
@@ -2263,34 +2083,12 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
         - name: tenantId
           in: path
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2338,7 +2136,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2390,7 +2188,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2423,7 +2221,7 @@ paths:
       security:
         - access-token: []
       tags: *a12
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/chat":
     get:
       operationId: ChatController_findMany
       parameters:
@@ -2454,7 +2252,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2491,7 +2289,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2530,7 +2328,7 @@ paths:
       security:
         - access-token: []
       tags: *a12
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat/{chatId}/message/new":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/chat/{chatId}/message/new":
     post:
       operationId: MessageController_newMessage
       parameters:
@@ -2539,7 +2337,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2567,7 +2365,7 @@ paths:
       tags:
         &a13
         - Message
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat/{chatId}/message/{id}":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/chat/{chatId}/message/{id}":
     get:
       operationId: MessageController_findByID
       parameters:
@@ -2576,34 +2374,12 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
         - name: tenantId
           in: path
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2654,7 +2430,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2711,7 +2487,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2749,7 +2525,7 @@ paths:
       security:
         - access-token: []
       tags: *a13
-  "/api/tenant/{tenantId}/knowledge/{knowledgeSlug}/chat/{chatId}/message":
+  "/api/tenant/{tenantId}/knowledge/{knowledgeId}/chat/{chatId}/message":
     get:
       operationId: MessageController_findMany
       parameters:
@@ -2780,7 +2556,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2822,7 +2598,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: knowledgeSlug
+        - name: knowledgeId
           in: path
           required: true
           schema:
@@ -2898,28 +2674,6 @@ paths:
           in: path
           schema:
             type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
         - name: tenantId
           in: path
           required: true
@@ -3328,12 +3082,12 @@ components:
           format: date-time
           type: string
           description: The date the account was created
-          example: 2025-11-21T17:05:56.660Z
+          example: 2025-11-21T19:18:06.385Z
         updatedAt:
           format: date-time
           type: string
           description: The date the account was updated
-          example: 2025-11-21T17:05:56.661Z
+          example: 2025-11-21T19:18:06.385Z
       required:
         - id
         - provider
@@ -3396,7 +3150,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-21T17:05:56.660Z
+          example: 2025-11-21T19:18:06.383Z
         image:
           type: string
           description: The image of the user
@@ -3409,12 +3163,12 @@ components:
           format: date-time
           type: string
           description: The date the user was created
-          example: 2025-11-21T17:05:56.660Z
+          example: 2025-11-21T19:18:06.384Z
         updatedAt:
           format: date-time
           type: string
           description: The date the user was updated
-          example: 2025-11-21T17:05:56.660Z
+          example: 2025-11-21T19:18:06.384Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:
@@ -4043,6 +3797,10 @@ components:
     CreateFolderDto:
       type: object
       properties:
+        knowledgeId:
+          type: string
+          description: The ID of the associated knowledge base
+          format: uuid
         name:
           type: string
           description: The name of the folder
@@ -4051,6 +3809,7 @@ components:
           description: The ID of the parent folder
           format: uuid
       required:
+        - knowledgeId
         - name
     UpdateFolderDto:
       type: object

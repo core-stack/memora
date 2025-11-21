@@ -4,34 +4,34 @@
 */
 
 import fetch from "@kubb/plugin-client/clients/axios";
-import type { KnowledgeByIDQueryResponse, KnowledgeByIDPathParams, KnowledgeByIDQueryParams, KnowledgeByID400, KnowledgeByID404, KnowledgeByID500 } from "../types/KnowledgeByID.ts";
+import type { KnowledgeByIDQueryResponse, KnowledgeByIDPathParams, KnowledgeByID400, KnowledgeByID404, KnowledgeByID500 } from "../types/KnowledgeByID.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
 import { knowledgeByIDQueryResponseSchema } from "../zod/knowledgeByIDSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const knowledgeByIDQueryKeyFn = (id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"], params?: KnowledgeByIDQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:id', params: {tenantId:tenantId,id:id} }, ...(params ? [params] : [])] as const
+export const knowledgeByIDQueryKeyFn = (id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"]) => [{ url: '/api/tenant/:tenantId/knowledge/:id', params: {tenantId:tenantId,id:id} }] as const
 
 export type KnowledgeByIDQueryKey = ReturnType<typeof knowledgeByIDQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/knowledge/:id}
  */
-export async function knowledgeByID(id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"], params?: KnowledgeByIDQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function knowledgeByID(id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<KnowledgeByIDQueryResponse, ResponseErrorConfig<KnowledgeByID400 | KnowledgeByID404 | KnowledgeByID500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${id}`, baseURL : "/", params, ... requestConfig })  
+  const res = await request<KnowledgeByIDQueryResponse, ResponseErrorConfig<KnowledgeByID400 | KnowledgeByID404 | KnowledgeByID500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${id}`, baseURL : "/", ... requestConfig })  
   return knowledgeByIDQueryResponseSchema.parse(res.data)
 }
 
-export function knowledgeByIDQueryOptions(id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"], params?: KnowledgeByIDQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = knowledgeByIDQueryKeyFn(id, tenantId, params)
+export function knowledgeByIDQueryOptions(id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = knowledgeByIDQueryKeyFn(id, tenantId)
   return queryOptions<KnowledgeByIDQueryResponse, ResponseErrorConfig<KnowledgeByID400 | KnowledgeByID404 | KnowledgeByID500>, KnowledgeByIDQueryResponse, typeof queryKey>({
    enabled: !!(id&& tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return knowledgeByID(id, tenantId, params, config)
+      return knowledgeByID(id, tenantId, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function knowledgeByIDQueryOptions(id: KnowledgeByIDPathParams["id"], ten
 /**
  * {@link /api/tenant/:tenantId/knowledge/:id}
  */
-export function useApiKnowledgeByID<TData = KnowledgeByIDQueryResponse, TQueryData = KnowledgeByIDQueryResponse, TQueryKey extends QueryKey = KnowledgeByIDQueryKey>(id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"], params?: KnowledgeByIDQueryParams, options: 
+export function useApiKnowledgeByID<TData = KnowledgeByIDQueryResponse, TQueryData = KnowledgeByIDQueryResponse, TQueryKey extends QueryKey = KnowledgeByIDQueryKey>(id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"], options: 
 {
   query?: Partial<QueryObserverOptions<KnowledgeByIDQueryResponse, ResponseErrorConfig<KnowledgeByID400 | KnowledgeByID404 | KnowledgeByID500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiKnowledgeByID<TData = KnowledgeByIDQueryResponse, TQueryDa
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? knowledgeByIDQueryKeyFn(id, tenantId, params)
+  const queryKey = queryOptions?.queryKey ?? knowledgeByIDQueryKeyFn(id, tenantId)
 
   const query = useQuery({
-   ...knowledgeByIDQueryOptions(id, tenantId, params, config),
+   ...knowledgeByIDQueryOptions(id, tenantId, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<KnowledgeByID400 | KnowledgeByID404 | KnowledgeByID500>> & { queryKey: TQueryKey }

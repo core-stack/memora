@@ -1,8 +1,5 @@
-import type { GetSelfUserSchema } from "@snipet/schemas";
 import { createContext, useCallback, useEffect, useState } from 'react';
 
-import { useApiMutation } from '@/hooks/use-api-mutation';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { useLocation } from '@/hooks/use-location';
 import { useRouter } from '@/hooks/use-router';
@@ -12,9 +9,11 @@ import { can as canPermission } from '@snipet/permission';
 import { useQueryClient } from '@tanstack/react-query';
 
 import type { Permission } from "@snipet/permission";
+import { useApiAuthLogout, useApiUserSelf, type MemberEntity, type UserEntity } from '@/gen';
+
 type AuthContextType = {
-  user: GetSelfUserSchema | undefined;
-  currentMember: GetSelfUserSchema["members"][0] | undefined;
+  user: UserEntity | undefined;
+  currentMember: MemberEntity | undefined;
   logout: () => void;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -32,14 +31,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { mutate } = useApiMutation(
-    "/api/auth/logout",
-    { method: "POST" }
-  );
-  const { data: user, isLoading: loadingUserSelf, error, refetch } = useApiQuery(
-    "/api/user/self",
-    { method: "GET", retry: false }
-  );
+  const { mutate } = useApiAuthLogout()
+  const { data: user, isLoading: loadingUserSelf, error, refetch } = useApiUserSelf();
 
   const isAuthenticated = !!user && !error;
   const currentMember = user?.members.find((member) => member.tenantId === tenantId);
@@ -47,11 +40,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   //#region Permissions
   const tenantPermissions = user?.members.map((member) => ({ tenantId: member.tenantId, role: member.role }));
-  const canInTenant = (permission: Permission | Permission[], tenant: string | undefined = tenantId ?? undefined): boolean => {
+  const canInTenant = (
+    permission: Permission | Permission[],
+    tenant: string | undefined = tenantId ?? undefined
+  ): boolean => {
     if (!tenant) throw new Error("tenant is required");
     if (tenantPermissions) {
       return canPermission(
-        tenantPermissions.find((p) => p.tenantId === tenant)?.role.permissions ?? [],
+        tenantPermissions.find((p) => p.tenantId === tenant)?.role?.permissions ?? [],
         Array.isArray(permission) ? permission : [permission]
       );
     }
@@ -64,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = useCallback(() => {
     setExiting(true);
     setExiting(true);
-    mutate({}, {
+    mutate(undefined, {
       onSuccess: async () => {
         queryClient.clear();
         await refetch();
@@ -93,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       router.replace("/");
     } else if (!publicRoute && !isAuthenticated) {
       router.replace(REDIRECT_WHEN_NOT_AUTHENTICATED_PATH);
-    } else if (error && error.statusCode === 401 && !exiting) {
+    } else if (error && error.status === 401 && !exiting) {
       logout();
     }
   }, [isAuthenticated, pathname, router, error, exiting, logout, isLoading]);

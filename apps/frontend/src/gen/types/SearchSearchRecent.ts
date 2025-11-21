@@ -12,7 +12,7 @@ export type SearchSearchRecentPathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeIdearch: string;
 };
 
 export type SearchSearchRecent200 = any;

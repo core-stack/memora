@@ -9,7 +9,7 @@ import { z } from "zod/v4";
 
 export const sourceUploadPathParamsSchema = z.object({
     "tenantId": z.string(),
-"knowledgeSlug": z.string()
+"knowledgeId": z.string()
     })
 
 export type SourceUploadPathParamsSchema = z.infer<typeof sourceUploadPathParamsSchema>

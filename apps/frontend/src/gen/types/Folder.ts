@@ -14,7 +14,7 @@ export type FolderPathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 export type FolderQueryParams = {

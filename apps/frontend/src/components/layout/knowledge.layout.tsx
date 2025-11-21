@@ -12,11 +12,13 @@ import { cn } from '@/lib/utils';
 
 import { Button } from '../ui/button';
 import { UserInfo } from '../user';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { useApiKnowledge } from '@/gen';
+import { useTenant } from '@/hooks/use-tenant';
 
 export function KnowledgeLayout() {
-  const { data: knowledges = [] } = useApiQuery("/api/tenant/:tenantId/knowledge", { method: "GET" });
+  const { tenant } = useTenant();
+  const { data: knowledges = [] } = useApiKnowledge(tenant.id ?? "");
   const { pathname } = useLocation();
   const { slug } = useKnowledge();
   const knowledge = knowledges.find((knowledge) => knowledge.slug === slug);

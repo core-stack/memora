@@ -14,7 +14,7 @@ export type SourcePathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 export type SourceQueryParams = {

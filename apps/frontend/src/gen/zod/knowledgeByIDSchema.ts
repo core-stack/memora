@@ -14,14 +14,6 @@ export const knowledgeByIDPathParamsSchema = z.object({
 
 export type KnowledgeByIDPathParamsSchema = z.infer<typeof knowledgeByIDPathParamsSchema>
 
-export const knowledgeByIDQueryParamsSchema = z.object({
-    "limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
-"offset": z.optional(z.coerce.number().describe("Number of records to skip")),
-"sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: "))
-    }).optional()
-
-export type KnowledgeByIDQueryParamsSchema = z.infer<typeof knowledgeByIDQueryParamsSchema>
-
 /**
  * @description Record found successfully
  */

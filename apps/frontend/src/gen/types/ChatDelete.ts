@@ -18,7 +18,7 @@ export type ChatDeletePathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 /**

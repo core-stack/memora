@@ -9,7 +9,7 @@ import { z } from "zod/v4";
 export const sourceDownloadPathParamsSchema = z.object({
     "id": z.string(),
 "tenantId": z.string(),
-"knowledgeSlug": z.string()
+"knowledgeId": z.string()
     })
 
 export type SourceDownloadPathParamsSchema = z.infer<typeof sourceDownloadPathParamsSchema>
@@ -18,6 +18,6 @@ export const sourceDownload200Schema = fileURLResponseDtoSchema
 
 export type SourceDownload200Schema = z.infer<typeof sourceDownload200Schema>
 
-export const sourceDownloadQueryResponseSchema = sourceDownload200Schema
+export const sourceDownloadMutationResponseSchema = sourceDownload200Schema
 
-export type SourceDownloadQueryResponseSchema = z.infer<typeof sourceDownloadQueryResponseSchema>
+export type SourceDownloadMutationResponseSchema = z.infer<typeof sourceDownloadMutationResponseSchema>

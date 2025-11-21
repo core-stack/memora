@@ -10,38 +10,38 @@ import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tansta
 import { folderUpdateMutationResponseSchema, folderUpdateMutationRequestSchema } from "../zod/folderUpdateSchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
-export const folderUpdateMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder/:id' }] as const
+export const folderUpdateMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id' }] as const
 
 export type FolderUpdateMutationKey = ReturnType<typeof folderUpdateMutationKey>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/folder/:id}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id}
  */
-export async function folderUpdate(id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeSlug: FolderUpdatePathParams["knowledgeSlug"], data: FolderUpdateMutationRequest, config: Partial<RequestConfig<FolderUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function folderUpdate(id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeId: FolderUpdatePathParams["knowledgeId"], data: FolderUpdateMutationRequest, config: Partial<RequestConfig<FolderUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = folderUpdateMutationRequestSchema.parse(data)  
   
-  const res = await request<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, FolderUpdateMutationRequest>({ method : "PUT", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/folder/${id}`, baseURL : "/", data : requestData, ... requestConfig })  
+  const res = await request<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, FolderUpdateMutationRequest>({ method : "PUT", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/folder/${id}`, baseURL : "/", data : requestData, ... requestConfig })  
   return folderUpdateMutationResponseSchema.parse(res.data)
 }
 
 export function folderUpdateMutationOptions(config: Partial<RequestConfig<FolderUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = folderUpdateMutationKey()
-  return mutationOptions<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeSlug: FolderUpdatePathParams["knowledgeSlug"], data: FolderUpdateMutationRequest}, typeof mutationKey>({
+  return mutationOptions<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeId: FolderUpdatePathParams["knowledgeId"], data: FolderUpdateMutationRequest}, typeof mutationKey>({
     mutationKey,
-    mutationFn: async({ id, tenantId, knowledgeSlug, data }) => {
-      return folderUpdate(id, tenantId, knowledgeSlug, data, config)
+    mutationFn: async({ id, tenantId, knowledgeId, data }) => {
+      return folderUpdate(id, tenantId, knowledgeId, data, config)
     },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/folder/:id}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id}
  */
 export function useApiFolderUpdate<TContext>(options: 
 {
-  mutation?: UseMutationOptions<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeSlug: FolderUpdatePathParams["knowledgeSlug"], data: FolderUpdateMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeId: FolderUpdatePathParams["knowledgeId"], data: FolderUpdateMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<FolderUpdateMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -49,11 +49,11 @@ export function useApiFolderUpdate<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? folderUpdateMutationKey()
 
-  const baseOptions = folderUpdateMutationOptions(config) as UseMutationOptions<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeSlug: FolderUpdatePathParams["knowledgeSlug"], data: FolderUpdateMutationRequest}, TContext>
+  const baseOptions = folderUpdateMutationOptions(config) as UseMutationOptions<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeId: FolderUpdatePathParams["knowledgeId"], data: FolderUpdateMutationRequest}, TContext>
 
-  return useMutation<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeSlug: FolderUpdatePathParams["knowledgeSlug"], data: FolderUpdateMutationRequest}, TContext>({
+  return useMutation<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeId: FolderUpdatePathParams["knowledgeId"], data: FolderUpdateMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeSlug: FolderUpdatePathParams["knowledgeSlug"], data: FolderUpdateMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeId: FolderUpdatePathParams["knowledgeId"], data: FolderUpdateMutationRequest}, TContext>
 }

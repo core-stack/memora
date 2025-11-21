@@ -21,13 +21,6 @@ export class KnowledgeService extends Service<KnowledgeEntity> {
     });
   }
 
-  async loadFromSlug(): Promise<KnowledgeEntity> {
-    const knowledgeSlug = this.context.params.shouldGetString("knowledgeSlug");
-    const knowledge = await this.findBySlug(knowledgeSlug, this.context.params.shouldGetString("tenantId"));
-    if (!knowledge) throw new NotFoundException("Knowledge not found");
-    return knowledge;
-  }
-
   override async delete(id: string, manager?: EntityManager): Promise<void> {
     const knowledge = await this.repository(manager).findOneOrFail({ where: { id } });
     if (!knowledge) throw new NotFoundException("Knowledge not found");

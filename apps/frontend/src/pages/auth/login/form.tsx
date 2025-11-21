@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { Mail } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
+import { FaFacebook } from "react-icons/fa";
 
 import { FormInput } from '@/components/form/input';
 import { Button } from '@/components/ui/button';
@@ -12,13 +12,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Link } from '@/components/ui/link';
 import { Separator } from '@/components/ui/separator';
-import { loginDtoSchema, useApiAuthLogin } from '@/gen';
+import { loginDtoSchema, useApiAuthLogin, useApiAuthProviders } from '@/gen';
 import { useRouter } from '@/hooks/use-router';
 import { useSearchParams } from '@/hooks/use-search-params';
 import { zodResolver } from '@/utils/zod-resolver';
 
 import type { LoginDtoSchema } from '@/gen';
-
+import { capitalizeFirstLetter } from '@/lib/string';
+const providerIconMap = {
+  google: FcGoogle,
+  facebook: FaFacebook
+}
 export function LoginForm() {
   const [searchParams] = useSearchParams();
   const form = useForm<LoginDtoSchema>({
@@ -32,6 +36,7 @@ export function LoginForm() {
 
   const isLoading = form.formState.isSubmitting;
   const router = useRouter();
+  const { data: providers = [] } = useApiAuthProviders();
   const { mutate, error} = useApiAuthLogin();
   const onSubmit = form.handleSubmit(async (data) => {
     mutate({ data }, {
@@ -40,6 +45,11 @@ export function LoginForm() {
       }
     });
   });
+
+  const getProviderIcon = (provider: keyof typeof providerIconMap) => {
+    const Icon = providerIconMap[provider];
+    return <Icon className="mr-2 h-4 w-4" />;
+  };
 
   return (
     <div className="grid gap-6">
@@ -79,14 +89,12 @@ export function LoginForm() {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <Button variant="outline" type="button" isLoading={isLoading}>
-          <FcGoogle className="mr-2 h-4 w-4" />
-          Google
-        </Button>
-        <Button variant="outline" type="button" isLoading={isLoading}>
-          <Mail className="mr-2 h-4 w-4" />
-          Email
-        </Button>
+        {providers.map((provider) => (
+          <Button variant="outline" type="button" isLoading={isLoading}>
+            {getProviderIcon(provider as keyof typeof providerIconMap)}
+            {capitalizeFirstLetter(provider)}
+          </Button>
+        ))}
       </div>
       <div className="text-center text-sm text-muted-foreground">
         Don't have an account?{" "}

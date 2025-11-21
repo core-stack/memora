@@ -10,36 +10,36 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { sourceViewQueryResponseSchema } from "../zod/sourceViewSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const sourceViewQueryKeyFn = (id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeSlug: SourceViewPathParams["knowledgeSlug"]) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/view', params: {tenantId:tenantId,knowledgeSlug:knowledgeSlug,id:id} }] as const
+export const sourceViewQueryKeyFn = (id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeId: SourceViewPathParams["knowledgeId"]) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/view', params: {tenantId:tenantId,knowledgeId:knowledgeId,id:id} }] as const
 
 export type SourceViewQueryKey = ReturnType<typeof sourceViewQueryKeyFn>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/view}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/view}
  */
-export async function sourceView(id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeSlug: SourceViewPathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function sourceView(id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeId: SourceViewPathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<SourceViewQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/source/${id}/view`, baseURL : "/", ... requestConfig })  
+  const res = await request<SourceViewQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/source/${id}/view`, baseURL : "/", ... requestConfig })  
   return sourceViewQueryResponseSchema.parse(res.data)
 }
 
-export function sourceViewQueryOptions(id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeSlug: SourceViewPathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = sourceViewQueryKeyFn(id, tenantId, knowledgeSlug)
+export function sourceViewQueryOptions(id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeId: SourceViewPathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = sourceViewQueryKeyFn(id, tenantId, knowledgeId)
   return queryOptions<SourceViewQueryResponse, ResponseErrorConfig<Error>, SourceViewQueryResponse, typeof queryKey>({
-   enabled: !!(id&& tenantId&& knowledgeSlug),
+   enabled: !!(id&& tenantId&& knowledgeId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return sourceView(id, tenantId, knowledgeSlug, config)
+      return sourceView(id, tenantId, knowledgeId, config)
    },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/view}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/view}
  */
-export function useApiSourceView<TData = SourceViewQueryResponse, TQueryData = SourceViewQueryResponse, TQueryKey extends QueryKey = SourceViewQueryKey>(id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeSlug: SourceViewPathParams["knowledgeSlug"], options: 
+export function useApiSourceView<TData = SourceViewQueryResponse, TQueryData = SourceViewQueryResponse, TQueryKey extends QueryKey = SourceViewQueryKey>(id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeId: SourceViewPathParams["knowledgeId"], options: 
 {
   query?: Partial<QueryObserverOptions<SourceViewQueryResponse, ResponseErrorConfig<Error>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiSourceView<TData = SourceViewQueryResponse, TQueryData = S
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? sourceViewQueryKeyFn(id, tenantId, knowledgeSlug)
+  const queryKey = queryOptions?.queryKey ?? sourceViewQueryKeyFn(id, tenantId, knowledgeId)
 
   const query = useQuery({
-   ...sourceViewQueryOptions(id, tenantId, knowledgeSlug, config),
+   ...sourceViewQueryOptions(id, tenantId, knowledgeId, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Error>> & { queryKey: TQueryKey }

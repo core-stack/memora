@@ -13,24 +13,6 @@ export type TenantByIDPathParams = {
     id: string;
 };
 
-export type TenantByIDQueryParams = {
-    /**
-     * @description Maximum number of records to return
-     * @type number | undefined
-    */
-    limit?: number;
-    /**
-     * @description Number of records to skip
-     * @type number | undefined
-    */
-    offset?: number;
-    /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields:
-     * @type array | undefined
-    */
-    sort?: string[];
-};
-
 /**
  * @description Record found successfully
 */
@@ -56,6 +38,5 @@ export type TenantByIDQueryResponse = TenantByID200;
 export type TenantByIDQuery = {
     Response: TenantByID200;
     PathParams: TenantByIDPathParams;
-    QueryParams: TenantByIDQueryParams;
     Errors: TenantByID400 | TenantByID404 | TenantByID500;
 };

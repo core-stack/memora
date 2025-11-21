@@ -9,7 +9,7 @@ import { z } from "zod/v4";
 
 export const folderPathParamsSchema = z.object({
     "tenantId": z.string(),
-"knowledgeSlug": z.string()
+"knowledgeId": z.string()
     })
 
 export type FolderPathParamsSchema = z.infer<typeof folderPathParamsSchema>

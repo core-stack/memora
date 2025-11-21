@@ -10,36 +10,36 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { messageQueryResponseSchema } from "../zod/messageSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const messageQueryKeyFn = (tenantId: MessagePathParams["tenantId"], knowledgeSlug: MessagePathParams["knowledgeSlug"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message', params: {tenantId:tenantId,knowledgeSlug:knowledgeSlug,chatId:chatId} }, ...(params ? [params] : [])] as const
+export const messageQueryKeyFn = (tenantId: MessagePathParams["tenantId"], knowledgeId: MessagePathParams["knowledgeId"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message', params: {tenantId:tenantId,knowledgeId:knowledgeId,chatId:chatId} }, ...(params ? [params] : [])] as const
 
 export type MessageQueryKey = ReturnType<typeof messageQueryKeyFn>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message}
  */
-export async function message(tenantId: MessagePathParams["tenantId"], knowledgeSlug: MessagePathParams["knowledgeSlug"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function message(tenantId: MessagePathParams["tenantId"], knowledgeId: MessagePathParams["knowledgeId"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<MessageQueryResponse, ResponseErrorConfig<Message400 | Message500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/chat/${chatId}/message`, baseURL : "/", params, ... requestConfig })  
+  const res = await request<MessageQueryResponse, ResponseErrorConfig<Message400 | Message500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/chat/${chatId}/message`, baseURL : "/", params, ... requestConfig })  
   return messageQueryResponseSchema.parse(res.data)
 }
 
-export function messageQueryOptions(tenantId: MessagePathParams["tenantId"], knowledgeSlug: MessagePathParams["knowledgeSlug"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = messageQueryKeyFn(tenantId, knowledgeSlug, chatId, params)
+export function messageQueryOptions(tenantId: MessagePathParams["tenantId"], knowledgeId: MessagePathParams["knowledgeId"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = messageQueryKeyFn(tenantId, knowledgeId, chatId, params)
   return queryOptions<MessageQueryResponse, ResponseErrorConfig<Message400 | Message500>, MessageQueryResponse, typeof queryKey>({
-   enabled: !!(tenantId&& knowledgeSlug&& chatId),
+   enabled: !!(tenantId&& knowledgeId&& chatId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return message(tenantId, knowledgeSlug, chatId, params, config)
+      return message(tenantId, knowledgeId, chatId, params, config)
    },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message}
  */
-export function useApiMessage<TData = MessageQueryResponse, TQueryData = MessageQueryResponse, TQueryKey extends QueryKey = MessageQueryKey>(tenantId: MessagePathParams["tenantId"], knowledgeSlug: MessagePathParams["knowledgeSlug"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams, options: 
+export function useApiMessage<TData = MessageQueryResponse, TQueryData = MessageQueryResponse, TQueryKey extends QueryKey = MessageQueryKey>(tenantId: MessagePathParams["tenantId"], knowledgeId: MessagePathParams["knowledgeId"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams, options: 
 {
   query?: Partial<QueryObserverOptions<MessageQueryResponse, ResponseErrorConfig<Message400 | Message500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiMessage<TData = MessageQueryResponse, TQueryData = Message
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? messageQueryKeyFn(tenantId, knowledgeSlug, chatId, params)
+  const queryKey = queryOptions?.queryKey ?? messageQueryKeyFn(tenantId, knowledgeId, chatId, params)
 
   const query = useQuery({
-   ...messageQueryOptions(tenantId, knowledgeSlug, chatId, params, config),
+   ...messageQueryOptions(tenantId, knowledgeId, chatId, params, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Message400 | Message500>> & { queryKey: TQueryKey }

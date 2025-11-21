@@ -10,36 +10,36 @@ import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryRe
 import { searchSearchRecentQueryResponseSchema } from "../zod/searchSearchRecentSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const searchSearchRecentSuspenseQueryKeyFn = (tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeSlug: SearchSearchRecentPathParams["knowledgeSlug"]) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/search/recent', params: {tenantId:tenantId,knowledgeSlug:knowledgeSlug} }] as const
+export const searchSearchRecentSuspenseQueryKeyFn = (tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeIdearch: SearchSearchRecentPathParams["knowledgeIdearch"]) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeIdearch/recent', params: {tenantId:tenantId,knowledgeIdearch:knowledgeIdearch} }] as const
 
 export type SearchSearchRecentSuspenseQueryKey = ReturnType<typeof searchSearchRecentSuspenseQueryKeyFn>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/search/recent}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeIdearch/recent}
  */
-export async function searchSearchRecentSuspense(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeSlug: SearchSearchRecentPathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function searchSearchRecentSuspense(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeIdearch: SearchSearchRecentPathParams["knowledgeIdearch"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<SearchSearchRecentQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/search/recent`, baseURL : "/", ... requestConfig })  
+  const res = await request<SearchSearchRecentQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeIdearch}/recent`, baseURL : "/", ... requestConfig })  
   return searchSearchRecentQueryResponseSchema.parse(res.data)
 }
 
-export function searchSearchRecentSuspenseQueryOptions(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeSlug: SearchSearchRecentPathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = searchSearchRecentSuspenseQueryKeyFn(tenantId, knowledgeSlug)
+export function searchSearchRecentSuspenseQueryOptions(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeIdearch: SearchSearchRecentPathParams["knowledgeIdearch"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = searchSearchRecentSuspenseQueryKeyFn(tenantId, knowledgeIdearch)
   return queryOptions<SearchSearchRecentQueryResponse, ResponseErrorConfig<Error>, SearchSearchRecentQueryResponse, typeof queryKey>({
-   enabled: !!(tenantId&& knowledgeSlug),
+   enabled: !!(tenantId&& knowledgeIdearch),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return searchSearchRecentSuspense(tenantId, knowledgeSlug, config)
+      return searchSearchRecentSuspense(tenantId, knowledgeIdearch, config)
    },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/search/recent}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeIdearch/recent}
  */
-export function useApiSearchSearchRecentSuspense<TData = SearchSearchRecentQueryResponse, TQueryKey extends QueryKey = SearchSearchRecentSuspenseQueryKey>(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeSlug: SearchSearchRecentPathParams["knowledgeSlug"], options: 
+export function useApiSearchSearchRecentSuspense<TData = SearchSearchRecentQueryResponse, TQueryKey extends QueryKey = SearchSearchRecentSuspenseQueryKey>(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeIdearch: SearchSearchRecentPathParams["knowledgeIdearch"], options: 
 {
   query?: Partial<UseSuspenseQueryOptions<SearchSearchRecentQueryResponse, ResponseErrorConfig<Error>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiSearchSearchRecentSuspense<TData = SearchSearchRecentQuery
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? searchSearchRecentSuspenseQueryKeyFn(tenantId, knowledgeSlug)
+  const queryKey = queryOptions?.queryKey ?? searchSearchRecentSuspenseQueryKeyFn(tenantId, knowledgeIdearch)
 
   const query = useSuspenseQuery({
-   ...searchSearchRecentSuspenseQueryOptions(tenantId, knowledgeSlug, config),
+   ...searchSearchRecentSuspenseQueryOptions(tenantId, knowledgeIdearch, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<Error>> & { queryKey: TQueryKey }

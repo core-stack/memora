@@ -17,24 +17,6 @@ export type KnowledgeByIDPathParams = {
     tenantId: string;
 };
 
-export type KnowledgeByIDQueryParams = {
-    /**
-     * @description Maximum number of records to return
-     * @type number | undefined
-    */
-    limit?: number;
-    /**
-     * @description Number of records to skip
-     * @type number | undefined
-    */
-    offset?: number;
-    /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields:
-     * @type array | undefined
-    */
-    sort?: string[];
-};
-
 /**
  * @description Record found successfully
 */
@@ -60,6 +42,5 @@ export type KnowledgeByIDQueryResponse = KnowledgeByID200;
 export type KnowledgeByIDQuery = {
     Response: KnowledgeByID200;
     PathParams: KnowledgeByIDPathParams;
-    QueryParams: KnowledgeByIDQueryParams;
     Errors: KnowledgeByID400 | KnowledgeByID404 | KnowledgeByID500;
 };

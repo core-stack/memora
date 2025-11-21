@@ -14,14 +14,6 @@ export const inviteByIDPathParamsSchema = z.object({
 
 export type InviteByIDPathParamsSchema = z.infer<typeof inviteByIDPathParamsSchema>
 
-export const inviteByIDQueryParamsSchema = z.object({
-    "limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
-"offset": z.optional(z.coerce.number().describe("Number of records to skip")),
-"sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: "))
-    }).optional()
-
-export type InviteByIDQueryParamsSchema = z.infer<typeof inviteByIDQueryParamsSchema>
-
 /**
  * @description Record found successfully
  */

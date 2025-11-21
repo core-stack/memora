@@ -1,10 +1,10 @@
-// shared/decorators/query-params.ts
 import { applyDecorators } from "@nestjs/common";
 import { ApiQuery } from "@nestjs/swagger";
 
 export function ApiFilterQuery<TEntity>(
   allowedFilters: (keyof TEntity)[] = [],
-  allowedRelations: (keyof TEntity)[] = []
+  allowedRelations: (keyof TEntity)[] = [],
+  many = true
 ) {
   const decorators: MethodDecorator[] = [];
 
@@ -20,30 +20,31 @@ export function ApiFilterQuery<TEntity>(
       })
     );
   }
-
-  decorators.push(
-    ApiQuery({
-      name: "limit",
-      required: false,
-      type: Number,
-      description: "Maximum number of records to return",
-      example: 10
-    }),
-    ApiQuery({
-      name: "offset",
-      required: false,
-      type: Number,
-      description: "Number of records to skip",
-      example: 0
-    }),
-    ApiQuery({
-      name: "sort",
-      required: false,
-      type: String,
-      isArray: true,
-      description: `Sort order. Use "-" to DESC. Allowed fields: ${allowedFilters.join(", ")}`
-    })
-  );
+  if (many) {
+    decorators.push(
+      ApiQuery({
+        name: "limit",
+        required: false,
+        type: Number,
+        description: "Maximum number of records to return",
+        example: 10
+      }),
+      ApiQuery({
+        name: "offset",
+        required: false,
+        type: Number,
+        description: "Number of records to skip",
+        example: 0
+      }),
+      ApiQuery({
+        name: "sort",
+        required: false,
+        type: String,
+        isArray: true,
+        description: `Sort order. Use "-" to DESC. Allowed fields: ${allowedFilters.join(", ")}`
+      })
+    );
+  }
 
   allowedFilters.forEach(field => {
     const fieldName = String(field);

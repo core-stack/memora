@@ -10,38 +10,38 @@ import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tansta
 import { sourceUploadMutationResponseSchema, sourceUploadMutationRequestSchema } from "../zod/sourceUploadSchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
-export const sourceUploadMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/upload-url' }] as const
+export const sourceUploadMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/source/upload-url' }] as const
 
 export type SourceUploadMutationKey = ReturnType<typeof sourceUploadMutationKey>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/source/upload-url}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/upload-url}
  */
-export async function sourceUpload(tenantId: SourceUploadPathParams["tenantId"], knowledgeSlug: SourceUploadPathParams["knowledgeSlug"], data: SourceUploadMutationRequest, config: Partial<RequestConfig<SourceUploadMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function sourceUpload(tenantId: SourceUploadPathParams["tenantId"], knowledgeId: SourceUploadPathParams["knowledgeId"], data: SourceUploadMutationRequest, config: Partial<RequestConfig<SourceUploadMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = sourceUploadMutationRequestSchema.parse(data)  
   
-  const res = await request<SourceUploadMutationResponse, ResponseErrorConfig<Error>, SourceUploadMutationRequest>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/source/upload-url`, baseURL : "/", data : requestData, ... requestConfig })  
+  const res = await request<SourceUploadMutationResponse, ResponseErrorConfig<Error>, SourceUploadMutationRequest>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/source/upload-url`, baseURL : "/", data : requestData, ... requestConfig })  
   return sourceUploadMutationResponseSchema.parse(res.data)
 }
 
 export function sourceUploadMutationOptions(config: Partial<RequestConfig<SourceUploadMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = sourceUploadMutationKey()
-  return mutationOptions<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeSlug: SourceUploadPathParams["knowledgeSlug"], data: SourceUploadMutationRequest}, typeof mutationKey>({
+  return mutationOptions<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeId: SourceUploadPathParams["knowledgeId"], data: SourceUploadMutationRequest}, typeof mutationKey>({
     mutationKey,
-    mutationFn: async({ tenantId, knowledgeSlug, data }) => {
-      return sourceUpload(tenantId, knowledgeSlug, data, config)
+    mutationFn: async({ tenantId, knowledgeId, data }) => {
+      return sourceUpload(tenantId, knowledgeId, data, config)
     },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/source/upload-url}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/upload-url}
  */
 export function useApiSourceUpload<TContext>(options: 
 {
-  mutation?: UseMutationOptions<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeSlug: SourceUploadPathParams["knowledgeSlug"], data: SourceUploadMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeId: SourceUploadPathParams["knowledgeId"], data: SourceUploadMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<SourceUploadMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -49,11 +49,11 @@ export function useApiSourceUpload<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? sourceUploadMutationKey()
 
-  const baseOptions = sourceUploadMutationOptions(config) as UseMutationOptions<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeSlug: SourceUploadPathParams["knowledgeSlug"], data: SourceUploadMutationRequest}, TContext>
+  const baseOptions = sourceUploadMutationOptions(config) as UseMutationOptions<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeId: SourceUploadPathParams["knowledgeId"], data: SourceUploadMutationRequest}, TContext>
 
-  return useMutation<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeSlug: SourceUploadPathParams["knowledgeSlug"], data: SourceUploadMutationRequest}, TContext>({
+  return useMutation<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeId: SourceUploadPathParams["knowledgeId"], data: SourceUploadMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeSlug: SourceUploadPathParams["knowledgeSlug"], data: SourceUploadMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeId: SourceUploadPathParams["knowledgeId"], data: SourceUploadMutationRequest}, TContext>
 }

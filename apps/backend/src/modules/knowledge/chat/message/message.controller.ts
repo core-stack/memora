@@ -7,7 +7,7 @@ import { ApiResponse } from "@nestjs/swagger";
 import { CreateMessageDto, CreateMessageResponseDto } from "./dto/create-message.dto";
 import { MessageService } from "./message.service";
 
-@Controller("tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message")
+@Controller("tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message")
 export class MessageController extends BaseController({ entity: MessageEntity }) {
   constructor(public service: MessageService) {
     super(service);

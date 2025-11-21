@@ -2,11 +2,11 @@ import { useQueryClient } from '@tanstack/react-query';
 
 export const useApiInvalidate = () => {
   const queryClient = useQueryClient();
-  return (...keys: readonly any[]) => {
+  return async (...keys: readonly any[]): Promise<void> => {
     if (keys.length > 0) {
-      return Promise.all(keys.map((key) => queryClient.invalidateQueries(key)))
+      await Promise.all(keys.map((key) => queryClient.invalidateQueries(key)));
     } else {
-      return queryClient.clear();
+      queryClient.clear();
     }
   }
 }

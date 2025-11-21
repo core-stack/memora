@@ -2,15 +2,14 @@ import { createContext, useCallback, useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 
 import { DialogType } from '@/dialogs';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useAuth } from '@/hooks/use-auth';
 import { useDialog } from '@/hooks/use-dialog';
 import { useLocalStorage } from '@/hooks/use-local-storage';
+import { useApiUserSelf, type TenantEntity } from '@/gen';
 
-import type { TenantSchema } from "@snipet/schemas";
 type TenantContextType = {
-  tenant?: TenantSchema;
-  tenants?: TenantSchema[];
+  tenant?: TenantEntity;
+  tenants?: TenantEntity[];
   setTenant: (tenantId: string) => void;
   isLoading: boolean;
 }
@@ -24,13 +23,12 @@ export const TenantProvider = () => {
   const [canRender, setCanRender] = useState(false);
   const [tenantId, setTenantId] = useLocalStorage<string>("tenant-id", null);
 
-  const { data: user, isLoading, refetch } = useApiQuery(
-    "/api/user/self",
-    { method: "GET", retry: (failureCount) => failureCount < 1 }
-  );
+  const { data: user, isLoading, refetch } = useApiUserSelf({
+    query: { retry: (failureCount) => failureCount < 1 }
+  });
 
   const tenant = user?.members.find((member) => member.tenantId === tenantId)?.tenant;
-  const tenants = user?.members.map((member) => member.tenant);
+  const tenants = user?.members.map((member) => member.tenant).filter((tenant) => !!tenant);
 
   const setTenant = useCallback(async (tenantId: string) => {
     try {
@@ -46,7 +44,7 @@ export const TenantProvider = () => {
     if (!tenant && tenantId) return setTenantId(null);
     if (!tenant && isAuthenticated) {
       if (tenants && tenants?.length > 0) {
-        setTenant(tenants[0].id);
+        setTenant(tenants[0]?.id);
       } else if (!isOpenDialog) {
         setIsOpenDialog(true);
         openDialog({ type: DialogType.CREATE_TENANT });

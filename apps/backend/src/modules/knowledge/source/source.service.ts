@@ -5,7 +5,6 @@ import { EntityManager } from "typeorm";
 import { IndexStatus, SourceEntity } from "@/entities/source.entity";
 import { PrivateStorageService } from "@/infra/storage/private-storage.service";
 import { JobType } from "@/jobs/types";
-import { FilterOptions } from "@/shared/filter-options";
 import { Service } from "@/shared/service";
 import { InjectQueue } from "@nestjs/bullmq";
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
@@ -24,18 +23,9 @@ export class SourceService extends Service<SourceEntity> {
   @Inject() private readonly storageService: PrivateStorageService;
   @InjectQueue(JobType.INGEST) private readonly ingestQueue: Queue;
 
-  override async find(filterOpts: FilterOptions<SourceEntity>, manager?: EntityManager): Promise<SourceEntity[]> {
-    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
-    filterOpts.where = filterOpts.where ?? {};
-    filterOpts.where.knowledgeId = knowledgeId;
-    return super.find(filterOpts, manager);
-  }
-
   override async create(input: SourceEntity, manager?: EntityManager) {
     if (!input.key) throw new BadRequestException("Key is required");
 
-    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
-    input.knowledgeId = knowledgeId;
     input.indexStatus = IndexStatus.PENDING;
     input.path = await this.folderService.getPathByFolderId(
       input.originalName ?? input.name!,
@@ -51,8 +41,8 @@ export class SourceService extends Service<SourceEntity> {
 
     const createdSource = await super.create(input, manager);
 
-    await this.knowledgeService.increaseFileCount(knowledgeId);
-    await this.knowledgeService.increaseStorageCount(knowledgeId, createdSource.metadata.size);
+    await this.knowledgeService.increaseFileCount(input.knowledgeId, 1, manager);
+    await this.knowledgeService.increaseStorageCount(input.knowledgeId, createdSource.metadata.size, manager);
     await this.ingestQueue.add(
       JobType.INGEST,
       createdSource,
@@ -62,9 +52,10 @@ export class SourceService extends Service<SourceEntity> {
   }
 
   async getUploadUrl(input: GetUploadUrlDto) {
-    const { id: knowledgeId } = await this.knowledgeService.loadFromSlug();
+    const tenantId = this.context.params.shouldGetString("tenantId");
+    const knowledgeId = this.context.params.shouldGetString("knowledgeId");
     const ext = input.fileName.split(".").pop();
-    const key = `source/${this.context.params.shouldGetString("tenantId")}/${knowledgeId}/${randomUUID()}.${ext}`;
+    const key = `source/${tenantId}/${knowledgeId}/${randomUUID()}.${ext}`;
     return this.storageService.getUploadUrl(key, input.contentType, { temp: true });
   }
 

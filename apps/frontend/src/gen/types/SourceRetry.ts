@@ -17,7 +17,7 @@ export type SourceRetryPathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 export type SourceRetry200 = SourceEntity;

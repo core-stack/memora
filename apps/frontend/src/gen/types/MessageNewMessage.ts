@@ -14,7 +14,7 @@ export type MessageNewMessagePathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
     /**
      * @type string
     */

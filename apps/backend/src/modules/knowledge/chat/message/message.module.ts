@@ -17,7 +17,6 @@ import { MessageService } from "./message.service";
   providers: [ MessageService ],
   imports: [
     DatabaseModule,
-    KnowledgeModule,
     StorageModule,
     PromptModule,
     ChatModule,

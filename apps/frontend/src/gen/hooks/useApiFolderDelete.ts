@@ -10,36 +10,36 @@ import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tansta
 import { folderDeleteMutationResponseSchema } from "../zod/folderDeleteSchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
-export const folderDeleteMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder/:id' }] as const
+export const folderDeleteMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id' }] as const
 
 export type FolderDeleteMutationKey = ReturnType<typeof folderDeleteMutationKey>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/folder/:id}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id}
  */
-export async function folderDelete(id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeSlug: FolderDeletePathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function folderDelete(id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeId: FolderDeletePathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/folder/${id}`, baseURL : "/", ... requestConfig })  
+  const res = await request<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/folder/${id}`, baseURL : "/", ... requestConfig })  
   return folderDeleteMutationResponseSchema.parse(res.data)
 }
 
 export function folderDeleteMutationOptions(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const mutationKey = folderDeleteMutationKey()
-  return mutationOptions<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeSlug: FolderDeletePathParams["knowledgeSlug"]}, typeof mutationKey>({
+  return mutationOptions<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeId: FolderDeletePathParams["knowledgeId"]}, typeof mutationKey>({
     mutationKey,
-    mutationFn: async({ id, tenantId, knowledgeSlug }) => {
-      return folderDelete(id, tenantId, knowledgeSlug, config)
+    mutationFn: async({ id, tenantId, knowledgeId }) => {
+      return folderDelete(id, tenantId, knowledgeId, config)
     },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/folder/:id}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id}
  */
 export function useApiFolderDelete<TContext>(options: 
 {
-  mutation?: UseMutationOptions<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeSlug: FolderDeletePathParams["knowledgeSlug"]}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeId: FolderDeletePathParams["knowledgeId"]}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch },
 }
  = {}) {
@@ -47,11 +47,11 @@ export function useApiFolderDelete<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? folderDeleteMutationKey()
 
-  const baseOptions = folderDeleteMutationOptions(config) as UseMutationOptions<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeSlug: FolderDeletePathParams["knowledgeSlug"]}, TContext>
+  const baseOptions = folderDeleteMutationOptions(config) as UseMutationOptions<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeId: FolderDeletePathParams["knowledgeId"]}, TContext>
 
-  return useMutation<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeSlug: FolderDeletePathParams["knowledgeSlug"]}, TContext>({
+  return useMutation<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeId: FolderDeletePathParams["knowledgeId"]}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeSlug: FolderDeletePathParams["knowledgeSlug"]}, TContext>
+  }, queryClient) as UseMutationResult<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeId: FolderDeletePathParams["knowledgeId"]}, TContext>
 }

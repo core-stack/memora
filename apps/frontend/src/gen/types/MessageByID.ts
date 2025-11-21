@@ -18,29 +18,11 @@ export type MessageByIDPathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
     /**
      * @type string
     */
     chatId: string;
-};
-
-export type MessageByIDQueryParams = {
-    /**
-     * @description Maximum number of records to return
-     * @type number | undefined
-    */
-    limit?: number;
-    /**
-     * @description Number of records to skip
-     * @type number | undefined
-    */
-    offset?: number;
-    /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields:
-     * @type array | undefined
-    */
-    sort?: string[];
 };
 
 /**
@@ -68,6 +50,5 @@ export type MessageByIDQueryResponse = MessageByID200;
 export type MessageByIDQuery = {
     Response: MessageByID200;
     PathParams: MessageByIDPathParams;
-    QueryParams: MessageByIDQueryParams;
     Errors: MessageByID400 | MessageByID404 | MessageByID500;
 };

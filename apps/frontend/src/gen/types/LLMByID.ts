@@ -17,24 +17,6 @@ export type LLMByIDPathParams = {
     tenantId: string;
 };
 
-export type LLMByIDQueryParams = {
-    /**
-     * @description Maximum number of records to return
-     * @type number | undefined
-    */
-    limit?: number;
-    /**
-     * @description Number of records to skip
-     * @type number | undefined
-    */
-    offset?: number;
-    /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields:
-     * @type array | undefined
-    */
-    sort?: string[];
-};
-
 /**
  * @description Record found successfully
 */
@@ -60,6 +42,5 @@ export type LLMByIDQueryResponse = LLMByID200;
 export type LLMByIDQuery = {
     Response: LLMByID200;
     PathParams: LLMByIDPathParams;
-    QueryParams: LLMByIDQueryParams;
     Errors: LLMByID400 | LLMByID404 | LLMByID500;
 };

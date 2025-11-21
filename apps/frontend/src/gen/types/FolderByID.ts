@@ -18,25 +18,7 @@ export type FolderByIDPathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
-};
-
-export type FolderByIDQueryParams = {
-    /**
-     * @description Maximum number of records to return
-     * @type number | undefined
-    */
-    limit?: number;
-    /**
-     * @description Number of records to skip
-     * @type number | undefined
-    */
-    offset?: number;
-    /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields:
-     * @type array | undefined
-    */
-    sort?: string[];
+    knowledgeId: string;
 };
 
 /**
@@ -64,6 +46,5 @@ export type FolderByIDQueryResponse = FolderByID200;
 export type FolderByIDQuery = {
     Response: FolderByID200;
     PathParams: FolderByIDPathParams;
-    QueryParams: FolderByIDQueryParams;
     Errors: FolderByID400 | FolderByID404 | FolderByID500;
 };

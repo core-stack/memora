@@ -15,7 +15,7 @@ export type FolderCreatePathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 /**

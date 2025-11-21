@@ -19,7 +19,7 @@ export type FolderUpdatePathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 /**

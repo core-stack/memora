@@ -23,21 +23,6 @@ export type MemberByIDQueryParams = {
      * @type array | undefined
     */
     relations?: string[];
-    /**
-     * @description Maximum number of records to return
-     * @type number | undefined
-    */
-    limit?: number;
-    /**
-     * @description Number of records to skip
-     * @type number | undefined
-    */
-    offset?: number;
-    /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields:
-     * @type array | undefined
-    */
-    sort?: string[];
 };
 
 /**

@@ -47,7 +47,7 @@ export function BaseController<
   abstract class Base {
     constructor(public readonly service: Service<TEntity>) {}
 
-    @ApiFilterQuery([], allowedRelations)
+    @ApiFilterQuery([], allowedRelations, false)
     @HttpGet(":id", { ignore: ignore.includes("findByID"), responses: responses.findByID })
     async findByID(@Param("id", ParseUUIDPipe) id: string): Promise<TEntity | null> {
       return this.service.findByID(id);

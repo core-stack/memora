@@ -9,7 +9,7 @@ import { z } from "zod/v4";
 
 export const messageNewMessagePathParamsSchema = z.object({
     "tenantId": z.string(),
-"knowledgeSlug": z.string(),
+"knowledgeId": z.string(),
 "chatId": z.string()
     })
 

@@ -10,38 +10,38 @@ import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tansta
 import { chatCreateMutationResponseSchema, chatCreateMutationRequestSchema } from "../zod/chatCreateSchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
-export const chatCreateMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat' }] as const
+export const chatCreateMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/chat' }] as const
 
 export type ChatCreateMutationKey = ReturnType<typeof chatCreateMutationKey>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/chat}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat}
  */
-export async function chatCreate(tenantId: ChatCreatePathParams["tenantId"], knowledgeSlug: ChatCreatePathParams["knowledgeSlug"], data: ChatCreateMutationRequest, config: Partial<RequestConfig<ChatCreateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function chatCreate(tenantId: ChatCreatePathParams["tenantId"], knowledgeId: ChatCreatePathParams["knowledgeId"], data: ChatCreateMutationRequest, config: Partial<RequestConfig<ChatCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = chatCreateMutationRequestSchema.parse(data)  
   
-  const res = await request<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, ChatCreateMutationRequest>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/chat`, baseURL : "/", data : requestData, ... requestConfig })  
+  const res = await request<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, ChatCreateMutationRequest>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/chat`, baseURL : "/", data : requestData, ... requestConfig })  
   return chatCreateMutationResponseSchema.parse(res.data)
 }
 
 export function chatCreateMutationOptions(config: Partial<RequestConfig<ChatCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = chatCreateMutationKey()
-  return mutationOptions<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeSlug: ChatCreatePathParams["knowledgeSlug"], data: ChatCreateMutationRequest}, typeof mutationKey>({
+  return mutationOptions<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeId: ChatCreatePathParams["knowledgeId"], data: ChatCreateMutationRequest}, typeof mutationKey>({
     mutationKey,
-    mutationFn: async({ tenantId, knowledgeSlug, data }) => {
-      return chatCreate(tenantId, knowledgeSlug, data, config)
+    mutationFn: async({ tenantId, knowledgeId, data }) => {
+      return chatCreate(tenantId, knowledgeId, data, config)
     },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/chat}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat}
  */
 export function useApiChatCreate<TContext>(options: 
 {
-  mutation?: UseMutationOptions<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeSlug: ChatCreatePathParams["knowledgeSlug"], data: ChatCreateMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeId: ChatCreatePathParams["knowledgeId"], data: ChatCreateMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<ChatCreateMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -49,11 +49,11 @@ export function useApiChatCreate<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? chatCreateMutationKey()
 
-  const baseOptions = chatCreateMutationOptions(config) as UseMutationOptions<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeSlug: ChatCreatePathParams["knowledgeSlug"], data: ChatCreateMutationRequest}, TContext>
+  const baseOptions = chatCreateMutationOptions(config) as UseMutationOptions<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeId: ChatCreatePathParams["knowledgeId"], data: ChatCreateMutationRequest}, TContext>
 
-  return useMutation<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeSlug: ChatCreatePathParams["knowledgeSlug"], data: ChatCreateMutationRequest}, TContext>({
+  return useMutation<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeId: ChatCreatePathParams["knowledgeId"], data: ChatCreateMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeSlug: ChatCreatePathParams["knowledgeSlug"], data: ChatCreateMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeId: ChatCreatePathParams["knowledgeId"], data: ChatCreateMutationRequest}, TContext>
 }

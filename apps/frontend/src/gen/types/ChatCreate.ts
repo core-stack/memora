@@ -15,7 +15,7 @@ export type ChatCreatePathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 /**

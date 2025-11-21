@@ -1,7 +1,7 @@
 import { TenantGuard } from "@/guards/tenant.guard";
 import { BaseController } from "@/shared/controller";
-import { Controller } from "@/shared/controller/decorators";
-import { UseGuards } from "@nestjs/common";
+import { Controller, Filter, HttpGet } from "@/shared/controller/decorators";
+import { Get, Param, UseGuards } from "@nestjs/common";
 
 import { KnowledgeEntity } from "../../entities/knowledge.entity";
 import { CreateKnowledgeDto } from "./dto/create-knowledge.dto";
@@ -13,7 +13,8 @@ import { KnowledgeService } from "./knowledge.service";
 export class KnowledgeController extends BaseController({
   entity: KnowledgeEntity,
   createDto: CreateKnowledgeDto,
-  updateDto: UpdateKnowledgeDto
+  updateDto: UpdateKnowledgeDto,
+  allowedFilters: [ 'slug', 'storage', 'title' ],
 }) {
-  constructor(service: KnowledgeService) { super(service); }
+  constructor(public service: KnowledgeService) { super(service); }
 }

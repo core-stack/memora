@@ -1,4 +1,7 @@
 import { ChatEntity } from "@/entities";
-import { PickType } from "@nestjs/swagger";
+import { ApiHideProperty, PickType } from "@nestjs/swagger";
 
-export class CreateChatDto extends PickType(ChatEntity, [ "name" ]) {}
+export class CreateChatDto extends PickType(ChatEntity, [ "name" ]) {
+  @ApiHideProperty()
+  knowledgeId: string;
+}

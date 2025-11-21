@@ -14,7 +14,7 @@ export type ChatPathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeId: string;
 };
 
 export type ChatQueryParams = {

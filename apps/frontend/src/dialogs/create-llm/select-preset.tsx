@@ -9,13 +9,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useDialog } from '@/hooks/use-dialog';
 import { cn } from '@/lib/utils';
 
 import { DialogType } from '../';
 
-import type { LLMPreset } from "@snipet/schemas"
+import { useApiLLMGetPresets } from '@/gen';
+import { useTenant } from '@/hooks/use-tenant';
 export interface SelectPresetDialogProps {
   onSelectPreset?: (preset: LLMPreset) => void;
   openConfigDialog?: boolean;
@@ -24,7 +24,8 @@ export interface SelectPresetDialogProps {
 export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true }: SelectPresetDialogProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { openDialog, closeDialog } = useDialog();
-  const { data: presets = [] } = useApiQuery("/api/tenant/:tenantId/llm/presets", { method: "GET" });
+  const { tenant } = useTenant();
+  const { data: presets = [] } = useApiLLMGetPresets(tenant?.id ?? "")
 
   const filteredPresets = presets.filter(
     (preset) =>
@@ -32,7 +33,7 @@ export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true }: 
       preset.description.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
-  const handleSelectPreset = (preset: LLMPreset) => {    
+  const handleSelectPreset = (preset: LLMPreset) => {
     onSelectPreset?.(preset);
     setSearchQuery("")
     if (openConfigDialog) openDialog({ type: DialogType.CONFIGURE_LLM, props: { preset }});

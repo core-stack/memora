@@ -4,34 +4,34 @@
 */
 
 import fetch from "@kubb/plugin-client/clients/axios";
-import type { TenantByIDQueryResponse, TenantByIDPathParams, TenantByIDQueryParams, TenantByID400, TenantByID404, TenantByID500 } from "../types/TenantByID.ts";
+import type { TenantByIDQueryResponse, TenantByIDPathParams, TenantByID400, TenantByID404, TenantByID500 } from "../types/TenantByID.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
 import { tenantByIDQueryResponseSchema } from "../zod/tenantByIDSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const tenantByIDSuspenseQueryKeyFn = (id: TenantByIDPathParams["id"], params?: TenantByIDQueryParams) => [{ url: '/api/tenant/:id', params: {id:id} }, ...(params ? [params] : [])] as const
+export const tenantByIDSuspenseQueryKeyFn = (id: TenantByIDPathParams["id"]) => [{ url: '/api/tenant/:id', params: {id:id} }] as const
 
 export type TenantByIDSuspenseQueryKey = ReturnType<typeof tenantByIDSuspenseQueryKeyFn>
 
 /**
  * {@link /api/tenant/:id}
  */
-export async function tenantByIDSuspense(id: TenantByIDPathParams["id"], params?: TenantByIDQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function tenantByIDSuspense(id: TenantByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<TenantByIDQueryResponse, ResponseErrorConfig<TenantByID400 | TenantByID404 | TenantByID500>, unknown>({ method : "GET", url : `/api/tenant/${id}`, baseURL : "/", params, ... requestConfig })  
+  const res = await request<TenantByIDQueryResponse, ResponseErrorConfig<TenantByID400 | TenantByID404 | TenantByID500>, unknown>({ method : "GET", url : `/api/tenant/${id}`, baseURL : "/", ... requestConfig })  
   return tenantByIDQueryResponseSchema.parse(res.data)
 }
 
-export function tenantByIDSuspenseQueryOptions(id: TenantByIDPathParams["id"], params?: TenantByIDQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = tenantByIDSuspenseQueryKeyFn(id, params)
+export function tenantByIDSuspenseQueryOptions(id: TenantByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = tenantByIDSuspenseQueryKeyFn(id)
   return queryOptions<TenantByIDQueryResponse, ResponseErrorConfig<TenantByID400 | TenantByID404 | TenantByID500>, TenantByIDQueryResponse, typeof queryKey>({
    enabled: !!(id),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return tenantByIDSuspense(id, params, config)
+      return tenantByIDSuspense(id, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function tenantByIDSuspenseQueryOptions(id: TenantByIDPathParams["id"], p
 /**
  * {@link /api/tenant/:id}
  */
-export function useApiTenantByIDSuspense<TData = TenantByIDQueryResponse, TQueryKey extends QueryKey = TenantByIDSuspenseQueryKey>(id: TenantByIDPathParams["id"], params?: TenantByIDQueryParams, options: 
+export function useApiTenantByIDSuspense<TData = TenantByIDQueryResponse, TQueryKey extends QueryKey = TenantByIDSuspenseQueryKey>(id: TenantByIDPathParams["id"], options: 
 {
   query?: Partial<UseSuspenseQueryOptions<TenantByIDQueryResponse, ResponseErrorConfig<TenantByID400 | TenantByID404 | TenantByID500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiTenantByIDSuspense<TData = TenantByIDQueryResponse, TQuery
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? tenantByIDSuspenseQueryKeyFn(id, params)
+  const queryKey = queryOptions?.queryKey ?? tenantByIDSuspenseQueryKeyFn(id)
 
   const query = useSuspenseQuery({
-   ...tenantByIDSuspenseQueryOptions(id, params, config),
+   ...tenantByIDSuspenseQueryOptions(id, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<TenantByID400 | TenantByID404 | TenantByID500>> & { queryKey: TQueryKey }

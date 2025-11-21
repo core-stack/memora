@@ -10,36 +10,36 @@ import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryRe
 import { chatQueryResponseSchema } from "../zod/chatSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const chatSuspenseQueryKeyFn = (tenantId: ChatPathParams["tenantId"], knowledgeSlug: ChatPathParams["knowledgeSlug"], params?: ChatQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat', params: {tenantId:tenantId,knowledgeSlug:knowledgeSlug} }, ...(params ? [params] : [])] as const
+export const chatSuspenseQueryKeyFn = (tenantId: ChatPathParams["tenantId"], knowledgeId: ChatPathParams["knowledgeId"], params?: ChatQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/chat', params: {tenantId:tenantId,knowledgeId:knowledgeId} }, ...(params ? [params] : [])] as const
 
 export type ChatSuspenseQueryKey = ReturnType<typeof chatSuspenseQueryKeyFn>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/chat}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat}
  */
-export async function chatSuspense(tenantId: ChatPathParams["tenantId"], knowledgeSlug: ChatPathParams["knowledgeSlug"], params?: ChatQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function chatSuspense(tenantId: ChatPathParams["tenantId"], knowledgeId: ChatPathParams["knowledgeId"], params?: ChatQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<ChatQueryResponse, ResponseErrorConfig<Chat400 | Chat500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/chat`, baseURL : "/", params, ... requestConfig })  
+  const res = await request<ChatQueryResponse, ResponseErrorConfig<Chat400 | Chat500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/chat`, baseURL : "/", params, ... requestConfig })  
   return chatQueryResponseSchema.parse(res.data)
 }
 
-export function chatSuspenseQueryOptions(tenantId: ChatPathParams["tenantId"], knowledgeSlug: ChatPathParams["knowledgeSlug"], params?: ChatQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = chatSuspenseQueryKeyFn(tenantId, knowledgeSlug, params)
+export function chatSuspenseQueryOptions(tenantId: ChatPathParams["tenantId"], knowledgeId: ChatPathParams["knowledgeId"], params?: ChatQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = chatSuspenseQueryKeyFn(tenantId, knowledgeId, params)
   return queryOptions<ChatQueryResponse, ResponseErrorConfig<Chat400 | Chat500>, ChatQueryResponse, typeof queryKey>({
-   enabled: !!(tenantId&& knowledgeSlug),
+   enabled: !!(tenantId&& knowledgeId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return chatSuspense(tenantId, knowledgeSlug, params, config)
+      return chatSuspense(tenantId, knowledgeId, params, config)
    },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/chat}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat}
  */
-export function useApiChatSuspense<TData = ChatQueryResponse, TQueryKey extends QueryKey = ChatSuspenseQueryKey>(tenantId: ChatPathParams["tenantId"], knowledgeSlug: ChatPathParams["knowledgeSlug"], params?: ChatQueryParams, options: 
+export function useApiChatSuspense<TData = ChatQueryResponse, TQueryKey extends QueryKey = ChatSuspenseQueryKey>(tenantId: ChatPathParams["tenantId"], knowledgeId: ChatPathParams["knowledgeId"], params?: ChatQueryParams, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<ChatQueryResponse, ResponseErrorConfig<Chat400 | Chat500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiChatSuspense<TData = ChatQueryResponse, TQueryKey extends 
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? chatSuspenseQueryKeyFn(tenantId, knowledgeSlug, params)
+  const queryKey = queryOptions?.queryKey ?? chatSuspenseQueryKeyFn(tenantId, knowledgeId, params)
 
   const query = useSuspenseQuery({
-   ...chatSuspenseQueryOptions(tenantId, knowledgeSlug, params, config),
+   ...chatSuspenseQueryOptions(tenantId, knowledgeId, params, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<Chat400 | Chat500>> & { queryKey: TQueryKey }

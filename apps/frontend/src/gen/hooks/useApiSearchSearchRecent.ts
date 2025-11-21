@@ -10,36 +10,36 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { searchSearchRecentQueryResponseSchema } from "../zod/searchSearchRecentSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const searchSearchRecentQueryKeyFn = (tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeSlug: SearchSearchRecentPathParams["knowledgeSlug"]) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/search/recent', params: {tenantId:tenantId,knowledgeSlug:knowledgeSlug} }] as const
+export const searchSearchRecentQueryKeyFn = (tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeIdearch: SearchSearchRecentPathParams["knowledgeIdearch"]) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeIdearch/recent', params: {tenantId:tenantId,knowledgeIdearch:knowledgeIdearch} }] as const
 
 export type SearchSearchRecentQueryKey = ReturnType<typeof searchSearchRecentQueryKeyFn>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/search/recent}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeIdearch/recent}
  */
-export async function searchSearchRecent(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeSlug: SearchSearchRecentPathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function searchSearchRecent(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeIdearch: SearchSearchRecentPathParams["knowledgeIdearch"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<SearchSearchRecentQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/search/recent`, baseURL : "/", ... requestConfig })  
+  const res = await request<SearchSearchRecentQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeIdearch}/recent`, baseURL : "/", ... requestConfig })  
   return searchSearchRecentQueryResponseSchema.parse(res.data)
 }
 
-export function searchSearchRecentQueryOptions(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeSlug: SearchSearchRecentPathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = searchSearchRecentQueryKeyFn(tenantId, knowledgeSlug)
+export function searchSearchRecentQueryOptions(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeIdearch: SearchSearchRecentPathParams["knowledgeIdearch"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = searchSearchRecentQueryKeyFn(tenantId, knowledgeIdearch)
   return queryOptions<SearchSearchRecentQueryResponse, ResponseErrorConfig<Error>, SearchSearchRecentQueryResponse, typeof queryKey>({
-   enabled: !!(tenantId&& knowledgeSlug),
+   enabled: !!(tenantId&& knowledgeIdearch),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return searchSearchRecent(tenantId, knowledgeSlug, config)
+      return searchSearchRecent(tenantId, knowledgeIdearch, config)
    },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/search/recent}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeIdearch/recent}
  */
-export function useApiSearchSearchRecent<TData = SearchSearchRecentQueryResponse, TQueryData = SearchSearchRecentQueryResponse, TQueryKey extends QueryKey = SearchSearchRecentQueryKey>(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeSlug: SearchSearchRecentPathParams["knowledgeSlug"], options: 
+export function useApiSearchSearchRecent<TData = SearchSearchRecentQueryResponse, TQueryData = SearchSearchRecentQueryResponse, TQueryKey extends QueryKey = SearchSearchRecentQueryKey>(tenantId: SearchSearchRecentPathParams["tenantId"], knowledgeIdearch: SearchSearchRecentPathParams["knowledgeIdearch"], options: 
 {
   query?: Partial<QueryObserverOptions<SearchSearchRecentQueryResponse, ResponseErrorConfig<Error>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiSearchSearchRecent<TData = SearchSearchRecentQueryResponse
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? searchSearchRecentQueryKeyFn(tenantId, knowledgeSlug)
+  const queryKey = queryOptions?.queryKey ?? searchSearchRecentQueryKeyFn(tenantId, knowledgeIdearch)
 
   const query = useQuery({
-   ...searchSearchRecentQueryOptions(tenantId, knowledgeSlug, config),
+   ...searchSearchRecentQueryOptions(tenantId, knowledgeIdearch, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Error>> & { queryKey: TQueryKey }

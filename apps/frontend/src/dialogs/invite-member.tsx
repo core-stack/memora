@@ -15,16 +15,12 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ROLES } from '@snipet/permission';
-import { createInviteSchema } from '@snipet/schemas';
 
 import { DialogType } from './';
 
-import type { CreateInviteSchema } from "@snipet/schemas";
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useCallback, useEffect, useMemo } from 'react';
 
 export function InviteMemberDialog() {

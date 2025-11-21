@@ -13,14 +13,6 @@ export const accountByIDPathParamsSchema = z.object({
 
 export type AccountByIDPathParamsSchema = z.infer<typeof accountByIDPathParamsSchema>
 
-export const accountByIDQueryParamsSchema = z.object({
-    "limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
-"offset": z.optional(z.coerce.number().describe("Number of records to skip")),
-"sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: "))
-    }).optional()
-
-export type AccountByIDQueryParamsSchema = z.infer<typeof accountByIDQueryParamsSchema>
-
 /**
  * @description Record found successfully
  */

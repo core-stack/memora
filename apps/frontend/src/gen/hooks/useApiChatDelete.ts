@@ -10,36 +10,36 @@ import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tansta
 import { chatDeleteMutationResponseSchema } from "../zod/chatDeleteSchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
-export const chatDeleteMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:id' }] as const
+export const chatDeleteMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/chat/:id' }] as const
 
 export type ChatDeleteMutationKey = ReturnType<typeof chatDeleteMutationKey>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:id}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat/:id}
  */
-export async function chatDelete(id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeSlug: ChatDeletePathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function chatDelete(id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeId: ChatDeletePathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/chat/${id}`, baseURL : "/", ... requestConfig })  
+  const res = await request<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/chat/${id}`, baseURL : "/", ... requestConfig })  
   return chatDeleteMutationResponseSchema.parse(res.data)
 }
 
 export function chatDeleteMutationOptions(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const mutationKey = chatDeleteMutationKey()
-  return mutationOptions<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, {id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeSlug: ChatDeletePathParams["knowledgeSlug"]}, typeof mutationKey>({
+  return mutationOptions<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, {id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeId: ChatDeletePathParams["knowledgeId"]}, typeof mutationKey>({
     mutationKey,
-    mutationFn: async({ id, tenantId, knowledgeSlug }) => {
-      return chatDelete(id, tenantId, knowledgeSlug, config)
+    mutationFn: async({ id, tenantId, knowledgeId }) => {
+      return chatDelete(id, tenantId, knowledgeId, config)
     },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:id}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat/:id}
  */
 export function useApiChatDelete<TContext>(options: 
 {
-  mutation?: UseMutationOptions<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, {id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeSlug: ChatDeletePathParams["knowledgeSlug"]}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, {id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeId: ChatDeletePathParams["knowledgeId"]}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch },
 }
  = {}) {
@@ -47,11 +47,11 @@ export function useApiChatDelete<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? chatDeleteMutationKey()
 
-  const baseOptions = chatDeleteMutationOptions(config) as UseMutationOptions<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, {id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeSlug: ChatDeletePathParams["knowledgeSlug"]}, TContext>
+  const baseOptions = chatDeleteMutationOptions(config) as UseMutationOptions<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, {id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeId: ChatDeletePathParams["knowledgeId"]}, TContext>
 
-  return useMutation<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, {id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeSlug: ChatDeletePathParams["knowledgeSlug"]}, TContext>({
+  return useMutation<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, {id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeId: ChatDeletePathParams["knowledgeId"]}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, {id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeSlug: ChatDeletePathParams["knowledgeSlug"]}, TContext>
+  }, queryClient) as UseMutationResult<ChatDeleteMutationResponse, ResponseErrorConfig<ChatDelete400 | ChatDelete404 | ChatDelete500>, {id: ChatDeletePathParams["id"], tenantId: ChatDeletePathParams["tenantId"], knowledgeId: ChatDeletePathParams["knowledgeId"]}, TContext>
 }

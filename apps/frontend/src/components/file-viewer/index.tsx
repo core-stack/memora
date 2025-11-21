@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useApiQuery } from '@/hooks/use-api-query';
 import {
   IndexStatusBadge
 } from '@/pages/[knowledgeSlug]/source/components/content/file-preview/index-status-badge';
@@ -12,33 +11,39 @@ import { DateFormat, formatBytes, formatDate } from '@/utils/format';
 
 import { PDFViewer } from './pdf';
 
-import type { Source } from '@snipet/schemas';
-import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useToast } from '@/hooks/use-toast';
 import { useDownload } from '@/hooks/use-download';
+import { useApiSourceDownload, useApiSourceView, type SourceEntity } from '@/gen';
+import { useTenant } from '@/hooks/use-tenant';
+import { useKnowledge } from '@/hooks/use-knowledge';
+
 type Props = {
-  source?: Source;
+  source?: SourceEntity;
   isLoading: boolean;
 }
 
 export const FileViewer = ({ source }: Props) => {
   const { toast } = useToast();
-  const { data: preview } = useApiQuery(
-    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:sourceId/view",
-    { method: "GET", params: { sourceId: source?.id }, enabled: !!source?.id }
+  const { tenant } = useTenant();
+  const { knowledge } = useKnowledge();
+  const { data: preview } = useApiSourceView(
+    source?.id ?? "",
+    tenant?.id ?? "",
+    knowledge?.id ?? "",
   );
   const { download } = useDownload();
-  const { mutate } = useApiMutation(
-    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/download-url",
-    { method: "GET" }
-  )
+  const { mutate } = useApiSourceDownload()
 
   const [showHeader, setShowHeader] = useState(false);
 
   const handleDownload = () => {
     if (!source) return;
     mutate(
-      { params: { id: source?.id } },
+      {
+        id: source?.id ?? "",
+        tenantId: tenant?.id ?? "",
+        knowledgeId: knowledge?.id ?? "",
+      },
       {
         onSuccess: (data) => {
           download(data.url, source?.originalName);

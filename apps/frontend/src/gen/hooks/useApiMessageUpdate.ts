@@ -10,38 +10,38 @@ import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tansta
 import { messageUpdateMutationResponseSchema, messageUpdateMutationRequestSchema } from "../zod/messageUpdateSchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
-export const messageUpdateMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message/:id' }] as const
+export const messageUpdateMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message/:id' }] as const
 
 export type MessageUpdateMutationKey = ReturnType<typeof messageUpdateMutationKey>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message/:id}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message/:id}
  */
-export async function messageUpdate(id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeSlug: MessageUpdatePathParams["knowledgeSlug"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest, config: Partial<RequestConfig<MessageUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function messageUpdate(id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeId: MessageUpdatePathParams["knowledgeId"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest, config: Partial<RequestConfig<MessageUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = messageUpdateMutationRequestSchema.parse(data)  
   
-  const res = await request<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, MessageUpdateMutationRequest>({ method : "PUT", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/chat/${chatId}/message/${id}`, baseURL : "/", data : requestData, ... requestConfig })  
+  const res = await request<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, MessageUpdateMutationRequest>({ method : "PUT", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/chat/${chatId}/message/${id}`, baseURL : "/", data : requestData, ... requestConfig })  
   return messageUpdateMutationResponseSchema.parse(res.data)
 }
 
 export function messageUpdateMutationOptions(config: Partial<RequestConfig<MessageUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = messageUpdateMutationKey()
-  return mutationOptions<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeSlug: MessageUpdatePathParams["knowledgeSlug"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, typeof mutationKey>({
+  return mutationOptions<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeId: MessageUpdatePathParams["knowledgeId"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, typeof mutationKey>({
     mutationKey,
-    mutationFn: async({ id, tenantId, knowledgeSlug, chatId, data }) => {
-      return messageUpdate(id, tenantId, knowledgeSlug, chatId, data, config)
+    mutationFn: async({ id, tenantId, knowledgeId, chatId, data }) => {
+      return messageUpdate(id, tenantId, knowledgeId, chatId, data, config)
     },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message/:id}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message/:id}
  */
 export function useApiMessageUpdate<TContext>(options: 
 {
-  mutation?: UseMutationOptions<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeSlug: MessageUpdatePathParams["knowledgeSlug"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeId: MessageUpdatePathParams["knowledgeId"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<MessageUpdateMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -49,11 +49,11 @@ export function useApiMessageUpdate<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? messageUpdateMutationKey()
 
-  const baseOptions = messageUpdateMutationOptions(config) as UseMutationOptions<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeSlug: MessageUpdatePathParams["knowledgeSlug"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, TContext>
+  const baseOptions = messageUpdateMutationOptions(config) as UseMutationOptions<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeId: MessageUpdatePathParams["knowledgeId"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, TContext>
 
-  return useMutation<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeSlug: MessageUpdatePathParams["knowledgeSlug"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, TContext>({
+  return useMutation<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeId: MessageUpdatePathParams["knowledgeId"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeSlug: MessageUpdatePathParams["knowledgeSlug"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeId: MessageUpdatePathParams["knowledgeId"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, TContext>
 }

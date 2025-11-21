@@ -12,7 +12,7 @@ export type SearchSearchByTermPathParams = {
     /**
      * @type string
     */
-    knowledgeSlug: string;
+    knowledgeIdearch: string;
 };
 
 export type SearchSearchByTerm200 = any;

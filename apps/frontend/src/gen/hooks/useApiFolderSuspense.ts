@@ -10,36 +10,36 @@ import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryRe
 import { folderQueryResponseSchema } from "../zod/folderSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const folderSuspenseQueryKeyFn = (tenantId: FolderPathParams["tenantId"], knowledgeSlug: FolderPathParams["knowledgeSlug"], params?: FolderQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder', params: {tenantId:tenantId,knowledgeSlug:knowledgeSlug} }, ...(params ? [params] : [])] as const
+export const folderSuspenseQueryKeyFn = (tenantId: FolderPathParams["tenantId"], knowledgeId: FolderPathParams["knowledgeId"], params?: FolderQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/folder', params: {tenantId:tenantId,knowledgeId:knowledgeId} }, ...(params ? [params] : [])] as const
 
 export type FolderSuspenseQueryKey = ReturnType<typeof folderSuspenseQueryKeyFn>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/folder}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder}
  */
-export async function folderSuspense(tenantId: FolderPathParams["tenantId"], knowledgeSlug: FolderPathParams["knowledgeSlug"], params?: FolderQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function folderSuspense(tenantId: FolderPathParams["tenantId"], knowledgeId: FolderPathParams["knowledgeId"], params?: FolderQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<FolderQueryResponse, ResponseErrorConfig<Folder400 | Folder500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/folder`, baseURL : "/", params, ... requestConfig })  
+  const res = await request<FolderQueryResponse, ResponseErrorConfig<Folder400 | Folder500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/folder`, baseURL : "/", params, ... requestConfig })  
   return folderQueryResponseSchema.parse(res.data)
 }
 
-export function folderSuspenseQueryOptions(tenantId: FolderPathParams["tenantId"], knowledgeSlug: FolderPathParams["knowledgeSlug"], params?: FolderQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = folderSuspenseQueryKeyFn(tenantId, knowledgeSlug, params)
+export function folderSuspenseQueryOptions(tenantId: FolderPathParams["tenantId"], knowledgeId: FolderPathParams["knowledgeId"], params?: FolderQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = folderSuspenseQueryKeyFn(tenantId, knowledgeId, params)
   return queryOptions<FolderQueryResponse, ResponseErrorConfig<Folder400 | Folder500>, FolderQueryResponse, typeof queryKey>({
-   enabled: !!(tenantId&& knowledgeSlug),
+   enabled: !!(tenantId&& knowledgeId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return folderSuspense(tenantId, knowledgeSlug, params, config)
+      return folderSuspense(tenantId, knowledgeId, params, config)
    },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/folder}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder}
  */
-export function useApiFolderSuspense<TData = FolderQueryResponse, TQueryKey extends QueryKey = FolderSuspenseQueryKey>(tenantId: FolderPathParams["tenantId"], knowledgeSlug: FolderPathParams["knowledgeSlug"], params?: FolderQueryParams, options: 
+export function useApiFolderSuspense<TData = FolderQueryResponse, TQueryKey extends QueryKey = FolderSuspenseQueryKey>(tenantId: FolderPathParams["tenantId"], knowledgeId: FolderPathParams["knowledgeId"], params?: FolderQueryParams, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<FolderQueryResponse, ResponseErrorConfig<Folder400 | Folder500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiFolderSuspense<TData = FolderQueryResponse, TQueryKey exte
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? folderSuspenseQueryKeyFn(tenantId, knowledgeSlug, params)
+  const queryKey = queryOptions?.queryKey ?? folderSuspenseQueryKeyFn(tenantId, knowledgeId, params)
 
   const query = useSuspenseQuery({
-   ...folderSuspenseQueryOptions(tenantId, knowledgeSlug, params, config),
+   ...folderSuspenseQueryOptions(tenantId, knowledgeId, params, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<Folder400 | Folder500>> & { queryKey: TQueryKey }

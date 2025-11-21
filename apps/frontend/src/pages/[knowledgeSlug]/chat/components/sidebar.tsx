@@ -8,19 +8,23 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useApiQuery } from '@/hooks/use-api-query';
-import { useParams } from '@/hooks/use-params';
 import { useRouter } from '@/hooks/use-router';
 import { cn } from '@/lib/utils';
 import { DateFormat, formatDate } from '@/utils/format';
+import { useApiChat } from '@/gen';
+import { useTenant } from '@/hooks/use-tenant';
+import { useKnowledge } from '@/hooks/use-knowledge';
+import { useParams } from '@/hooks/use-params';
 
 export function ChatSidebar() {
-  const { knowledgeSlug, chatId } = useParams<{ knowledgeSlug: string, chatId?: string }>();
+  const { chatId } = useParams<{ chatId: string }>();
+  const { tenant } = useTenant();
+  const { knowledge, slug } = useKnowledge();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("")
-  const { data: chats = [], isLoading } = useApiQuery(
-    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/chat",
-    { method: "GET", query: { order: { createdAt: "DESC" } } }
+  const { data: chats = [], isLoading } = useApiChat(
+    tenant?.id ?? "", knowledge?.id ?? "",
+    { sort: ['-createdAt'] }
   );
 
   const filteredChats = chats.filter((chat) => {
@@ -29,11 +33,11 @@ export function ChatSidebar() {
   });
 
   const onNewChat = () => {
-    router.replace(`/${knowledgeSlug}/chat`);
+    router.replace(`/${slug}/chat`);
   }
 
   const onSelectChat = (chatId: string) => {
-    router.push(`/${knowledgeSlug}/chat/${chatId}`);
+    router.push(`/${slug}/chat/${chatId}`);
   }
 
   return (

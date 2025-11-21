@@ -4,58 +4,54 @@
 */
 
 import fetch from "@kubb/plugin-client/clients/axios";
-import type { SourceDownloadQueryResponse, SourceDownloadPathParams } from "../types/SourceDownload.ts";
+import type { SourceDownloadMutationResponse, SourceDownloadPathParams } from "../types/SourceDownload.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
-import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
-import { sourceDownloadQueryResponseSchema } from "../zod/sourceDownloadSchema.ts";
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
+import { sourceDownloadMutationResponseSchema } from "../zod/sourceDownloadSchema.ts";
+import { mutationOptions, useMutation } from "@tanstack/react-query";
 
-export const sourceDownloadQueryKeyFn = (id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeSlug: SourceDownloadPathParams["knowledgeSlug"]) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/download-url', params: {tenantId:tenantId,knowledgeSlug:knowledgeSlug,id:id} }] as const
+export const sourceDownloadMutationKey = () => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/download-url' }] as const
 
-export type SourceDownloadQueryKey = ReturnType<typeof sourceDownloadQueryKeyFn>
+export type SourceDownloadMutationKey = ReturnType<typeof sourceDownloadMutationKey>
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/download-url}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/download-url}
  */
-export async function sourceDownload(id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeSlug: SourceDownloadPathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function sourceDownload(id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeId: SourceDownloadPathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<SourceDownloadQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeSlug}/source/${id}/download-url`, baseURL : "/", ... requestConfig })  
-  return sourceDownloadQueryResponseSchema.parse(res.data)
+  const res = await request<SourceDownloadMutationResponse, ResponseErrorConfig<Error>, unknown>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/source/${id}/download-url`, baseURL : "/", ... requestConfig })  
+  return sourceDownloadMutationResponseSchema.parse(res.data)
 }
 
-export function sourceDownloadQueryOptions(id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeSlug: SourceDownloadPathParams["knowledgeSlug"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = sourceDownloadQueryKeyFn(id, tenantId, knowledgeSlug)
-  return queryOptions<SourceDownloadQueryResponse, ResponseErrorConfig<Error>, SourceDownloadQueryResponse, typeof queryKey>({
-   enabled: !!(id&& tenantId&& knowledgeSlug),
-   queryKey,
-   queryFn: async ({ signal }) => {
-      config.signal = signal
-      return sourceDownload(id, tenantId, knowledgeSlug, config)
-   },
+export function sourceDownloadMutationOptions(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const mutationKey = sourceDownloadMutationKey()
+  return mutationOptions<SourceDownloadMutationResponse, ResponseErrorConfig<Error>, {id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeId: SourceDownloadPathParams["knowledgeId"]}, typeof mutationKey>({
+    mutationKey,
+    mutationFn: async({ id, tenantId, knowledgeId }) => {
+      return sourceDownload(id, tenantId, knowledgeId, config)
+    },
   })
 }
 
 /**
- * {@link /api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/download-url}
+ * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/download-url}
  */
-export function useApiSourceDownload<TData = SourceDownloadQueryResponse, TQueryData = SourceDownloadQueryResponse, TQueryKey extends QueryKey = SourceDownloadQueryKey>(id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeSlug: SourceDownloadPathParams["knowledgeSlug"], options: 
+export function useApiSourceDownload<TContext>(options: 
 {
-  query?: Partial<QueryObserverOptions<SourceDownloadQueryResponse, ResponseErrorConfig<Error>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
-  client?: Partial<RequestConfig> & { client?: typeof fetch }
+  mutation?: UseMutationOptions<SourceDownloadMutationResponse, ResponseErrorConfig<Error>, {id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeId: SourceDownloadPathParams["knowledgeId"]}, TContext> & { client?: QueryClient },
+  client?: Partial<RequestConfig> & { client?: typeof fetch },
 }
  = {}) {
-  const { query: queryConfig = {}, client: config = {} } = options ?? {}
-  const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? sourceDownloadQueryKeyFn(id, tenantId, knowledgeSlug)
+  const { mutation = {}, client: config = {} } = options ?? {}
+  const { client: queryClient, ...mutationOptions } = mutation;
+  const mutationKey = mutationOptions.mutationKey ?? sourceDownloadMutationKey()
 
-  const query = useQuery({
-   ...sourceDownloadQueryOptions(id, tenantId, knowledgeSlug, config),
-   queryKey,
-   ...queryOptions
-  } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Error>> & { queryKey: TQueryKey }
+  const baseOptions = sourceDownloadMutationOptions(config) as UseMutationOptions<SourceDownloadMutationResponse, ResponseErrorConfig<Error>, {id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeId: SourceDownloadPathParams["knowledgeId"]}, TContext>
 
-  query.queryKey = queryKey as TQueryKey
-
-  return query
+  return useMutation<SourceDownloadMutationResponse, ResponseErrorConfig<Error>, {id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeId: SourceDownloadPathParams["knowledgeId"]}, TContext>({
+    ...baseOptions,
+    mutationKey,
+    ...mutationOptions,
+  }, queryClient) as UseMutationResult<SourceDownloadMutationResponse, ResponseErrorConfig<Error>, {id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeId: SourceDownloadPathParams["knowledgeId"]}, TContext>
 }
