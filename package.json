@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "generate:prompts": "cd apps/backend && npm run generate:prompts",
+    "generate:api": "cd apps/frontend && npm run generate:api",
 
     "db:generate": "cd apps/backend && pnpm db:generate",
     "db:migrate": "cd apps/backend && pnpm typeorm migration:run",

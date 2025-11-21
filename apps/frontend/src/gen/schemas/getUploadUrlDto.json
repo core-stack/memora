@@ -1,0 +1,1 @@
+{"type":"object","properties":{"fileName":{"type":"string","example":"my-file.pdf"},"contentType":{"type":"string","example":"application/pdf"},"fileSize":{"type":"number","example":104857600,"description":"File size in bytes (max: 100.00 MB"}},"required":["fileName","contentType","fileSize"],"x-readme-ref-name":"GetUploadUrlDto"}

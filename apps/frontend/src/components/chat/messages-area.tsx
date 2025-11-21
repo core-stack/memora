@@ -31,7 +31,7 @@ export const ChatMessagesArea = () => {
 
         {/* {isLoading && (
           <div className="flex gap-4">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <div className="w-8 h-8 rounded-full bg-card text-card-foreground border border-border flex items-center justify-center">
                 <Bot className="h-4 w-4" />
               </div>

@@ -10,7 +10,9 @@ import { FolderService } from './folder.service';
 export class FolderController extends BaseController({ 
   entity: FolderEntity,
   createDto: CreateFolderDto,
-  updateDto: UpdateFolderDto
+  updateDto: UpdateFolderDto,
+  allowedFilters: [ 'parentId', 'name', 'tenantId', 'root' ],
+  // allowedRelations: [ 'children', 'knowledge', 'parent', 'sources' ]
 }) {
   constructor(folderService: FolderService) {
     super(folderService);

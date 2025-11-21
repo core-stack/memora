@@ -1,0 +1,1 @@
+{"type":"object","properties":{"error":{"type":"string"},"code":{"type":"string"},"timestamp":{"format":"date-time","type":"string"}},"required":["error","code","timestamp"],"x-readme-ref-name":"ErrorResponse"}

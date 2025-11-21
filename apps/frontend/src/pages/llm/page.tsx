@@ -8,15 +8,20 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DialogType } from '@/dialogs';
-import { useApiQuery } from '@/hooks/use-api-query';
+import { useApiLLM, useApiLLMGetPresets } from '@/gen';
 import { useDialog } from '@/hooks/use-dialog';
+import { useTenant } from '@/hooks/use-tenant';
 
 import { LLMListItem } from './components/llm-list-item';
 
 export default function LLMManagementPage() {
   const { openDialog } = useDialog();
-  const { data: llms = [] } = useApiQuery("/api/tenant/:tenantId/llm", { method: "GET", query: { order: { createdAt: "DESC" } } });
-  const { data: presets = [] } = useApiQuery("/api/tenant/:tenantId/llm/presets", { method: "GET" });
+  const { tenant } = useTenant();
+
+  const hasTenant = !!tenant;
+  const { data: llms = [] } = useApiLLM(tenant?.id!, { sort: [ 'createdAt' ] }, { query: { enabled: hasTenant } });
+  const { data: presets = [] } = useApiLLMGetPresets(tenant?.id!, { query: { enabled: hasTenant } });
+
   const [activeTab, setActiveTab] = useState("all")
 
   const filteredLLMs = activeTab === "all" ? llms : llms.filter((llm) => llm.type === activeTab);
@@ -54,6 +59,7 @@ export default function LLMManagementPage() {
                 key={llm.id} 
                 llm={llm}
                 preset={presets.find((p) => p.config.model === llm.model)}
+                tenantId={tenant?.id!}
               />
             ))}
           </div>

@@ -6,24 +6,27 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { DialogType } from '@/dialogs';
+import { LLMQueryKeyFn, useApiLLMDelete } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { DateFormat, formatDate } from '@/utils/format';
 
-import type { LLM, LLMPreset } from "@snipet/schemas";
+import type { LLMEntity, LLMPreset } from '@/gen';
+
 interface LLMListItemProps {
-  llm: LLM;
+  tenantId: string;
+  llm: LLMEntity;
   preset?: LLMPreset;
 }
 
-export function LLMListItem({ llm, preset }: LLMListItemProps) {
+export function LLMListItem({ llm, preset, tenantId }: LLMListItemProps) {
   const invalidate = useApiInvalidate();
   const { toast } = useToast();
   const { openDialog } = useDialog();
-  const { mutate } = useApiMutation("/api/tenant/:tenantId/llm/:id",  { method: "DELETE" });
+  const { mutate } = useApiLLMDelete();
+  // const { mutate } = useApiMutation("/api/tenant/:tenantId/llm/:id",  { method: "DELETE" });
 
   const handleDelete = () => {
     openDialog({
@@ -34,10 +37,10 @@ export function LLMListItem({ llm, preset }: LLMListItemProps) {
         confirm: {
           text: "Yes",
           action: () => {
-            mutate({ params: { id: llm.id } }, { 
+            mutate({ id: llm.id, tenantId }, { 
               onSuccess: () => {
                 toast({ title: "Delete LLM", description: "The LLM has been deleted." })
-                invalidate("/api/tenant/:tenantId/llm");
+                invalidate(LLMQueryKeyFn(tenantId));
               }
             })
           }

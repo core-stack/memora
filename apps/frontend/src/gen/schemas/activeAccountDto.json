@@ -1,0 +1,1 @@
+{"type":"object","properties":{"token":{"type":"string"}},"required":["token"],"x-readme-ref-name":"ActiveAccountDto"}

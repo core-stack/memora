@@ -37,7 +37,7 @@ async function bootstrap() {
   const yamlDocument = yaml.stringify(document);
   fs.writeFileSync('./swagger.yaml', yamlDocument);
 
-  app.use('/api', apiReference({ content: document }));
+  app.use('/scalar', apiReference({ content: document }));
   SwaggerModule.setup('swagger', app, document);
 
   app.use(cookieParser());

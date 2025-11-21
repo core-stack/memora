@@ -84,7 +84,7 @@ export const Plugins = () => {
                       <img
                         src={`${env.STORAGE_URL}/plugins/${plugin.name}/${plugin.iconPath ?? "icon.png"}`}
                         alt={plugin.displayName || plugin.name}
-                        className="w-8 h-8 rounded object-cover flex-shrink-0"
+                        className="w-8 h-8 rounded object-cover shrink-0"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
@@ -144,7 +144,7 @@ export const Plugins = () => {
                       <img
                         src={`${env.STORAGE_URL}/plugins/${plugin.name}/${plugin.iconPath ?? "icon.png"}`}
                         alt={plugin.displayName || plugin.name}
-                        className="w-8 h-8 rounded object-cover flex-shrink-0"
+                        className="w-8 h-8 rounded object-cover shrink-0"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">

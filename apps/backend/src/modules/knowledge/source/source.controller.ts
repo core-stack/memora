@@ -12,6 +12,7 @@ import { SourceService } from './source.service';
 export class SourceController extends BaseController({
   entity: SourceEntity,
   ignore: ['create', 'update', 'delete'],
+  allowedFilters: [ 'folderId', 'key', 'knowledgeId', 'tenantId', 'sourceType' ]
 }) {
   constructor(public service: SourceService) {
     super(service);

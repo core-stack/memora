@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DialogType } from '@/dialogs';
 import { useAuth } from '@/hooks/use-auth';
 import { useDialog } from '@/hooks/use-dialog';
+import { useTenant } from '@/hooks/use-tenant';
 import { Permission } from '@snipet/permission';
 
 import { InvitesTable } from './invite-table';
@@ -17,6 +18,8 @@ export default function MembersPage() {
   const [activeTab, setActiveTab] = useState("members")
   const { canInTenant } = useAuth();
   const { openDialog } = useDialog();
+  const { tenant } = useTenant();
+  
   return (
     <>
       <TenantPageHeader
@@ -40,7 +43,7 @@ export default function MembersPage() {
         </div>
 
         <TabsContent value="members" className="space-y-4">
-          <MembersTable />
+          <MembersTable tenantId={tenant?.id} />
         </TabsContent>
 
         <TabsContent value="invites" className="space-y-4">

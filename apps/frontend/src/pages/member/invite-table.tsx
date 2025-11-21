@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from '@/components/ui/table';
+import { useApiInvite, useApiInviteDelete } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useApiMutation } from '@/hooks/use-api-mutation';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { Permission } from '@snipet/permission';
@@ -16,22 +15,25 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 
+import type { InviteEntity } from "@/gen";
 import type {
   ColumnDef, ColumnFiltersState, SortingState, VisibilityState
 } from "@tanstack/react-table";
-import type { InviteSchema } from '@snipet/schemas';
-export const InvitesTable = () => {
+
+export const InvitesTable = ({ tenantId }: { tenantId: string }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({});
-  const { data: invites = [] } = useApiQuery("/api/tenant/:tenantId/invite", { method: "GET" });
-  const { mutate: deleteInvite } = useApiMutation("/api/tenant/:tenantId/invite/:id", { method: "DELETE" });
+  const { data: invites = [] } = useApiInvite(tenantId);
+  const { mutate: deleteInvite } = useApiInviteDelete();
+
   const invalidate = useApiInvalidate();
+  
   const { toast } = useToast();
   const { canInTenant } = useAuth();
 
-  const inviteColumns: ColumnDef<InviteSchema>[] = [
+  const inviteColumns: ColumnDef<InviteEntity>[] = [
     {
       accessorKey: "email",
       header: "Email",
@@ -107,15 +109,15 @@ export const InvitesTable = () => {
               variant="destructive-outline"
               size="sm"
               onClick={() => {
-                deleteInvite({
-                  params: { id: row.original.id },
-                }, { onSuccess: () => {
-                  toast({
-                    title: "Invite canceled",
-                    description: "The invite has been canceled.",
-                  })
-                  invalidate("/api/tenant/:tenantId/invite");
-                } });
+                deleteInvite(
+                  { tenantId, id: row.getValue("id") },
+                  { 
+                    onSuccess: () => {
+                      toast({ title: "Invite canceled", description: "The invite has been canceled." })
+                      invalidate("/api/tenant/:tenantId/invite");
+                    }
+                  }
+                );
               }}
             >
               Cancel

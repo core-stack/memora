@@ -1,0 +1,1 @@
+{"type":"object","properties":{"userMessage":{"$ref":"#/components/schemas/MessageEntity"},"aiMessage":{"$ref":"#/components/schemas/MessageEntity"}},"required":["userMessage","aiMessage"],"x-readme-ref-name":"CreateMessageResponseDto"}

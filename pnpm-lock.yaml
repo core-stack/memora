@@ -333,9 +333,6 @@ importers:
       '@snipet/permission':
         specifier: workspace:*
         version: link:../../packages/permission
-      '@snipet/schemas':
-        specifier: workspace:*
-        version: link:../../packages/schemas
       '@tailwindcss/vite':
         specifier: ^4.1.12
         version: 4.1.16(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
@@ -17251,7 +17248,7 @@ snapshots:
       isstream: 0.1.2
       jsonwebtoken: 9.0.2
       mime-types: 2.1.35
-      retry-axios: 2.6.0(axios@1.13.1)
+      retry-axios: 2.6.0(axios@1.13.1(debug@4.4.3))
       tough-cookie: 4.1.4
     transitivePeerDependencies:
       - supports-color
@@ -20149,7 +20146,7 @@ snapshots:
       onetime: 7.0.0
       signal-exit: 4.1.0
 
-  retry-axios@2.6.0(axios@1.13.1):
+  retry-axios@2.6.0(axios@1.13.1(debug@4.4.3)):
     dependencies:
       axios: 1.13.1(debug@4.4.3)
 

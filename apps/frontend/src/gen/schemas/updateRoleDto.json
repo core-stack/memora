@@ -1,0 +1,1 @@
+{"type":"object","properties":{"key":{"type":"string","description":"The key of the role"},"name":{"type":"string","description":"The name of the role"},"permissions":{"type":"number","description":"The permissions of the role as a bitmask"}},"required":["key","name","permissions"],"x-readme-ref-name":"UpdateRoleDto"}

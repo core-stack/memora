@@ -10,18 +10,19 @@ import {
   Form, FormControl, FormError, FormField, FormItem, FormLabel, FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { useApiMutation } from '@/hooks/use-api-mutation';
-import { zodResolver } from '@/utils/zod-resolver';
-import { useSearchParams } from '@/hooks/use-search-params';
-import { loginSchema, type LoginSchema } from '@snipet/schemas';
-import { useRouter } from '@/hooks/use-router';
 import { Link } from '@/components/ui/link';
+import { Separator } from '@/components/ui/separator';
+import { loginDtoSchema, useApiAuthLogin } from '@/gen';
+import { useRouter } from '@/hooks/use-router';
+import { useSearchParams } from '@/hooks/use-search-params';
+import { zodResolver } from '@/utils/zod-resolver';
+
+import type { LoginDtoSchema } from '@/gen';
 
 export function LoginForm() {
   const [searchParams] = useSearchParams();
-  const form = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<LoginDtoSchema>({
+    resolver: zodResolver(loginDtoSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -31,9 +32,9 @@ export function LoginForm() {
 
   const isLoading = form.formState.isSubmitting;
   const router = useRouter();
-  const { mutate, error } = useApiMutation('/api/auth/login');
-  const onSubmit = form.handleSubmit(async (body) => {
-    mutate({ body }, {
+  const { mutate, error} = useApiAuthLogin();
+  const onSubmit = form.handleSubmit(async (data) => {
+    mutate({ data }, {
       onSuccess: ({ redirect }) => {
         if (redirect) router.push(redirect);
       }

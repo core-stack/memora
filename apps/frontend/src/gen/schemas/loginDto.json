@@ -1,0 +1,1 @@
+{"type":"object","properties":{"email":{"type":"string"},"password":{"type":"string"},"redirect":{"type":"string"}},"required":["email","password"],"x-readme-ref-name":"LoginDto"}

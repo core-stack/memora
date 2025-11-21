@@ -10,7 +10,9 @@ import { MemberService } from './member.service';
 export class MemberController extends BaseController({
   entity: MemberEntity,
   updateDto: UpdateMemberDto,
-  ignore: [ 'create' ]
+  ignore: [ 'create' ],
+  allowedFilters: [ 'tenantId' ],
+  allowedRelations: [ 'user', 'role', 'tenant' ],
 }) {
   constructor(service: MemberService) {
     super(service);

@@ -128,6 +128,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -170,6 +192,59 @@ paths:
     get:
       operationId: SourceController_findMany
       parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: folderId, key,
+            knowledgeId, tenantId, sourceType'
+          schema:
+            type: array
+            items:
+              type: string
+        - name: filter[folderId]
+          required: false
+          in: query
+          description: Filter by folderId
+          schema:
+            type: string
+        - name: filter[key]
+          required: false
+          in: query
+          description: Filter by key
+          schema:
+            type: string
+        - name: filter[knowledgeId]
+          required: false
+          in: query
+          description: Filter by knowledgeId
+          schema:
+            type: string
+        - name: filter[tenantId]
+          required: false
+          in: query
+          description: Filter by tenantId
+          schema:
+            type: string
+        - name: filter[sourceType]
+          required: false
+          in: query
+          description: Filter by sourceType
+          schema:
+            type: string
         - name: tenantId
           in: path
           required: true
@@ -213,6 +288,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -355,6 +452,53 @@ paths:
     get:
       operationId: FolderController_findMany
       parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: parentId, name,
+            tenantId, root'
+          schema:
+            type: array
+            items:
+              type: string
+        - name: filter[parentId]
+          required: false
+          in: query
+          description: Filter by parentId
+          schema:
+            type: string
+        - name: filter[name]
+          required: false
+          in: query
+          description: Filter by name
+          schema:
+            type: string
+        - name: filter[tenantId]
+          required: false
+          in: query
+          description: Filter by tenantId
+          schema:
+            type: string
+        - name: filter[root]
+          required: false
+          in: query
+          description: Filter by root
+          schema:
+            type: string
         - name: tenantId
           in: path
           required: true
@@ -445,6 +589,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -572,6 +738,28 @@ paths:
     get:
       operationId: KnowledgeController_findMany
       parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -752,6 +940,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         "200":
           description: Record found successfully
@@ -783,7 +993,29 @@ paths:
   /api/user:
     get:
       operationId: UserController_findMany
-      parameters: []
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         "200":
           description: Records found successfully
@@ -817,6 +1049,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         "200":
           description: Record found successfully
@@ -928,7 +1182,29 @@ paths:
   /api/account:
     get:
       operationId: AccountController_findMany
-      parameters: []
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         "200":
           description: Records found successfully
@@ -999,6 +1275,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -1126,6 +1424,28 @@ paths:
     get:
       operationId: RoleController_findMany
       parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -1206,6 +1526,37 @@ paths:
           in: path
           schema:
             type: string
+        - name: relations
+          required: false
+          in: query
+          description: "Relations. Allowed fields: user, role, tenant"
+          schema:
+            example: user,role
+            type: array
+            items:
+              type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -1333,6 +1684,43 @@ paths:
     get:
       operationId: MemberController_findMany
       parameters:
+        - name: relations
+          required: false
+          in: query
+          description: "Relations. Allowed fields: user, role, tenant"
+          schema:
+            example: user,role
+            type: array
+            items:
+              type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: tenantId'
+          schema:
+            type: array
+            items:
+              type: string
+        - name: filter[tenantId]
+          required: false
+          in: query
+          description: Filter by tenantId
+          schema:
+            type: string
         - name: tenantId
           in: path
           required: true
@@ -1371,6 +1759,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         "200":
           description: Record found successfully
@@ -1440,7 +1850,29 @@ paths:
   /api/tenant:
     get:
       operationId: TenantController_findMany
-      parameters: []
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         "200":
           description: Records found successfully
@@ -1582,6 +2014,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -1707,6 +2161,28 @@ paths:
     get:
       operationId: InviteController_findMany
       parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -1787,6 +2263,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -1929,6 +2427,28 @@ paths:
     get:
       operationId: ChatController_findMany
       parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -2056,6 +2576,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -2211,6 +2753,28 @@ paths:
     get:
       operationId: MessageController_findMany
       parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -2334,6 +2898,28 @@ paths:
           in: path
           schema:
             type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -2459,6 +3045,28 @@ paths:
     get:
       operationId: LLMController_findMany
       parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -2720,12 +3328,12 @@ components:
           format: date-time
           type: string
           description: The date the account was created
-          example: 2025-11-20T10:55:58.696Z
+          example: 2025-11-21T10:09:17.670Z
         updatedAt:
           format: date-time
           type: string
           description: The date the account was updated
-          example: 2025-11-20T10:55:58.696Z
+          example: 2025-11-21T10:09:17.670Z
       required:
         - id
         - provider
@@ -2788,7 +3396,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-20T10:55:58.696Z
+          example: 2025-11-21T10:09:17.669Z
         image:
           type: string
           description: The image of the user
@@ -2801,12 +3409,12 @@ components:
           format: date-time
           type: string
           description: The date the user was created
-          example: 2025-11-20T10:55:58.696Z
+          example: 2025-11-21T10:09:17.670Z
         updatedAt:
           format: date-time
           type: string
           description: The date the user was updated
-          example: 2025-11-20T10:55:58.696Z
+          example: 2025-11-21T10:09:17.670Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:

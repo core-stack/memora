@@ -1,0 +1,1 @@
+{"type":"object","properties":{"emails":{"type":"array","items":{"type":"object","properties":{"email":{"type":"string"},"roleId":{"type":"string"}},"required":["email","roleId"],"x-readme-ref-name":"SendInviteItemDto"}}},"required":["emails"],"x-readme-ref-name":"SendInviteDto"}

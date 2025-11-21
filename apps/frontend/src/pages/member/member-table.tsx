@@ -9,7 +9,7 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from '@/components/ui/table';
-import { useApiQuery } from '@/hooks/use-api-query';
+import { useApiMember } from '@/gen';
 import { useAuth } from '@/hooks/use-auth';
 import { DateFormat, formatDate } from '@/utils/format';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
@@ -19,19 +19,22 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 
+import type { MemberEntity } from "@/gen";
 import type {
   ColumnDef, ColumnFiltersState, SortingState, VisibilityState
 } from "@tanstack/react-table";
-import type { MemberSchema } from "@snipet/schemas";
-export const MembersTable = () => {
-  const { data: members = [] } = useApiQuery("/api/tenant/:tenantId/member", { method: "GET", query: { include: [ "user", "role" ] } });
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState({})
+export const MembersTable = ({ tenantId }: { tenantId: string }) => {
+  const { data: members = [] } = useApiMember(
+    tenantId,
+    { relations: ["user", "role"] },
+  );
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
   const { canInTenant } = useAuth();
 
-  const memberColumns: ColumnDef<MemberSchema>[] = [
+  const memberColumns: ColumnDef<MemberEntity>[] = [
     {
       accessorKey: "user.name",
       header: "User",

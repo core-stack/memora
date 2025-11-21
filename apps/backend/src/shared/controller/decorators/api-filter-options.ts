@@ -14,36 +14,36 @@ export function ApiFilterQuery<TEntity>(
         name: 'relations',
         required: false,
         type: String,
+        isArray: true,
         description: `Relations. Allowed fields: ${allowedRelations.join(', ')}`,
         example: allowedRelations.slice(0, 2).join(',')
       })
     );
   }
-  if (allowedFilters.length > 0) {
-    decorators.push(
-      ApiQuery({
-        name: 'limit',
-        required: false,
-        type: Number,
-        description: 'Maximum number of records to return',
-        example: 10
-      }),
-      ApiQuery({
-        name: 'offset',
-        required: false,
-        type: Number,
-        description: 'Number of records to skip',
-        example: 0
-      }),
-      ApiQuery({
-        name: 'sort',
-        required: false,
-        type: String,
-        description: `Sort order. Use "-" to DESC. Allowed fields: ${allowedFilters.join(', ')}`,
-        example: 'name,-createdAt'
-      }),
-    )
-  }
+
+  decorators.push(
+    ApiQuery({
+      name: 'limit',
+      required: false,
+      type: Number,
+      description: 'Maximum number of records to return',
+      example: 10
+    }),
+    ApiQuery({
+      name: 'offset',
+      required: false,
+      type: Number,
+      description: 'Number of records to skip',
+      example: 0
+    }),
+    ApiQuery({
+      name: 'sort',
+      required: false,
+      type: String,
+      isArray: true,
+      description: `Sort order. Use "-" to DESC. Allowed fields: ${allowedFilters.join(', ')}`,
+    }),
+  )
 
   allowedFilters.forEach(field => {
     const fieldName = String(field);

@@ -1,17 +1,22 @@
-import { useApiQuery } from '@/hooks/use-api-query';
+import { useApiFolder, useApiSource } from '@/gen';
 
-export const useExplorer = (parentId: string | null = null, enabled: boolean = true) => {
-  const { data: folders, error: folderError, isLoading: folderLoading } = useApiQuery(
-    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder",
-    { method: "GET", query: { filter: { parentId } }, enabled }
+export const useExplorer = (tenantId: string, knowledgeId: string, parentId?: string, enabled: boolean = true) => {
+  const { data: folders, error: folderError, isLoading: folderLoading } = useApiFolder(
+    tenantId,
+    knowledgeId,
+    { "filter[parentId]": parentId },
+    { query: { enabled } }
   );
-  const { data: sources, error: sourceError, isLoading: sourceLoading } = useApiQuery(
-    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/source",
-    {
-      method: "GET",
-      query: { filter: { folderId: parentId } },
-      refetchInterval: (query) =>  query.state.data?.some((s) => ["PENDING", "INDEXING"].includes(s.indexStatus)) ? 5000 : false,
-      enabled
+
+  const { data: sources, error: sourceError, isLoading: sourceLoading } = useApiSource(
+    tenantId,
+    knowledgeId,
+    { "filter[folderId]": parentId },
+    { 
+      query: {
+        enabled,
+        refetchInterval: (query) =>  query.state.data?.some((s) => ["PENDING", "INDEXING"].includes(s.indexStatus)) ? 5000 : false
+      }
     }
   );
 

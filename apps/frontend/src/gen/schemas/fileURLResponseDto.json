@@ -1,0 +1,1 @@
+{"type":"object","properties":{"url":{"type":"string","example":"https://example.com/file.pdf"},"key":{"type":"string","example":"path/to/my-file.pdf"}},"required":["url","key"],"x-readme-ref-name":"FileURLResponseDto"}

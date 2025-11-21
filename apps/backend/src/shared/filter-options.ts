@@ -41,16 +41,13 @@ export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
 
     if (params) {
       for (const [key, value] of Object.entries(params)) {
-        const field = key as keyof TEntity;
-        if (allowedFilters.length === 0 || allowedFilters.includes(field)) {
-          where[key] = value === 'null' ? null : value;
-        }
+        where[key] = value;
       }
     }
 
     const order: FindOptionsOrder<TEntity> = {};
     if (query.sort) {
-      const fields = (query.sort as string).split(',');
+      const fields = query.sort as string[];
       for (const f of fields) {
         const key = (f.startsWith('-') ? f.substring(1) : f) as keyof TEntity;
         const direction = f.startsWith('-') ? 'DESC' : 'ASC';
@@ -60,20 +57,14 @@ export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
       }
     }
 
-    const relations = query.relations
-      ? (query.relations as string).split(',').map(r => r.trim())
-      : [];
-
-    const filteredRelations = allowedRelations.length > 0
-      ? relations.filter(relation => allowedRelations.includes(relation as keyof TEntity))
-      : relations;
+    const relations = (query.relations as string[])?.filter(relation => allowedRelations.includes(relation as keyof TEntity))
 
     return new FilterOptions<TEntity>({
       take: query.limit ? parseInt(query.limit as string) : undefined,
       skip: query.offset ? parseInt(query.offset as string) : undefined,
       where: where as FindOptionsWhere<TEntity>,
       order,
-      relations: filteredRelations,
+      relations,
     });
   }
 }

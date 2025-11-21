@@ -3,9 +3,9 @@ import { Database, Plus } from 'lucide-react';
 import { TenantPageHeader } from '@/components/tenant-page-header';
 import { DialogType } from '@/dialogs';
 import { useDialog } from '@/hooks/use-dialog';
-
-import { KnowledgeList } from './components/knowledge-list';
 import { useTenant } from '@/hooks/use-tenant';
+
+import { KnowledgeList } from '../components/knowledge/knowledge-list';
 
 export default function Home() {
   const { openDialog } = useDialog();
