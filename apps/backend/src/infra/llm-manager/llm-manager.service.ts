@@ -1,17 +1,17 @@
-import { readdir, readFile } from 'fs/promises';
-import { join } from 'path';
+import { readdir, readFile } from "fs/promises";
+import { join } from "path";
 
-import { LLMEntity } from '@/entities/llm.entity';
-import { env } from '@/env';
-import { __root } from '@/root';
-import { LLMPreset } from '@/types/llm-preset';
-import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { LLMEntity } from "@/entities/llm.entity";
+import { env } from "@/env";
+import { __root } from "@/root";
+import { LLMPreset } from "@/types/llm-preset";
+import { Injectable, Logger } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
 
-import { NotFoundError } from './errors/not-found.error';
-import { LLMLoaderService } from './llm-loader.service';
-import { EmbeddingProvider } from './provider/embedding/base';
-import { TextProvider } from './provider/text/base';
+import { NotFoundError } from "./errors/not-found.error";
+import { LLMLoaderService } from "./llm-loader.service";
+import { EmbeddingProvider } from "./provider/embedding/base";
+import { TextProvider } from "./provider/text/base";
 
 @Injectable()
 export class LLMManagerService {
@@ -25,7 +25,7 @@ export class LLMManagerService {
 
   async onModuleInit() {
     try {
-      const presetsPath = join(__root, 'llm-presets');
+      const presetsPath = join(__root, "llm-presets");
 
       try {
         await readdir(presetsPath);
@@ -38,10 +38,10 @@ export class LLMManagerService {
       const dir = await readdir(presetsPath);
       const presets: LLMPreset[] = [];
 
-      for (const file of dir.filter((f) => f.endsWith('.json'))) {
+      for (const file of dir.filter((f) => f.endsWith(".json"))) {
         const filePath = join(presetsPath, file);
         try {
-          const content = await readFile(filePath, 'utf8');
+          const content = await readFile(filePath, "utf8");
           const parsedData = JSON.parse(content) as any[];
 
           presets.push(...LLMPreset.fromObject(parsedData));
@@ -66,20 +66,20 @@ export class LLMManagerService {
   }
 
   async getEmbedding(entityOrId: LLMEntity | string): Promise<EmbeddingProvider | null> {
-    if (typeof entityOrId === 'string') {
+    if (typeof entityOrId === "string") {
       const instance = this.instances.get(entityOrId)?.instance;
       if (!instance) return null;
       if (instance instanceof TextProvider) throw new Error("Invalid provider type");
       return instance;
     }
 
-    if (entityOrId.type !== 'EMBEDDING') throw new Error("Invalid provider type");
+    if (entityOrId.type !== "EMBEDDING") throw new Error("Invalid provider type");
     return this.getInstance(entityOrId) as unknown as EmbeddingProvider;
   }
 
   async getInstance<T extends LLMEntity>(
     llm: T
-  ): Promise<T['type'] extends 'EMBEDDING' ? EmbeddingProvider : TextProvider> {
+  ): Promise<T["type"] extends "EMBEDDING" ? EmbeddingProvider : TextProvider> {
     if (this.instances.has(llm.id)) return this.instances.get(llm.id)!.instance as any;
 
     const preset = this.presets.find(preset => preset.config.model === llm.model);

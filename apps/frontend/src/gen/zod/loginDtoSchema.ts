@@ -6,9 +6,9 @@
 import { z } from "zod/v4";
 
 export const loginDtoSchema = z.object({
-    "email": z.string(),
-"password": z.string(),
-"redirect": z.optional(z.string())
+    "email": z.email().describe("The email of the user"),
+"password": z.string().describe("The password of the user"),
+"redirect": z.optional(z.string().describe("The path to redirect"))
     })
 
 export type LoginDtoSchema = z.infer<typeof loginDtoSchema>

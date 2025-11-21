@@ -1,13 +1,13 @@
-import { MessageEntity } from '@/entities/message.entity';
-import { BaseController } from '@/shared/controller';
-import { Controller, HttpPost } from '@/shared/controller/decorators';
-import { Body } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { MessageEntity } from "@/entities/message.entity";
+import { BaseController } from "@/shared/controller";
+import { Controller, HttpPost } from "@/shared/controller/decorators";
+import { Body } from "@nestjs/common";
+import { ApiResponse } from "@nestjs/swagger";
 
-import { CreateMessageDto, CreateMessageResponseDto } from './dto/create-message.dto';
-import { MessageService } from './message.service';
+import { CreateMessageDto, CreateMessageResponseDto } from "./dto/create-message.dto";
+import { MessageService } from "./message.service";
 
-@Controller('tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message')
+@Controller("tenant/:tenantId/knowledge/:knowledgeSlug/chat/:chatId/message")
 export class MessageController extends BaseController({ entity: MessageEntity }) {
   constructor(public service: MessageService) {
     super(service);

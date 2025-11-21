@@ -1,6 +1,6 @@
-import { Auth } from '@/shared/plugins/swagger-auth';
-import { applyDecorators, Controller as NestController } from '@nestjs/common';
-import { DECORATORS } from '@nestjs/swagger/dist/constants';
+import { Auth } from "@/shared/plugins/swagger-auth";
+import { applyDecorators, Controller as NestController } from "@nestjs/common";
+import { DECORATORS } from "@nestjs/swagger/dist/constants";
 
 export function ApiParamsInherit(params: Array<{ name: string; type?: any; required?: boolean }>) {
   return (target: any) => {
@@ -10,8 +10,8 @@ export function ApiParamsInherit(params: Array<{ name: string; type?: any; requi
         const methodNames = Object.getOwnPropertyNames(proto)
           .filter(
             (prop) =>
-              typeof proto[prop] === 'function' &&
-              prop !== 'constructor'
+              typeof proto[prop] === "function" &&
+              prop !== "constructor"
           );
 
         for (const methodName of methodNames) {
@@ -26,19 +26,19 @@ export function ApiParamsInherit(params: Array<{ name: string; type?: any; requi
                 ...existing,
                 {
                   name: p.name,
-                  in: 'path',
+                  in: "path",
                   required: p.required ?? true,
-                  type: p.type ?? String,
-                },
+                  type: p.type ?? String
+                }
               ],
-              method,
+              method
             );
           }
         }
 
         proto = Object.getPrototypeOf(proto);
       }
-    })
+    });
   };
 }
 
@@ -53,6 +53,6 @@ export function Controller(path: string, params: Array<{ name: string; type?: an
   return applyDecorators(
     Auth(),
     NestController(path),
-    ApiParamsInherit(params),
-  )
+    ApiParamsInherit(params)
+  );
 }

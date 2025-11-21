@@ -1,7 +1,7 @@
-import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
+import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
 import { LLMPreset } from "@/types/llm-preset";
 
-import { EmbeddingProvider } from './base';
+import { EmbeddingProvider } from "./base";
 
 type GeminiOptions = {
   apiKey: string;
@@ -21,7 +21,7 @@ export class GeminiLLMEmbeddingAdapter extends EmbeddingProvider {
   embed(text: string): Promise<number[]>;
   embed(texts: string[]): Promise<number[][]>;
   override async embed(texts: string | string[]): Promise<number[] | number[][]> {
-    const inputs = Array.isArray(texts) ? texts : [texts];
+    const inputs = Array.isArray(texts) ? texts : [ texts ];
 
     const embeddings = await Promise.all(
       inputs.map(async (text) => {

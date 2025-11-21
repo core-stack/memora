@@ -5,11 +5,11 @@ export type { AccountDeletePathParams, AccountDelete200, AccountDelete400, Accou
 export type { AccountEntity } from "./AccountEntity.ts";
 export type { AccountUpdatePathParams, AccountUpdate200, AccountUpdate400, AccountUpdate404, AccountUpdate500, AccountUpdateMutationRequest, AccountUpdateMutationResponse, AccountUpdateMutation } from "./AccountUpdate.ts";
 export type { ActiveAccountDto } from "./ActiveAccountDto.ts";
-export type { AuthActiveAccount201, AuthActiveAccountMutationRequest, AuthActiveAccountMutationResponse, AuthActiveAccountMutation } from "./AuthActiveAccount.ts";
 export type { AuthCreateAccount201, AuthCreateAccountMutationRequest, AuthCreateAccountMutationResponse, AuthCreateAccountMutation } from "./AuthCreateAccount.ts";
 export type { AuthForgetPassword201, AuthForgetPasswordMutationRequest, AuthForgetPasswordMutationResponse, AuthForgetPasswordMutation } from "./AuthForgetPassword.ts";
 export type { AuthLogin201, AuthLoginMutationRequest, AuthLoginMutationResponse, AuthLoginMutation } from "./AuthLogin.ts";
 export type { AuthLogout201, AuthLogoutMutationResponse, AuthLogoutMutation } from "./AuthLogout.ts";
+export type { AuthProviders200, AuthProvidersQueryResponse, AuthProvidersQuery } from "./AuthProviders.ts";
 export type { ChatPathParams, ChatQueryParams, Chat200, Chat400, Chat500, ChatQueryResponse, ChatQuery } from "./Chat.ts";
 export type { ChatByIDPathParams, ChatByIDQueryParams, ChatByID200, ChatByID400, ChatByID404, ChatByID500, ChatByIDQueryResponse, ChatByIDQuery } from "./ChatByID.ts";
 export type { ChatCreatePathParams, ChatCreate201, ChatCreate400, ChatCreate409, ChatCreate500, ChatCreateMutationRequest, ChatCreateMutationResponse, ChatCreateMutation } from "./ChatCreate.ts";

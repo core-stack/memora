@@ -1,11 +1,11 @@
-import { readdir, readFile } from 'fs/promises';
-import matter from 'gray-matter';
-import { join } from 'path';
+import { readdir, readFile } from "fs/promises";
+import matter from "gray-matter";
+import { join } from "path";
 
-import { env } from '@/env';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { env } from "@/env";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 
-import { PromptTemplate } from './prompt-template';
+import { PromptTemplate } from "./prompt-template";
 
 @Injectable()
 export class PromptService implements OnModuleInit {
@@ -24,22 +24,22 @@ export class PromptService implements OnModuleInit {
     for (const file of files) {
       try {
         this.logger.verbose(`Loading prompt template: ${file}`);
-        const { content } = matter(await readFile(join(this.templatesDir, file), 'utf-8'));
-        const name = file.replace(/\..+$/, '');
+        const { content } = matter(await readFile(join(this.templatesDir, file), "utf-8"));
+        const name = file.replace(/\..+$/, "");
         this.templates.set(name, new PromptTemplate(content));
       } catch (error) {
         this.logger.error(`Failed to load prompt template: ${file}`, error);
       }
     }
 
-    this.logger.verbose(`Prompt instances generated!`);
+    this.logger.verbose("Prompt instances generated!");
   }
 
   // @ts-ignore
-  getTemplate<K extends keyof typeof import('../../@generated/prompts/prompts').PromptTemplates>(
+  getTemplate<K extends keyof typeof import("../../@generated/prompts/prompts").PromptTemplates>(
     name: K
-  ): (typeof import('../../@generated/prompts/prompts').PromptTemplates)[K] {
+  ): (typeof import("../../@generated/prompts/prompts").PromptTemplates)[K] {
     // @ts-ignore
-    return require('../../@generated/prompts/prompts').PromptTemplates[name];
+    return require("../../@generated/prompts/prompts").PromptTemplates[name];
   }
 }

@@ -1,15 +1,15 @@
-import { AuthRequest } from '@/types/auth-request';
-import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
+import { AuthRequest } from "@/types/auth-request";
+import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 
-import { CONTEXT_FIELDS_KEY } from '../controller/decorators/context';
+import { CONTEXT_FIELDS_KEY } from "../controller/decorators/context";
 
-import type { ExecutionContext } from '@nestjs/common';
+import type { ExecutionContext } from "@nestjs/common";
 @Injectable()
 export class ContextInjectPipe implements PipeTransform {
   constructor(private readonly context: ExecutionContext) {}
 
   transform(value: any, metadata: ArgumentMetadata) {
-    if (!metadata.metatype || typeof value !== 'object') return value;
+    if (!metadata.metatype || typeof value !== "object") return value;
 
     const request: AuthRequest = this.context.switchToHttp().getRequest();
 
@@ -17,7 +17,7 @@ export class ContextInjectPipe implements PipeTransform {
       params: request.params,
       query: request.query,
       session: request.session,
-      user: request.session?.user,
+      user: request.session?.user
     };
 
     const fields =
@@ -28,7 +28,7 @@ export class ContextInjectPipe implements PipeTransform {
       if (!sourceValue) continue;
 
       const contextValue =
-        key && typeof sourceValue === 'object'
+        key && typeof sourceValue === "object"
           ? sourceValue[key]
           : sourceValue;
 

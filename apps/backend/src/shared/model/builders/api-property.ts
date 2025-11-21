@@ -1,6 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
-import { FieldOptions } from '../types';
+import { FieldOptions } from "../types";
 
 export const buildApiProperty = (opts: FieldOptions): PropertyDecorator => {
   const isRequired = opts.required ?? true;
@@ -9,17 +9,17 @@ export const buildApiProperty = (opts: FieldOptions): PropertyDecorator => {
     description: opts.description,
     example: opts.example,
     default: opts.default,
-    isArray: opts.isArray,
+    isArray: opts.isArray
   };
 
   switch (opts.type) {
     case "string":
       baseConfig.type = String;
       let format: string | undefined;
-      if (opts.uuid) format = 'uuid';
-      if (opts.url) format = 'uri';
-      if (opts.password) format = 'password';
-      if (opts.email) format = 'email';
+      if (opts.uuid) format = "uuid";
+      if (opts.url) format = "uri";
+      if (opts.password) format = "password";
+      if (opts.email) format = "email";
       if (format) baseConfig.format = format;
       break;
     case "number":

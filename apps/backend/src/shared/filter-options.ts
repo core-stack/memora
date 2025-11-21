@@ -1,5 +1,5 @@
-import { Request } from 'express';
-import { FindManyOptions, FindOptionsOrder, FindOptionsWhere } from 'typeorm';
+import { Request } from "express";
+import { FindManyOptions, FindOptionsOrder, FindOptionsWhere } from "typeorm";
 
 export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
   take?: number;
@@ -25,22 +25,22 @@ export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
     const params = request.params;
     const where: Record<string, any> = {};
 
-    for (const [key, value] of Object.entries(query)) {
-      if (key === 'limit' || key === 'offset' || key === 'sort' || key === 'relations') continue;
+    for (const [ key, value ] of Object.entries(query)) {
+      if (key === "limit" || key === "offset" || key === "sort" || key === "relations") continue;
 
       const match = key.match(/^filter\[(.+)\]$/);
       if (match) {
         const field = match[1] as keyof TEntity;
 
         if (allowedFilters.length === 0 || allowedFilters.includes(field)) {
-          where[field as string] = value === 'null' ? null : value;
+          where[field as string] = value === "null" ? null : value;
         }
       }
 
     }
 
     if (params) {
-      for (const [key, value] of Object.entries(params)) {
+      for (const [ key, value ] of Object.entries(params)) {
         where[key] = value;
       }
     }
@@ -49,22 +49,22 @@ export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
     if (query.sort) {
       const fields = query.sort as string[];
       for (const f of fields) {
-        const key = (f.startsWith('-') ? f.substring(1) : f) as keyof TEntity;
-        const direction = f.startsWith('-') ? 'DESC' : 'ASC';
+        const key = (f.startsWith("-") ? f.substring(1) : f) as keyof TEntity;
+        const direction = f.startsWith("-") ? "DESC" : "ASC";
         if (allowedFilters.length === 0 || allowedFilters.includes(key)) {
           (order as any)[key] = direction;
         }
       }
     }
 
-    const relations = (query.relations as string[])?.filter(relation => allowedRelations.includes(relation as keyof TEntity))
+    const relations = (query.relations as string[])?.filter(relation => allowedRelations.includes(relation as keyof TEntity));
 
     return new FilterOptions<TEntity>({
       take: query.limit ? parseInt(query.limit as string) : undefined,
       skip: query.offset ? parseInt(query.offset as string) : undefined,
       where: where as FindOptionsWhere<TEntity>,
       order,
-      relations,
+      relations
     });
   }
 }

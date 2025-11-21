@@ -1,5 +1,5 @@
 // Generated file - do not edit
-import { PromptTemplate } from './prompt-template';
+import { PromptTemplate } from "./prompt-template";
 
 
 export interface AnwserQuestionVars {

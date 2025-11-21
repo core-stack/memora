@@ -1,12 +1,12 @@
-import moment from 'moment';
+import moment from "moment";
 
-import { Fragments, SourceFragment } from '@/fragment';
-import { CacheService } from '@/infra/cache/cache.service';
-import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
-import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
-import { buildOptions } from '@/utils/build-options';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { RecentMemory } from '../types/recent';
+import { Fragments, SourceFragment } from "@/fragment";
+import { CacheService } from "@/infra/cache/cache.service";
+import { SourceVectorStoreService } from "@/infra/vector/source-vector-store.service";
+import { KnowledgeService } from "@/modules/knowledge/knowledge.service";
+import { buildOptions } from "@/utils/build-options";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { RecentMemory } from "../types/recent";
 
 export type FindOptions = {
   knowledgeId: string;
@@ -25,14 +25,18 @@ export class SourceMemoryService {
   constructor(
     private readonly vectorStore:      SourceVectorStoreService,
     private readonly knowledgeService: KnowledgeService,
-    private readonly cacheService:     CacheService,
+    private readonly cacheService:     CacheService
   ) {}
 
   private buildFindOptions(knowledgeId: string, userInput: string, ...opts: Finder[]): FindOptions {
     return buildOptions({ knowledgeId, userInput }, opts);
   }
 
-  async find(knowledgeId: string, userInput: string, ...options: Finder[]): Promise<Fragments<SourceFragment>> {
+  async find(
+    knowledgeId: string,
+    userInput: string,
+    ...options: Finder[]
+  ): Promise<Fragments<SourceFragment>> {
     const opts = this.buildFindOptions(knowledgeId, userInput, ...options);
     // get knowledge
     const knowledge = await this.knowledgeService.findByID(knowledgeId);
@@ -45,17 +49,24 @@ export class SourceMemoryService {
       SourceVectorStoreService.withFilters({ ...opts.metadata }),
       SourceVectorStoreService.withDense({ query: userInput, topK: 100 }),
       SourceVectorStoreService.withSparse({ query: userInput, topK: 100 }),
-      SourceVectorStoreService.withTopK(10),
+      SourceVectorStoreService.withTopK(10)
     ));
   }
 
-  private async findFragmentsInCache(knowledgeId: string, userInput: string): Promise<SourceFragment[] | null> {
-    const key = encodeURIComponent(userInput.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase());
+  private async findFragmentsInCache(
+    knowledgeId: string,
+    userInput: string
+  ): Promise<SourceFragment[] | null> {
+    const key = encodeURIComponent(userInput.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase());
     return this.cacheService.get<SourceFragment[]>(`fragments:${key}`, { namespace: knowledgeId });
   }
 
-  private async saveFragmentsInCache(knowledgeId: string, userInput: string, fragments: SourceFragment[]) {
-    const key = encodeURIComponent(userInput.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase());
+  private async saveFragmentsInCache(
+    knowledgeId: string,
+    userInput: string,
+    fragments: SourceFragment[]
+  ): Promise<void> {
+    const key = encodeURIComponent(userInput.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase());
     await this.cacheService.set<SourceFragment[]>(
       `fragments:${key}`,
       fragments,
@@ -63,7 +74,7 @@ export class SourceMemoryService {
     );
   }
 
-  private async saveInputToRecents(knowledgeId: string, text: string) {
+  private async saveInputToRecents(knowledgeId: string, text: string): Promise<void> {
     const recents = (await this.cacheService.get<RecentMemory[]>("recent", { namespace: knowledgeId })) ?? [];
     const index = recents.findIndex(p => p.text === text);
     if (index !== -1) {
@@ -73,7 +84,7 @@ export class SourceMemoryService {
       recents.push({ text, count: 1, lastUsed: new Date() });
     }
     recents.sort((a, b) => moment(b.lastUsed).valueOf() - moment(a.lastUsed).valueOf());
-    while(recents.length > 5) recents.pop();
+    while (recents.length > 5) recents.pop();
 
     await this.cacheService.set<RecentMemory[]>("recent", recents, { namespace: knowledgeId });
   }
@@ -91,15 +102,15 @@ export class SourceMemoryService {
     const fragments = await this.vectorStore.search(
       knowledgeId,
       SourceVectorStoreService.withSparse(userInput),
-      SourceVectorStoreService.withTerm(userInput),
+      SourceVectorStoreService.withTerm(userInput)
     );
     this.logger.verbose(fragments);
     await this.saveFragmentsInCache(knowledgeId, userInput, fragments.toArray());
     return fragments;
   }
 
-  async findRecent(knowledgeId: string) {
-    return this.cacheService.get<string[]>("recent", { namespace: knowledgeId });
+  async findRecent(knowledgeId: string): Promise<string[]> {
+    return (await this.cacheService.get<string[]>("recent", { namespace: knowledgeId })) ?? [];
   }
 
   static withMetadata(metadata: Record<string, any>): Finder {

@@ -1,9 +1,9 @@
-import { CookieOptions, Response } from 'express';
-import { CLS_REQ, CLS_RES, ClsService } from 'nestjs-cls';
+import { CookieOptions, Response } from "express";
+import { CLS_REQ, CLS_RES, ClsService } from "nestjs-cls";
 
-import { AuthRequest } from '@/types/auth-request';
-import { Session } from '@/modules/auth/types';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { AuthRequest } from "@/types/auth-request";
+import { Session } from "@/modules/auth/types";
+import { BadRequestException, Injectable } from "@nestjs/common";
 
 abstract class Getter {
   constructor(private params: Record<string, string | number | boolean | undefined>, private name: string) { }
@@ -64,8 +64,8 @@ export class HTTPContext {
   get req(): AuthRequest { return this.cls.get(CLS_REQ); }
   get res(): Response { return this.cls.get(CLS_RES); }
 
-  get params(): Params { return new Params(this.req.params) }
-  get query(): Query { return new Query(this.req.query) }
+  get params(): Params { return new Params(this.req.params); }
+  get query(): Query { return new Query(this.req.query); }
 
   get session(): Session | undefined { return this.req.session; }
 
@@ -91,9 +91,9 @@ export class HTTPContext {
     if (!this.res) {
       console.warn("Missing response in http context to delete cookie");
     }
-    names = Array.isArray(names) ? names : [names];
+    names = Array.isArray(names) ? names : [ names ];
     names.forEach((name) => {
       this.res.clearCookie(name);
-    })
+    });
   }
 }

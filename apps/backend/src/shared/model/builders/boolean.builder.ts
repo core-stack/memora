@@ -1,8 +1,8 @@
-import { Transform } from 'class-transformer';
-import { IsBoolean } from 'class-validator';
+import { Transform } from "class-transformer";
+import { IsBoolean } from "class-validator";
 
-import { FieldBooleanOptions } from '../types';
-import { buildApiProperty } from './api-property';
+import { FieldBooleanOptions } from "../types";
+import { buildApiProperty } from "./api-property";
 
 export const buildBooleanDecorators = (opts: FieldBooleanOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];

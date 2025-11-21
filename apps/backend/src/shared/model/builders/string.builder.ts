@@ -1,8 +1,8 @@
-import { Transform } from 'class-transformer';
-import { IsEmail, IsUrl, IsUUID, Matches, MaxLength, MinLength } from 'class-validator';
+import { Transform } from "class-transformer";
+import { IsEmail, IsUrl, IsUUID, Matches, MaxLength, MinLength } from "class-validator";
 
-import { FieldStringOptions } from '../types';
-import { buildApiProperty } from './api-property';
+import { FieldStringOptions } from "../types";
+import { buildApiProperty } from "./api-property";
 
 export const buildStringDecorators = (opts: FieldStringOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];

@@ -1,15 +1,15 @@
-import { BaseController } from '@/shared/controller';
-import { Controller } from '@/shared/controller/decorators';
+import { BaseController } from "@/shared/controller";
+import { Controller } from "@/shared/controller/decorators";
 
-import { TenantEntity } from '../../entities/tenant.entity';
-import { CreateTenantDto } from './dto/create-tenant.dto';
-import { TenantService } from './tenant.service';
+import { TenantEntity } from "../../entities/tenant.entity";
+import { CreateTenantDto } from "./dto/create-tenant.dto";
+import { TenantService } from "./tenant.service";
 
-@Controller('tenant')
+@Controller("tenant")
 export class TenantController extends BaseController({
   entity: TenantEntity,
   createDto: CreateTenantDto,
-  ignore: [ 'update' ]
+  ignore: [ "update" ]
 }) {
   constructor(service: TenantService) {
     super(service);

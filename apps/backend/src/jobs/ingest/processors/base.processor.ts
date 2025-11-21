@@ -1,14 +1,14 @@
-import { SourceMetadata, SourceType } from '@/entities/metadata.types';
-import { SourceEntity } from '@/entities/source.entity';
-import { Fragments, SourceFragment } from '@/fragment';
-import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
+import { SourceMetadata, SourceType } from "@/entities/metadata.types";
+import { SourceEntity } from "@/entities/source.entity";
+import { Fragments, SourceFragment } from "@/fragment";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
-import { IProcessor } from './types';
+import { IProcessor } from "./types";
 
 export abstract class BaseProcessor implements IProcessor {
   protected splitter = new RecursiveCharacterTextSplitter({
     chunkSize: 1000,
-    chunkOverlap: 200,
+    chunkOverlap: 200
   });
 
   protected createFragments(
@@ -25,7 +25,7 @@ export abstract class BaseProcessor implements IProcessor {
         tenantId: source.tenantId,
         seqId,
         metadata,
-        sourceType: type,
+        sourceType: type
       });
     });
 

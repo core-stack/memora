@@ -1,4 +1,4 @@
-import { SearchResults } from '@zilliz/milvus2-sdk-node';
+import { SearchResults } from "@zilliz/milvus2-sdk-node";
 
 export class VectorSearchError extends Error {
   constructor(message?: string, searchResult?: SearchResults<any>) {

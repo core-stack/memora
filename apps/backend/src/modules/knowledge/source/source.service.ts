@@ -1,18 +1,18 @@
-import { Queue } from 'bullmq';
-import { randomUUID } from 'crypto';
-import { EntityManager } from 'typeorm';
+import { Queue } from "bullmq";
+import { randomUUID } from "crypto";
+import { EntityManager } from "typeorm";
 
-import { IndexStatus, SourceEntity } from '@/entities/source.entity';
-import { PrivateStorageService } from '@/infra/storage/private-storage.service';
-import { JobType } from '@/jobs/types';
-import { FilterOptions } from '@/shared/filter-options';
-import { Service } from '@/shared/service';
-import { InjectQueue } from '@nestjs/bullmq';
-import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { IndexStatus, SourceEntity } from "@/entities/source.entity";
+import { PrivateStorageService } from "@/infra/storage/private-storage.service";
+import { JobType } from "@/jobs/types";
+import { FilterOptions } from "@/shared/filter-options";
+import { Service } from "@/shared/service";
+import { InjectQueue } from "@nestjs/bullmq";
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 
-import { FolderService } from '../folder/folder.service';
-import { KnowledgeService } from '../knowledge.service';
-import { GetUploadUrlDto } from './dto/get-upload-url.dto';
+import { FolderService } from "../folder/folder.service";
+import { KnowledgeService } from "../knowledge.service";
+import { GetUploadUrlDto } from "./dto/get-upload-url.dto";
 
 @Injectable()
 export class SourceService extends Service<SourceEntity> {

@@ -1,9 +1,9 @@
-import { Transform } from 'class-transformer';
-import { IsDate, MaxDate, MinDate } from 'class-validator';
-import moment from 'moment';
+import { Transform } from "class-transformer";
+import { IsDate, MaxDate, MinDate } from "class-validator";
+import moment from "moment";
 
-import { FieldDateOptions } from '../types';
-import { buildApiProperty } from './api-property';
+import { FieldDateOptions } from "../types";
+import { buildApiProperty } from "./api-property";
 
 export const buildDateDecorators = (opts: FieldDateOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];

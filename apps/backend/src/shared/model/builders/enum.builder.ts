@@ -1,7 +1,7 @@
-import { IsEnum } from 'class-validator';
+import { IsEnum } from "class-validator";
 
-import { FieldEnumOptions } from '../types';
-import { buildApiProperty } from './api-property';
+import { FieldEnumOptions } from "../types";
+import { buildApiProperty } from "./api-property";
 
 export const buildEnumDecorators = (opts: FieldEnumOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];

@@ -1,7 +1,7 @@
 import {
   registerDecorator,
   ValidationOptions,
-  ValidationArguments,
+  ValidationArguments
 } from "class-validator";
 
 export function Match(property: string, options?: ValidationOptions) {
@@ -10,14 +10,14 @@ export function Match(property: string, options?: ValidationOptions) {
       name: "Match",
       target: object.constructor,
       propertyName,
-      constraints: [property],
+      constraints: [ property ],
       options,
       validator: {
         validate(value: any, args: ValidationArguments) {
-          const [relatedPropertyName] = args.constraints;
+          const [ relatedPropertyName ] = args.constraints;
           return value === (args.object as any)[relatedPropertyName];
-        },
-      },
+        }
+      }
     });
   };
 }

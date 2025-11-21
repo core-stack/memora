@@ -1,16 +1,16 @@
-import { env } from '@/env';
+import { env } from "@/env";
 import {
   CopyObjectCommand, CreateBucketCommand, Delete, DeleteObjectsCommand, GetObjectCommand,
   ListBucketsCommand, ListObjectsV2Command, PutBucketPolicyCommand, PutObjectCommand, S3Client
-} from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
 
-import { StorageDeleteError } from '../errors/delete-error';
-import { GetPreSignedUploadUrlOptions, StorageService } from '../storage.service';
+import { StorageDeleteError } from "../errors/delete-error";
+import { GetPreSignedUploadUrlOptions, StorageService } from "../storage.service";
 
-import type { CreateBucketCommandInput } from '@aws-sdk/client-s3';
+import type { CreateBucketCommandInput } from "@aws-sdk/client-s3";
 @Injectable()
 export class S3Service extends StorageService implements OnModuleInit {
   private readonly logger = new Logger(S3Service.name);
@@ -26,15 +26,15 @@ export class S3Service extends StorageService implements OnModuleInit {
       forcePathStyle: env.AWS_FORCE_PATH_STYLE,
       credentials: {
         accessKeyId: env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-      },
+        secretAccessKey: env.AWS_SECRET_ACCESS_KEY
+      }
     });
   }
 
   async onModuleInit() {
     const res = await this.s3.send(new ListBucketsCommand());
     if (!res.Buckets) {
-      this.logger.warn('No buckets found');
+      this.logger.warn("No buckets found");
       return;
     }
     if (res.Buckets.find(b => b.Name === this.config.Bucket)) {
@@ -57,13 +57,13 @@ export class S3Service extends StorageService implements OnModuleInit {
     { temp }: GetPreSignedUploadUrlOptions = { temp: false }
   ): Promise<{ url: string, key: string }> {
     if (temp) {
-      key = `temp/${key}`
+      key = `temp/${key}`;
     }
 
     const command = new PutObjectCommand({
       Bucket: this.config.Bucket,
       Key: key,
-      ContentType: contentType,
+      ContentType: contentType
     });
     return { url: await getSignedUrl(this.s3, command, { expiresIn: 300 }), key };
   }
@@ -71,20 +71,20 @@ export class S3Service extends StorageService implements OnModuleInit {
   async getVisualizationUrl(key: string): Promise<{ url: string, key: string }> {
     const command = new GetObjectCommand({
       Bucket: this.config.Bucket,
-      Key: key,
+      Key: key
     });
 
-    return { url: await getSignedUrl(this.s3, command, { expiresIn: 300 }), key};
+    return { url: await getSignedUrl(this.s3, command, { expiresIn: 300 }), key };
   }
 
   async confirmTempUpload(key: string, bucket = this.config.Bucket): Promise<string> {
     const targetKey = key.replace("temp/", "");
-    const sourceKey = key.startsWith("temp/") ? key : `temp/${key}`
+    const sourceKey = key.startsWith("temp/") ? key : `temp/${key}`;
 
     const command = new CopyObjectCommand({
       Bucket: bucket,
       CopySource: `/${bucket}/${sourceKey}`,
-      Key: targetKey,
+      Key: targetKey
     });
 
     const res = await this.s3.send(command);
@@ -98,7 +98,7 @@ export class S3Service extends StorageService implements OnModuleInit {
   async getPreSignedDownloadUrl(key: string, bucket = this.config.Bucket): Promise<string> {
     const command = new GetObjectCommand({
       Bucket: bucket,
-      Key: key,
+      Key: key
     });
 
     return getSignedUrl(this.s3, command, { expiresIn: 300 });
@@ -107,7 +107,7 @@ export class S3Service extends StorageService implements OnModuleInit {
   async getObject(key: string, bucket = this.config.Bucket): Promise<NodeJS.ReadableStream | null> {
     const command = new GetObjectCommand({
       Bucket: bucket,
-      Key: key,
+      Key: key
     });
 
     const result = await this.s3.send(command);
@@ -119,7 +119,7 @@ export class S3Service extends StorageService implements OnModuleInit {
       Bucket: opts.bucket,
       Key: key,
       Body: body,
-      ContentType: contentType,
+      ContentType: contentType
     });
 
     await this.s3.send(command);
@@ -131,15 +131,15 @@ export class S3Service extends StorageService implements OnModuleInit {
       Prefix: isFolder ? key.endsWith("/") ? key : `${key}/` : key
     }));
     if (!listOfObjects.Contents || listOfObjects.Contents.length === 0) return;
-    
+
     const objectsToDelete: Delete = { Objects: [] };
     listOfObjects.Contents?.forEach((object) => objectsToDelete.Objects?.push({ Key: object.Key }));
-  
+
     const deleteResult = await this.s3.send(new DeleteObjectsCommand({
       Bucket: this.config.Bucket,
-      Delete: objectsToDelete,
+      Delete: objectsToDelete
     }));
-  
+
     if (deleteResult.Errors) {
       throw new StorageDeleteError("Error deleting objects", deleteResult.Errors.map((err) => err.Key).filter(e => e !== undefined));
     }
@@ -150,14 +150,14 @@ export class S3Service extends StorageService implements OnModuleInit {
     try {
       const listCommand = new ListObjectsV2Command({
         Bucket: this.config.Bucket,
-        Prefix: 'temp/',
+        Prefix: "temp/"
       });
       const listedObjects = await this.s3.send(listCommand);
 
       if (!listedObjects.Contents || listedObjects.Contents.length === 0) return;
 
       const now = new Date();
-        const expiredObjects = listedObjects.Contents.filter(obj => {
+      const expiredObjects = listedObjects.Contents.filter(obj => {
         if (!obj.LastModified) return false;
         const age = (now.getTime() - obj.LastModified.getTime());
         return age > env.DELETE_TEMP_FILES_AFTER;
@@ -168,20 +168,20 @@ export class S3Service extends StorageService implements OnModuleInit {
       const deleteCommand = new DeleteObjectsCommand({
         Bucket: this.config.Bucket,
         Delete: {
-          Objects: expiredObjects.map(obj => ({ Key: obj.Key! })),
-        },
+          Objects: expiredObjects.map(obj => ({ Key: obj.Key! }))
+        }
       });
 
       const result = await this.s3.send(deleteCommand);
 
       if (result.Errors && result.Errors.length > 0) {
-        this.logger.error(`Error deleting some temp files: ${result.Errors.map(e => e.Key).join(', ')}`);
+        this.logger.error(`Error deleting some temp files: ${result.Errors.map(e => e.Key).join(", ")}`);
       } else {
         this.logger.verbose(`Deleted ${expiredObjects.length} expired temp file(s).`);
       }
 
     } catch (err) {
-      this.logger.error('Error while deleting temp files', err instanceof Error ? err.stack : err);
+      this.logger.error("Error while deleting temp files", err instanceof Error ? err.stack : err);
     }
   }
 }

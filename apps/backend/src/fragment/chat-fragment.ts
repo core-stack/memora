@@ -1,5 +1,5 @@
 
-import { BaseFragment } from './fragment';
+import { BaseFragment } from "./fragment";
 
 export class ChatFragment extends BaseFragment {
   role: string;

@@ -1,6 +1,6 @@
-import z from 'zod';
+import z from "zod";
 
-import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
+import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from "@nestjs/common";
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
@@ -11,8 +11,8 @@ export class ZodValidationPipe implements PipeTransform {
 
     if (!result.success) {
       throw new BadRequestException({
-        message: 'Validation failed',
-        errors: result.error.format(),
+        message: "Validation failed",
+        errors: result.error.format()
       });
     }
 

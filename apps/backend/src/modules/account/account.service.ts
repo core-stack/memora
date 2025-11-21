@@ -1,15 +1,15 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager } from "typeorm";
 
-import { Service } from '@/shared/service';
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { ROLES } from '@snipet/permission';
+import { Service } from "@/shared/service";
+import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { ROLES } from "@snipet/permission";
 
-import { AccountEntity } from '../../entities/account.entity';
-import { RoleScope } from '../../entities/role.entity';
-import { UserEntity } from '../../entities/user.entity';
-import { RoleService } from '../role/role.service';
-import { UserService } from '../user/user.service';
-import { CreateAccountDto } from './dto/crete-account.dto';
+import { AccountEntity } from "../../entities/account.entity";
+import { RoleScope } from "../../entities/role.entity";
+import { UserEntity } from "../../entities/user.entity";
+import { RoleService } from "../role/role.service";
+import { UserService } from "../user/user.service";
+import { CreateAccountDto } from "./dto/crete-account.dto";
 
 @Injectable()
 export class AccountService extends Service<AccountEntity> {
@@ -23,8 +23,8 @@ export class AccountService extends Service<AccountEntity> {
     return this.transaction(async (manager) => {
       // get account
       const account = await this.repository(manager).findOne({
-        where: { user: { email: data.email } }, 
-        relations: [ 'user' ]
+        where: { user: { email: data.email } },
+        relations: [ "user" ]
       });
       if (account) return account;
 
@@ -32,7 +32,7 @@ export class AccountService extends Service<AccountEntity> {
       const user = await this.userService.findUnique({ where: { email: data.email } });
       // if user not found, create user with user role and account
       if (!user) {
-        const role = await this.roleService.findUnique({ 
+        const role = await this.roleService.findUnique({
           where: { key: ROLES.global.user.key, scope: RoleScope.GLOBAL }
         }, manager);
 

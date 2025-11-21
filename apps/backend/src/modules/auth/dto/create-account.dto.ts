@@ -3,7 +3,7 @@ import {
   IsEmail,
   IsString,
   MinLength,
-  MaxLength,
+  MaxLength
 } from "class-validator";
 
 export class CreateAccountDto {

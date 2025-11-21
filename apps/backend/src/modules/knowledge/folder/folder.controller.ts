@@ -1,17 +1,17 @@
-import { BaseController } from '@/shared/controller';
-import { Controller } from '@/shared/controller/decorators';
+import { BaseController } from "@/shared/controller";
+import { Controller } from "@/shared/controller/decorators";
 
-import { FolderEntity } from '../../../entities/folder.entity';
-import { CreateFolderDto } from './dto/create-folder.dto';
-import { UpdateFolderDto } from './dto/update-folder.dto';
-import { FolderService } from './folder.service';
+import { FolderEntity } from "../../../entities/folder.entity";
+import { CreateFolderDto } from "./dto/create-folder.dto";
+import { UpdateFolderDto } from "./dto/update-folder.dto";
+import { FolderService } from "./folder.service";
 
-@Controller('tenant/:tenantId/knowledge/:knowledgeSlug/folder')
-export class FolderController extends BaseController({ 
+@Controller("tenant/:tenantId/knowledge/:knowledgeSlug/folder")
+export class FolderController extends BaseController({
   entity: FolderEntity,
   createDto: CreateFolderDto,
   updateDto: UpdateFolderDto,
-  allowedFilters: [ 'parentId', 'name', 'tenantId', 'root' ],
+  allowedFilters: [ "parentId", "name", "tenantId", "root" ]
   // allowedRelations: [ 'children', 'knowledge', 'parent', 'sources' ]
 }) {
   constructor(folderService: FolderService) {

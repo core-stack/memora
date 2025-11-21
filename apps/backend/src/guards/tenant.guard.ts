@@ -1,8 +1,8 @@
-import { AuthRequest } from '@/types/auth-request';
-import { AuthManager } from '@/modules/auth/auth-manager.service';
-import { Session } from '@/modules/auth/types';
-import { isUUID } from '@/utils/uuid';
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { AuthRequest } from "@/types/auth-request";
+import { AuthManager } from "@/modules/auth/auth-manager.service";
+import { Session } from "@/modules/auth/types";
+import { isUUID } from "@/utils/uuid";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 
 @Injectable()
 export class TenantGuard implements CanActivate {

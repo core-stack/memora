@@ -1,17 +1,17 @@
-import { Job } from 'bullmq';
-import { DataSource } from 'typeorm';
+import { Job } from "bullmq";
+import { DataSource } from "typeorm";
 
-import { KnowledgeEntity, KnowledgeStatus } from '@/entities/knowledge.entity';
-import { LLMType } from '@/entities/llm.entity';
-import { StorageDeleteError } from '@/infra/storage/errors/delete-error';
-import { PrivateStorageService } from '@/infra/storage/private-storage.service';
-import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
-import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
-import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
-import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
-import { forwardRef, Inject, Logger } from '@nestjs/common';
+import { KnowledgeEntity, KnowledgeStatus } from "@/entities/knowledge.entity";
+import { LLMType } from "@/entities/llm.entity";
+import { StorageDeleteError } from "@/infra/storage/errors/delete-error";
+import { PrivateStorageService } from "@/infra/storage/private-storage.service";
+import { ChatVectorStoreService } from "@/infra/vector/chat-vector-store.service";
+import { SourceVectorStoreService } from "@/infra/vector/source-vector-store.service";
+import { KnowledgeService } from "@/modules/knowledge/knowledge.service";
+import { OnWorkerEvent, Processor, WorkerHost } from "@nestjs/bullmq";
+import { forwardRef, Inject, Logger } from "@nestjs/common";
 
-import { JobType } from '../types';
+import { JobType } from "../types";
 
 @Processor(JobType.DELETE_KNOWLEDGE, { concurrency: 10 })
 export class DeleteKnowledgeProcessor extends WorkerHost {
@@ -27,7 +27,7 @@ export class DeleteKnowledgeProcessor extends WorkerHost {
 
   async process(job: Job<KnowledgeEntity>) {
     const { id: knowledgeId, tenantId } = job.data;
-    const knowledge = await this.knowledgeService.findByID(knowledgeId, { relations: ['knowledgeLLMs.llm'] });
+    const knowledge = await this.knowledgeService.findByID(knowledgeId, { relations: [ "knowledgeLLMs.llm" ] });
     if (!knowledge) return;
     const knEmbeddings = knowledge.knowledgeLLMs.find(kllm => kllm.default && kllm.llm.type === LLMType.EMBEDDING);
     if (!knEmbeddings) return;

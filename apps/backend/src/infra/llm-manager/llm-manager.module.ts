@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
 
-import { LLMLoaderService } from './llm-loader.service';
-import { LLMManagerService } from './llm-manager.service';
+import { LLMLoaderService } from "./llm-loader.service";
+import { LLMManagerService } from "./llm-manager.service";
 
 @Module({
-  providers: [LLMManagerService, LLMLoaderService],
-  exports: [LLMManagerService]
+  providers: [ LLMManagerService, LLMLoaderService ],
+  exports: [ LLMManagerService ]
 })
 export class LLMManagerModule {}

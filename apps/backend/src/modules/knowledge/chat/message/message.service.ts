@@ -1,17 +1,17 @@
 
-import { EntityManager } from 'typeorm';
+import { EntityManager } from "typeorm";
 
-import { MessageEntity, MessageRole } from '@/entities/message.entity';
-import { PromptService } from '@/infra/prompt/prompt.service';
-import { LLMService } from '@/modules/llm/llm.service';
-import { ChatMemoryService } from '@/modules/memory/chat-memory/chat-memory.service';
-import { SourceMemoryService } from '@/modules/memory/source-memory/source-memory.service';
-import { Service } from '@/shared/service';
-import { forwardRef, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { MessageEntity, MessageRole } from "@/entities/message.entity";
+import { PromptService } from "@/infra/prompt/prompt.service";
+import { LLMService } from "@/modules/llm/llm.service";
+import { ChatMemoryService } from "@/modules/memory/chat-memory/chat-memory.service";
+import { SourceMemoryService } from "@/modules/memory/source-memory/source-memory.service";
+import { Service } from "@/shared/service";
+import { forwardRef, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 
-import { KnowledgeService } from '../../knowledge.service';
-import { ChatService } from '../chat.service';
-import { CreateMessageResponseDto } from './dto/create-message.dto';
+import { KnowledgeService } from "../../knowledge.service";
+import { ChatService } from "../chat.service";
+import { CreateMessageResponseDto } from "./dto/create-message.dto";
 
 @Injectable()
 export class MessageService extends Service<MessageEntity> {
@@ -39,7 +39,7 @@ export class MessageService extends Service<MessageEntity> {
     // if no have messages, is a new chat, then create chat name
     const instance = await this.llmService.getInstanceByKnowledge(knowledgeId, "TEXT", manager);
     if (!instance) throw new NotFoundException("LLM not found");
-  
+
     if (chat.messageCount === 0) {
       this.logger.verbose("Chat is empty, creating chat name");
       const chatNamePrompt = this.promptService.getTemplate("GenerateChatName").build({ query: content });
@@ -56,7 +56,7 @@ export class MessageService extends Service<MessageEntity> {
       content,
       chatId,
       messageRole: MessageRole.USER,
-      knowledgeId,
+      knowledgeId
     }), manager);
 
     await this.chatMemoryService.add(userMessage);
@@ -66,12 +66,12 @@ export class MessageService extends Service<MessageEntity> {
     const chatSearchResult = await this.chatMemoryService.search(
       knowledgeId,
       chatId,
-      ChatMemoryService.withSearchQuery(content),
+      ChatMemoryService.withSearchQuery(content)
     );
     const sourceSearchResult = await this.sourceMemoryService.find(
       knowledgeId,
-      content,
-    )
+      content
+    );
     //#endregion
 
     //#region build prompt to get answer
@@ -80,7 +80,7 @@ export class MessageService extends Service<MessageEntity> {
       recentMessages: [], // lastNMessages.map(f => ({ role: f.role, content: f.content })),
       relevantMessages: chatSearchResult.searchQuery.map(f => ({ content: f.content, role: f.role })),
       retrievedFragments: sourceSearchResult
-        .map(f => (`${f.content} {sourceId:${f.sourceId}, seqId:${f.seqId}}`)),
+        .map(f => (`${f.content} {sourceId:${f.sourceId}, seqId:${f.seqId}}`))
     });
     //#endregion
 

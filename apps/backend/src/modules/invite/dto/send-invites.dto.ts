@@ -1,9 +1,9 @@
-import { Type } from 'class-transformer';
-import { IsArray, IsEmail, IsUUID, ValidateNested } from 'class-validator';
+import { Type } from "class-transformer";
+import { IsArray, IsEmail, IsUUID, ValidateNested } from "class-validator";
 
-import { InviteEntity } from '@/entities/invite.entity';
-import { MemberEntity } from '@/entities/member.entity';
-import { ApiProperty } from '@nestjs/swagger';
+import { InviteEntity } from "@/entities/invite.entity";
+import { MemberEntity } from "@/entities/member.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class SendInviteItemDto {
   @ApiProperty()
@@ -16,7 +16,7 @@ export class SendInviteItemDto {
 }
 
 export class SendInviteDto {
-  @ApiProperty({ type: [SendInviteItemDto] })
+  @ApiProperty({ type: [ SendInviteItemDto ] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SendInviteItemDto)
@@ -28,19 +28,19 @@ export class SendInviteDto {
 }
 
 export class SendInviteResponseDto {
-  @ApiProperty({ type: [InviteEntity] })
+  @ApiProperty({ type: [ InviteEntity ] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => InviteEntity)
   sendedInvites: InviteEntity[];
 
-  @ApiProperty({ type: [InviteEntity] })
+  @ApiProperty({ type: [ InviteEntity ] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => InviteEntity)
   reSendedInvites: InviteEntity[];
 
-  @ApiProperty({ type: [MemberEntity] })
+  @ApiProperty({ type: [ MemberEntity ] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => MemberEntity)

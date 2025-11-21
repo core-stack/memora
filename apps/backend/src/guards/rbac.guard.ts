@@ -1,10 +1,10 @@
-import { Permissions } from '@/shared/controller/decorators/permissions';
-import { AuthRequest } from '@/types/auth-request';
+import { Permissions } from "@/shared/controller/decorators/permissions";
+import { AuthRequest } from "@/types/auth-request";
 import {
   CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { can, mergePermissions, numberToPermissions } from '@snipet/permission';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { can, mergePermissions, numberToPermissions } from "@snipet/permission";
 
 @Injectable()
 export class RBACGuard implements CanActivate {

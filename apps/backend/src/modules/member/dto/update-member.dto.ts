@@ -1,7 +1,7 @@
-import { PartialType, PickType } from '@nestjs/swagger';
+import { PartialType, PickType } from "@nestjs/swagger";
 
-import { MemberEntity } from '@/entities';
+import { MemberEntity } from "@/entities";
 
 export class UpdateMemberDto extends PartialType(
-  PickType(MemberEntity, ['roleId'] as const),
+  PickType(MemberEntity, [ "roleId" ] as const)
 ) {}

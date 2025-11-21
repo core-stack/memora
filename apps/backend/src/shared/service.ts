@@ -1,11 +1,11 @@
 import {
   EntityManager, FindOneOptions, FindOptionsWhere, ObjectLiteral, Repository
-} from 'typeorm';
+} from "typeorm";
 
-import { Logger } from '@nestjs/common';
+import { Logger } from "@nestjs/common";
 
-import { FilterOptions } from './filter-options';
-import { GenericService } from './generic-service';
+import { FilterOptions } from "./filter-options";
+import { GenericService } from "./generic-service";
 
 export abstract class Service<
   TEntity extends ObjectLiteral,

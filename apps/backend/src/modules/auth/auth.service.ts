@@ -1,29 +1,30 @@
-import { Queue } from 'bullmq';
-import moment from 'moment';
-import { EntityManager } from 'typeorm';
+import { Queue } from "bullmq";
+import moment from "moment";
+import { EntityManager } from "typeorm";
 
-import { RoleScope } from '@/entities/role.entity';
-import { env } from '@/env';
-import { EmailPayload, EmailTemplate } from '@/jobs/email/schemas';
-import { JobType } from '@/jobs/types';
-import { GenericService } from '@/shared/generic-service';
-import { InjectQueue } from '@nestjs/bullmq';
-import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { ROLES } from '@snipet/permission';
+import { RoleScope } from "@/entities/role.entity";
+import { env } from "@/env";
+import { EmailPayload, EmailTemplate } from "@/jobs/email/schemas";
+import { JobType } from "@/jobs/types";
+import { GenericService } from "@/shared/generic-service";
+import { InjectQueue } from "@nestjs/bullmq";
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { ROLES } from "@snipet/permission";
 
-import { UserEntity } from '../../entities/user.entity';
+import { UserEntity } from "../../entities/user.entity";
 import {
   VerificationTokenEntity, VerificationType
-} from '../../entities/verification-token.entity';
-import { RoleService } from '../role/role.service';
-import { UserService } from '../user/user.service';
-import { VerificationTokenService } from '../verification-token/verification-token.service';
-import { AuthManager } from './auth-manager.service';
-import { CreateAccountDto } from './dto/create-account.dto';
-import { ActiveAccountDto } from './dto/active-account.dto';
-import { ForgetPasswordDto } from './dto/forget-password.dto';
-import { LoginDto } from './dto/login.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
+} from "../../entities/verification-token.entity";
+import { RoleService } from "../role/role.service";
+import { UserService } from "../user/user.service";
+import { VerificationTokenService } from "../verification-token/verification-token.service";
+import { AuthManager } from "./auth-manager.service";
+import { CreateAccountDto } from "./dto/create-account.dto";
+import { ActiveAccountDto } from "./dto/active-account.dto";
+import { ForgetPasswordDto } from "./dto/forget-password.dto";
+import { LoginDto, LoginResponseDto } from "./dto/login.dto";
+import { ResetPasswordDto } from "./dto/reset-password.dto";
+import { TenantService } from "../tenant/tenant.service";
 
 @Injectable()
 export class AuthService extends GenericService {
@@ -32,8 +33,13 @@ export class AuthService extends GenericService {
   @Inject() private readonly authManager: AuthManager;
   @Inject() private readonly userService: UserService;
   @Inject() private readonly roleService: RoleService;
+  @Inject() private readonly tenantService: TenantService;
   @Inject() private readonly verificationTokenService: VerificationTokenService;
   @InjectQueue(JobType.SEND_EMAIL) private readonly sendMail: Queue<EmailPayload>;
+
+  getActiveProviders(): string[] {
+    return this.authManager.activeProviders();
+  }
 
   private async createVerificationToken(
     userId: string,
@@ -69,12 +75,12 @@ export class AuthService extends GenericService {
       template: EmailTemplate.ACTIVE_ACCOUNT,
       context: {
         name: name,
-        activationUrl: `${env.FRONTEND_URL}/auth/activate/${token}`,
+        activationUrl: `${env.FRONTEND_URL}/auth/activate/${token}`
       }
     });
   }
 
-  async createAccount(data: CreateAccountDto, manager?: EntityManager) {
+  async createAccount(data: CreateAccountDto, manager?: EntityManager): Promise<void> {
     // verify if user exists by email
     const userWithEmail = await this.userService.find({ where: { email: data.email } }, manager);
     if (userWithEmail.length > 0) throw new BadRequestException("Email already in use");
@@ -82,7 +88,7 @@ export class AuthService extends GenericService {
     let user = new UserEntity({
       name: data.name,
       email: data.email,
-      emailVerified: env.REQUIRE_EMAIL_VERIFICATION ? undefined : new Date(),
+      emailVerified: env.REQUIRE_EMAIL_VERIFICATION ? undefined : new Date()
     });
     await user.setPassword(data.password);
 
@@ -95,14 +101,23 @@ export class AuthService extends GenericService {
 
       user = await this.userService.create(user, manager);
 
+      await this.tenantService.create({
+        name: `${user.name}'s Org`,
+        backgroundImage: ""
+      }, manager);
+
       if (env.REQUIRE_EMAIL_VERIFICATION) {
-        const verificationToken = await this.createVerificationToken(user.id, VerificationType.ACTIVE_ACCOUNT, manager);
+        const verificationToken = await this.createVerificationToken(
+          user.id,
+          VerificationType.ACTIVE_ACCOUNT,
+          manager
+        );
         await this.sendActivationAccountEmail(data.email, data.name, verificationToken.token);
       }
     }, manager);
   }
 
-  async activeAccount(data: ActiveAccountDto, manager?: EntityManager) {
+  async activeAccount(data: ActiveAccountDto, manager?: EntityManager): Promise<void> {
     const verificationToken = await this.verificationTokenService.findFirst({
       where: { token: data.token, type: VerificationType.ACTIVE_ACCOUNT }
     }, manager);
@@ -135,10 +150,10 @@ export class AuthService extends GenericService {
     return this.transaction(async (manager) => {
       await this.verificationTokenService.delete(verificationToken.token, manager);
       await this.userService.update(user.id, user.verifyEmail(), manager);
-    }, manager)
+    }, manager);
   }
 
-  async forgetPassword(data: ForgetPasswordDto, manager?: EntityManager) {
+  async forgetPassword(data: ForgetPasswordDto, manager?: EntityManager): Promise<void> {
     const { email } = data;
     const user = await this.userService.findUnique({ where: { email } }, manager);
     if (!user) throw new NotFoundException("User not found");
@@ -155,13 +170,13 @@ export class AuthService extends GenericService {
         template: EmailTemplate.FORGET_PASSWORD,
         context: {
           name: user.name,
-          resetUrl: `${env.FRONTEND_URL}/auth/reset-password/${token}`,
+          resetUrl: `${env.FRONTEND_URL}/auth/reset-password/${token}`
         }
       });
     });
   }
 
-  async login(data: LoginDto, manager?: EntityManager) {
+  async login(data: LoginDto, manager?: EntityManager): Promise<LoginResponseDto> {
     const user = await this.userService.findFirstWithMemberRoleTenant(
       { where: { email: data.email } },
       manager
@@ -178,26 +193,26 @@ export class AuthService extends GenericService {
     this.context.setCookie("access-token", token.accessToken, {
       maxAge: token.accessTokenDuration,
       httpOnly: true,
-      path: "/",
+      path: "/"
     });
     this.context.setCookie("refresh-token", token.refreshToken, {
       maxAge: token.refreshTokenDuration,
       httpOnly: true,
-      path: "/",
+      path: "/"
     });
 
-    return { redirect: data.redirect ?? "/" }
+    return new LoginResponseDto({ redirect: data.redirect ?? "/" });
   }
 
-  async logout() {
-    this.context.deleteCookies(["access-token", "refresh-token"]);
+  async logout(): Promise<void> {
+    this.context.deleteCookies([ "access-token", "refresh-token" ]);
   }
 
-  async resetPassword(data: ResetPasswordDto, manager?: EntityManager) {
+  async resetPassword(data: ResetPasswordDto, manager?: EntityManager): Promise<void> {
     await this.transaction(async (manager) => {
       const verificationToken = await this.verificationTokenService.findFirst({
         where: { token: data.token, type: VerificationType.RESET_PASSWORD },
-        relations: ['user']
+        relations: [ "user" ]
       }, manager);
       if (!verificationToken) throw new BadRequestException("Reset password link invalid");
       if (!verificationToken.user) throw new NotFoundException("User not found");

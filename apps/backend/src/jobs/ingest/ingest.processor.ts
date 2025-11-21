@@ -1,15 +1,15 @@
-import { Job } from 'bullmq';
-import streamToBlob from 'stream-to-blob';
+import { Job } from "bullmq";
+import streamToBlob from "stream-to-blob";
 
-import { IndexStatus, SourceEntity } from '@/entities/source.entity';
-import { PrivateStorageService } from '@/infra/storage/private-storage.service';
-import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
-import { SourceService } from '@/modules/knowledge/source/source.service';
-import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
-import { forwardRef, Inject, Logger } from '@nestjs/common';
+import { IndexStatus, SourceEntity } from "@/entities/source.entity";
+import { PrivateStorageService } from "@/infra/storage/private-storage.service";
+import { SourceVectorStoreService } from "@/infra/vector/source-vector-store.service";
+import { SourceService } from "@/modules/knowledge/source/source.service";
+import { OnWorkerEvent, Processor, WorkerHost } from "@nestjs/bullmq";
+import { forwardRef, Inject, Logger } from "@nestjs/common";
 
-import { JobType } from '../types';
-import { ProcessorManager } from './processor-manager';
+import { JobType } from "../types";
+import { ProcessorManager } from "./processor-manager";
 
 @Processor(JobType.INGEST, { concurrency: 1 })
 export class IngestProcessor extends WorkerHost {

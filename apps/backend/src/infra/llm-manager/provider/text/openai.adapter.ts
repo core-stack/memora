@@ -1,8 +1,8 @@
-import OpenAI from 'openai';
-import { output, ZodObject } from 'zod';
+import OpenAI from "openai";
+import { output, ZodObject } from "zod";
 
-import { ProviderHealth } from '../types';
-import { GenerateParams, GenerateResult, StreamChunk, TextProvider } from './base';
+import { ProviderHealth } from "../types";
+import { GenerateParams, GenerateResult, StreamChunk, TextProvider } from "./base";
 
 type OpenAIOptions = {
   baseURL: string;
@@ -24,10 +24,10 @@ export class OpenAILLMTextAdapter extends TextProvider {
 
     const response = await this.client.chat.completions.create({
       model: this.opts.model,
-      messages: [{ role: "user", content: prompt }],
+      messages: [ { role: "user", content: prompt } ],
       max_tokens: maxTokens,
       temperature,
-      stream: false,
+      stream: false
     });
 
     const message = response.choices[0]?.message?.content ?? "";
@@ -47,10 +47,10 @@ export class OpenAILLMTextAdapter extends TextProvider {
     const { prompt, maxTokens, temperature } = params;
     const stream = await this.client.chat.completions.create({
       model: this.opts.model,
-      messages: [{ role: "user", content: prompt }],
+      messages: [ { role: "user", content: prompt } ],
       max_tokens: maxTokens,
       temperature,
-      stream: true,
+      stream: true
     });
 
     for await (const part of stream) {
@@ -73,17 +73,17 @@ export class OpenAILLMTextAdapter extends TextProvider {
 
         const stream = await self.client.chat.completions.create({
           model: self.opts.model,
-          messages: [{ role: "user", content: prompt }],
+          messages: [ { role: "user", content: prompt } ],
           max_tokens: maxTokens,
           temperature,
-          stream: true,
+          stream: true
         });
 
         for await (const part of stream) {
           const delta = part.choices[0]?.delta?.content;
           if (delta) yield delta;
         }
-      },
+      }
     };
   }
 
@@ -105,11 +105,11 @@ export class OpenAILLMTextAdapter extends TextProvider {
       model: this.opts.model,
       messages: [
         { role: "system", content: prompt },
-        { role: "user", content: query },
+        { role: "user", content: query }
       ],
       response_format: { type: "json_object" }, // JSON MODE
       temperature: 0,
-      stream: false,
+      stream: false
     });
 
     const text = res.choices[0].message?.content ?? "";

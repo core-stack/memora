@@ -1,20 +1,20 @@
-import { Constructor } from '@/types/constructor';
-import { env } from '@/env';
-import { BaseFragment, Fragments } from '@/fragment';
-import { InvalidPresetError } from '@/infra/llm-manager/errors/invalid-preset.error';
-import { LLMManagerService } from '@/infra/llm-manager/llm-manager.service';
-import { Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Constructor } from "@/types/constructor";
+import { env } from "@/env";
+import { BaseFragment, Fragments } from "@/fragment";
+import { InvalidPresetError } from "@/infra/llm-manager/errors/invalid-preset.error";
+import { LLMManagerService } from "@/infra/llm-manager/llm-manager.service";
+import { Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import {
   CreateIndexesReq, FieldType, FunctionObject, HybridSearchSingleReq, MilvusClient, RerankerObj,
   RowData, RRFRanker, SearchResultData
-} from '@zilliz/milvus2-sdk-node';
+} from "@zilliz/milvus2-sdk-node";
 
-import { VectorDeleteError } from '../errors/delete-error';
-import { InvalidVectorFiltersError } from '../errors/invalid-vector-filters';
-import { VectorMutationError } from '../errors/vector-mutation';
-import { VectorSearchError } from '../errors/vector-search';
-import { VectorStore, WithSearchOptions } from '../vector-store.service';
-import { LLMPreset } from '@/types/llm-preset';
+import { VectorDeleteError } from "../errors/delete-error";
+import { InvalidVectorFiltersError } from "../errors/invalid-vector-filters";
+import { VectorMutationError } from "../errors/vector-mutation";
+import { VectorSearchError } from "../errors/vector-search";
+import { VectorStore, WithSearchOptions } from "../vector-store.service";
+import { LLMPreset } from "@/types/llm-preset";
 
 export abstract class MilvusService<T extends BaseFragment>
   extends VectorStore<T> implements OnModuleInit, OnModuleDestroy {
@@ -28,7 +28,7 @@ export abstract class MilvusService<T extends BaseFragment>
     protected readonly fields: FieldType[] | ((model: string, dim: number) => FieldType[]) = [],
     protected readonly functions: FunctionObject[] | (() => FunctionObject[]) = [],
     protected readonly indexSchema: CreateIndexesReq | ((collectionName: string) => CreateIndexesReq) = [],
-    protected readonly reranker: RerankerObj = RRFRanker(100),
+    protected readonly reranker: RerankerObj = RRFRanker(100)
   ) {
     super();
     this.client = new MilvusClient({ address: env.MILVUS_URL });
@@ -116,7 +116,7 @@ export abstract class MilvusService<T extends BaseFragment>
 
     const res = await this.client.insert({ collection_name: collectionName, fields_data: chunks });
     if (res.err_index.length > 0) throw new VectorMutationError("Error adding fragments", res);
-    await this.client.flushSync({ collection_names: [collectionName] });
+    await this.client.flushSync({ collection_names: [ collectionName ] });
   }
 
   async deleteFragments(llmId: string, c: T | T[] | Fragments<T>): Promise<void> {
@@ -132,7 +132,7 @@ export abstract class MilvusService<T extends BaseFragment>
       filter: `id in [${ids.map(id => `"${id}"`).join(", ")}]`
     });
     if (res.err_index.length > 0) throw new VectorMutationError("Error deleting fragments", res);
-    await this.client.flushSync({ collection_names: [collectionName] });
+    await this.client.flushSync({ collection_names: [ collectionName ] });
   }
 
   async search(llmId: string, ...opts: WithSearchOptions[]): Promise<Fragments<T>> {
@@ -161,7 +161,7 @@ export abstract class MilvusService<T extends BaseFragment>
     const data: HybridSearchSingleReq[] = [];
     if (options.dense) {
       let topK = options.topK;
-      if (typeof options.dense !== "string" && options.dense.topK) topK = options.dense.topK
+      if (typeof options.dense !== "string" && options.dense.topK) topK = options.dense.topK;
 
       const embeddings = await embeddingProvider.embed(
         typeof options.dense === "string" ? options.dense : options.dense.query
@@ -171,7 +171,7 @@ export abstract class MilvusService<T extends BaseFragment>
         anns_field: "dense",
         data: embeddings,
         limit: topK,
-        param: { nprobe: 10 },
+        param: { nprobe: 10 }
       } as HybridSearchSingleReq);
     }
     if (options.sparse) {
@@ -181,7 +181,7 @@ export abstract class MilvusService<T extends BaseFragment>
         anns_field: "sparse",
         data: typeof options.sparse === "string" ? options.sparse : options.sparse.query,
         limit: topK,
-        param: { drop_ratio_search: 0.2 },
+        param: { drop_ratio_search: 0.2 }
       } as HybridSearchSingleReq);
     }
     //#endregion
@@ -208,7 +208,7 @@ export abstract class MilvusService<T extends BaseFragment>
 
     const res = await this.client.delete({
       collection_name: collectionName,
-      filter: this.buildFilters(filter),
+      filter: this.buildFilters(filter)
     });
     if (res.err_index.length > 0) {
       this.logger.error("Error deleting fragments", res);
@@ -218,10 +218,10 @@ export abstract class MilvusService<T extends BaseFragment>
 
   private buildFilters(filters?: Record<string, string | number | boolean>): string {
     const exprParts: string[] = [];
-    Object.entries(filters ?? {}).map(([key, value]) => {
-      switch(typeof value) {
+    Object.entries(filters ?? {}).map(([ key, value ]) => {
+      switch (typeof value) {
         case "string":
-          const safe = String(value).replace(/"/g, '\\"');
+          const safe = String(value).replace(/"/g, "\\\"");
           exprParts.push(`${key} == "${safe}"`);
           break;
         case "number":
@@ -231,7 +231,7 @@ export abstract class MilvusService<T extends BaseFragment>
         default:
           break;
       }
-    })
+    });
 
     return exprParts.join(" && ");
   }

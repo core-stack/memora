@@ -1,17 +1,17 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager } from "typeorm";
 
-import { LLMEntity } from '@/entities/llm.entity';
-import { env } from '@/env';
-import { LLMManagerService } from '@/infra/llm-manager/llm-manager.service';
-import { EmbeddingProvider } from '@/infra/llm-manager/provider/embedding/base';
-import { TextProvider } from '@/infra/llm-manager/provider/text/base';
-import { SecurityService } from '@/infra/security/security.service';
-import { Service } from '@/shared/service';
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { LLMEntity } from "@/entities/llm.entity";
+import { env } from "@/env";
+import { LLMManagerService } from "@/infra/llm-manager/llm-manager.service";
+import { EmbeddingProvider } from "@/infra/llm-manager/provider/embedding/base";
+import { TextProvider } from "@/infra/llm-manager/provider/text/base";
+import { SecurityService } from "@/infra/security/security.service";
+import { Service } from "@/shared/service";
+import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 
-import { KnowledgeLLMEntity } from '../../entities/knowledge-llm.entity';
-import { KnowledgeEntity } from '../../entities/knowledge.entity';
-import { KnowledgeService } from '../knowledge/knowledge.service';
+import { KnowledgeLLMEntity } from "../../entities/knowledge-llm.entity";
+import { KnowledgeEntity } from "../../entities/knowledge.entity";
+import { KnowledgeService } from "../knowledge/knowledge.service";
 
 @Injectable()
 export class LLMService extends Service<LLMEntity> {
@@ -25,14 +25,14 @@ export class LLMService extends Service<LLMEntity> {
   async findByKnowledge(knowledgeId: string, manager?: EntityManager): Promise<KnowledgeLLMEntity[]> {
     const knowledge = await this.knowledgeService.findUnique({
       where: { id: knowledgeId },
-      relations: ['knowledgeLLMs.llm']
+      relations: [ "knowledgeLLMs.llm" ]
     }, manager);
     if (!knowledge) throw new NotFoundException("Knowledge not found");
     const llms = knowledge.knowledgeLLMs;
     for (const kLLM of llms) {
       const preset = this.manager.getPresets().find(preset => preset.config.model === kLLM.llm.model);
       if (!preset) throw new NotFoundException("Model not found");
-      await Promise.all(Object.entries(kLLM.llm.config).map(async ([key, value]) => {
+      await Promise.all(Object.entries(kLLM.llm.config).map(async ([ key, value ]) => {
         const isSecret = preset.fields?.[key] === "secret-string";
         if (isSecret) kLLM.llm.config[key] = await this.securityService.decrypt(value as any, env.ENCRYPT_MASTER_PASSWORD);
       }));
@@ -40,9 +40,9 @@ export class LLMService extends Service<LLMEntity> {
     return llms;
   }
 
-  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: 'EMBEDDING', manager?: EntityManager): Promise<EmbeddingProvider | null>
-  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: 'TEXT', manager?: EntityManager): Promise<TextProvider | null>
-  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: 'EMBEDDING' | 'TEXT', manager?: EntityManager): Promise<EmbeddingProvider | TextProvider | null> {
+  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: "EMBEDDING", manager?: EntityManager): Promise<EmbeddingProvider | null>
+  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: "TEXT", manager?: EntityManager): Promise<TextProvider | null>
+  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: "EMBEDDING" | "TEXT", manager?: EntityManager): Promise<EmbeddingProvider | TextProvider | null> {
     const knowledgeId = typeof entityOrId === "string" ? entityOrId : entityOrId.id;
     const llms = await this.findByKnowledge(knowledgeId, manager);
     const llm = llms.find(llm => llm.llm.type === type && llm.default);
@@ -54,10 +54,10 @@ export class LLMService extends Service<LLMEntity> {
   override async create(input: LLMEntity, manager?: EntityManager): Promise<LLMEntity> {
     const preset = this.manager.getPresets().find(preset => preset.config.model === input.model);
     if (!preset) throw new NotFoundException("Model not found");
-    await Promise.all(Object.entries(input.config).map(async ([key, value]) => {
+    await Promise.all(Object.entries(input.config).map(async ([ key, value ]) => {
       const isSecret = preset.fields?.[key] === "secret-string";
       if (isSecret) input.config[key] = await this.securityService.encrypt(value as string, env.ENCRYPT_MASTER_PASSWORD);
-    }))
+    }));
 
     return super.create(input, manager);
   }

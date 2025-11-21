@@ -1,4 +1,4 @@
-import { MutationResult } from '@zilliz/milvus2-sdk-node';
+import { MutationResult } from "@zilliz/milvus2-sdk-node";
 
 export class VectorMutationError extends Error {
   constructor(message?: string, mutationResult?: MutationResult) {

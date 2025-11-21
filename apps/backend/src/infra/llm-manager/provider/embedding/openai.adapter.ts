@@ -1,9 +1,9 @@
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
 import { LLMPreset } from "@/types/llm-preset";
 
-import { ProviderHealth } from '../types';
-import { EmbeddingProvider } from './base';
+import { ProviderHealth } from "../types";
+import { EmbeddingProvider } from "./base";
 
 type OpenAIOptions = {
   baseURL: string;
@@ -24,7 +24,7 @@ export class OpenAILLMEmbeddingAdapter extends EmbeddingProvider {
   async embed(texts: string | string[]): Promise<number[] | number[][]> {
     const response = await this.client.embeddings.create({
       model: this.opts.model,
-      input: texts,
+      input: texts
     });
     if (Array.isArray(texts)) return response.data.map((d) => d.embedding);
     return response.data[0].embedding;

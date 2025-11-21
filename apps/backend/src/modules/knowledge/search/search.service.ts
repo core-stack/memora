@@ -1,8 +1,8 @@
-import { SourceMemoryService } from '@/modules/memory/source-memory/source-memory.service';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { SourceMemoryService } from "@/modules/memory/source-memory/source-memory.service";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 
-import { KnowledgeService } from '../knowledge.service';
-import { GenericService } from '@/shared/generic-service';
+import { KnowledgeService } from "../knowledge.service";
+import { GenericService } from "@/shared/generic-service";
 
 @Injectable()
 export class SearchService extends GenericService {

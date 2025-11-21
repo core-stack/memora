@@ -1,5 +1,5 @@
-import { randomUUID } from 'crypto';
-import moment from 'moment';
+import { randomUUID } from "crypto";
+import moment from "moment";
 
 export abstract class BaseFragment {
   id: string;

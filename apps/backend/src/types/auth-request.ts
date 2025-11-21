@@ -1,5 +1,5 @@
-import { Request } from 'express';
+import { Request } from "express";
 
-import { Session } from '@/modules/auth/types';
+import { Session } from "@/modules/auth/types";
 
 export type AuthRequest = Request & { session?: Session };

@@ -1,7 +1,7 @@
-import { BaseFragment, Fragments } from '@/fragment';
-import { buildOptions } from '@/utils/build-options';
+import { BaseFragment, Fragments } from "@/fragment";
+import { buildOptions } from "@/utils/build-options";
 
-import { InvalidVectorFiltersError } from './errors/invalid-vector-filters';
+import { InvalidVectorFiltersError } from "./errors/invalid-vector-filters";
 
 export type SearchOptions = {
   filters?: Record<string, string | number | boolean>;
@@ -22,32 +22,32 @@ export abstract class VectorStore<T extends BaseFragment> {
   static withFilters(filters: Record<string, string | number | boolean>): WithSearchOptions {
     return (currentOpts: Partial<SearchOptions>) => {
       return { ...currentOpts, filters: { ...currentOpts.filters, ...filters } };
-    }
+    };
   }
   static withTopK(topK: number): WithSearchOptions {
     return (currentOpts: Partial<SearchOptions>) => {
       return { ...currentOpts, topK };
-    }
+    };
   }
   static withDense(dense: string | { topK?: number, query: string }): WithSearchOptions {
     return (currentOpts: Partial<SearchOptions>) => {
       return { ...currentOpts, dense };
-    }
+    };
   }
   static  withSparse(sparse: string | { topK?: number, query: string }): WithSearchOptions {
     return (currentOpts: Partial<SearchOptions>) => {
       return { ...currentOpts, sparse };
-    }
+    };
   }
   static withQuery(query: string | { topK?: number, query: string }): WithSearchOptions {
     return (currentOpts: Partial<SearchOptions>) => {
       return { ...currentOpts, dense: query, sparse: query };
-    }
+    };
   }
   static  withTerm(term: string): WithSearchOptions {
     return (currentOpts: Partial<SearchOptions>) => {
       return { ...currentOpts, term };
-    }
+    };
   }
   protected buildSearchOptions(...opts: WithSearchOptions[]): SearchOptions {
     const options = buildOptions<WithSearchOptions, SearchOptions>({ topK: 5 }, opts);

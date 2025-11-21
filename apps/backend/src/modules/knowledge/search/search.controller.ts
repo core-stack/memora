@@ -1,9 +1,9 @@
-import { Controller } from '@/shared/controller/decorators';
-import { Get } from '@nestjs/common';
+import { Controller } from "@/shared/controller/decorators";
+import { Get } from "@nestjs/common";
 
-import { SearchService } from './search.service';
+import { SearchService } from "./search.service";
 
-@Controller('tenant/:tenantId/knowledge/:knowledgeSlug/search')
+@Controller("tenant/:tenantId/knowledge/:knowledgeSlug/search")
 export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 

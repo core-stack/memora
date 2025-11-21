@@ -6,14 +6,17 @@
 
 export type LoginDto = {
     /**
-     * @type string
+     * @description The email of the user
+     * @type string, email
     */
     email: string;
     /**
-     * @type string
+     * @description The password of the user
+     * @type string, password
     */
     password: string;
     /**
+     * @description The path to redirect
      * @type string | undefined
     */
     redirect?: string;

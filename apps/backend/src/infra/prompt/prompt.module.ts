@@ -1,8 +1,8 @@
-import { env } from '@/env';
-import { Module } from '@nestjs/common';
+import { env } from "@/env";
+import { Module } from "@nestjs/common";
 
-import { TEMPLATES_DIR } from './config';
-import { PromptService } from './prompt.service';
+import { TEMPLATES_DIR } from "./config";
+import { PromptService } from "./prompt.service";
 
 @Module({
   providers: [
@@ -12,6 +12,6 @@ import { PromptService } from './prompt.service';
       useValue: env.PROMPT_TEMPLATES_DIR
     }
   ],
-  exports: [PromptService]
+  exports: [ PromptService ]
 })
 export class PromptModule {}

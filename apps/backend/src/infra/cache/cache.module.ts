@@ -1,8 +1,8 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Module } from "@nestjs/common";
 
-import { CacheService } from './cache.service';
-import { CACHE_PREFIX_KEY } from './prefix';
-import { RedisService } from './redis/redis.service';
+import { CacheService } from "./cache.service";
+import { CACHE_PREFIX_KEY } from "./prefix";
+import { RedisService } from "./redis/redis.service";
 
 @Module({})
 export class CacheModule {
@@ -16,10 +16,10 @@ export class CacheModule {
         },
         {
           provide: CacheService,
-          useClass: RedisService,
+          useClass: RedisService
         }
       ],
-      exports: [CacheService]
-    }
+      exports: [ CacheService ]
+    };
   }
 }

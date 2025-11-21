@@ -1,6 +1,6 @@
-import { SourceFragment } from '@/fragment';
+import { SourceFragment } from "@/fragment";
 
-import { VectorStore } from './vector-store.service';
+import { VectorStore } from "./vector-store.service";
 
 export abstract class SourceVectorStoreService extends VectorStore<SourceFragment> {
 }

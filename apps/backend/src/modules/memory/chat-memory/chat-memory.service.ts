@@ -1,9 +1,9 @@
-import { MessageEntity } from '@/entities/message.entity';
-import { ChatFragment, Fragments } from '@/fragment';
-import { ChatVectorStoreService } from '@/infra/vector/chat-vector-store.service';
-import { MessageService } from '@/modules/knowledge/chat/message/message.service';
-import { buildOptions } from '@/utils/build-options';
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { MessageEntity } from "@/entities/message.entity";
+import { ChatFragment, Fragments } from "@/fragment";
+import { ChatVectorStoreService } from "@/infra/vector/chat-vector-store.service";
+import { MessageService } from "@/modules/knowledge/chat/message/message.service";
+import { buildOptions } from "@/utils/build-options";
+import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 
 export type ChatSearchOptions = {
   lastNMessages?: number;
@@ -49,8 +49,8 @@ export class ChatMemoryService {
     const options = this.buildChatSearchOptions(...opts);
     const response: { lastNMessages: MessageEntity[], searchQuery: Fragments<ChatFragment> } = {
       lastNMessages: [],
-      searchQuery: Fragments.fromFragmentArray([]),
-    }
+      searchQuery: Fragments.fromFragmentArray([])
+    };
     if (options.lastNMessages) {
       response.lastNMessages = await this.messageService.findLastNMessages(chatId, options.lastNMessages);
     }
@@ -61,30 +61,29 @@ export class ChatMemoryService {
         ChatVectorStoreService.withChatId(chatId),
         ChatVectorStoreService.withQuery(options.searchQuery),
         options.filters && ChatVectorStoreService.withFilters(options.filters)
-      )
+      );
       response.searchQuery = searchQuery;
     }
     return response;
   }
 
 
-
   static withFilters(filters: Record<string, string | number | boolean>): WithChatSearchOptions {
     return (currentOpts: Partial<ChatSearchOptions>) => {
       return { ...currentOpts, filters: { ...currentOpts.filters, ...filters } };
-    }
+    };
   }
 
   static withLastNMessages(lastNMessages: number): WithChatSearchOptions {
     return (currentOpts: Partial<ChatSearchOptions>) => {
       return { ...currentOpts, lastNMessages };
-    }
+    };
   }
 
   static withSearchQuery(searchQuery: string): WithChatSearchOptions {
     return (currentOpts: Partial<ChatSearchOptions>) => {
       return { ...currentOpts, searchQuery };
-    }
+    };
   }
 
   protected buildChatSearchOptions(...opts: WithChatSearchOptions[]) {

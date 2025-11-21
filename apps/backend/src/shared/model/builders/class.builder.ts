@@ -1,9 +1,9 @@
-import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { Type } from "class-transformer";
+import { ValidateNested } from "class-validator";
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
-import { FieldClassOptions } from '../types';
+import { FieldClassOptions } from "../types";
 
 export const buildClassDecorators = (opts: FieldClassOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];
@@ -15,7 +15,7 @@ export const buildClassDecorators = (opts: FieldClassOptions): PropertyDecorator
     description: opts.description,
     example: opts.example,
     default: opts.default,
-    isArray: opts.isArray,
+    isArray: opts.isArray
   };
   if (opts.debug) console.log(apiMetadata);
   decorators.push(isRequired ? ApiProperty(apiMetadata) : ApiPropertyOptional(apiMetadata));
@@ -27,4 +27,4 @@ export const buildClassDecorators = (opts: FieldClassOptions): PropertyDecorator
   decorators.push(ValidateNested({ each: opts.isArray }));
   if (opts.debug) console.log("added validate nested");
   return decorators;
-}
+};

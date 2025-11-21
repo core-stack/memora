@@ -1,20 +1,20 @@
-import moment from 'moment';
+import moment from "moment";
 
-import { Fragments, SourceFragment } from '@/fragment';
-import { LLMManagerService } from '@/infra/llm-manager/llm-manager.service';
-import { Injectable, Logger } from '@nestjs/common';
-import { RowData, SearchResultData } from '@zilliz/milvus2-sdk-node';
+import { Fragments, SourceFragment } from "@/fragment";
+import { LLMManagerService } from "@/infra/llm-manager/llm-manager.service";
+import { Injectable, Logger } from "@nestjs/common";
+import { RowData, SearchResultData } from "@zilliz/milvus2-sdk-node";
 
-import { MilvusService } from '../base';
-import { sourceFields, sourceFunctions, sourceIndexSchema } from './source-schemas';
-import { SourceType } from '@/entities';
+import { MilvusService } from "../base";
+import { sourceFields, sourceFunctions, sourceIndexSchema } from "./source-schemas";
+import { SourceType } from "@/entities";
 
 @Injectable()
 export class MilvusSourceVectorStoreService extends MilvusService<SourceFragment> {
   protected override logger = new Logger(MilvusSourceVectorStoreService.name);
 
   constructor(llmManager: LLMManagerService) {
-    super(llmManager, "source", SourceFragment, sourceFields, sourceFunctions, sourceIndexSchema)
+    super(llmManager, "source", SourceFragment, sourceFields, sourceFunctions, sourceIndexSchema);
   }
 
   fragmentToChunk(c: SourceFragment | SourceFragment[] | Fragments<SourceFragment>): RowData[] {
@@ -46,7 +46,7 @@ export class MilvusSourceVectorStoreService extends MilvusService<SourceFragment
         sourceType: c.sourceType,
         tenantId: c.tenantId,
         createdAt: moment(Number(c.createdAt)).toDate(),
-        updatedAt: moment(Number(c.updatedAt)).toDate(),
+        updatedAt: moment(Number(c.updatedAt)).toDate()
       }))
     );
   }

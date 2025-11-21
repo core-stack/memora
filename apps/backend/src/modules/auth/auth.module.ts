@@ -1,30 +1,31 @@
-import { env } from '@/env';
-import { DatabaseModule } from '@/infra/database/database.module';
-import { SecurityModule } from '@/infra/security/security.module';
-import { EmailModule } from '@/jobs/email/email.module';
-import { HTTPContextModule } from '@/shared/http-context/http-context.module';
-import { Module } from '@nestjs/common';
+import { env } from "@/env";
+import { DatabaseModule } from "@/infra/database/database.module";
+import { SecurityModule } from "@/infra/security/security.module";
+import { EmailModule } from "@/jobs/email/email.module";
+import { HTTPContextModule } from "@/shared/http-context/http-context.module";
+import { forwardRef, Module } from "@nestjs/common";
 
-import { AccountModule } from '../account/account.module';
-import { RoleModule } from '../role/role.module';
-import { UserModule } from '../user/user.module';
-import { VerificationTokenModule } from '../verification-token/verification-token.module';
-import { AuthManager, PROVIDERS } from './auth-manager.service';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { JWTService } from './jwt.service';
-import { GoogleProvider } from './providers/google';
-import { Provider } from './providers/types';
-import { MemoryStore } from './store/memory.store';
-import { RedisStore } from './store/redis.store';
-import { Store } from './store/types';
-import { Session } from './types';
+import { AccountModule } from "../account/account.module";
+import { RoleModule } from "../role/role.module";
+import { UserModule } from "../user/user.module";
+import { VerificationTokenModule } from "../verification-token/verification-token.module";
+import { AuthManager, PROVIDERS } from "./auth-manager.service";
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
+import { JWTService } from "./jwt.service";
+import { GoogleProvider } from "./providers/google";
+import { Provider } from "./providers/types";
+import { MemoryStore } from "./store/memory.store";
+import { RedisStore } from "./store/redis.store";
+import { Store } from "./store/types";
+import { Session } from "./types";
+import { TenantModule } from "../tenant/tenant.module";
 
-const useProvider = (name: string, provider: Provider, use: boolean) => {
+const useProvider = (name: string, provider: Provider, use: boolean): Record<string, Provider> => {
   return use ? { [name]: provider } : {};
-}
+};
 @Module({
-  controllers: [AuthController],
+  controllers: [ AuthController ],
   providers: [
     AuthManager, JWTService, AuthService,
     {
@@ -45,7 +46,7 @@ const useProvider = (name: string, provider: Provider, use: boolean) => {
             REDIRECT_URI: env.GOOGLE_REDIRECT_URI!
           }),
           env.GOOGLE_ENABLED
-        ),
+        )
       } as Record<string, Provider>
     }
   ],
@@ -58,7 +59,8 @@ const useProvider = (name: string, provider: Provider, use: boolean) => {
     SecurityModule,
     DatabaseModule,
     RoleModule,
-    HTTPContextModule
-  ],
+    HTTPContextModule,
+    forwardRef(() => TenantModule)
+  ]
 })
 export class AuthModule {}

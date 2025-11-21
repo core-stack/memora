@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
 
-import { HTTPContext } from './http-context';
+import { HTTPContext } from "./http-context";
 
 @Module({
-  providers: [HTTPContext],
-  exports: [HTTPContext]
+  providers: [ HTTPContext ],
+  exports: [ HTTPContext ]
 })
 export class HTTPContextModule {}

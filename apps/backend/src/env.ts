@@ -1,21 +1,21 @@
-import dotenv from 'dotenv';
-import moment from 'moment';
-import path from 'path';
-import z from 'zod';
+import dotenv from "dotenv";
+import moment from "moment";
+import path from "path";
+import z from "zod";
 
-import { __root } from './root';
+import { __root } from "./root";
 
 const envFile = process.env.ENV_FILE;
 
 const buildEnvPaths = (envFile?: string) => {
   if (envFile) {
-    return [envFile, `../../${envFile}`];
+    return [ envFile, `../../${envFile}` ];
   }
-  return [".env", "../../.env", "../../.env.local"];
-}
+  return [ ".env", "../../.env", "../../.env.local" ];
+};
 
 dotenv.config({
-  path: buildEnvPaths(envFile),
+  path: buildEnvPaths(envFile)
 });
 
 const envSchema = z.object({
@@ -24,14 +24,14 @@ const envSchema = z.object({
   API_URL: z.url().optional().default("http://localhost:3000/api"),
   SERVE_STATIC_PATH: z.string().optional(),
   FRONTEND_URL: z.url().optional().default("http://localhost:3000"),
-  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  NODE_ENV: z.enum([ "development", "production", "test" ]).default("development"),
 
   // INVITE
   DEFAULT_INVITE_EXPIRES: z.coerce.number().optional().default(60 * 60 * 24), // 1 day
 
   // AUTH
   REQUIRE_EMAIL_VERIFICATION: z.coerce.boolean().optional().default(false),
-  STORE: z.enum(["memory", "redis"]).default("redis"),
+  STORE: z.enum([ "memory", "redis" ]).default("redis"),
   REDIS_STORE_URL: z.url().optional().default("redis://localhost:6379"),
 
   // OAUTH
@@ -51,7 +51,7 @@ const envSchema = z.object({
   SMTP_PORT: z.coerce.number().optional(),
   SMTP_SECURE: z.coerce.boolean().default(false),
   SMTP_USER: z.string().optional(),
-  SMTP_ENV: z.enum(["development", "production", "test"]).default("development"),
+  SMTP_ENV: z.enum([ "development", "production", "test" ]).default("development"),
   SMTP_TEST_EMAIL: z.string().optional(),
   SMTP_FROM: z.string().optional(),
   SMTP_PASSWORD: z.string().optional(),
@@ -67,9 +67,9 @@ const envSchema = z.object({
   PLUGINS_BUCKET: z.string().optional().default("plugins"),
 
   // CORS
-  CORS_ORIGINS: z.string().transform((s) => s.split(",")).optional().default(["*", "http://localhost:3000", "http://localhost:5173"]),
-  CORS_METHODS: z.string().array().optional().default(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]),
-  CORS_HEADERS: z.string().array().optional().default(["*"]),
+  CORS_ORIGINS: z.string().transform((s) => s.split(",")).optional().default([ "*", "http://localhost:3000", "http://localhost:5173" ]),
+  CORS_METHODS: z.string().array().optional().default([ "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS" ]),
+  CORS_HEADERS: z.string().array().optional().default([ "*" ]),
   CORS_CREDENTIALS: z.boolean().optional().default(true),
 
   // DATABASE
@@ -77,7 +77,7 @@ const envSchema = z.object({
   CREATE_DATABASE: z.coerce.boolean().optional().default(false),
 
   // STORAGE
-  STORAGE_TYPE: z.enum(['s3']).default('s3'),
+  STORAGE_TYPE: z.enum([ "s3" ]).default("s3"),
   DELETE_TEMP_FILES_AFTER: z.coerce.number().optional().default(60 * 60 * 24), // 1 day
   // S3
   AWS_ACCESS_KEY_ID: z.string().optional(),
@@ -109,7 +109,7 @@ const envSchema = z.object({
   GEMINI_MODEL: z.string().optional().default("gemini-2.5-flash"),
 
   // VECTOR
-  VECTOR_ENGINE: z.enum(['milvus']).default('milvus'),
+  VECTOR_ENGINE: z.enum([ "milvus" ]).default("milvus"),
   // MILVUS
   MILVUS_URL: z.url().optional().default("localhost:19530"),
   MILVUS_COLLECTION_PREFIX: z.string().optional().default("snipet"),
@@ -119,17 +119,17 @@ const envSchema = z.object({
   PROMPT_TEMPLATES_DIR: z.string().optional().default(path.join(__root, "prompts")),
   DEBUG_PROMPTS: z.coerce.boolean().optional().default(false),
 
-  IGNORE_PLUGINS: z.coerce.boolean().optional().default(false),
+  IGNORE_PLUGINS: z.coerce.boolean().optional().default(false)
 }).transform((data) => {
   if (!data.API_URL) {
     return {
       ...data,
-      API_URL: `http://localhost:${data.APP_PORT}/api`,
+      API_URL: `http://localhost:${data.APP_PORT}/api`
     };
   }
   return data;
 }).superRefine((data, ctx) => {
-  if (data.STORAGE_TYPE === 's3') {
+  if (data.STORAGE_TYPE === "s3") {
     if (!data.AWS_ACCESS_KEY_ID && !data.AWS_SECRET_ACCESS_KEY) {
       ctx.addIssue({ code: "custom", message: "AWS storage is not configured" });
     }

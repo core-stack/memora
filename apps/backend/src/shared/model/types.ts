@@ -1,8 +1,8 @@
-import { TransformOptions } from 'class-transformer';
-import { ValidationOptions } from 'class-validator';
-import * as ValidatorJS from 'validator';
+import { TransformOptions } from "class-transformer";
+import { ValidationOptions } from "class-validator";
+import * as ValidatorJS from "validator";
 
-import { Constructor } from '@/types/constructor';
+import { Constructor } from "@/types/constructor";
 
 export type EnumAllowedTypes =
   | any[]

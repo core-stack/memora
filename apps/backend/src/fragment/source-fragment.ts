@@ -1,7 +1,7 @@
-import { SourceMetadata } from '@/entities/metadata.types';
+import { SourceMetadata } from "@/entities/metadata.types";
 
-import { BaseFragment } from './fragment';
-import { SourceType } from '@/entities';
+import { BaseFragment } from "./fragment";
+import { SourceType } from "@/entities";
 
 export class SourceFragment extends BaseFragment {
   seqId?: number;

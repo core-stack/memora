@@ -13,7 +13,7 @@ export class RedisStore<T> extends Store<T> {
   private redis: Redis;
   private readonly prefix: string;
 
-  constructor({ url, prefix = "auth"}: RedisStoreOptions) {
+  constructor({ url, prefix = "auth" }: RedisStoreOptions) {
     super();
 
     this.redis = new Redis(url);
@@ -51,12 +51,12 @@ export class RedisStore<T> extends Store<T> {
     cursor: number = 0,
     limit: number = 10
   ): Promise<{ cursor: number, items: T[]}> {
-    const matchPattern = this.makeKey('*');
+    const matchPattern = this.makeKey("*");
 
-    const [nextCursor, keys] = await this.redis.scan(
+    const [ nextCursor, keys ] = await this.redis.scan(
       cursor,
-      'MATCH', matchPattern,
-      'COUNT', limit
+      "MATCH", matchPattern,
+      "COUNT", limit
     );
 
     if (keys.length === 0) {
@@ -68,12 +68,12 @@ export class RedisStore<T> extends Store<T> {
     const items: [string, T][] = keys.map((key, index) => {
       const shortKey = key.substring(this.prefix.length + 1);
       const value = values[index] ? JSON.parse(values[index] as string) as T : null;
-      return [shortKey, value];
-    }).filter(([, value]) => value !== null) as [string, T][];
+      return [ shortKey, value ];
+    }).filter(([ , value ]) => value !== null) as [string, T][];
     const res = {
       cursor: parseInt(nextCursor, 10),
-      items: items.map((i) => i[1]),
-    }
+      items: items.map((i) => i[1])
+    };
     return res;
   }
 

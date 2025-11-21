@@ -1,1 +1,1 @@
-{"type":"object","properties":{"email":{"type":"string"},"password":{"type":"string"},"redirect":{"type":"string"}},"required":["email","password"],"x-readme-ref-name":"LoginDto"}
+{"type":"object","properties":{"email":{"type":"string","description":"The email of the user","example":"my@example.com","format":"email"},"password":{"type":"string","description":"The password of the user","format":"password"},"redirect":{"type":"string","description":"The path to redirect","example":"/"}},"required":["email","password"],"x-readme-ref-name":"LoginDto"}

@@ -1,74 +1,74 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
-} from 'typeorm';
+} from "typeorm";
 
-import { Field } from '@/shared/model';
+import { Field } from "@/shared/model";
 
-import { AccountEntity } from './account.entity';
-import { InviteEntity } from './invite.entity';
-import { MemberEntity } from './member.entity';
-import { RoleEntity } from './role.entity';
-import { VerificationTokenEntity } from './verification-token.entity';
+import { AccountEntity } from "./account.entity";
+import { InviteEntity } from "./invite.entity";
+import { MemberEntity } from "./member.entity";
+import { RoleEntity } from "./role.entity";
+import { VerificationTokenEntity } from "./verification-token.entity";
 
-@Entity('users')
+@Entity("users")
 export class UserEntity {
-  @Field({ type: 'string', description: 'The unique identifier of the user', uuid: true })
-  @PrimaryGeneratedColumn('uuid')
+  @Field({ type: "string", description: "The unique identifier of the user", uuid: true })
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Field({ type: 'string', description: 'The name of the user', max: 255, min: 1 })
+  @Field({ type: "string", description: "The name of the user", max: 255, min: 1 })
   @Column({ length: 255 })
   name: string;
 
-  @Field({ type: 'string', description: 'The email of the user', email: true })
-  @Column({ unique: true, type: 'text' })
+  @Field({ type: "string", description: "The email of the user", email: true })
+  @Column({ unique: true, type: "text" })
   email: string;
 
-  @Field({ type: 'string', description: 'The password of the user', password: true, min: 6, max: 100 })
-  @Column({ type: 'text', nullable: true })
+  @Field({ type: "string", description: "The password of the user", password: true, min: 6, max: 100 })
+  @Column({ type: "text", nullable: true })
   password?: string;
 
-  @Field({ type: 'date', description: 'The date the user email was verified', example: new Date().toISOString() })
-  @Column({ name: 'email_verified', type: 'timestamptz', nullable: true })
+  @Field({ type: "date", description: "The date the user email was verified", example: new Date().toISOString() })
+  @Column({ name: "email_verified", type: "timestamptz", nullable: true })
   emailVerified?: Date;
 
-  @Field({ type: 'string', description: 'The image of the user', url: true })
-  @Column({ type: 'text', nullable: true })
+  @Field({ type: "string", description: "The image of the user", url: true })
+  @Column({ type: "text", nullable: true })
   image?: string;
 
-  @Field({ type: 'string', description: 'The unique identifier of the role', uuid: true })
-  @Column({ name: 'role_id' })
+  @Field({ type: "string", description: "The unique identifier of the role", uuid: true })
+  @Column({ name: "role_id" })
   roleId: string;
 
-  @Field({ type: 'date', description: 'The date the user was created', example: new Date().toISOString() })
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @Field({ type: "date", description: "The date the user was created", example: new Date().toISOString() })
+  @CreateDateColumn({ name: "created_at", type: "timestamptz" })
   createdAt: Date;
 
-  @Field({ type: 'date', description: 'The date the user was updated', example: new Date().toISOString() })
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @Field({ type: "date", description: "The date the user was updated", example: new Date().toISOString() })
+  @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
   updatedAt: Date;
 
-  // Relations  
-  @Field({ type: 'class', class: () => RoleEntity })
+  // Relations
+  @Field({ type: "class", class: () => RoleEntity })
   @ManyToOne(() => RoleEntity, (role) => role.users, { eager: false })
-  @JoinColumn({ name: 'role_id' })
+  @JoinColumn({ name: "role_id" })
   role?: RoleEntity;
 
-  @Field({ type: 'class', class: () => AccountEntity, isArray: true })
+  @Field({ type: "class", class: () => AccountEntity, isArray: true })
   @OneToMany(() => AccountEntity, (account) => account.user)
   accounts?: AccountEntity[];
 
-  @Field({ type: 'class', class: () => InviteEntity, isArray: true })
+  @Field({ type: "class", class: () => InviteEntity, isArray: true })
   @OneToMany(() => InviteEntity, (invite) => invite.user)
   invites?: InviteEntity[];
 
-  @Field({ type: 'class', class: () => MemberEntity, isArray: true })
+  @Field({ type: "class", class: () => MemberEntity, isArray: true })
   @OneToMany(() => MemberEntity, (member) => member.user)
   members?: MemberEntity[];
 
-  @Field({ type: 'class', class: () => VerificationTokenEntity, isArray: true })
+  @Field({ type: "class", class: () => VerificationTokenEntity, isArray: true })
   @OneToMany(() => VerificationTokenEntity, (token) => token.user)
   verificationTokens?: VerificationTokenEntity[];
 

@@ -1,8 +1,8 @@
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, EntityManager } from "typeorm";
 
-import { Inject, Logger } from '@nestjs/common';
+import { Inject, Logger } from "@nestjs/common";
 
-import { HTTPContext } from './http-context/http-context';
+import { HTTPContext } from "./http-context/http-context";
 
 export abstract class GenericService {
   @Inject() protected readonly context: HTTPContext;

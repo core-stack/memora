@@ -1,12 +1,12 @@
-import { Queue } from 'bullmq';
-import { EntityManager } from 'typeorm';
+import { Queue } from "bullmq";
+import { EntityManager } from "typeorm";
 
-import { JobType } from '@/jobs/types';
-import { Service } from '@/shared/service';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { JobType } from "@/jobs/types";
+import { Service } from "@/shared/service";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 
-import { KnowledgeEntity } from '../../entities/knowledge.entity';
+import { KnowledgeEntity } from "../../entities/knowledge.entity";
 
 @Injectable()
 export class KnowledgeService extends Service<KnowledgeEntity> {
@@ -17,7 +17,7 @@ export class KnowledgeService extends Service<KnowledgeEntity> {
 
   async findBySlug(slug: string, tenantId: string, manager?: EntityManager): Promise<KnowledgeEntity | null> {
     return this.repository(manager).findOne({
-      where: { slug, tenantId },
+      where: { slug, tenantId }
     });
   }
 

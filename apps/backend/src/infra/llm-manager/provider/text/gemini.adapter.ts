@@ -1,10 +1,10 @@
-import { randomUUID } from 'crypto';
-import { output, ZodObject } from 'zod';
+import { randomUUID } from "crypto";
+import { output, ZodObject } from "zod";
 
-import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
+import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
 
-import { ProviderHealth } from '../types';
-import { GenerateParams, GenerateResult, StreamChunk, TextProvider } from './base';
+import { ProviderHealth } from "../types";
+import { GenerateParams, GenerateResult, StreamChunk, TextProvider } from "./base";
 
 type GeminiAdapterOptions = {
   apiKey: string;
@@ -22,12 +22,12 @@ export class GeminiTextAdapter extends TextProvider {
   async generate(params: GenerateParams): Promise<GenerateResult> {
     const { prompt, maxTokens, temperature } = params;
     const start = Date.now();
-    const res = await this.model.generateContent({ 
-      contents: [{ 
+    const res = await this.model.generateContent({
+      contents: [ {
         role: "user",
-        parts: [{ text: prompt }]
-      }],
-      generationConfig: { temperature, maxOutputTokens: maxTokens },
+        parts: [ { text: prompt } ]
+      } ],
+      generationConfig: { temperature, maxOutputTokens: maxTokens }
     });
 
     return {
@@ -36,18 +36,18 @@ export class GeminiTextAdapter extends TextProvider {
       tokensIn: res.response.usageMetadata?.promptTokenCount ?? 0,
       tokensOut: res.response.usageMetadata?.candidatesTokenCount ?? 0,
       generationTimeMs: Date.now() - start
-    }
+    };
   }
-  
+
   async stream(params: GenerateParams, onChunk: (chunk: StreamChunk) => void): Promise<void> {
     const { prompt, maxTokens, temperature } = params;
     const start = Date.now();
-    const res = await this.model.generateContentStream({ 
-      contents: [{ 
+    const res = await this.model.generateContentStream({
+      contents: [ {
         role: "user",
-        parts: [{ text: prompt }]
-      }],
-      generationConfig: { temperature, maxOutputTokens: maxTokens },
+        parts: [ { text: prompt } ]
+      } ],
+      generationConfig: { temperature, maxOutputTokens: maxTokens }
     });
     for await (const chunk of res.stream) {
       const chunkText = chunk.text();
@@ -62,11 +62,11 @@ export class GeminiTextAdapter extends TextProvider {
         const { prompt, maxTokens, temperature } = params;
 
         const res = await this.model.generateContentStream({
-          contents: [{
+          contents: [ {
             role: "user",
-            parts: [{ text: prompt }]
-          }],
-          generationConfig: { temperature, maxOutputTokens: maxTokens },
+            parts: [ { text: prompt } ]
+          } ],
+          generationConfig: { temperature, maxOutputTokens: maxTokens }
         });
 
         for await (const chunk of res.stream) {
@@ -95,12 +95,12 @@ export class GeminiTextAdapter extends TextProvider {
     `.trim();
 
     const res = await this.model.generateContent({
-      contents: [{
+      contents: [ {
         role: "user",
-        parts: [{ text: prompt }]
-      }],
+        parts: [ { text: prompt } ]
+      } ],
       generationConfig: {
-        temperature: 0,
+        temperature: 0
       }
     });
 
@@ -116,7 +116,7 @@ export class GeminiTextAdapter extends TextProvider {
     return schema.parse(parsed);
   }
 
-  
+
   async healthCheck(): Promise<ProviderHealth> {
     const start = Date.now();
     try {

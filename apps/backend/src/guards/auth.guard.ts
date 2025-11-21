@@ -1,11 +1,11 @@
-import { Response } from 'express';
+import { Response } from "express";
 
-import { AuthManager } from '@/modules/auth/auth-manager.service';
-import { Session } from '@/modules/auth/types';
-import { IS_PUBLIC_KEY } from '@/shared/controller/decorators/public';
-import { AuthRequest } from '@/types/auth-request';
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { AuthManager } from "@/modules/auth/auth-manager.service";
+import { Session } from "@/modules/auth/types";
+import { IS_PUBLIC_KEY } from "@/shared/controller/decorators/public";
+import { AuthRequest } from "@/types/auth-request";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
     const response: Response = context.switchToHttp().getResponse();
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
-      context.getClass(),
+      context.getClass()
     ]);
 
     const accessToken: string | undefined = request.cookies?.["access-token"];
@@ -36,13 +36,13 @@ export class AuthGuard implements CanActivate {
         response.cookie("access-token", refreshResult.token.accessToken, {
           maxAge: refreshResult.token.accessTokenDuration,
           httpOnly: true,
-          path: "/",
-        })
+          path: "/"
+        });
 
         response.cookie("refresh-token", refreshResult.token.refreshToken, {
           maxAge: refreshResult.token.refreshTokenDuration,
           httpOnly: true,
-          path: "/",
+          path: "/"
         });
       }
     } catch {

@@ -1,6 +1,6 @@
-import { mergeBy } from '@/utils/array';
+import { mergeBy } from "@/utils/array";
 
-import { BaseFragment } from './fragment';
+import { BaseFragment } from "./fragment";
 
 export class Fragments<T extends BaseFragment> {
   get length(): number { return this.fragments.length; }
@@ -28,7 +28,7 @@ export class Fragments<T extends BaseFragment> {
     this.push(...fragments.fragments);
     return this;
   }
- 
+
   toArray(): T[] {
     return this.fragments;
   }

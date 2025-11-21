@@ -831,6 +831,22 @@ paths:
       security:
         - access-token: []
       tags: *a3
+  /api/auth/providers:
+    get:
+      operationId: AuthController_providers
+      parameters: []
+      responses:
+        "200":
+          description: The list of active providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      tags:
+        &a4
+        - Auth
   /api/auth/login:
     post:
       operationId: AuthController_login
@@ -844,9 +860,7 @@ paths:
       responses:
         "201":
           description: ""
-      tags:
-        &a4
-        - Auth
+      tags: *a4
   /api/auth/logout:
     post:
       operationId: AuthController_logout
@@ -865,20 +879,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateAccountDto"
-      responses:
-        "201":
-          description: ""
-      tags: *a4
-  /api/auth/active-account:
-    post:
-      operationId: AuthController_activeAccount
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ActiveAccountDto"
       responses:
         "201":
           description: ""
@@ -1517,6 +1517,190 @@ paths:
       security:
         - access-token: []
       tags: *a7
+  "/api/tenant/{id}":
+    get:
+      operationId: TenantController_findByID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: Record found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags:
+        &a8
+        - Tenant
+    delete:
+      operationId: TenantController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a8
+  /api/tenant:
+    get:
+      operationId: TenantController_findMany
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Maximum number of records to return
+          schema:
+            example: 10
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Number of records to skip
+          schema:
+            example: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          description: 'Sort order. Use "-" to DESC. Allowed fields: '
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: Records found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TenantEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a8
+    post:
+      operationId: TenantController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTenantDto"
+      responses:
+        "201":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantEntity"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - duplicate record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - access-token: []
+      tags: *a8
   "/api/tenant/{tenantId}/member/{id}":
     get:
       operationId: MemberController_findByID
@@ -1590,7 +1774,7 @@ paths:
       security:
         - access-token: []
       tags:
-        &a8
+        &a9
         - Member
     put:
       operationId: MemberController_update
@@ -1638,7 +1822,7 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
       security:
         - access-token: []
-      tags: *a8
+      tags: *a9
     delete:
       operationId: MemberController_delete
       parameters:
@@ -1679,7 +1863,7 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
       security:
         - access-token: []
-      tags: *a8
+      tags: *a9
   "/api/tenant/{tenantId}/member":
     get:
       operationId: MemberController_findMany
@@ -1737,190 +1921,6 @@ paths:
                   $ref: "#/components/schemas/MemberEntity"
         "400":
           description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-      security:
-        - access-token: []
-      tags: *a8
-  "/api/tenant/{id}":
-    get:
-      operationId: TenantController_findByID
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        "200":
-          description: Record found successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TenantEntity"
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "404":
-          description: Record not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-      security:
-        - access-token: []
-      tags:
-        &a9
-        - Tenant
-    delete:
-      operationId: TenantController_delete
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Record deleted successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TenantEntity"
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "404":
-          description: Record not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-      security:
-        - access-token: []
-      tags: *a9
-  /api/tenant:
-    get:
-      operationId: TenantController_findMany
-      parameters:
-        - name: limit
-          required: false
-          in: query
-          description: Maximum number of records to return
-          schema:
-            example: 10
-            type: number
-        - name: offset
-          required: false
-          in: query
-          description: Number of records to skip
-          schema:
-            example: 0
-            type: number
-        - name: sort
-          required: false
-          in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: '
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        "200":
-          description: Records found successfully
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/TenantEntity"
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-      security:
-        - access-token: []
-      tags: *a9
-    post:
-      operationId: TenantController_create
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateTenantDto"
-      responses:
-        "201":
-          description: Record created successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TenantEntity"
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "409":
-          description: Conflict - duplicate record
           content:
             application/json:
               schema:
@@ -3328,12 +3328,12 @@ components:
           format: date-time
           type: string
           description: The date the account was created
-          example: 2025-11-21T10:09:17.670Z
+          example: 2025-11-21T17:05:56.660Z
         updatedAt:
           format: date-time
           type: string
           description: The date the account was updated
-          example: 2025-11-21T10:09:17.670Z
+          example: 2025-11-21T17:05:56.661Z
       required:
         - id
         - provider
@@ -3396,7 +3396,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-21T10:09:17.669Z
+          example: 2025-11-21T17:05:56.660Z
         image:
           type: string
           description: The image of the user
@@ -3409,12 +3409,12 @@ components:
           format: date-time
           type: string
           description: The date the user was created
-          example: 2025-11-21T10:09:17.670Z
+          example: 2025-11-21T17:05:56.660Z
         updatedAt:
           format: date-time
           type: string
           description: The date the user was updated
-          example: 2025-11-21T10:09:17.670Z
+          example: 2025-11-21T17:05:56.660Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:
@@ -4089,10 +4089,17 @@ components:
       properties:
         email:
           type: string
+          description: The email of the user
+          example: my@example.com
+          format: email
         password:
           type: string
+          description: The password of the user
+          format: password
         redirect:
           type: string
+          description: The path to redirect
+          example: /
       required:
         - email
         - password
@@ -4157,13 +4164,6 @@ components:
         - key
         - name
         - permissions
-    UpdateMemberDto:
-      type: object
-      properties:
-        roleId:
-          type: string
-          description: The ID of the role assigned to the member
-          format: uuid
     CreateTenantDto:
       type: object
       properties:
@@ -4180,6 +4180,13 @@ components:
       required:
         - name
         - backgroundImage
+    UpdateMemberDto:
+      type: object
+      properties:
+        roleId:
+          type: string
+          description: The ID of the role assigned to the member
+          format: uuid
     SendInviteItemDto:
       type: object
       properties:

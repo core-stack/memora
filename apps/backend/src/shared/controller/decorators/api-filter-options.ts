@@ -1,6 +1,6 @@
 // shared/decorators/query-params.ts
-import { applyDecorators } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
+import { applyDecorators } from "@nestjs/common";
+import { ApiQuery } from "@nestjs/swagger";
 
 export function ApiFilterQuery<TEntity>(
   allowedFilters: (keyof TEntity)[] = [],
@@ -11,39 +11,39 @@ export function ApiFilterQuery<TEntity>(
   if (allowedRelations.length > 0) {
     decorators.push(
       ApiQuery({
-        name: 'relations',
+        name: "relations",
         required: false,
         type: String,
         isArray: true,
-        description: `Relations. Allowed fields: ${allowedRelations.join(', ')}`,
-        example: allowedRelations.slice(0, 2).join(',')
+        description: `Relations. Allowed fields: ${allowedRelations.join(", ")}`,
+        example: allowedRelations.slice(0, 2).join(",")
       })
     );
   }
 
   decorators.push(
     ApiQuery({
-      name: 'limit',
+      name: "limit",
       required: false,
       type: Number,
-      description: 'Maximum number of records to return',
+      description: "Maximum number of records to return",
       example: 10
     }),
     ApiQuery({
-      name: 'offset',
+      name: "offset",
       required: false,
       type: Number,
-      description: 'Number of records to skip',
+      description: "Number of records to skip",
       example: 0
     }),
     ApiQuery({
-      name: 'sort',
+      name: "sort",
       required: false,
       type: String,
       isArray: true,
-      description: `Sort order. Use "-" to DESC. Allowed fields: ${allowedFilters.join(', ')}`,
-    }),
-  )
+      description: `Sort order. Use "-" to DESC. Allowed fields: ${allowedFilters.join(", ")}`
+    })
+  );
 
   allowedFilters.forEach(field => {
     const fieldName = String(field);

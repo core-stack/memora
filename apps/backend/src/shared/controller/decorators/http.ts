@@ -1,6 +1,6 @@
-import { applyDecorators, Delete, Get, Post, Put } from '@nestjs/common';
-import { ResponseConfig } from '../types';
-import { ApiResponse } from '@nestjs/swagger';
+import { applyDecorators, Delete, Get, Post, Put } from "@nestjs/common";
+import { ResponseConfig } from "../types";
+import { ApiResponse } from "@nestjs/swagger";
 
 export const ApiResponses = (responseConfigs: ResponseConfig[] = []) => {
   return applyDecorators(...responseConfigs.map(config => ApiResponse(config)));
@@ -24,7 +24,7 @@ export const Http = (
     case "DELETE":
       return Delete(path);
   }
-}
+};
 
 type HttpOptions = {
   ignore?: boolean;
@@ -34,20 +34,20 @@ type HttpOptions = {
 export const HttpGet = (path?: string, opts?: HttpOptions) => applyDecorators(
   Http("GET", path ?? "", opts?.ignore),
   ApiResponses(opts?.responses ?? [])
-)
+);
 export const HttpPost = (path?: string, opts?: HttpOptions) => applyDecorators(
   Http("POST", path ?? "", opts?.ignore),
   ApiResponses(opts?.responses ?? [])
-)
+);
 export const HttpPut = (path?: string, opts?: HttpOptions) => applyDecorators(
   Http("PUT", path ?? "", opts?.ignore),
   ApiResponses(opts?.responses ?? [])
-)
+);
 export const HttpPatch = (path?: string, opts?: HttpOptions) => applyDecorators(
   Http("PATCH", path ?? "", opts?.ignore),
   ApiResponses(opts?.responses ?? [])
-)
+);
 export const HttpDelete = (path?: string, opts?: HttpOptions) => applyDecorators(
   Http("DELETE", path ?? "", opts?.ignore),
   ApiResponses(opts?.responses ?? [])
-)
+);

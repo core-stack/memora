@@ -1,20 +1,20 @@
 
-import { EntityManager } from 'typeorm';
+import { EntityManager } from "typeorm";
 
-import { FilterOptions } from '@/shared/filter-options';
-import { Service } from '@/shared/service';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { FilterOptions } from "@/shared/filter-options";
+import { Service } from "@/shared/service";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 
-import { FolderEntity } from '../../../entities/folder.entity';
-import { KnowledgeService } from '../knowledge.service';
-import { CreateFolderDto } from './dto/create-folder.dto';
+import { FolderEntity } from "../../../entities/folder.entity";
+import { KnowledgeService } from "../knowledge.service";
+import { CreateFolderDto } from "./dto/create-folder.dto";
 
 @Injectable()
 export class FolderService extends Service<FolderEntity> {
   entity = FolderEntity;
   logger = new Logger(FolderService.name);
 
-  @Inject() private readonly knowledgeService: KnowledgeService
+  @Inject() private readonly knowledgeService: KnowledgeService;
 
   override async find(filterOpts: FilterOptions<FolderEntity>, manager?: EntityManager): Promise<FolderEntity[]> {
     const { id: knowledgeId } = await (this.knowledgeService.loadFromSlug());
@@ -37,7 +37,7 @@ export class FolderService extends Service<FolderEntity> {
     if (!folderId) return "";
     const folder = await this.repository(manager).findOneBy({ id: folderId });
     if (!folder) throw new Error("Folder not found");
-    const path = [folder.name];
+    const path = [ folder.name ];
 
     if (folder.parentId) {
       let parent = await this.repository(manager).findOneBy({ id: folder.parentId });

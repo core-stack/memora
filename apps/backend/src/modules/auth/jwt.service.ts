@@ -12,7 +12,7 @@ export type RefreshToken = {
   userId: string;
 };
 
-type Tokens = {
+export type Tokens = {
   accessToken: string;
   refreshToken: string;
   accessTokenDuration: number;
@@ -41,7 +41,7 @@ export class JWTService {
       accessTokenDuration: env.JWT_ACCESS_TOKEN_DURATION,
       refreshTokenDuration: env.JWT_REFRESH_TOKEN_DURATION,
       accessToken,
-      refreshToken,
+      refreshToken
     };
   }
 

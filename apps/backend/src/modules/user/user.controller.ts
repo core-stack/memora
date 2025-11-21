@@ -1,14 +1,14 @@
-import { BaseController } from '@/shared/controller';
-import { Controller, HttpGet } from '@/shared/controller/decorators';
-import { getDefaultFindByIDResponses } from '@/shared/controller/default-response';
+import { BaseController } from "@/shared/controller";
+import { Controller, HttpGet } from "@/shared/controller/decorators";
+import { getDefaultFindByIDResponses } from "@/shared/controller/default-response";
 
-import { UserEntity } from '../../entities/user.entity';
-import { UserService } from './user.service';
+import { UserEntity } from "../../entities/user.entity";
+import { UserService } from "./user.service";
 
-@Controller('user')
+@Controller("user")
 export class UserController extends BaseController({
- entity: UserEntity,
- ignore: [ 'create', "update", "delete" ]
+  entity: UserEntity,
+  ignore: [ "create", "update", "delete" ]
 }) {
   constructor(public service: UserService) {
     super(service);

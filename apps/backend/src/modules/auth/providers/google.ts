@@ -1,4 +1,4 @@
-import { CallbackResponse, Provider } from './types';
+import { CallbackResponse, Provider } from "./types";
 
 type Opts = {
   GOOGLE_CLIENT_ID: string;
@@ -23,15 +23,15 @@ export const GoogleProvider = ({ GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIREC
       const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           code,
           client_id: GOOGLE_CLIENT_ID,
           client_secret: GOOGLE_CLIENT_SECRET,
           redirect_uri: REDIRECT_URI,
-          grant_type: "authorization_code",
-        }),
+          grant_type: "authorization_code"
+        })
       });
 
       if (!tokenRes.ok) {
@@ -55,8 +55,8 @@ export const GoogleProvider = ({ GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIREC
         email: profile.email,
         name: profile.name,
         image: profile.picture,
-        provider: path,
+        provider: path
       } as CallbackResponse;
-    },
+    }
   } as Provider;
 };

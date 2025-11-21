@@ -1,8 +1,8 @@
-import { Transform } from 'class-transformer';
-import { IsInt, IsNegative, IsNumber, IsPositive, Max, Min } from 'class-validator';
+import { Transform } from "class-transformer";
+import { IsInt, IsNegative, IsNumber, IsPositive, Max, Min } from "class-validator";
 
-import { FieldNumberOptions } from '../types';
-import { buildApiProperty } from './api-property';
+import { FieldNumberOptions } from "../types";
+import { buildApiProperty } from "./api-property";
 
 export const buildNumberDecorators = (opts: FieldNumberOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];
@@ -18,7 +18,7 @@ export const buildNumberDecorators = (opts: FieldNumberOptions): PropertyDecorat
   if (opts.min) {
     if (typeof opts.min === "object") decorators.push(Min(opts.min.min, opts.min as any));
     else decorators.push(Min(opts.min));
-    if (opts.debug) console.log("added min validator");  
+    if (opts.debug) console.log("added min validator");
   }
 
   if (opts.max) {

@@ -1,13 +1,13 @@
-import { LLMEntity } from '@/entities/llm.entity';
-import { Injectable } from '@nestjs/common';
+import { LLMEntity } from "@/entities/llm.entity";
+import { Injectable } from "@nestjs/common";
 import { LLMPreset } from "@/types/llm-preset";
 
-import { EmbeddingProvider } from './provider/embedding/base';
-import { GeminiLLMEmbeddingAdapter } from './provider/embedding/gemini.adapter';
-import { OpenAILLMEmbeddingAdapter } from './provider/embedding/openai.adapter';
-import { TextProvider } from './provider/text/base';
-import { GeminiTextAdapter } from './provider/text/gemini.adapter';
-import { OpenAILLMTextAdapter } from './provider/text/openai.adapter';
+import { EmbeddingProvider } from "./provider/embedding/base";
+import { GeminiLLMEmbeddingAdapter } from "./provider/embedding/gemini.adapter";
+import { OpenAILLMEmbeddingAdapter } from "./provider/embedding/openai.adapter";
+import { TextProvider } from "./provider/text/base";
+import { GeminiTextAdapter } from "./provider/text/gemini.adapter";
+import { OpenAILLMTextAdapter } from "./provider/text/openai.adapter";
 
 @Injectable()
 export class LLMLoaderService {
@@ -23,7 +23,7 @@ export class LLMLoaderService {
     if (preset.config.type !== "TEXT") throw new Error("Invalid provider type");
     let AdapterClass: new (config: any, preset: LLMPreset) => TextProvider;
 
-    switch(adapter) {
+    switch (adapter) {
       case "openai":
         AdapterClass = OpenAILLMTextAdapter;
         break;
@@ -42,7 +42,7 @@ export class LLMLoaderService {
     if (preset.config.type !== "EMBEDDING") throw new Error("Invalid provider type");
 
     let AdapterClass: new (config: any, preset: LLMPreset) => EmbeddingProvider;
-    switch(adapter) {
+    switch (adapter) {
       case "openai":
         AdapterClass = OpenAILLMEmbeddingAdapter;
         break;

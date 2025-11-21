@@ -1,9 +1,9 @@
-import 'reflect-metadata';
+import "reflect-metadata";
 
-export const CONTEXT_FIELDS_KEY = Symbol('context:fields');
+export const CONTEXT_FIELDS_KEY = Symbol("context:fields");
 
 export interface ContextFieldOptions {
-  source: 'params' | 'query' | 'session' | 'memberId';
+  source: "params" | "query" | "session" | "memberId";
   key?: string;
 }
 
@@ -16,17 +16,17 @@ export function ContextField(options: ContextFieldOptions): PropertyDecorator {
   };
 }
 
-export const TenantId = (key = 'tenantId') =>
-  ContextField({ source: 'params', key });
+export const TenantId = (key = "tenantId") =>
+  ContextField({ source: "params", key });
 
 export const CreatedBy = () =>
-  ContextField({ source: 'session', key: 'userId' });
+  ContextField({ source: "session", key: "userId" });
 
 export const MemberId = () =>
-  ContextField({ source: 'memberId' });
+  ContextField({ source: "memberId" });
 
 export const FromQuery = (key: string) =>
-  ContextField({ source: 'query', key });
+  ContextField({ source: "query", key });
 
 export const FromParams = (key: string) =>
-  ContextField({ source: 'params', key });
+  ContextField({ source: "params", key });

@@ -1,10 +1,10 @@
-import { Redis } from 'ioredis';
+import { Redis } from "ioredis";
 
-import { env } from '@/env';
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { env } from "@/env";
+import { Inject, Injectable, OnModuleInit } from "@nestjs/common";
 
-import { CacheService, GetCacheOptions, SetCacheOptions } from '../cache.service';
-import { CACHE_PREFIX_KEY } from '../prefix';
+import { CacheService, GetCacheOptions, SetCacheOptions } from "../cache.service";
+import { CACHE_PREFIX_KEY } from "../prefix";
 
 @Injectable()
 export class RedisService extends CacheService implements OnModuleInit {
@@ -20,7 +20,7 @@ export class RedisService extends CacheService implements OnModuleInit {
       host: env.REDIS_HOST,
       username: env.REDIS_USER,
       password: env.REDIS_PASSWORD,
-      db: env.REDIS_DB,
+      db: env.REDIS_DB
     });
   }
 

@@ -1,10 +1,10 @@
 export enum SourceType {
-  TEXT = 'TEXT',
-  DOC = 'DOC',
-  LINK = 'LINK',
-  VIDEO = 'VIDEO',
-  AUDIO = 'AUDIO',
-  IMAGE = 'IMAGE',
+  TEXT = "TEXT",
+  DOC = "DOC",
+  LINK = "LINK",
+  VIDEO = "VIDEO",
+  AUDIO = "AUDIO",
+  IMAGE = "IMAGE",
 }
 
 export class BaseFileMetadata {

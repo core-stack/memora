@@ -1,4 +1,4 @@
-import { ChatEntity } from '@/entities';
-import { PickType } from '@nestjs/swagger';
+import { ChatEntity } from "@/entities";
+import { PickType } from "@nestjs/swagger";
 
-export class UpdateChatDto extends PickType(ChatEntity, [ 'name' ]) {}
+export class UpdateChatDto extends PickType(ChatEntity, [ "name" ]) {}

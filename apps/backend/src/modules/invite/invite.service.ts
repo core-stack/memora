@@ -1,21 +1,21 @@
-import { Queue } from 'bullmq';
-import moment from 'moment';
-import { EntityManager, In } from 'typeorm';
+import { Queue } from "bullmq";
+import moment from "moment";
+import { EntityManager, In } from "typeorm";
 
-import { InviteEntity } from '@/entities/invite.entity';
-import { env } from '@/env';
-import { EmailPayload, EmailTemplate } from '@/jobs/email/schemas';
-import { JobType } from '@/jobs/types';
-import { Service } from '@/shared/service';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { InviteEntity } from "@/entities/invite.entity";
+import { env } from "@/env";
+import { EmailPayload, EmailTemplate } from "@/jobs/email/schemas";
+import { JobType } from "@/jobs/types";
+import { Service } from "@/shared/service";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 
-import { RoleEntity, RoleScope } from '../../entities/role.entity';
-import { MemberService } from '../member/member.service';
-import { RoleService } from '../role/role.service';
-import { TenantService } from '../tenant/tenant.service';
-import { UserService } from '../user/user.service';
-import { SendInviteDto, SendInviteResponseDto } from './dto/send-invites.dto';
+import { RoleEntity, RoleScope } from "../../entities/role.entity";
+import { MemberService } from "../member/member.service";
+import { RoleService } from "../role/role.service";
+import { TenantService } from "../tenant/tenant.service";
+import { UserService } from "../user/user.service";
+import { SendInviteDto, SendInviteResponseDto } from "./dto/send-invites.dto";
 
 @Injectable()
 export class InviteService extends Service<InviteEntity> {
@@ -82,15 +82,15 @@ export class InviteService extends Service<InviteEntity> {
                 tenantName: tenant.name,
                 inviteUrl: `${env.FRONTEND_URL}/invite/${invite.id}`,
                 role: rolesCache.find(role => role.id === inviteWithEmail.roleId)?.name ?? "",
-                inviterName: this.context.user?.name ?? '',
-                expirationDate: moment(invite.expiresAt).format("MM/DD/YYYY HH:mm"),
+                inviterName: this.context.user?.name ?? "",
+                expirationDate: moment(invite.expiresAt).format("MM/DD/YYYY HH:mm")
               },
               to: invite.email,
-              subject: "You have been invited to " + tenant.name,
+              subject: "You have been invited to " + tenant.name
             });
             await this.repository(manager).update(
               invite.id,
-              invite.setExpiresAt().setRoleId(inviteWithEmail.roleId),
+              invite.setExpiresAt().setRoleId(inviteWithEmail.roleId)
             );
             reSendedInvites.push(invite);
           }, manager);
@@ -105,7 +105,7 @@ export class InviteService extends Service<InviteEntity> {
     );
 
     for (const { email, roleId } of invites.emails) {
-      const userWithEmail = await this.userService.findFirst({ where: { email }}, manager);
+      const userWithEmail = await this.userService.findFirst({ where: { email } }, manager);
       if (!rolesCache.find(role => role.id === roleId)) {
         const role = await this.roleService.findByID(roleId, { manager });
         if (!role) throw new NotFoundException("Role not found");
@@ -118,7 +118,7 @@ export class InviteService extends Service<InviteEntity> {
           tenantId: tenant.id,
           roleId: rolesCache.find(role => role.id === roleId)?.id ?? "",
           creatorId: memberId,
-          userId: userWithEmail?.id,
+          userId: userWithEmail?.id
         });
 
         await this.sendMail.add("", {
@@ -127,15 +127,15 @@ export class InviteService extends Service<InviteEntity> {
             tenantName: tenant.name,
             inviteUrl: `${env.FRONTEND_URL}/invite/${invite.id}`,
             role: rolesCache.find(role => role.id === roleId)?.name ?? "",
-            inviterName: this.context.user?.name ?? '',
-            expirationDate: moment(invite.expiresAt).format("MM/DD/YYYY HH:mm"),
+            inviterName: this.context.user?.name ?? "",
+            expirationDate: moment(invite.expiresAt).format("MM/DD/YYYY HH:mm")
           },
           to: invite.email,
-          subject: "You have been invited to " + tenant.name,
+          subject: "You have been invited to " + tenant.name
         });
 
         sendedInvites.push(invite);
-      })
+      });
     }
 
     return new SendInviteResponseDto({
