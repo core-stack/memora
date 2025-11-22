@@ -27,8 +27,5 @@
       "@/types/*": ["src/types/*"],
       "@generated/*": ["src/@generated/*"]
     },
-  },
-  "references": [
-    { "path": "../../packages/schemas" }
-  ]
+  }
 }

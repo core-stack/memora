@@ -1,10 +1,9 @@
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { Field } from "@/shared/model";
-
-import { UserEntity } from "./user.entity";
+import { Field } from '../shared/model';
+import { UserEntity } from './user.entity';
 
 export enum VerificationType {
   ACTIVE_ACCOUNT = "ACTIVE_ACCOUNT",

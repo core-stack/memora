@@ -1,16 +1,15 @@
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { Field } from "@/shared/model";
-
-import { AccountEntity } from "./account.entity";
-import { InviteEntity } from "./invite.entity";
-import { MemberEntity } from "./member.entity";
-import { RoleEntity } from "./role.entity";
-import { VerificationTokenEntity } from "./verification-token.entity";
+import { Field } from '../shared/model';
+import { AccountEntity } from './account.entity';
+import { InviteEntity } from './invite.entity';
+import { MemberEntity } from './member.entity';
+import { RoleEntity } from './role.entity';
+import { VerificationTokenEntity } from './verification-token.entity';
 
 @Entity("users")
 export class UserEntity {

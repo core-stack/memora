@@ -1,15 +1,15 @@
-import { EntityManager } from "typeorm";
+import { EntityManager } from 'typeorm';
 
-import { Service } from "@/shared/service";
-import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { ROLES } from "@snipet/permission";
+import { Service } from '@/shared/service';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ROLES } from '@snipet/permission';
 
-import { AccountEntity } from "../../entities/account.entity";
-import { RoleScope } from "../../entities/role.entity";
-import { UserEntity } from "../../entities/user.entity";
-import { RoleService } from "../role/role.service";
-import { UserService } from "../user/user.service";
-import { CreateAccountDto } from "./dto/crete-account.dto";
+import { AccountEntity } from '../../entities/account.entity';
+import { RoleScope } from '../../entities/role.entity';
+import { UserEntity } from '../../entities/user.entity';
+import { RoleService } from '../role/role.service';
+import { UserService } from '../user/user.service';
+import { CreateAccountDto } from './dto/crete-account.dto';
 
 @Injectable()
 export class AccountService extends Service<AccountEntity> {
@@ -29,7 +29,7 @@ export class AccountService extends Service<AccountEntity> {
       if (account) return account;
 
       // get user by email
-      const user = await this.userService.findUnique({ where: { email: data.email } });
+      let user = await this.userService.findFirst({ where: { email: data.email } });
       // if user not found, create user with user role and account
       if (!user) {
         const role = await this.roleService.findUnique({
@@ -37,16 +37,11 @@ export class AccountService extends Service<AccountEntity> {
         }, manager);
 
         if (!role) throw new NotFoundException("Role not found");
-        return this.repository(manager).save(new AccountEntity({
-          provider: data.provider,
-          providerAccountId: data.providerAccountId,
-          user: new UserEntity({
-            name: data.name,
-            email: data.email,
-            image: data.image,
-            roleId: role.id,
-            emailVerified: data.emailVerified ? new Date() : undefined
-          })
+        user = await this.userService.create(new UserEntity({
+          name: data.name,
+          email: data.email,
+          roleId: role.id,
+          emailVerified: data.emailVerified ? new Date() : undefined
         }));
       }
       // create account

@@ -1,15 +1,15 @@
-import moment from "moment";
+import moment from 'moment';
 import {
   Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { env } from "../env";
-import { CreatedBy, TenantId } from "../shared/controller/decorators/context";
-import { Field } from "@/shared/model";
-import { MemberEntity } from "./member.entity";
-import { RoleEntity } from "./role.entity";
-import { TenantEntity } from "./tenant.entity";
-import { UserEntity } from "./user.entity";
+import { env } from '../env';
+import { CreatedBy, TenantId } from '../shared/controller/decorators/context';
+import { Field } from '../shared/model';
+import { MemberEntity } from './member.entity';
+import { RoleEntity } from './role.entity';
+import { TenantEntity } from './tenant.entity';
+import { UserEntity } from './user.entity';
 
 @Entity("invites")
 @Unique("invites_tenant_email_unique", [ "tenantId", "email" ])

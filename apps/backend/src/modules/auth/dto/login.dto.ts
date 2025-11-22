@@ -1,6 +1,7 @@
-import { Field } from "@/shared/model";
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsString, IsOptional, MinLength, MaxLength } from "class-validator";
+import { IsOptional, IsString } from 'class-validator';
+
+import { Field } from '@/shared/model';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {
   @Field({
@@ -36,10 +37,11 @@ export class LoginDto {
 export class LoginResponseDto {
   @Field({
     type: "string",
-    description: "The path to redirect (the same as the one in the request)",
-    example: "/"
+    description: "The path to redirect",
+    example: "/",
+    required: true
   })
-  redirect?: string;
+  redirect: string;
 
   constructor(data: Partial<LoginResponseDto>) {
     Object.assign(this, data);

@@ -1,0 +1,1 @@
+{"type":"object","properties":{"url":{"type":"string","description":"The url to redirect to","example":"https://google.com","format":"uri"}},"required":["url"],"x-readme-ref-name":"GetOAuth2UrlResponseDto"}

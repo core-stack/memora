@@ -910,6 +910,75 @@ paths:
         "201":
           description: ""
       tags: *a4
+  "/api/auth/{provider}":
+    post:
+      operationId: AuthController_oauth2
+      parameters:
+        - name: provider
+          required: true
+          in: path
+          description: The provider name
+          schema:
+            example: google
+            type: string
+      responses:
+        "200":
+          description: The oauth2 url response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetOAuth2UrlResponseDto"
+        "404":
+          description: The provider not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      tags: *a4
+  "/api/auth/{provider}/callback":
+    get:
+      operationId: AuthController_oauth2Callback
+      parameters:
+        - name: provider
+          required: true
+          in: path
+          description: The provider name
+          schema:
+            example: google
+            type: string
+        - name: code
+          required: true
+          in: query
+          description: The provider code
+          schema:
+            example: code
+            type: string
+      responses:
+        "200":
+          description: The login response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponseDto"
+        "404":
+          description: The provider not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      tags: *a4
   /api/user/self:
     get:
       operationId: UserController_self
@@ -3316,12 +3385,12 @@ components:
           format: date-time
           type: string
           description: The date the account was created
-          example: 2025-11-22T12:00:26.422Z
+          example: 2025-11-22T14:41:25.300Z
         updatedAt:
           format: date-time
           type: string
           description: The date the account was updated
-          example: 2025-11-22T12:00:26.422Z
+          example: 2025-11-22T14:41:25.300Z
       required:
         - id
         - provider
@@ -3384,7 +3453,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-22T12:00:26.422Z
+          example: 2025-11-22T14:41:25.299Z
         image:
           type: string
           description: The image of the user
@@ -3397,12 +3466,12 @@ components:
           format: date-time
           type: string
           description: The date the user was created
-          example: 2025-11-22T12:00:26.422Z
+          example: 2025-11-22T14:41:25.299Z
         updatedAt:
           format: date-time
           type: string
           description: The date the user was updated
-          example: 2025-11-22T12:00:26.422Z
+          example: 2025-11-22T14:41:25.299Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:
@@ -4155,6 +4224,25 @@ components:
           type: string
       required:
         - email
+    GetOAuth2UrlResponseDto:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The url to redirect to
+          example: https://google.com
+          format: uri
+      required:
+        - url
+    LoginResponseDto:
+      type: object
+      properties:
+        redirect:
+          type: string
+          description: The path to redirect
+          example: /
+      required:
+        - redirect
     CreateRoleDto:
       type: object
       properties:

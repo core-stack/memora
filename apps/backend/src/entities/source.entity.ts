@@ -2,10 +2,10 @@ import {
   Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
 
-import { Field } from '@/shared/model';
 import { ApiExtraModels } from '@nestjs/swagger';
 
 import { FromParams, TenantId } from '../shared/controller/decorators/context';
+import { Field } from '../shared/model';
 import { FolderEntity } from './folder.entity';
 import { KnowledgeEntity } from './knowledge.entity';
 import {

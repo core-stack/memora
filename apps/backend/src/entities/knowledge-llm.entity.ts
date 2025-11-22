@@ -2,12 +2,11 @@
 import {
   Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn, Unique,
   UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { Field } from "@/shared/model";
-
-import { KnowledgeEntity } from "./knowledge.entity";
-import { LLMEntity } from "./llm.entity";
+import { Field } from '../shared/model';
+import { KnowledgeEntity } from './knowledge.entity';
+import { LLMEntity } from './llm.entity';
 
 @Entity("knowledge_llms")
 @Unique("knowledge_llm_unique", [ "knowledge", "llm" ])

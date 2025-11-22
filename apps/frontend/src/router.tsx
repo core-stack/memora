@@ -9,6 +9,7 @@ import SourcePage from './pages/[knowledgeSlug]/source/page';
 import { ActivateAccountPage } from './pages/auth/activate/[token]/page';
 import CreateAccountPage from './pages/auth/create-account/page';
 import LoginPage from './pages/auth/login/page';
+import { OAuth2CallbackPage } from './pages/auth/oauth2/callback/page';
 import LLMManagementPage from './pages/llm/page';
 import MembersPage from './pages/member/page';
 import Home from './pages/page';
@@ -23,6 +24,7 @@ export const Router = () => {
             <Route path='create-account' element={ <CreateAccountPage /> } />
             <Route path='activate/:token' element={ <ActivateAccountPage /> } />
             <Route path='login' element={ <LoginPage /> } />
+            <Route path='oauth2/callback' element={ <OAuth2CallbackPage /> } />
           </Route>
           <Route path="/" element={ <TenantProvider /> }>
             <Route element={ <TenantLayout /> }>

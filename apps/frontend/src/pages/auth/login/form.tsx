@@ -1,8 +1,8 @@
 "use client";
 
 import { useForm } from 'react-hook-form';
+import { FaFacebook } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from "react-icons/fa";
 
 import { FormInput } from '@/components/form/input';
 import { Button } from '@/components/ui/button';
@@ -12,13 +12,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Link } from '@/components/ui/link';
 import { Separator } from '@/components/ui/separator';
-import { loginDtoSchema, useApiAuthLogin, useApiAuthProviders } from '@/gen';
+import { loginDtoSchema, useApiAuthLogin, useApiAuthOauth2, useApiAuthProviders } from '@/gen';
 import { useRouter } from '@/hooks/use-router';
 import { useSearchParams } from '@/hooks/use-search-params';
+import { capitalizeFirstLetter } from '@/lib/string';
+import { cn } from '@/lib/utils';
 import { zodResolver } from '@/utils/zod-resolver';
 
 import type { LoginDtoSchema } from '@/gen';
-import { capitalizeFirstLetter } from '@/lib/string';
+
 const providerIconMap = {
   google: FcGoogle,
   facebook: FaFacebook
@@ -34,10 +36,11 @@ export function LoginForm() {
     },
   });
 
-  const isLoading = form.formState.isSubmitting;
   const router = useRouter();
+  const isLoading = form.formState.isSubmitting;
   const { data: providers = [] } = useApiAuthProviders();
-  const { mutate, error} = useApiAuthLogin();
+  const { mutate, error } = useApiAuthLogin();
+  const { mutate: mutateOauth } = useApiAuthOauth2();
   const onSubmit = form.handleSubmit(async (data) => {
     mutate({ data }, {
       onSuccess: ({ redirect }) => {
@@ -45,6 +48,8 @@ export function LoginForm() {
       }
     });
   });
+
+  const handleOauth2 = (provider: string) => mutateOauth({ provider }, { onSuccess: ({ url }) => window.location.href = url });
 
   const getProviderIcon = (provider: keyof typeof providerIconMap) => {
     const Icon = providerIconMap[provider];
@@ -80,17 +85,26 @@ export function LoginForm() {
           </Button>
         </form>
       </Form>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <Separator className="w-full" />
+      {
+        providers.length > 0 &&
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <Separator className="w-full" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+          </div>
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        {providers.map((provider) => (
-          <Button variant="outline" type="button" isLoading={isLoading}>
+      }
+      <div className="flex justify-center gap-4">
+        {providers.map(provider => (
+          <Button
+            variant="outline"
+            type="button"
+            className={cn(providers.length === 1 && 'w-full')}
+            isLoading={isLoading}
+            onClick={() => handleOauth2(provider)}
+          >
             {getProviderIcon(provider as keyof typeof providerIconMap)}
             {capitalizeFirstLetter(provider)}
           </Button>

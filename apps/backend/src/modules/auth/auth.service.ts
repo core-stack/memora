@@ -1,30 +1,31 @@
-import { Queue } from "bullmq";
-import moment from "moment";
-import { EntityManager } from "typeorm";
+import { Queue } from 'bullmq';
+import moment from 'moment';
+import { EntityManager } from 'typeorm';
 
-import { RoleScope } from "@/entities/role.entity";
-import { env } from "@/env";
-import { EmailPayload, EmailTemplate } from "@/jobs/email/schemas";
-import { JobType } from "@/jobs/types";
-import { GenericService } from "@/shared/generic-service";
-import { InjectQueue } from "@nestjs/bullmq";
-import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { ROLES } from "@snipet/permission";
+import { RoleScope } from '@/entities/role.entity';
+import { env } from '@/env';
+import { EmailPayload, EmailTemplate } from '@/jobs/email/schemas';
+import { JobType } from '@/jobs/types';
+import { GenericService } from '@/shared/generic-service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ROLES } from '@snipet/permission';
 
-import { UserEntity } from "../../entities/user.entity";
+import { UserEntity } from '../../entities/user.entity';
 import {
   VerificationTokenEntity, VerificationType
-} from "../../entities/verification-token.entity";
-import { RoleService } from "../role/role.service";
-import { UserService } from "../user/user.service";
-import { VerificationTokenService } from "../verification-token/verification-token.service";
-import { AuthManager } from "./auth-manager.service";
-import { CreateAccountDto } from "./dto/create-account.dto";
-import { ActiveAccountDto } from "./dto/active-account.dto";
-import { ForgetPasswordDto } from "./dto/forget-password.dto";
-import { LoginDto, LoginResponseDto } from "./dto/login.dto";
-import { ResetPasswordDto } from "./dto/reset-password.dto";
-import { TenantService } from "../tenant/tenant.service";
+} from '../../entities/verification-token.entity';
+import { RoleService } from '../role/role.service';
+import { TenantService } from '../tenant/tenant.service';
+import { UserService } from '../user/user.service';
+import { VerificationTokenService } from '../verification-token/verification-token.service';
+import { AuthManager } from './auth-manager.service';
+import { ActiveAccountDto } from './dto/active-account.dto';
+import { CreateAccountDto } from './dto/create-account.dto';
+import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { GetOAuth2UrlResponseDto } from './dto/get-oauth2-url.dto';
+import { LoginDto, LoginResponseDto } from './dto/login.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService extends GenericService {
@@ -224,5 +225,28 @@ export class AuthService extends GenericService {
       );
       await this.verificationTokenService.delete(data.token, manager);
     }, manager);
+  }
+
+  async getOAuth2Url(provider: string): Promise<GetOAuth2UrlResponseDto> {
+    if (!this.authManager.hasProvider(provider)) throw new NotFoundException("Provider not found");
+    return new GetOAuth2UrlResponseDto({ url: await this.authManager.oauth2GetUrl(provider) });
+  }
+
+  async oauth2Callback(provider: string, code: string): Promise<LoginResponseDto> {
+    if (!this.authManager.hasProvider(provider)) throw new NotFoundException("Provider not found");
+    const { token, session } = await this.authManager.oauth2Callback(provider, code);
+    
+    this.context.setCookie("access-token", token.accessToken, {
+      maxAge: token.accessTokenDuration,
+      httpOnly: true,
+      path: "/"
+    });
+    this.context.setCookie("refresh-token", token.refreshToken, {
+      maxAge: token.refreshTokenDuration,
+      httpOnly: true,
+      path: "/"
+    });
+
+    return new LoginResponseDto({ redirect: "/" });
   }
 }

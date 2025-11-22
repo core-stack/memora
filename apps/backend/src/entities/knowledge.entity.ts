@@ -1,15 +1,15 @@
 import {
   Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, Unique,
   UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { Field } from "@/shared/model";
-import { TenantId } from "../shared/controller/decorators/context";
-import { ChatEntity } from "./chat.entity";
-import { FolderEntity } from "./folder.entity";
-import { KnowledgeLLMEntity } from "./knowledge-llm.entity";
-import { MessageEntity } from "./message.entity";
-import { SourceEntity } from "./source.entity";
+import { TenantId } from '../shared/controller/decorators/context';
+import { Field } from '../shared/model';
+import { ChatEntity } from './chat.entity';
+import { FolderEntity } from './folder.entity';
+import { KnowledgeLLMEntity } from './knowledge-llm.entity';
+import { MessageEntity } from './message.entity';
+import { SourceEntity } from './source.entity';
 
 export enum KnowledgeStatus {
   DELETING = "DELETING",
