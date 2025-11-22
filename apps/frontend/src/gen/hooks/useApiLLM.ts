@@ -7,31 +7,31 @@ import fetch from "@kubb/plugin-client/clients/axios";
 import type { LLMQueryResponse, LLMPathParams, LLMQueryParams, LLM400, LLM500 } from "../types/LLM.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
-import { LLMQueryResponseSchema } from "../zod/LLMSchema.ts";
+import { llmqueryResponseSchema } from "../zod/LLMSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const LLMQueryKeyFn = (tenantId: LLMPathParams["tenantId"], params?: LLMQueryParams) => [{ url: '/api/tenant/:tenantId/llm', params: {tenantId:tenantId} }, ...(params ? [params] : [])] as const
+export const LLMQueryKeyFn = ({ tenantId }: { tenantId: LLMPathParams["tenantId"] }, params?: LLMQueryParams) => [{ url: '/api/tenant/:tenantId/llm', params: {tenantId:tenantId} }, ...(params ? [params] : [])] as const
 
 export type LLMQueryKey = ReturnType<typeof LLMQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/llm}
  */
-export async function LLM(tenantId: LLMPathParams["tenantId"], params?: LLMQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function LLM({ tenantId, params }: { tenantId: LLMPathParams["tenantId"]; params?: LLMQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<LLMQueryResponse, ResponseErrorConfig<LLM400 | LLM500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/llm`, baseURL : "/", params, ... requestConfig })  
-  return LLMQueryResponseSchema.parse(res.data)
+  return llmqueryResponseSchema.parse(res.data)
 }
 
-export function LLMQueryOptions(tenantId: LLMPathParams["tenantId"], params?: LLMQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = LLMQueryKeyFn(tenantId, params)
+export function LLMQueryOptions({ tenantId, params }: { tenantId: LLMPathParams["tenantId"]; params?: LLMQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = LLMQueryKeyFn({ tenantId }, params)
   return queryOptions<LLMQueryResponse, ResponseErrorConfig<LLM400 | LLM500>, LLMQueryResponse, typeof queryKey>({
    enabled: !!(tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return LLM(tenantId, params, config)
+      return LLM({ tenantId, params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function LLMQueryOptions(tenantId: LLMPathParams["tenantId"], params?: LL
 /**
  * {@link /api/tenant/:tenantId/llm}
  */
-export function useApiLLM<TData = LLMQueryResponse, TQueryData = LLMQueryResponse, TQueryKey extends QueryKey = LLMQueryKey>(tenantId: LLMPathParams["tenantId"], params?: LLMQueryParams, options: 
+export function useApiLLM<TData = LLMQueryResponse, TQueryData = LLMQueryResponse, TQueryKey extends QueryKey = LLMQueryKey>({ tenantId, params }: { tenantId: LLMPathParams["tenantId"]; params?: LLMQueryParams }, options: 
 {
   query?: Partial<QueryObserverOptions<LLMQueryResponse, ResponseErrorConfig<LLM400 | LLM500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiLLM<TData = LLMQueryResponse, TQueryData = LLMQueryRespons
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? LLMQueryKeyFn(tenantId, params)
+  const queryKey = queryOptions?.queryKey ?? LLMQueryKeyFn({ tenantId }, params)
 
   const query = useQuery({
-   ...LLMQueryOptions(tenantId, params, config),
+   ...LLMQueryOptions({ tenantId, params }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<LLM400 | LLM500>> & { queryKey: TQueryKey }

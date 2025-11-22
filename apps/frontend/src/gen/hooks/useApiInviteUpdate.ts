@@ -17,7 +17,7 @@ export type InviteUpdateMutationKey = ReturnType<typeof inviteUpdateMutationKey>
 /**
  * {@link /api/tenant/:tenantId/invite/:id}
  */
-export async function inviteUpdate(id: InviteUpdatePathParams["id"], tenantId: InviteUpdatePathParams["tenantId"], data?: InviteUpdateMutationRequest, config: Partial<RequestConfig<InviteUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function inviteUpdate({ id, tenantId, data }: { id: InviteUpdatePathParams["id"]; tenantId: InviteUpdatePathParams["tenantId"]; data?: InviteUpdateMutationRequest }, config: Partial<RequestConfig<InviteUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = inviteUpdateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function inviteUpdateMutationOptions(config: Partial<RequestConfig<Invite
   return mutationOptions<InviteUpdateMutationResponse, ResponseErrorConfig<InviteUpdate400 | InviteUpdate404 | InviteUpdate500>, {id: InviteUpdatePathParams["id"], tenantId: InviteUpdatePathParams["tenantId"], data?: InviteUpdateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, data }) => {
-      return inviteUpdate(id, tenantId, data, config)
+      return inviteUpdate({ id, tenantId, data }, config)
     },
   })
 }

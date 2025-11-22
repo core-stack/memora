@@ -1,8 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
+import { KnowledgeLayout } from './components/layout/knowledge.layout';
+import { TenantLayout } from './components/layout/tenant.layout';
 import { TenantProvider } from './context/tenant';
 import ChatPage from './pages/[knowledgeSlug]/chat/page';
-import PluginPage from './pages/[knowledgeSlug]/plugins/page';
+import KnowledgePage from './pages/[knowledgeSlug]/page';
 import SourcePage from './pages/[knowledgeSlug]/source/page';
 import { ActivateAccountPage } from './pages/auth/activate/[token]/page';
 import CreateAccountPage from './pages/auth/create-account/page';
@@ -11,9 +13,6 @@ import LLMManagementPage from './pages/llm/page';
 import MembersPage from './pages/member/page';
 import Home from './pages/page';
 import { RootProviders } from './root-providers';
-import { TenantLayout } from './components/layout/tenant.layout';
-import { KnowledgeLayout } from './components/layout/knowledge.layout';
-import KnowledgePage from './pages/[knowledgeSlug]/page';
 
 export const Router = () => {
   return (
@@ -36,7 +35,6 @@ export const Router = () => {
               <Route path='chat' element={ <ChatPage /> } />
               <Route path='chat/:chatId' element={ <ChatPage /> } />
               <Route path='source' element={ <SourcePage /> } />
-              <Route path='plugin' element={ <PluginPage /> } />
             </Route>
           </Route>
         </Route>

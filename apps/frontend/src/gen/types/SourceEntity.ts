@@ -5,6 +5,10 @@
 
 import type { FolderEntity } from "./FolderEntity.ts";
 import type { KnowledgeEntity } from "./KnowledgeEntity.ts";
+import type { SourceAudioMetadata } from "./SourceAudioMetadata.ts";
+import type { SourceDocMetadata } from "./SourceDocMetadata.ts";
+import type { SourceImageMetadata } from "./SourceImageMetadata.ts";
+import type { SourceVideoMetadata } from "./SourceVideoMetadata.ts";
 import type { TenantEntity } from "./TenantEntity.ts";
 
 export const sourceEntitySourceTypeEnum = {
@@ -60,9 +64,8 @@ export type SourceEntity = {
     originalName?: string;
     /**
      * @description The metadata of the source
-     * @type object
     */
-    metadata: object;
+    metadata: (SourceDocMetadata | SourceImageMetadata | SourceVideoMetadata | SourceAudioMetadata);
     /**
      * @description The type of the source
      * @type string

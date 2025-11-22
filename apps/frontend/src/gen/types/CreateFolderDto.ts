@@ -6,11 +6,6 @@
 
 export type CreateFolderDto = {
     /**
-     * @description The ID of the associated knowledge base
-     * @type string, uuid
-    */
-    knowledgeId: string;
-    /**
      * @description The name of the folder
      * @type string
     */

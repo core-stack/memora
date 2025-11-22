@@ -17,7 +17,7 @@ export type MemberUpdateMutationKey = ReturnType<typeof memberUpdateMutationKey>
 /**
  * {@link /api/tenant/:tenantId/member/:id}
  */
-export async function memberUpdate(id: MemberUpdatePathParams["id"], tenantId: MemberUpdatePathParams["tenantId"], data?: MemberUpdateMutationRequest, config: Partial<RequestConfig<MemberUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function memberUpdate({ id, tenantId, data }: { id: MemberUpdatePathParams["id"]; tenantId: MemberUpdatePathParams["tenantId"]; data?: MemberUpdateMutationRequest }, config: Partial<RequestConfig<MemberUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = memberUpdateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function memberUpdateMutationOptions(config: Partial<RequestConfig<Member
   return mutationOptions<MemberUpdateMutationResponse, ResponseErrorConfig<MemberUpdate400 | MemberUpdate404 | MemberUpdate500>, {id: MemberUpdatePathParams["id"], tenantId: MemberUpdatePathParams["tenantId"], data?: MemberUpdateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, data }) => {
-      return memberUpdate(id, tenantId, data, config)
+      return memberUpdate({ id, tenantId, data }, config)
     },
   })
 }

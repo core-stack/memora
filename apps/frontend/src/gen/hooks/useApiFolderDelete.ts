@@ -17,7 +17,7 @@ export type FolderDeleteMutationKey = ReturnType<typeof folderDeleteMutationKey>
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id}
  */
-export async function folderDelete(id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeId: FolderDeletePathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function folderDelete({ id, tenantId, knowledgeId }: { id: FolderDeletePathParams["id"]; tenantId: FolderDeletePathParams["tenantId"]; knowledgeId: FolderDeletePathParams["knowledgeId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/folder/${id}`, baseURL : "/", ... requestConfig })  
@@ -29,7 +29,7 @@ export function folderDeleteMutationOptions(config: Partial<RequestConfig> & { c
   return mutationOptions<FolderDeleteMutationResponse, ResponseErrorConfig<FolderDelete400 | FolderDelete404 | FolderDelete500>, {id: FolderDeletePathParams["id"], tenantId: FolderDeletePathParams["tenantId"], knowledgeId: FolderDeletePathParams["knowledgeId"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, knowledgeId }) => {
-      return folderDelete(id, tenantId, knowledgeId, config)
+      return folderDelete({ id, tenantId, knowledgeId }, config)
     },
   })
 }

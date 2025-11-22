@@ -4,44 +4,44 @@
 */
 
 import { errorResponseSchema } from "./errorResponseSchema.ts";
-import { LLMEntitySchema } from "./LLMEntitySchema.ts";
+import { llmentitySchema } from "./LLMEntitySchema.ts";
 import { z } from "zod/v4";
 
-export const LLMDeletePathParamsSchema = z.object({
+export const llmdeletePathParamsSchema = z.object({
     "id": z.string(),
 "tenantId": z.string()
     })
 
-export type LLMDeletePathParamsSchema = z.infer<typeof LLMDeletePathParamsSchema>
+export type LLMDeletePathParamsSchema = z.infer<typeof llmdeletePathParamsSchema>
 
 /**
  * @description Record deleted successfully
  */
-export const LLMDelete200Schema = LLMEntitySchema
+export const llmdelete200Schema = llmentitySchema
 
-export type LLMDelete200Schema = z.infer<typeof LLMDelete200Schema>
+export type LLMDelete200Schema = z.infer<typeof llmdelete200Schema>
 
 /**
  * @description Bad request
  */
-export const LLMDelete400Schema = errorResponseSchema
+export const llmdelete400Schema = errorResponseSchema
 
-export type LLMDelete400Schema = z.infer<typeof LLMDelete400Schema>
+export type LLMDelete400Schema = z.infer<typeof llmdelete400Schema>
 
 /**
  * @description Record not found
  */
-export const LLMDelete404Schema = errorResponseSchema
+export const llmdelete404Schema = errorResponseSchema
 
-export type LLMDelete404Schema = z.infer<typeof LLMDelete404Schema>
+export type LLMDelete404Schema = z.infer<typeof llmdelete404Schema>
 
 /**
  * @description Internal server error
  */
-export const LLMDelete500Schema = errorResponseSchema
+export const llmdelete500Schema = errorResponseSchema
 
-export type LLMDelete500Schema = z.infer<typeof LLMDelete500Schema>
+export type LLMDelete500Schema = z.infer<typeof llmdelete500Schema>
 
-export const LLMDeleteMutationResponseSchema = LLMDelete200Schema
+export const llmdeleteMutationResponseSchema = llmdelete200Schema
 
-export type LLMDeleteMutationResponseSchema = z.infer<typeof LLMDeleteMutationResponseSchema>
+export type LLMDeleteMutationResponseSchema = z.infer<typeof llmdeleteMutationResponseSchema>

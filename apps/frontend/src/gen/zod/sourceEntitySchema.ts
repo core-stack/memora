@@ -5,6 +5,10 @@
 
 import { folderEntitySchema } from "./folderEntitySchema.ts";
 import { knowledgeEntitySchema } from "./knowledgeEntitySchema.ts";
+import { sourceAudioMetadataSchema } from "./sourceAudioMetadataSchema.ts";
+import { sourceDocMetadataSchema } from "./sourceDocMetadataSchema.ts";
+import { sourceImageMetadataSchema } from "./sourceImageMetadataSchema.ts";
+import { sourceVideoMetadataSchema } from "./sourceVideoMetadataSchema.ts";
 import { tenantEntitySchema } from "./tenantEntitySchema.ts";
 import { z } from "zod/v4";
 
@@ -15,9 +19,9 @@ export const sourceEntitySchema = z.object({
 "name": z.string().describe("The name of the source"),
 "description": z.optional(z.string().describe("A brief description of the source")),
 "originalName": z.optional(z.string().describe("The original name of the file")),
-"metadata": z.object({
-    
-    }).describe("The metadata of the source"),
+get "metadata"(){
+                return z.union([sourceDocMetadataSchema, sourceImageMetadataSchema, sourceVideoMetadataSchema, sourceAudioMetadataSchema]).describe("The metadata of the source")
+              },
 "sourceType": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]).describe("The type of the source"),
 "indexStatus": z.enum(["PENDING", "INDEXING", "INDEXED", "ERROR"]).describe("The indexing status of the source"),
 "indexError": z.optional(z.string().describe("The error message if indexing fails")),

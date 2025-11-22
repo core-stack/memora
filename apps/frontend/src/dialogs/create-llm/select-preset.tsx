@@ -9,23 +9,24 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useApiLLMGetPresets } from '@/gen';
 import { useDialog } from '@/hooks/use-dialog';
 import { cn } from '@/lib/utils';
 
 import { DialogType } from '../';
 
-import { useApiLLMGetPresets } from '@/gen';
-import { useTenant } from '@/hooks/use-tenant';
+import type { LLMPreset } from "@/gen";
+
 export interface SelectPresetDialogProps {
   onSelectPreset?: (preset: LLMPreset) => void;
   openConfigDialog?: boolean;
+  tenantId: string;
 }
 
-export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true }: SelectPresetDialogProps) {
+export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true, tenantId }: SelectPresetDialogProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { openDialog, closeDialog } = useDialog();
-  const { tenant } = useTenant();
-  const { data: presets = [] } = useApiLLMGetPresets(tenant?.id ?? "")
+  const { data: presets = [] } = useApiLLMGetPresets({ tenantId });
 
   const filteredPresets = presets.filter(
     (preset) =>

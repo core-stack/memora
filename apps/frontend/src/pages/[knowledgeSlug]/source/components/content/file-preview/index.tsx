@@ -1,22 +1,39 @@
 "use client"
 
-import { useApiSourceByID } from '@/gen';
+import { AsyncBoundary } from '@/components/suspense-boundary';
+import { useApiSourceByIDSuspense } from '@/gen';
+import { useKnowledge } from '@/hooks/use-knowledge';
+import { useTenant } from '@/hooks/use-tenant';
+
 import { useSource } from '../../../hooks/use-source';
 import { ContentPreview } from './content-preview';
 import { FileInfoPanel } from './info-panel';
-import { useTenant } from '@/hooks/use-tenant';
-import { useKnowledge } from '@/hooks/use-knowledge';
+
+import type { KnowledgeEntity, TenantEntity } from '@/gen';
 
 export function FileContentViewer() {
-  const { selectedFileId } = useSource();
   const { tenant } = useTenant();
   const { knowledge } = useKnowledge();
-  const { data, isLoading } = useApiSourceByID(selectedFileId ?? "", tenant?.id ?? "", knowledge?.id ?? "");
+
+  return ( 
+    <AsyncBoundary>
+      <Component knowledge={knowledge!} tenant={tenant!} />
+    </AsyncBoundary>
+  )
+}
+
+type Props = {
+  knowledge: KnowledgeEntity;
+  tenant: TenantEntity;
+}
+function Component({ knowledge, tenant }: Props) {
+  const { selectedFileId } = useSource();
+  const { data } = useApiSourceByIDSuspense({ id: selectedFileId ?? "", tenantId: tenant.id, knowledgeId: knowledge.id });
 
   return (
     <div className='flex gap-2 p-2 h-full'>
-      <ContentPreview isLoading={isLoading} data={data} />
-      <FileInfoPanel item={data} isLoading={isLoading} />
+      <ContentPreview data={data} />
+      <FileInfoPanel item={data} />
     </div>
   )
 }

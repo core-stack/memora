@@ -17,21 +17,21 @@ export type TenantQueryKey = ReturnType<typeof tenantQueryKeyFn>
 /**
  * {@link /api/tenant}
  */
-export async function tenant(params?: TenantQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function tenant({ params }: { params?: TenantQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<TenantQueryResponse, ResponseErrorConfig<Tenant400 | Tenant500>, unknown>({ method : "GET", url : `/api/tenant`, baseURL : "/", params, ... requestConfig })  
   return tenantQueryResponseSchema.parse(res.data)
 }
 
-export function tenantQueryOptions(params?: TenantQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export function tenantQueryOptions({ params }: { params?: TenantQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const queryKey = tenantQueryKeyFn(params)
   return queryOptions<TenantQueryResponse, ResponseErrorConfig<Tenant400 | Tenant500>, TenantQueryResponse, typeof queryKey>({
  
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return tenant(params, config)
+      return tenant({ params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function tenantQueryOptions(params?: TenantQueryParams, config: Partial<R
 /**
  * {@link /api/tenant}
  */
-export function useApiTenant<TData = TenantQueryResponse, TQueryData = TenantQueryResponse, TQueryKey extends QueryKey = TenantQueryKey>(params?: TenantQueryParams, options: 
+export function useApiTenant<TData = TenantQueryResponse, TQueryData = TenantQueryResponse, TQueryKey extends QueryKey = TenantQueryKey>({ params }: { params?: TenantQueryParams }, options: 
 {
   query?: Partial<QueryObserverOptions<TenantQueryResponse, ResponseErrorConfig<Tenant400 | Tenant500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -50,7 +50,7 @@ export function useApiTenant<TData = TenantQueryResponse, TQueryData = TenantQue
   const queryKey = queryOptions?.queryKey ?? tenantQueryKeyFn(params)
 
   const query = useQuery({
-   ...tenantQueryOptions(params, config),
+   ...tenantQueryOptions({ params }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Tenant400 | Tenant500>> & { queryKey: TQueryKey }

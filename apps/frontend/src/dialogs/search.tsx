@@ -11,19 +11,22 @@ import {
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Spinner } from '@/components/ui/spinner';
-import { useApiMutation } from '@/hooks/use-api-mutation';
-import { useApiQuery } from '@/hooks/use-api-query';
+import { useApiSearchByTerm, useApiSearchRecent } from '@/gen';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useDialog } from '@/hooks/use-dialog';
-import { OriginType } from '@snipet/schemas';
+import { useKnowledge } from '@/hooks/use-knowledge';
+import { useTenant } from '@/hooks/use-tenant';
 
 import { DialogType } from './';
 
-import type { SourceFragment } from '@snipet/schemas';
+import type { SourceFragment } from '@/gen';
+
 export function SearchDialog() {
+  const { tenant } = useTenant();
+  const { knowledge } = useKnowledge();
   const [query, setQuery] = useState("");
-  const { mutateAsync: search, data: results = [] } = useApiMutation("/api/tenant/:tenantId/knowledge/:knowledgeSlug/search", { method: "GET" });
-  const { data: recent = [] } = useApiQuery("/api/tenant/:tenantId/knowledge/:knowledgeSlug/search/recent", { method: "GET" });
+  const { mutateAsync: search, data: results = []  } = useApiSearchByTerm();
+  const { data: recent = [] } = useApiSearchRecent({ tenantId: tenant?.id ?? "", knowledgeId: knowledge?.slug ?? "" });
   const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -40,7 +43,8 @@ export function SearchDialog() {
   // Handle search
   useEffect(() => {
     startTransition(async () => {
-      if (debouncedQuery.trim()) await search({ query: { text: debouncedQuery.trim() } });
+      const term = debouncedQuery.trim();
+      if (term) await search({ params: { term }, knowledgeId: knowledge?.id ?? "", tenantId: tenant?.id ?? "" });
       setSelectedIndex(0);
     })
   }, [debouncedQuery, search]);
@@ -82,8 +86,8 @@ export function SearchDialog() {
   }
 
   const handleResultClick = (frag: SourceFragment) => {
-    // onResultSelect(result);
-
+    console.log(frag);
+    
     closeDialog(DialogType.SEARCH);
   }
 
@@ -154,11 +158,11 @@ export function SearchDialog() {
                           <span className="font-medium text-sm">
                             <Highlight text={result.content} query={query} />
                           </span>
-                          {
+                          {/* {
                             result.metadata.type === OriginType.FILE && (
                               <span className="text-xs text-muted-foreground">{result.metadata.name}</span>
                             )
-                          }
+                          } */}
                         </div>
                       </div>
                     </button>

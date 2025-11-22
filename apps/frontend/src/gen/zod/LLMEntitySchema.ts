@@ -6,7 +6,7 @@
 import { knowledgeLLMEntitySchema } from "./knowledgeLLMEntitySchema.ts";
 import { z } from "zod/v4";
 
-export const LLMEntitySchema = z.object({
+export const llmentitySchema = z.object({
     "id": z.uuid().describe("The unique identifier of the LLM"),
 "default": z.boolean().default(false).describe("Indicates if this is the default LLM for its type"),
 "name": z.string().describe("The name of the LLM"),
@@ -24,4 +24,4 @@ get "knowledgeLLMs"(){
 "updatedAt": z.string().datetime().describe("The timestamp when the LLM was last updated")
     })
 
-export type LLMEntitySchema = z.infer<typeof LLMEntitySchema>
+export type LLMEntitySchema = z.infer<typeof llmentitySchema>

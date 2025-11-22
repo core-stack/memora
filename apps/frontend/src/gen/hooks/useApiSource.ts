@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { sourceQueryResponseSchema } from "../zod/sourceSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const sourceQueryKeyFn = (tenantId: SourcePathParams["tenantId"], knowledgeId: SourcePathParams["knowledgeId"], params?: SourceQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/source', params: {tenantId:tenantId,knowledgeId:knowledgeId} }, ...(params ? [params] : [])] as const
+export const sourceQueryKeyFn = ({ tenantId, knowledgeId }: { tenantId: SourcePathParams["tenantId"]; knowledgeId: SourcePathParams["knowledgeId"] }, params?: SourceQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/source', params: {tenantId:tenantId,knowledgeId:knowledgeId} }, ...(params ? [params] : [])] as const
 
 export type SourceQueryKey = ReturnType<typeof sourceQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source}
  */
-export async function source(tenantId: SourcePathParams["tenantId"], knowledgeId: SourcePathParams["knowledgeId"], params?: SourceQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function source({ tenantId, knowledgeId, params }: { tenantId: SourcePathParams["tenantId"]; knowledgeId: SourcePathParams["knowledgeId"]; params?: SourceQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<SourceQueryResponse, ResponseErrorConfig<Source400 | Source500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/source`, baseURL : "/", params, ... requestConfig })  
   return sourceQueryResponseSchema.parse(res.data)
 }
 
-export function sourceQueryOptions(tenantId: SourcePathParams["tenantId"], knowledgeId: SourcePathParams["knowledgeId"], params?: SourceQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = sourceQueryKeyFn(tenantId, knowledgeId, params)
+export function sourceQueryOptions({ tenantId, knowledgeId, params }: { tenantId: SourcePathParams["tenantId"]; knowledgeId: SourcePathParams["knowledgeId"]; params?: SourceQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = sourceQueryKeyFn({ tenantId, knowledgeId }, params)
   return queryOptions<SourceQueryResponse, ResponseErrorConfig<Source400 | Source500>, SourceQueryResponse, typeof queryKey>({
    enabled: !!(tenantId&& knowledgeId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return source(tenantId, knowledgeId, params, config)
+      return source({ tenantId, knowledgeId, params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function sourceQueryOptions(tenantId: SourcePathParams["tenantId"], knowl
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source}
  */
-export function useApiSource<TData = SourceQueryResponse, TQueryData = SourceQueryResponse, TQueryKey extends QueryKey = SourceQueryKey>(tenantId: SourcePathParams["tenantId"], knowledgeId: SourcePathParams["knowledgeId"], params?: SourceQueryParams, options: 
+export function useApiSource<TData = SourceQueryResponse, TQueryData = SourceQueryResponse, TQueryKey extends QueryKey = SourceQueryKey>({ tenantId, knowledgeId, params }: { tenantId: SourcePathParams["tenantId"]; knowledgeId: SourcePathParams["knowledgeId"]; params?: SourceQueryParams }, options: 
 {
   query?: Partial<QueryObserverOptions<SourceQueryResponse, ResponseErrorConfig<Source400 | Source500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiSource<TData = SourceQueryResponse, TQueryData = SourceQue
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? sourceQueryKeyFn(tenantId, knowledgeId, params)
+  const queryKey = queryOptions?.queryKey ?? sourceQueryKeyFn({ tenantId, knowledgeId }, params)
 
   const query = useQuery({
-   ...sourceQueryOptions(tenantId, knowledgeId, params, config),
+   ...sourceQueryOptions({ tenantId, knowledgeId, params }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Source400 | Source500>> & { queryKey: TQueryKey }

@@ -17,7 +17,7 @@ export type RoleDeleteMutationKey = ReturnType<typeof roleDeleteMutationKey>
 /**
  * {@link /api/tenant/:tenantId/role/:id}
  */
-export async function roleDelete(id: RoleDeletePathParams["id"], tenantId: RoleDeletePathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function roleDelete({ id, tenantId }: { id: RoleDeletePathParams["id"]; tenantId: RoleDeletePathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<RoleDeleteMutationResponse, ResponseErrorConfig<RoleDelete400 | RoleDelete404 | RoleDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/role/${id}`, baseURL : "/", ... requestConfig })  
@@ -29,7 +29,7 @@ export function roleDeleteMutationOptions(config: Partial<RequestConfig> & { cli
   return mutationOptions<RoleDeleteMutationResponse, ResponseErrorConfig<RoleDelete400 | RoleDelete404 | RoleDelete500>, {id: RoleDeletePathParams["id"], tenantId: RoleDeletePathParams["tenantId"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId }) => {
-      return roleDelete(id, tenantId, config)
+      return roleDelete({ id, tenantId }, config)
     },
   })
 }

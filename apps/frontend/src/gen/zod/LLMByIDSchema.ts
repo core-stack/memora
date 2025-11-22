@@ -4,44 +4,44 @@
 */
 
 import { errorResponseSchema } from "./errorResponseSchema.ts";
-import { LLMEntitySchema } from "./LLMEntitySchema.ts";
+import { llmentitySchema } from "./LLMEntitySchema.ts";
 import { z } from "zod/v4";
 
-export const LLMByIDPathParamsSchema = z.object({
+export const llmbyIDPathParamsSchema = z.object({
     "id": z.string(),
 "tenantId": z.string()
     })
 
-export type LLMByIDPathParamsSchema = z.infer<typeof LLMByIDPathParamsSchema>
+export type LLMByIDPathParamsSchema = z.infer<typeof llmbyIDPathParamsSchema>
 
 /**
  * @description Record found successfully
  */
-export const LLMByID200Schema = LLMEntitySchema
+export const llmbyID200Schema = llmentitySchema
 
-export type LLMByID200Schema = z.infer<typeof LLMByID200Schema>
+export type LLMByID200Schema = z.infer<typeof llmbyID200Schema>
 
 /**
  * @description Bad request
  */
-export const LLMByID400Schema = errorResponseSchema
+export const llmbyID400Schema = errorResponseSchema
 
-export type LLMByID400Schema = z.infer<typeof LLMByID400Schema>
+export type LLMByID400Schema = z.infer<typeof llmbyID400Schema>
 
 /**
  * @description Record not found
  */
-export const LLMByID404Schema = errorResponseSchema
+export const llmbyID404Schema = errorResponseSchema
 
-export type LLMByID404Schema = z.infer<typeof LLMByID404Schema>
+export type LLMByID404Schema = z.infer<typeof llmbyID404Schema>
 
 /**
  * @description Internal server error
  */
-export const LLMByID500Schema = errorResponseSchema
+export const llmbyID500Schema = errorResponseSchema
 
-export type LLMByID500Schema = z.infer<typeof LLMByID500Schema>
+export type LLMByID500Schema = z.infer<typeof llmbyID500Schema>
 
-export const LLMByIDQueryResponseSchema = LLMByID200Schema
+export const llmbyIDQueryResponseSchema = llmbyID200Schema
 
-export type LLMByIDQueryResponseSchema = z.infer<typeof LLMByIDQueryResponseSchema>
+export type LLMByIDQueryResponseSchema = z.infer<typeof llmbyIDQueryResponseSchema>

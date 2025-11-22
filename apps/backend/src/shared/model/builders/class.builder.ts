@@ -1,9 +1,9 @@
-import { Type } from "class-transformer";
-import { ValidateNested } from "class-validator";
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { FieldClassOptions } from "../types";
+import { FieldClassOptions } from '../types';
 
 export const buildClassDecorators = (opts: FieldClassOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];

@@ -17,21 +17,21 @@ export type AccountSuspenseQueryKey = ReturnType<typeof accountSuspenseQueryKeyF
 /**
  * {@link /api/account}
  */
-export async function accountSuspense(params?: AccountQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function accountSuspense({ params }: { params?: AccountQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<AccountQueryResponse, ResponseErrorConfig<Account400 | Account500>, unknown>({ method : "GET", url : `/api/account`, baseURL : "/", params, ... requestConfig })  
   return accountQueryResponseSchema.parse(res.data)
 }
 
-export function accountSuspenseQueryOptions(params?: AccountQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export function accountSuspenseQueryOptions({ params }: { params?: AccountQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const queryKey = accountSuspenseQueryKeyFn(params)
   return queryOptions<AccountQueryResponse, ResponseErrorConfig<Account400 | Account500>, AccountQueryResponse, typeof queryKey>({
  
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return accountSuspense(params, config)
+      return accountSuspense({ params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function accountSuspenseQueryOptions(params?: AccountQueryParams, config:
 /**
  * {@link /api/account}
  */
-export function useApiAccountSuspense<TData = AccountQueryResponse, TQueryKey extends QueryKey = AccountSuspenseQueryKey>(params?: AccountQueryParams, options: 
+export function useApiAccountSuspense<TData = AccountQueryResponse, TQueryKey extends QueryKey = AccountSuspenseQueryKey>({ params }: { params?: AccountQueryParams }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<AccountQueryResponse, ResponseErrorConfig<Account400 | Account500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -50,7 +50,7 @@ export function useApiAccountSuspense<TData = AccountQueryResponse, TQueryKey ex
   const queryKey = queryOptions?.queryKey ?? accountSuspenseQueryKeyFn(params)
 
   const query = useSuspenseQuery({
-   ...accountSuspenseQueryOptions(params, config),
+   ...accountSuspenseQueryOptions({ params }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<Account400 | Account500>> & { queryKey: TQueryKey }

@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryRe
 import { knowledgeByIDQueryResponseSchema } from "../zod/knowledgeByIDSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const knowledgeByIDSuspenseQueryKeyFn = (id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"]) => [{ url: '/api/tenant/:tenantId/knowledge/:id', params: {tenantId:tenantId,id:id} }] as const
+export const knowledgeByIDSuspenseQueryKeyFn = ({ id, tenantId }: { id: KnowledgeByIDPathParams["id"]; tenantId: KnowledgeByIDPathParams["tenantId"] }) => [{ url: '/api/tenant/:tenantId/knowledge/:id', params: {tenantId:tenantId,id:id} }] as const
 
 export type KnowledgeByIDSuspenseQueryKey = ReturnType<typeof knowledgeByIDSuspenseQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/knowledge/:id}
  */
-export async function knowledgeByIDSuspense(id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function knowledgeByIDSuspense({ id, tenantId }: { id: KnowledgeByIDPathParams["id"]; tenantId: KnowledgeByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<KnowledgeByIDQueryResponse, ResponseErrorConfig<KnowledgeByID400 | KnowledgeByID404 | KnowledgeByID500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${id}`, baseURL : "/", ... requestConfig })  
   return knowledgeByIDQueryResponseSchema.parse(res.data)
 }
 
-export function knowledgeByIDSuspenseQueryOptions(id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = knowledgeByIDSuspenseQueryKeyFn(id, tenantId)
+export function knowledgeByIDSuspenseQueryOptions({ id, tenantId }: { id: KnowledgeByIDPathParams["id"]; tenantId: KnowledgeByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = knowledgeByIDSuspenseQueryKeyFn({ id, tenantId })
   return queryOptions<KnowledgeByIDQueryResponse, ResponseErrorConfig<KnowledgeByID400 | KnowledgeByID404 | KnowledgeByID500>, KnowledgeByIDQueryResponse, typeof queryKey>({
    enabled: !!(id&& tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return knowledgeByIDSuspense(id, tenantId, config)
+      return knowledgeByIDSuspense({ id, tenantId }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function knowledgeByIDSuspenseQueryOptions(id: KnowledgeByIDPathParams["i
 /**
  * {@link /api/tenant/:tenantId/knowledge/:id}
  */
-export function useApiKnowledgeByIDSuspense<TData = KnowledgeByIDQueryResponse, TQueryKey extends QueryKey = KnowledgeByIDSuspenseQueryKey>(id: KnowledgeByIDPathParams["id"], tenantId: KnowledgeByIDPathParams["tenantId"], options: 
+export function useApiKnowledgeByIDSuspense<TData = KnowledgeByIDQueryResponse, TQueryKey extends QueryKey = KnowledgeByIDSuspenseQueryKey>({ id, tenantId }: { id: KnowledgeByIDPathParams["id"]; tenantId: KnowledgeByIDPathParams["tenantId"] }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<KnowledgeByIDQueryResponse, ResponseErrorConfig<KnowledgeByID400 | KnowledgeByID404 | KnowledgeByID500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiKnowledgeByIDSuspense<TData = KnowledgeByIDQueryResponse, 
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? knowledgeByIDSuspenseQueryKeyFn(id, tenantId)
+  const queryKey = queryOptions?.queryKey ?? knowledgeByIDSuspenseQueryKeyFn({ id, tenantId })
 
   const query = useSuspenseQuery({
-   ...knowledgeByIDSuspenseQueryOptions(id, tenantId, config),
+   ...knowledgeByIDSuspenseQueryOptions({ id, tenantId }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<KnowledgeByID400 | KnowledgeByID404 | KnowledgeByID500>> & { queryKey: TQueryKey }

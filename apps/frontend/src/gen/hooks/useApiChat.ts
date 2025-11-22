@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { chatQueryResponseSchema } from "../zod/chatSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const chatQueryKeyFn = (tenantId: ChatPathParams["tenantId"], knowledgeId: ChatPathParams["knowledgeId"], params?: ChatQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/chat', params: {tenantId:tenantId,knowledgeId:knowledgeId} }, ...(params ? [params] : [])] as const
+export const chatQueryKeyFn = ({ tenantId, knowledgeId }: { tenantId: ChatPathParams["tenantId"]; knowledgeId: ChatPathParams["knowledgeId"] }, params?: ChatQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/chat', params: {tenantId:tenantId,knowledgeId:knowledgeId} }, ...(params ? [params] : [])] as const
 
 export type ChatQueryKey = ReturnType<typeof chatQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat}
  */
-export async function chat(tenantId: ChatPathParams["tenantId"], knowledgeId: ChatPathParams["knowledgeId"], params?: ChatQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function chat({ tenantId, knowledgeId, params }: { tenantId: ChatPathParams["tenantId"]; knowledgeId: ChatPathParams["knowledgeId"]; params?: ChatQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<ChatQueryResponse, ResponseErrorConfig<Chat400 | Chat500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/chat`, baseURL : "/", params, ... requestConfig })  
   return chatQueryResponseSchema.parse(res.data)
 }
 
-export function chatQueryOptions(tenantId: ChatPathParams["tenantId"], knowledgeId: ChatPathParams["knowledgeId"], params?: ChatQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = chatQueryKeyFn(tenantId, knowledgeId, params)
+export function chatQueryOptions({ tenantId, knowledgeId, params }: { tenantId: ChatPathParams["tenantId"]; knowledgeId: ChatPathParams["knowledgeId"]; params?: ChatQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = chatQueryKeyFn({ tenantId, knowledgeId }, params)
   return queryOptions<ChatQueryResponse, ResponseErrorConfig<Chat400 | Chat500>, ChatQueryResponse, typeof queryKey>({
    enabled: !!(tenantId&& knowledgeId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return chat(tenantId, knowledgeId, params, config)
+      return chat({ tenantId, knowledgeId, params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function chatQueryOptions(tenantId: ChatPathParams["tenantId"], knowledge
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat}
  */
-export function useApiChat<TData = ChatQueryResponse, TQueryData = ChatQueryResponse, TQueryKey extends QueryKey = ChatQueryKey>(tenantId: ChatPathParams["tenantId"], knowledgeId: ChatPathParams["knowledgeId"], params?: ChatQueryParams, options: 
+export function useApiChat<TData = ChatQueryResponse, TQueryData = ChatQueryResponse, TQueryKey extends QueryKey = ChatQueryKey>({ tenantId, knowledgeId, params }: { tenantId: ChatPathParams["tenantId"]; knowledgeId: ChatPathParams["knowledgeId"]; params?: ChatQueryParams }, options: 
 {
   query?: Partial<QueryObserverOptions<ChatQueryResponse, ResponseErrorConfig<Chat400 | Chat500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiChat<TData = ChatQueryResponse, TQueryData = ChatQueryResp
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? chatQueryKeyFn(tenantId, knowledgeId, params)
+  const queryKey = queryOptions?.queryKey ?? chatQueryKeyFn({ tenantId, knowledgeId }, params)
 
   const query = useQuery({
-   ...chatQueryOptions(tenantId, knowledgeId, params, config),
+   ...chatQueryOptions({ tenantId, knowledgeId, params }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Chat400 | Chat500>> & { queryKey: TQueryKey }

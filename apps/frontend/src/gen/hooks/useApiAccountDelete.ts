@@ -17,7 +17,7 @@ export type AccountDeleteMutationKey = ReturnType<typeof accountDeleteMutationKe
 /**
  * {@link /api/account/:id}
  */
-export async function accountDelete(id: AccountDeletePathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function accountDelete({ id }: { id: AccountDeletePathParams["id"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<AccountDeleteMutationResponse, ResponseErrorConfig<AccountDelete400 | AccountDelete404 | AccountDelete500>, unknown>({ method : "DELETE", url : `/api/account/${id}`, baseURL : "/", ... requestConfig })  
@@ -29,7 +29,7 @@ export function accountDeleteMutationOptions(config: Partial<RequestConfig> & { 
   return mutationOptions<AccountDeleteMutationResponse, ResponseErrorConfig<AccountDelete400 | AccountDelete404 | AccountDelete500>, {id: AccountDeletePathParams["id"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id }) => {
-      return accountDelete(id, config)
+      return accountDelete({ id }, config)
     },
   })
 }

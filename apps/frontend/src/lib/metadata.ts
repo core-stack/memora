@@ -1,12 +1,11 @@
 import exifr from 'exifr';
 
-import { SourceType } from '@snipet/schemas';
+import { sourceEntitySourceTypeEnum } from '@/gen';
 
-import type {
-  BaseFileMetadata, SourceAudioMetadata, SourceDocMetadata, SourceImageMetadata, SourceVideoMetadata
-} from '@snipet/schemas';
+import type { SourceAudioMetadata, SourceDocMetadata, SourceImageMetadata, SourceVideoMetadata } from '@/gen';
+
 export async function getFileMetadata(file: File): Promise<SourceAudioMetadata | SourceVideoMetadata | SourceImageMetadata | SourceDocMetadata> {
-  const base: BaseFileMetadata = {
+  const base = {
     extension: file.name.split('.').pop() || "",
     contentType: file.type,
     size: file.size,
@@ -17,7 +16,7 @@ export async function getFileMetadata(file: File): Promise<SourceAudioMetadata |
     const imageMeta = await new Promise<SourceImageMetadata>((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
-        resolve({ ...base, width: img.width, height: img.height, type: SourceType.IMAGE });
+        resolve({ ...base, width: img.width, height: img.height, type: sourceEntitySourceTypeEnum.IMAGE });
         URL.revokeObjectURL(img.src);
       };
       img.onerror = reject;
@@ -43,7 +42,7 @@ export async function getFileMetadata(file: File): Promise<SourceAudioMetadata |
           width: video.videoWidth,
           height: video.videoHeight,
           duration: video.duration,
-          type: SourceType.VIDEO
+          type: sourceEntitySourceTypeEnum.VIDEO
         });
         URL.revokeObjectURL(video.src);
       };
@@ -59,7 +58,7 @@ export async function getFileMetadata(file: File): Promise<SourceAudioMetadata |
       const audio = document.createElement("audio");
       audio.preload = "metadata";
       audio.onloadedmetadata = () => {
-        resolve({ ...base, duration: audio.duration, type: SourceType.AUDIO });
+        resolve({ ...base, duration: audio.duration, type: sourceEntitySourceTypeEnum.AUDIO });
         URL.revokeObjectURL(audio.src);
       };
       audio.onerror = reject;
@@ -69,5 +68,5 @@ export async function getFileMetadata(file: File): Promise<SourceAudioMetadata |
     return { ...audioMeta };
   }
 
-  return { ...base, type: SourceType.DOC };
+  return { ...base, type: sourceEntitySourceTypeEnum.DOC };
 }

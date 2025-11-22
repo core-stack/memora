@@ -4,44 +4,44 @@
 */
 
 import { errorResponseSchema } from "./errorResponseSchema.ts";
-import { LLMEntitySchema } from "./LLMEntitySchema.ts";
+import { llmentitySchema } from "./LLMEntitySchema.ts";
 import { z } from "zod/v4";
 
-export const LLMPathParamsSchema = z.object({
+export const llmpathParamsSchema = z.object({
     "tenantId": z.string()
     })
 
-export type LLMPathParamsSchema = z.infer<typeof LLMPathParamsSchema>
+export type LLMPathParamsSchema = z.infer<typeof llmpathParamsSchema>
 
-export const LLMQueryParamsSchema = z.object({
+export const llmqueryParamsSchema = z.object({
     "limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
 "offset": z.optional(z.coerce.number().describe("Number of records to skip")),
 "sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: "))
     }).optional()
 
-export type LLMQueryParamsSchema = z.infer<typeof LLMQueryParamsSchema>
+export type LLMQueryParamsSchema = z.infer<typeof llmqueryParamsSchema>
 
 /**
  * @description Records found successfully
  */
-export const LLM200Schema = z.array(LLMEntitySchema)
+export const llm200Schema = z.array(llmentitySchema)
 
-export type LLM200Schema = z.infer<typeof LLM200Schema>
+export type LLM200Schema = z.infer<typeof llm200Schema>
 
 /**
  * @description Bad request
  */
-export const LLM400Schema = errorResponseSchema
+export const llm400Schema = errorResponseSchema
 
-export type LLM400Schema = z.infer<typeof LLM400Schema>
+export type LLM400Schema = z.infer<typeof llm400Schema>
 
 /**
  * @description Internal server error
  */
-export const LLM500Schema = errorResponseSchema
+export const llm500Schema = errorResponseSchema
 
-export type LLM500Schema = z.infer<typeof LLM500Schema>
+export type LLM500Schema = z.infer<typeof llm500Schema>
 
-export const LLMQueryResponseSchema = LLM200Schema
+export const llmqueryResponseSchema = llm200Schema
 
-export type LLMQueryResponseSchema = z.infer<typeof LLMQueryResponseSchema>
+export type LLMQueryResponseSchema = z.infer<typeof llmqueryResponseSchema>

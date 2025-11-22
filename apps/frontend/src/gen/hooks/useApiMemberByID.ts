@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { memberByIDQueryResponseSchema } from "../zod/memberByIDSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const memberByIDQueryKeyFn = (id: MemberByIDPathParams["id"], tenantId: MemberByIDPathParams["tenantId"], params?: MemberByIDQueryParams) => [{ url: '/api/tenant/:tenantId/member/:id', params: {tenantId:tenantId,id:id} }, ...(params ? [params] : [])] as const
+export const memberByIDQueryKeyFn = ({ id, tenantId }: { id: MemberByIDPathParams["id"]; tenantId: MemberByIDPathParams["tenantId"] }, params?: MemberByIDQueryParams) => [{ url: '/api/tenant/:tenantId/member/:id', params: {tenantId:tenantId,id:id} }, ...(params ? [params] : [])] as const
 
 export type MemberByIDQueryKey = ReturnType<typeof memberByIDQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/member/:id}
  */
-export async function memberByID(id: MemberByIDPathParams["id"], tenantId: MemberByIDPathParams["tenantId"], params?: MemberByIDQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function memberByID({ id, tenantId, params }: { id: MemberByIDPathParams["id"]; tenantId: MemberByIDPathParams["tenantId"]; params?: MemberByIDQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<MemberByIDQueryResponse, ResponseErrorConfig<MemberByID400 | MemberByID404 | MemberByID500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/member/${id}`, baseURL : "/", params, ... requestConfig })  
   return memberByIDQueryResponseSchema.parse(res.data)
 }
 
-export function memberByIDQueryOptions(id: MemberByIDPathParams["id"], tenantId: MemberByIDPathParams["tenantId"], params?: MemberByIDQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = memberByIDQueryKeyFn(id, tenantId, params)
+export function memberByIDQueryOptions({ id, tenantId, params }: { id: MemberByIDPathParams["id"]; tenantId: MemberByIDPathParams["tenantId"]; params?: MemberByIDQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = memberByIDQueryKeyFn({ id, tenantId }, params)
   return queryOptions<MemberByIDQueryResponse, ResponseErrorConfig<MemberByID400 | MemberByID404 | MemberByID500>, MemberByIDQueryResponse, typeof queryKey>({
    enabled: !!(id&& tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return memberByID(id, tenantId, params, config)
+      return memberByID({ id, tenantId, params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function memberByIDQueryOptions(id: MemberByIDPathParams["id"], tenantId:
 /**
  * {@link /api/tenant/:tenantId/member/:id}
  */
-export function useApiMemberByID<TData = MemberByIDQueryResponse, TQueryData = MemberByIDQueryResponse, TQueryKey extends QueryKey = MemberByIDQueryKey>(id: MemberByIDPathParams["id"], tenantId: MemberByIDPathParams["tenantId"], params?: MemberByIDQueryParams, options: 
+export function useApiMemberByID<TData = MemberByIDQueryResponse, TQueryData = MemberByIDQueryResponse, TQueryKey extends QueryKey = MemberByIDQueryKey>({ id, tenantId, params }: { id: MemberByIDPathParams["id"]; tenantId: MemberByIDPathParams["tenantId"]; params?: MemberByIDQueryParams }, options: 
 {
   query?: Partial<QueryObserverOptions<MemberByIDQueryResponse, ResponseErrorConfig<MemberByID400 | MemberByID404 | MemberByID500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiMemberByID<TData = MemberByIDQueryResponse, TQueryData = M
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? memberByIDQueryKeyFn(id, tenantId, params)
+  const queryKey = queryOptions?.queryKey ?? memberByIDQueryKeyFn({ id, tenantId }, params)
 
   const query = useQuery({
-   ...memberByIDQueryOptions(id, tenantId, params, config),
+   ...memberByIDQueryOptions({ id, tenantId, params }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<MemberByID400 | MemberByID404 | MemberByID500>> & { queryKey: TQueryKey }

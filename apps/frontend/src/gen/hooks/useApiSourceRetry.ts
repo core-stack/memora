@@ -17,7 +17,7 @@ export type SourceRetryMutationKey = ReturnType<typeof sourceRetryMutationKey>
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/retry}
  */
-export async function sourceRetry(id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeId: SourceRetryPathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function sourceRetry({ id, tenantId, knowledgeId }: { id: SourceRetryPathParams["id"]; tenantId: SourceRetryPathParams["tenantId"]; knowledgeId: SourceRetryPathParams["knowledgeId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<SourceRetryMutationResponse, ResponseErrorConfig<Error>, unknown>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/source/${id}/retry`, baseURL : "/", ... requestConfig })  
@@ -29,7 +29,7 @@ export function sourceRetryMutationOptions(config: Partial<RequestConfig> & { cl
   return mutationOptions<SourceRetryMutationResponse, ResponseErrorConfig<Error>, {id: SourceRetryPathParams["id"], tenantId: SourceRetryPathParams["tenantId"], knowledgeId: SourceRetryPathParams["knowledgeId"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, knowledgeId }) => {
-      return sourceRetry(id, tenantId, knowledgeId, config)
+      return sourceRetry({ id, tenantId, knowledgeId }, config)
     },
   })
 }

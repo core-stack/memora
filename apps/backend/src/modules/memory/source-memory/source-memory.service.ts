@@ -1,12 +1,14 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { Fragments, SourceFragment } from "@/fragment";
-import { CacheService } from "@/infra/cache/cache.service";
-import { SourceVectorStoreService } from "@/infra/vector/source-vector-store.service";
-import { KnowledgeService } from "@/modules/knowledge/knowledge.service";
-import { buildOptions } from "@/utils/build-options";
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { RecentMemory } from "../types/recent";
+import { Fragments, SourceFragment } from '@/fragment';
+import { CacheService } from '@/infra/cache/cache.service';
+import { SourceVectorStoreService } from '@/infra/vector/source-vector-store.service';
+import { KnowledgeService } from '@/modules/knowledge/knowledge.service';
+import { buildOptions } from '@/utils/build-options';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+
+import { RecentMemory } from '../types/recent';
+import { RecentSearch } from './types';
 
 export type FindOptions = {
   knowledgeId: string;
@@ -109,8 +111,8 @@ export class SourceMemoryService {
     return fragments;
   }
 
-  async findRecent(knowledgeId: string): Promise<string[]> {
-    return (await this.cacheService.get<string[]>("recent", { namespace: knowledgeId })) ?? [];
+  async findRecent(knowledgeId: string): Promise<RecentSearch[]> {
+    return (await this.cacheService.get<Array<RecentSearch>>("recent", { namespace: knowledgeId })) ?? [];
   }
 
   static withMetadata(metadata: Record<string, any>): Finder {

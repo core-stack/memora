@@ -17,7 +17,7 @@ export type AuthForgetPasswordMutationKey = ReturnType<typeof authForgetPassword
 /**
  * {@link /api/auth/forget-password}
  */
-export async function authForgetPassword(data: AuthForgetPasswordMutationRequest, config: Partial<RequestConfig<AuthForgetPasswordMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function authForgetPassword({ data }: { data: AuthForgetPasswordMutationRequest }, config: Partial<RequestConfig<AuthForgetPasswordMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = authForgetPasswordMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function authForgetPasswordMutationOptions(config: Partial<RequestConfig<
   return mutationOptions<AuthForgetPasswordMutationResponse, ResponseErrorConfig<Error>, {data: AuthForgetPasswordMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ data }) => {
-      return authForgetPassword(data, config)
+      return authForgetPassword({ data }, config)
     },
   })
 }

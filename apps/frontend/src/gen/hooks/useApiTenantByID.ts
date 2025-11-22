@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { tenantByIDQueryResponseSchema } from "../zod/tenantByIDSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const tenantByIDQueryKeyFn = (id: TenantByIDPathParams["id"]) => [{ url: '/api/tenant/:id', params: {id:id} }] as const
+export const tenantByIDQueryKeyFn = ({ id }: { id: TenantByIDPathParams["id"] }) => [{ url: '/api/tenant/:id', params: {id:id} }] as const
 
 export type TenantByIDQueryKey = ReturnType<typeof tenantByIDQueryKeyFn>
 
 /**
  * {@link /api/tenant/:id}
  */
-export async function tenantByID(id: TenantByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function tenantByID({ id }: { id: TenantByIDPathParams["id"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<TenantByIDQueryResponse, ResponseErrorConfig<TenantByID400 | TenantByID404 | TenantByID500>, unknown>({ method : "GET", url : `/api/tenant/${id}`, baseURL : "/", ... requestConfig })  
   return tenantByIDQueryResponseSchema.parse(res.data)
 }
 
-export function tenantByIDQueryOptions(id: TenantByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = tenantByIDQueryKeyFn(id)
+export function tenantByIDQueryOptions({ id }: { id: TenantByIDPathParams["id"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = tenantByIDQueryKeyFn({ id })
   return queryOptions<TenantByIDQueryResponse, ResponseErrorConfig<TenantByID400 | TenantByID404 | TenantByID500>, TenantByIDQueryResponse, typeof queryKey>({
    enabled: !!(id),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return tenantByID(id, config)
+      return tenantByID({ id }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function tenantByIDQueryOptions(id: TenantByIDPathParams["id"], config: P
 /**
  * {@link /api/tenant/:id}
  */
-export function useApiTenantByID<TData = TenantByIDQueryResponse, TQueryData = TenantByIDQueryResponse, TQueryKey extends QueryKey = TenantByIDQueryKey>(id: TenantByIDPathParams["id"], options: 
+export function useApiTenantByID<TData = TenantByIDQueryResponse, TQueryData = TenantByIDQueryResponse, TQueryKey extends QueryKey = TenantByIDQueryKey>({ id }: { id: TenantByIDPathParams["id"] }, options: 
 {
   query?: Partial<QueryObserverOptions<TenantByIDQueryResponse, ResponseErrorConfig<TenantByID400 | TenantByID404 | TenantByID500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiTenantByID<TData = TenantByIDQueryResponse, TQueryData = T
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? tenantByIDQueryKeyFn(id)
+  const queryKey = queryOptions?.queryKey ?? tenantByIDQueryKeyFn({ id })
 
   const query = useQuery({
-   ...tenantByIDQueryOptions(id, config),
+   ...tenantByIDQueryOptions({ id }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<TenantByID400 | TenantByID404 | TenantByID500>> & { queryKey: TQueryKey }

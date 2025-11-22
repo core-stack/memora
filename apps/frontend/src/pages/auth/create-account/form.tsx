@@ -7,29 +7,38 @@ import { FcGoogle } from 'react-icons/fc';
 import { FormInput } from '@/components/form/input';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { Separator } from '@/components/ui/separator';
-import { useApiMutation } from '@/hooks/use-api-mutation';
-import { useToast } from '@/hooks/use-toast';
-import { createAccountSchema, type CreateAccountSchema } from '@snipet/schemas';
-import { zodResolver } from '@/utils/zod-resolver';
 import { Link } from '@/components/ui/link';
+import { Separator } from '@/components/ui/separator';
+import { createAccountDtoSchema, useApiAuthCreateAccount } from '@/gen';
+import { useToast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const formDto = createAccountDtoSchema.extend({
+  confirmPassword: createAccountDtoSchema.shape.password
+}).superRefine((data, ctx) => {
+  if (data.password !== data.confirmPassword) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Passwords do not match",
+    });
+  }
+})
 
 export function CreateAccountForm() {
   const { toast } = useToast();
-  const form = useForm<CreateAccountSchema>({
-    resolver: zodResolver(createAccountSchema),
+  const form = useForm({
+    resolver: zodResolver(formDto),
     defaultValues: {
       name: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
-  const { mutate } = useApiMutation("/api/auth/create-account");
+  const { mutate } = useApiAuthCreateAccount();
   const onSubmit = form.handleSubmit(async (data) => {
-    mutate({ body: data }, {
+    mutate({ data }, {
       onSuccess: () => {
         toast({
           title: "Account created",

@@ -1,0 +1,1 @@
+{"type":"object","properties":{"text":{"type":"string","description":"The text of the recent search"},"count":{"type":"number","description":"The count of the recent search"},"lastUsed":{"format":"date-time","type":"string","description":"The last used date of the recent search"}},"required":["text","count","lastUsed"],"x-readme-ref-name":"RecentSearch"}

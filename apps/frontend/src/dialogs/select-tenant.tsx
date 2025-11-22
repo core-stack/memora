@@ -13,9 +13,10 @@ import { useDialog } from '@/hooks/use-dialog';
 
 import { DialogType } from './';
 
-import type { TenantSchema } from '@snipet/schemas';
+import type { TenantEntity } from '@/gen';
+
 export type SelectTenantDialogProps = {
-  tenants: TenantSchema[];
+  tenants: TenantEntity[];
   setTenant: (tenantId: string) => void;
 }
 export function SelectTenantDialog({ setTenant, tenants }: SelectTenantDialogProps) {

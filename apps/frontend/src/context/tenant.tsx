@@ -2,16 +2,19 @@ import { createContext, useCallback, useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 
 import { DialogType } from '@/dialogs';
+import { useApiUserSelf } from '@/gen';
 import { useAuth } from '@/hooks/use-auth';
 import { useDialog } from '@/hooks/use-dialog';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import { useApiUserSelf, type TenantEntity } from '@/gen';
+
+import type { ErrorResponse, TenantEntity } from '@/gen';
 
 type TenantContextType = {
   tenant?: TenantEntity;
   tenants?: TenantEntity[];
   setTenant: (tenantId: string) => void;
   isLoading: boolean;
+  error?: ErrorResponse | string;
 }
 
 export const TenantContext = createContext<TenantContextType>({} as TenantContextType);
@@ -22,8 +25,8 @@ export const TenantProvider = () => {
   const { isAuthenticated } = useAuth();
   const [canRender, setCanRender] = useState(false);
   const [tenantId, setTenantId] = useLocalStorage<string>("tenant-id", null);
-
-  const { data: user, isLoading, refetch } = useApiUserSelf({
+  const [error, setError] = useState<ErrorResponse | string | undefined>();
+  const { data: user, isLoading, refetch, error: userError } = useApiUserSelf({
     query: { retry: (failureCount) => failureCount < 1 }
   });
 
@@ -31,14 +34,11 @@ export const TenantProvider = () => {
   const tenants = user?.members.map((member) => member.tenant).filter((tenant) => !!tenant);
 
   const setTenant = useCallback(async (tenantId: string) => {
-    try {
-      setTenantId(tenantId);
-      setCanRender(true);
-      await refetch();
-    } catch (error) {
-      console.error(error);
-    }
-  }, [refetch, setTenantId]);
+    setTenantId(tenantId);
+    setCanRender(true);
+    await refetch();
+    setError(undefined);
+  }, [refetch, setTenantId, setError, setCanRender]);
 
   useEffect(() => {
     if (!tenant && tenantId) return setTenantId(null);
@@ -54,13 +54,18 @@ export const TenantProvider = () => {
       setCanRender(true);
     }
   }, [tenant, isAuthenticated, isOpenDialog, openDialog, tenants, canRender, setTenant, tenantId, setTenantId]);
+  
+  useEffect(() => {
+    if (userError) setError(userError.response?.data);
+  }, [userError, setError]);
 
   return (
     <TenantContext.Provider value={{
       tenant,
       tenants,
       setTenant,
-      isLoading
+      isLoading,
+      error
     }}>
       {canRender && <Outlet />}
     </TenantContext.Provider>

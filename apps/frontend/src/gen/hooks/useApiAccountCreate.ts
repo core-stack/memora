@@ -17,7 +17,7 @@ export type AccountCreateMutationKey = ReturnType<typeof accountCreateMutationKe
 /**
  * {@link /api/account}
  */
-export async function accountCreate(data?: AccountCreateMutationRequest, config: Partial<RequestConfig<AccountCreateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function accountCreate({ data }: { data?: AccountCreateMutationRequest }, config: Partial<RequestConfig<AccountCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = accountCreateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function accountCreateMutationOptions(config: Partial<RequestConfig<Accou
   return mutationOptions<AccountCreateMutationResponse, ResponseErrorConfig<AccountCreate400 | AccountCreate409 | AccountCreate500>, {data?: AccountCreateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ data }) => {
-      return accountCreate(data, config)
+      return accountCreate({ data }, config)
     },
   })
 }

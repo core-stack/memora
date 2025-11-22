@@ -1,6 +1,7 @@
 "use client"
 
 import { Loader2, MinusCircle, PlusCircle } from 'lucide-react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -14,40 +15,43 @@ import { Input } from '@/components/ui/input';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select';
+import { sendInviteDtoSchema, useApiInviteSend, useApiRole } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useDialog } from '@/hooks/use-dialog';
+import { useTenant } from '@/hooks/use-tenant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ROLES } from '@snipet/permission';
 
 import { DialogType } from './';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import type { SendInviteDto } from "@/gen";
 
 export function InviteMemberDialog() {
-  const form = useForm<CreateInviteSchema>({
-    resolver: zodResolver(createInviteSchema),
+  const form = useForm({
+    resolver: zodResolver(sendInviteDtoSchema),
     defaultValues: {
       emails: [],
     },
   });
-  const { data: roles = [] } = useApiQuery("/api/tenant/:tenantId/role", { method: "GET" });
+  const { tenant } = useTenant();
+  const { data: roles = [] } = useApiRole({ tenantId: tenant?.id ?? "" });
 
-  const defaultEmail = useMemo(()=> ({
+  const defaultEmail = useMemo(() => ({
     email: "",
     roleId: roles.find(role => role.key === ROLES.tenant.user.key)?.id
-  } as CreateInviteSchema["emails"][0]), [roles]);
+  } as SendInviteDto["emails"][0]), [roles]);
 
   const isLoading = form.formState.isSubmitting;
   const invalidate = useApiInvalidate();
-  const { mutate } = useApiMutation("/api/tenant/:tenantId/invite/send", { method: "POST" });
+  const { mutate } = useApiInviteSend();
   const { closeDialog } = useDialog();
 
   const { fields, remove, insert } = useFieldArray({ control: form.control, name: "emails" });
   const removeField = (index: number) => remove(index);
   const addField = useCallback((index: number) => insert(index + 1, defaultEmail), [defaultEmail, insert]);
 
-  async function onSubmit(body: CreateInviteSchema) {
-    mutate({ body }, {
+  async function onSubmit(data: SendInviteDto) {
+    mutate({ data, tenantId: tenant?.id ?? "" }, {
       onSuccess: async () => {
         await invalidate("/api/tenant/:tenantId/invite");
         form.reset();

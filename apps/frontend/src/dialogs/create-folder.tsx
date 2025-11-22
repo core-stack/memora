@@ -6,37 +6,42 @@ import {
   DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
+import {
+  createFolderDtoSchema, folderQueryKeyFn, sourceQueryKeyFn, useApiFolderByID, useApiFolderCreate
+} from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useApiMutation } from '@/hooks/use-api-mutation';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useDialog } from '@/hooks/use-dialog';
 import { useKnowledge } from '@/hooks/use-knowledge';
-import { zodResolver } from '@/utils/zod-resolver';
-import { createKnowledgeFolderSchema } from '@snipet/schemas';
+import { useTenant } from '@/hooks/use-tenant';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { DialogType } from './';
 
-export type CreateKnowledgeFolderDialogProps = {
+export type CreateFolderDialogProps = {
   folderId?: string
 }
-export const CreateKnowledgeFolderDialog = ({ folderId }: CreateKnowledgeFolderDialogProps) => {
+export const CreateFolderDialog = ({ folderId }: CreateFolderDialogProps) => {
   const { closeDialog } = useDialog();
-  const { slug } = useKnowledge();
-  const form = useForm({ resolver: zodResolver(createKnowledgeFolderSchema) });
+  const { knowledge } = useKnowledge();
+  const { tenant } = useTenant();
+  const form = useForm({ resolver: zodResolver(createFolderDtoSchema) });
   const isLoading = form.formState.isSubmitting;
 
-  const { data: folder } = useApiQuery(
-    "/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder/:id",
-    { method: "GET", params: { id: folderId }, enabled: !!folderId }
-  );
+  const { data: folder } = useApiFolderByID({
+    id: folderId ?? "",
+    knowledgeId: knowledge?.id ?? "",
+    tenantId: tenant?.id ?? ""
+  }, { query: { enabled: !!folderId } });
 
   const invalidate = useApiInvalidate();
-  const { mutate } = useApiMutation('/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder', { method: 'POST' });
-  const onSubmit = form.handleSubmit(async (body) => {
-    mutate({ body, params: { knowledgeSlug: slug! }, query: { parentId: folderId } }, {
-      onSuccess: () => {
-        invalidate('/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder');
-        invalidate('/api/tenant/:tenantId/knowledge/:knowledgeSlug/source');
+  const { mutate } = useApiFolderCreate();
+  const onSubmit = form.handleSubmit(async (data) => {
+    mutate({ knowledgeId: knowledge?.id ?? "", tenantId: tenant?.id ?? "", data }, {
+      onSuccess: async () => {
+        await invalidate(
+          folderQueryKeyFn({ knowledgeId: knowledge?.id ?? "", tenantId: tenant?.id ?? "" }),
+          sourceQueryKeyFn({ knowledgeId: knowledge?.id ?? "", tenantId: tenant?.id ?? "" }),
+        );
         closeDialog(DialogType.CREATE_FOLDER);
       }
     });

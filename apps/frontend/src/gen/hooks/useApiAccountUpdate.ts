@@ -17,7 +17,7 @@ export type AccountUpdateMutationKey = ReturnType<typeof accountUpdateMutationKe
 /**
  * {@link /api/account/:id}
  */
-export async function accountUpdate(id: AccountUpdatePathParams["id"], data?: AccountUpdateMutationRequest, config: Partial<RequestConfig<AccountUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function accountUpdate({ id, data }: { id: AccountUpdatePathParams["id"]; data?: AccountUpdateMutationRequest }, config: Partial<RequestConfig<AccountUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = accountUpdateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function accountUpdateMutationOptions(config: Partial<RequestConfig<Accou
   return mutationOptions<AccountUpdateMutationResponse, ResponseErrorConfig<AccountUpdate400 | AccountUpdate404 | AccountUpdate500>, {id: AccountUpdatePathParams["id"], data?: AccountUpdateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, data }) => {
-      return accountUpdate(id, data, config)
+      return accountUpdate({ id, data }, config)
     },
   })
 }

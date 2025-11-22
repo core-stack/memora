@@ -17,7 +17,7 @@ export type FolderCreateMutationKey = ReturnType<typeof folderCreateMutationKey>
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder}
  */
-export async function folderCreate(tenantId: FolderCreatePathParams["tenantId"], knowledgeId: FolderCreatePathParams["knowledgeId"], data: FolderCreateMutationRequest, config: Partial<RequestConfig<FolderCreateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function folderCreate({ tenantId, knowledgeId, data }: { tenantId: FolderCreatePathParams["tenantId"]; knowledgeId: FolderCreatePathParams["knowledgeId"]; data: FolderCreateMutationRequest }, config: Partial<RequestConfig<FolderCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = folderCreateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function folderCreateMutationOptions(config: Partial<RequestConfig<Folder
   return mutationOptions<FolderCreateMutationResponse, ResponseErrorConfig<FolderCreate400 | FolderCreate409 | FolderCreate500>, {tenantId: FolderCreatePathParams["tenantId"], knowledgeId: FolderCreatePathParams["knowledgeId"], data: FolderCreateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ tenantId, knowledgeId, data }) => {
-      return folderCreate(tenantId, knowledgeId, data, config)
+      return folderCreate({ tenantId, knowledgeId, data }, config)
     },
   })
 }

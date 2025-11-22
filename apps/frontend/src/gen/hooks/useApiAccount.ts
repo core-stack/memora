@@ -17,21 +17,21 @@ export type AccountQueryKey = ReturnType<typeof accountQueryKeyFn>
 /**
  * {@link /api/account}
  */
-export async function account(params?: AccountQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function account({ params }: { params?: AccountQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<AccountQueryResponse, ResponseErrorConfig<Account400 | Account500>, unknown>({ method : "GET", url : `/api/account`, baseURL : "/", params, ... requestConfig })  
   return accountQueryResponseSchema.parse(res.data)
 }
 
-export function accountQueryOptions(params?: AccountQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export function accountQueryOptions({ params }: { params?: AccountQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const queryKey = accountQueryKeyFn(params)
   return queryOptions<AccountQueryResponse, ResponseErrorConfig<Account400 | Account500>, AccountQueryResponse, typeof queryKey>({
  
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return account(params, config)
+      return account({ params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function accountQueryOptions(params?: AccountQueryParams, config: Partial
 /**
  * {@link /api/account}
  */
-export function useApiAccount<TData = AccountQueryResponse, TQueryData = AccountQueryResponse, TQueryKey extends QueryKey = AccountQueryKey>(params?: AccountQueryParams, options: 
+export function useApiAccount<TData = AccountQueryResponse, TQueryData = AccountQueryResponse, TQueryKey extends QueryKey = AccountQueryKey>({ params }: { params?: AccountQueryParams }, options: 
 {
   query?: Partial<QueryObserverOptions<AccountQueryResponse, ResponseErrorConfig<Account400 | Account500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -50,7 +50,7 @@ export function useApiAccount<TData = AccountQueryResponse, TQueryData = Account
   const queryKey = queryOptions?.queryKey ?? accountQueryKeyFn(params)
 
   const query = useQuery({
-   ...accountQueryOptions(params, config),
+   ...accountQueryOptions({ params }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Account400 | Account500>> & { queryKey: TQueryKey }

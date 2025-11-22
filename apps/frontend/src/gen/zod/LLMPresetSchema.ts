@@ -5,7 +5,7 @@
 
 import { z } from "zod/v4";
 
-export const LLMPresetSchema = z.object({
+export const llmpresetSchema = z.object({
     "name": z.string().describe("The name of the LLM preset."),
 "description": z.string().describe("A description of the LLM preset."),
 "iconPath": z.string().describe("The URL or path of the icon representing the LLM."),
@@ -22,4 +22,4 @@ export const LLMPresetSchema = z.object({
     }).catchall(z.any()).describe("Adapter configuration.")
     })
 
-export type LLMPresetSchema = z.infer<typeof LLMPresetSchema>
+export type LLMPresetSchema = z.infer<typeof llmpresetSchema>

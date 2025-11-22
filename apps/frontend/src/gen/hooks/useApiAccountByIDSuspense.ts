@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryRe
 import { accountByIDQueryResponseSchema } from "../zod/accountByIDSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const accountByIDSuspenseQueryKeyFn = (id: AccountByIDPathParams["id"]) => [{ url: '/api/account/:id', params: {id:id} }] as const
+export const accountByIDSuspenseQueryKeyFn = ({ id }: { id: AccountByIDPathParams["id"] }) => [{ url: '/api/account/:id', params: {id:id} }] as const
 
 export type AccountByIDSuspenseQueryKey = ReturnType<typeof accountByIDSuspenseQueryKeyFn>
 
 /**
  * {@link /api/account/:id}
  */
-export async function accountByIDSuspense(id: AccountByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function accountByIDSuspense({ id }: { id: AccountByIDPathParams["id"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<AccountByIDQueryResponse, ResponseErrorConfig<AccountByID400 | AccountByID404 | AccountByID500>, unknown>({ method : "GET", url : `/api/account/${id}`, baseURL : "/", ... requestConfig })  
   return accountByIDQueryResponseSchema.parse(res.data)
 }
 
-export function accountByIDSuspenseQueryOptions(id: AccountByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = accountByIDSuspenseQueryKeyFn(id)
+export function accountByIDSuspenseQueryOptions({ id }: { id: AccountByIDPathParams["id"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = accountByIDSuspenseQueryKeyFn({ id })
   return queryOptions<AccountByIDQueryResponse, ResponseErrorConfig<AccountByID400 | AccountByID404 | AccountByID500>, AccountByIDQueryResponse, typeof queryKey>({
    enabled: !!(id),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return accountByIDSuspense(id, config)
+      return accountByIDSuspense({ id }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function accountByIDSuspenseQueryOptions(id: AccountByIDPathParams["id"],
 /**
  * {@link /api/account/:id}
  */
-export function useApiAccountByIDSuspense<TData = AccountByIDQueryResponse, TQueryKey extends QueryKey = AccountByIDSuspenseQueryKey>(id: AccountByIDPathParams["id"], options: 
+export function useApiAccountByIDSuspense<TData = AccountByIDQueryResponse, TQueryKey extends QueryKey = AccountByIDSuspenseQueryKey>({ id }: { id: AccountByIDPathParams["id"] }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<AccountByIDQueryResponse, ResponseErrorConfig<AccountByID400 | AccountByID404 | AccountByID500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiAccountByIDSuspense<TData = AccountByIDQueryResponse, TQue
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? accountByIDSuspenseQueryKeyFn(id)
+  const queryKey = queryOptions?.queryKey ?? accountByIDSuspenseQueryKeyFn({ id })
 
   const query = useSuspenseQuery({
-   ...accountByIDSuspenseQueryOptions(id, config),
+   ...accountByIDSuspenseQueryOptions({ id }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<AccountByID400 | AccountByID404 | AccountByID500>> & { queryKey: TQueryKey }

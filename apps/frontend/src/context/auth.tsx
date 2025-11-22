@@ -1,5 +1,6 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 
+import { useApiAuthLogout, useApiUserSelf } from '@/gen';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { useLocation } from '@/hooks/use-location';
 import { useRouter } from '@/hooks/use-router';
@@ -8,8 +9,8 @@ import { publicRoutes, REDIRECT_WHEN_NOT_AUTHENTICATED_PATH } from '@/routes';
 import { can as canPermission } from '@snipet/permission';
 import { useQueryClient } from '@tanstack/react-query';
 
+import type { MemberEntity, UserEntity } from '@/gen';
 import type { Permission } from "@snipet/permission";
-import { useApiAuthLogout, useApiUserSelf, type MemberEntity, type UserEntity } from '@/gen';
 
 type AuthContextType = {
   user: UserEntity | undefined;
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return false;
   }
 
-  const can = (permission: Permission | Permission[]): boolean => canPermission( user?.role.permissions ?? [], permission);
+  const can = (permission: Permission | Permission[]): boolean => canPermission(user?.role.permissions ?? [], permission);
   //#endregion
 
   const logout = useCallback(() => {
@@ -97,7 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-    value={{
+      value={{
         user,
         currentMember,
         isLoading,

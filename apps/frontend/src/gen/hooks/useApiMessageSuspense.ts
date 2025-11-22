@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryRe
 import { messageQueryResponseSchema } from "../zod/messageSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const messageSuspenseQueryKeyFn = (tenantId: MessagePathParams["tenantId"], knowledgeId: MessagePathParams["knowledgeId"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message', params: {tenantId:tenantId,knowledgeId:knowledgeId,chatId:chatId} }, ...(params ? [params] : [])] as const
+export const messageSuspenseQueryKeyFn = ({ tenantId, knowledgeId, chatId }: { tenantId: MessagePathParams["tenantId"]; knowledgeId: MessagePathParams["knowledgeId"]; chatId: MessagePathParams["chatId"] }, params?: MessageQueryParams) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message', params: {tenantId:tenantId,knowledgeId:knowledgeId,chatId:chatId} }, ...(params ? [params] : [])] as const
 
 export type MessageSuspenseQueryKey = ReturnType<typeof messageSuspenseQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message}
  */
-export async function messageSuspense(tenantId: MessagePathParams["tenantId"], knowledgeId: MessagePathParams["knowledgeId"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function messageSuspense({ tenantId, knowledgeId, chatId, params }: { tenantId: MessagePathParams["tenantId"]; knowledgeId: MessagePathParams["knowledgeId"]; chatId: MessagePathParams["chatId"]; params?: MessageQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<MessageQueryResponse, ResponseErrorConfig<Message400 | Message500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/chat/${chatId}/message`, baseURL : "/", params, ... requestConfig })  
   return messageQueryResponseSchema.parse(res.data)
 }
 
-export function messageSuspenseQueryOptions(tenantId: MessagePathParams["tenantId"], knowledgeId: MessagePathParams["knowledgeId"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = messageSuspenseQueryKeyFn(tenantId, knowledgeId, chatId, params)
+export function messageSuspenseQueryOptions({ tenantId, knowledgeId, chatId, params }: { tenantId: MessagePathParams["tenantId"]; knowledgeId: MessagePathParams["knowledgeId"]; chatId: MessagePathParams["chatId"]; params?: MessageQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = messageSuspenseQueryKeyFn({ tenantId, knowledgeId, chatId }, params)
   return queryOptions<MessageQueryResponse, ResponseErrorConfig<Message400 | Message500>, MessageQueryResponse, typeof queryKey>({
    enabled: !!(tenantId&& knowledgeId&& chatId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return messageSuspense(tenantId, knowledgeId, chatId, params, config)
+      return messageSuspense({ tenantId, knowledgeId, chatId, params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function messageSuspenseQueryOptions(tenantId: MessagePathParams["tenantI
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message}
  */
-export function useApiMessageSuspense<TData = MessageQueryResponse, TQueryKey extends QueryKey = MessageSuspenseQueryKey>(tenantId: MessagePathParams["tenantId"], knowledgeId: MessagePathParams["knowledgeId"], chatId: MessagePathParams["chatId"], params?: MessageQueryParams, options: 
+export function useApiMessageSuspense<TData = MessageQueryResponse, TQueryKey extends QueryKey = MessageSuspenseQueryKey>({ tenantId, knowledgeId, chatId, params }: { tenantId: MessagePathParams["tenantId"]; knowledgeId: MessagePathParams["knowledgeId"]; chatId: MessagePathParams["chatId"]; params?: MessageQueryParams }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<MessageQueryResponse, ResponseErrorConfig<Message400 | Message500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiMessageSuspense<TData = MessageQueryResponse, TQueryKey ex
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? messageSuspenseQueryKeyFn(tenantId, knowledgeId, chatId, params)
+  const queryKey = queryOptions?.queryKey ?? messageSuspenseQueryKeyFn({ tenantId, knowledgeId, chatId }, params)
 
   const query = useSuspenseQuery({
-   ...messageSuspenseQueryOptions(tenantId, knowledgeId, chatId, params, config),
+   ...messageSuspenseQueryOptions({ tenantId, knowledgeId, chatId, params }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<Message400 | Message500>> & { queryKey: TQueryKey }

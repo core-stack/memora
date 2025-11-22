@@ -17,7 +17,7 @@ export type FolderUpdateMutationKey = ReturnType<typeof folderUpdateMutationKey>
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id}
  */
-export async function folderUpdate(id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeId: FolderUpdatePathParams["knowledgeId"], data: FolderUpdateMutationRequest, config: Partial<RequestConfig<FolderUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function folderUpdate({ id, tenantId, knowledgeId, data }: { id: FolderUpdatePathParams["id"]; tenantId: FolderUpdatePathParams["tenantId"]; knowledgeId: FolderUpdatePathParams["knowledgeId"]; data: FolderUpdateMutationRequest }, config: Partial<RequestConfig<FolderUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = folderUpdateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function folderUpdateMutationOptions(config: Partial<RequestConfig<Folder
   return mutationOptions<FolderUpdateMutationResponse, ResponseErrorConfig<FolderUpdate400 | FolderUpdate404 | FolderUpdate500>, {id: FolderUpdatePathParams["id"], tenantId: FolderUpdatePathParams["tenantId"], knowledgeId: FolderUpdatePathParams["knowledgeId"], data: FolderUpdateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, knowledgeId, data }) => {
-      return folderUpdate(id, tenantId, knowledgeId, data, config)
+      return folderUpdate({ id, tenantId, knowledgeId, data }, config)
     },
   })
 }

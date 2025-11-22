@@ -17,21 +17,21 @@ export type UserSuspenseQueryKey = ReturnType<typeof useApirSuspenseQueryKeyFn>
 /**
  * {@link /api/user}
  */
-export async function useApirSuspense(params?: UserQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function useApirSuspense({ params }: { params?: UserQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<UserQueryResponse, ResponseErrorConfig<User400 | User500>, unknown>({ method : "GET", url : `/api/user`, baseURL : "/", params, ... requestConfig })  
   return useApirQueryResponseSchema.parse(res.data)
 }
 
-export function useApirSuspenseQueryOptions(params?: UserQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export function useApirSuspenseQueryOptions({ params }: { params?: UserQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const queryKey = useApirSuspenseQueryKeyFn(params)
   return queryOptions<UserQueryResponse, ResponseErrorConfig<User400 | User500>, UserQueryResponse, typeof queryKey>({
  
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return useApirSuspense(params, config)
+      return useApirSuspense({ params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function useApirSuspenseQueryOptions(params?: UserQueryParams, config: Pa
 /**
  * {@link /api/user}
  */
-export function useApiUserSuspense<TData = UserQueryResponse, TQueryKey extends QueryKey = UserSuspenseQueryKey>(params?: UserQueryParams, options: 
+export function useApiUserSuspense<TData = UserQueryResponse, TQueryKey extends QueryKey = UserSuspenseQueryKey>({ params }: { params?: UserQueryParams }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<UserQueryResponse, ResponseErrorConfig<User400 | User500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -50,7 +50,7 @@ export function useApiUserSuspense<TData = UserQueryResponse, TQueryKey extends 
   const queryKey = queryOptions?.queryKey ?? useApirSuspenseQueryKeyFn(params)
 
   const query = useSuspenseQuery({
-   ...useApirSuspenseQueryOptions(params, config),
+   ...useApirSuspenseQueryOptions({ params }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<User400 | User500>> & { queryKey: TQueryKey }

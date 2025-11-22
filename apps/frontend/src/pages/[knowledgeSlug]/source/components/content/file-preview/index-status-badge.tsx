@@ -3,13 +3,15 @@ import { CheckCircle, Clock, Loader2, XCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
+import type { SourceEntityIndexStatusEnumKey } from '@/gen';
+
 interface IndexingStatusBadgeProps {
-  status?: IndexStatus;
+  status?: SourceEntityIndexStatusEnumKey;
   className?: string;
   showText?: boolean;
 }
 
-const statusConfig: Record<IndexStatus, { icon: any; label: string; className: string; animate?: boolean }> = {
+const statusConfig: Record<SourceEntityIndexStatusEnumKey, { icon: any; label: string; className: string; animate?: boolean }> = {
   "PENDING": {
     icon: Clock,
     label: "Pending",

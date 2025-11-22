@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { useApirByIDQueryResponseSchema } from "../zod/useApirByIDSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const useApirByIDQueryKeyFn = (id: UserByIDPathParams["id"]) => [{ url: '/api/user/:id', params: {id:id} }] as const
+export const useApirByIDQueryKeyFn = ({ id }: { id: UserByIDPathParams["id"] }) => [{ url: '/api/user/:id', params: {id:id} }] as const
 
 export type UserByIDQueryKey = ReturnType<typeof useApirByIDQueryKeyFn>
 
 /**
  * {@link /api/user/:id}
  */
-export async function useApirByID(id: UserByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function useApirByID({ id }: { id: UserByIDPathParams["id"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<UserByIDQueryResponse, ResponseErrorConfig<UserByID400 | UserByID404 | UserByID500>, unknown>({ method : "GET", url : `/api/user/${id}`, baseURL : "/", ... requestConfig })  
   return useApirByIDQueryResponseSchema.parse(res.data)
 }
 
-export function useApirByIDQueryOptions(id: UserByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = useApirByIDQueryKeyFn(id)
+export function useApirByIDQueryOptions({ id }: { id: UserByIDPathParams["id"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = useApirByIDQueryKeyFn({ id })
   return queryOptions<UserByIDQueryResponse, ResponseErrorConfig<UserByID400 | UserByID404 | UserByID500>, UserByIDQueryResponse, typeof queryKey>({
    enabled: !!(id),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return useApirByID(id, config)
+      return useApirByID({ id }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function useApirByIDQueryOptions(id: UserByIDPathParams["id"], config: Pa
 /**
  * {@link /api/user/:id}
  */
-export function useApiUserByID<TData = UserByIDQueryResponse, TQueryData = UserByIDQueryResponse, TQueryKey extends QueryKey = UserByIDQueryKey>(id: UserByIDPathParams["id"], options: 
+export function useApiUserByID<TData = UserByIDQueryResponse, TQueryData = UserByIDQueryResponse, TQueryKey extends QueryKey = UserByIDQueryKey>({ id }: { id: UserByIDPathParams["id"] }, options: 
 {
   query?: Partial<QueryObserverOptions<UserByIDQueryResponse, ResponseErrorConfig<UserByID400 | UserByID404 | UserByID500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiUserByID<TData = UserByIDQueryResponse, TQueryData = UserB
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? useApirByIDQueryKeyFn(id)
+  const queryKey = queryOptions?.queryKey ?? useApirByIDQueryKeyFn({ id })
 
   const query = useQuery({
-   ...useApirByIDQueryOptions(id, config),
+   ...useApirByIDQueryOptions({ id }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<UserByID400 | UserByID404 | UserByID500>> & { queryKey: TQueryKey }

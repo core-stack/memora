@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { folderByIDQueryResponseSchema } from "../zod/folderByIDSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const folderByIDQueryKeyFn = (id: FolderByIDPathParams["id"], tenantId: FolderByIDPathParams["tenantId"], knowledgeId: FolderByIDPathParams["knowledgeId"]) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id', params: {tenantId:tenantId,knowledgeId:knowledgeId,id:id} }] as const
+export const folderByIDQueryKeyFn = ({ id, tenantId, knowledgeId }: { id: FolderByIDPathParams["id"]; tenantId: FolderByIDPathParams["tenantId"]; knowledgeId: FolderByIDPathParams["knowledgeId"] }) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id', params: {tenantId:tenantId,knowledgeId:knowledgeId,id:id} }] as const
 
 export type FolderByIDQueryKey = ReturnType<typeof folderByIDQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id}
  */
-export async function folderByID(id: FolderByIDPathParams["id"], tenantId: FolderByIDPathParams["tenantId"], knowledgeId: FolderByIDPathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function folderByID({ id, tenantId, knowledgeId }: { id: FolderByIDPathParams["id"]; tenantId: FolderByIDPathParams["tenantId"]; knowledgeId: FolderByIDPathParams["knowledgeId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<FolderByIDQueryResponse, ResponseErrorConfig<FolderByID400 | FolderByID404 | FolderByID500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/folder/${id}`, baseURL : "/", ... requestConfig })  
   return folderByIDQueryResponseSchema.parse(res.data)
 }
 
-export function folderByIDQueryOptions(id: FolderByIDPathParams["id"], tenantId: FolderByIDPathParams["tenantId"], knowledgeId: FolderByIDPathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = folderByIDQueryKeyFn(id, tenantId, knowledgeId)
+export function folderByIDQueryOptions({ id, tenantId, knowledgeId }: { id: FolderByIDPathParams["id"]; tenantId: FolderByIDPathParams["tenantId"]; knowledgeId: FolderByIDPathParams["knowledgeId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = folderByIDQueryKeyFn({ id, tenantId, knowledgeId })
   return queryOptions<FolderByIDQueryResponse, ResponseErrorConfig<FolderByID400 | FolderByID404 | FolderByID500>, FolderByIDQueryResponse, typeof queryKey>({
    enabled: !!(id&& tenantId&& knowledgeId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return folderByID(id, tenantId, knowledgeId, config)
+      return folderByID({ id, tenantId, knowledgeId }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function folderByIDQueryOptions(id: FolderByIDPathParams["id"], tenantId:
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/folder/:id}
  */
-export function useApiFolderByID<TData = FolderByIDQueryResponse, TQueryData = FolderByIDQueryResponse, TQueryKey extends QueryKey = FolderByIDQueryKey>(id: FolderByIDPathParams["id"], tenantId: FolderByIDPathParams["tenantId"], knowledgeId: FolderByIDPathParams["knowledgeId"], options: 
+export function useApiFolderByID<TData = FolderByIDQueryResponse, TQueryData = FolderByIDQueryResponse, TQueryKey extends QueryKey = FolderByIDQueryKey>({ id, tenantId, knowledgeId }: { id: FolderByIDPathParams["id"]; tenantId: FolderByIDPathParams["tenantId"]; knowledgeId: FolderByIDPathParams["knowledgeId"] }, options: 
 {
   query?: Partial<QueryObserverOptions<FolderByIDQueryResponse, ResponseErrorConfig<FolderByID400 | FolderByID404 | FolderByID500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiFolderByID<TData = FolderByIDQueryResponse, TQueryData = F
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? folderByIDQueryKeyFn(id, tenantId, knowledgeId)
+  const queryKey = queryOptions?.queryKey ?? folderByIDQueryKeyFn({ id, tenantId, knowledgeId })
 
   const query = useQuery({
-   ...folderByIDQueryOptions(id, tenantId, knowledgeId, config),
+   ...folderByIDQueryOptions({ id, tenantId, knowledgeId }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<FolderByID400 | FolderByID404 | FolderByID500>> & { queryKey: TQueryKey }

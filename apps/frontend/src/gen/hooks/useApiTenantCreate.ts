@@ -17,7 +17,7 @@ export type TenantCreateMutationKey = ReturnType<typeof tenantCreateMutationKey>
 /**
  * {@link /api/tenant}
  */
-export async function tenantCreate(data: TenantCreateMutationRequest, config: Partial<RequestConfig<TenantCreateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function tenantCreate({ data }: { data: TenantCreateMutationRequest }, config: Partial<RequestConfig<TenantCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = tenantCreateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function tenantCreateMutationOptions(config: Partial<RequestConfig<Tenant
   return mutationOptions<TenantCreateMutationResponse, ResponseErrorConfig<TenantCreate400 | TenantCreate409 | TenantCreate500>, {data: TenantCreateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ data }) => {
-      return tenantCreate(data, config)
+      return tenantCreate({ data }, config)
     },
   })
 }

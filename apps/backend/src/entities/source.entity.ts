@@ -1,16 +1,19 @@
 import {
   Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { Field } from "@/shared/model";
-import { FromParams, TenantId } from "../shared/controller/decorators/context";
-import { FolderEntity } from "./folder.entity";
-import { KnowledgeEntity } from "./knowledge.entity";
-import { SourceType } from "./metadata.types";
-import { TenantEntity } from "./tenant.entity";
+import { Field } from '@/shared/model';
+import { ApiExtraModels } from '@nestjs/swagger';
+
+import { FromParams, TenantId } from '../shared/controller/decorators/context';
+import { FolderEntity } from './folder.entity';
+import { KnowledgeEntity } from './knowledge.entity';
+import {
+  SourceAudioMetadata, SourceDocMetadata, SourceImageMetadata, SourceType, SourceVideoMetadata
+} from './metadata.types';
+import { TenantEntity } from './tenant.entity';
 
 import type { SourceMetadata } from "./metadata.types";
-
 export enum IndexStatus {
   PENDING = "PENDING",
   INDEXING = "INDEXING",
@@ -22,6 +25,7 @@ export enum IndexStatus {
 @Index("sources_memory_idx", [ "memoryId" ])
 @Index("sources_key_idx", [ "key" ])
 @Index("sources_index_status_idx", [ "indexStatus" ])
+@ApiExtraModels(SourceDocMetadata, SourceImageMetadata, SourceVideoMetadata, SourceAudioMetadata)
 export class SourceEntity {
   @Field({ type: "string", uuid: true, description: "The unique identifier of the source" })
   @PrimaryGeneratedColumn("uuid")
@@ -47,7 +51,16 @@ export class SourceEntity {
   @Column({ name: "original_name", length: 255, nullable: true })
   originalName?: string;
 
-  @Field({ type: "class", class: () => Object, description: "The metadata of the source" })
+  @Field({
+    type: "oneOf",
+    classes: [
+      () => SourceDocMetadata,
+      () => SourceImageMetadata,
+      () => SourceVideoMetadata,
+      () => SourceAudioMetadata
+    ],
+    description: "The metadata of the source"
+  })
   @Column({ type: "jsonb" })
   metadata: SourceMetadata;
 
@@ -108,4 +121,8 @@ export class SourceEntity {
   @Field({ type: "date", description: "The timestamp when the source was last updated" })
   @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
   updatedAt: Date;
+
+  constructor(source: Partial<SourceEntity>) {
+    Object.assign(this, source);
+  }
 }

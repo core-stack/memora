@@ -3,42 +3,53 @@
 import type { UploadedFile } from '@/components/file-uploader';
 
 import { FileUploader } from '@/components/file-uploader';
+import { useApiSourceCreate, useApiSourceUpload } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
+import { useKnowledge } from '@/hooks/use-knowledge';
+import { useTenant } from '@/hooks/use-tenant';
 import { useToast } from '@/hooks/use-toast';
 import { getFileMetadata } from '@/lib/metadata';
 
 import { DialogType } from '../';
 
-import type { CreateSource, GetFileUrlResponse } from '@snipet/schemas';
+import type { FileURLResponseDto } from '@/gen';
 
 type Props = { folderId?: string; }
 
 export const CreateSourceFile = ({ folderId }: Props) => {
-  const { mutateAsync: generateUrl } = useApiMutation("/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/upload-url", { method: "POST" });
+  const { mutateAsync: generateUrl } = useApiSourceUpload();
+  
+  const { tenant } = useTenant();
+  const { knowledge } = useKnowledge();
+
   const { closeDialog } = useDialog();
   const { toast } = useToast();
 
-  const generateUploadUrl = async (info: UploadedFile): Promise<GetFileUrlResponse> => {
+  const generateUploadUrl = async (info: UploadedFile): Promise<FileURLResponseDto> => {
     return await generateUrl({
-      body: { fileName: info.name, contentType: info.type, fileSize: info.size }
+      data: { fileName: info.name, contentType: info.type, fileSize: info.size },
+      tenantId: tenant?.id ?? "",
+      knowledgeId: knowledge?.id ?? ""
     });
   }
 
   const invalidate = useApiInvalidate();
-  const { mutateAsync: createSource } = useApiMutation("/api/tenant/:tenantId/knowledge/:knowledgeSlug/source", { method: "POST" });
+  const { mutateAsync: createSource } = useApiSourceCreate();
   const onUploadComplete = async (f: UploadedFile) => {
     const metadata = await getFileMetadata(f.file);
-    const body: CreateSource = {
-      metadata: metadata as any,
-      sourceType: metadata.type,
-      originalName: f.name,
-      name: f.name,
-      folderId,
-      key: f.key,
-    }
-    await createSource({ body }, {
+    await createSource({ 
+      knowledgeId: knowledge?.id ?? "",
+      tenantId: tenant?.id ?? "",
+      data: {
+        originalName: f.name,
+        name: f.name,
+        key: f.key,
+        folderId,
+        metadata,
+        sourceType: metadata.type,
+      }
+     }, {
       onError(error) {
         toast({ title:"Error processing source", description: error.message, variant: "destructive" });
       }

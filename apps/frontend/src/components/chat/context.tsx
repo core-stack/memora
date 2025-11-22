@@ -1,10 +1,17 @@
 import React, { createContext } from 'react';
 
+import {
+  chatQueryKeyFn, messageQueryKeyFn, useApiChatByID, useApiChatCreate, useApiMessage,
+  useApiMessageNewMessage
+} from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useParams } from '@/hooks/use-params';
 import { useRouter } from '@/hooks/use-router';
 
-import { chatQueryKeyFn, messageQueryKeyFn, useApiChatByID, useApiChatCreate, useApiMessage, useApiMessageNewMessage, type ChatEntity, type MessageEntity } from '@/gen';
+import type {
+  ChatEntity, KnowledgeEntity, MessageEntity, TenantEntity,
+} from '@/gen';
+
 type ChatContextType = {
   chat?: ChatEntity;
   loadingChat: boolean;
@@ -15,29 +22,26 @@ type ChatContextType = {
 }
 
 const ChatContext = createContext<ChatContextType>({} as ChatContextType);
-type ChatProviderProps = {
+export type ChatProviderProps = {
   children: React.ReactNode;
   chatId?: string;
-  tenantId: string;
-  knowledgeId: string;
+  tenant: TenantEntity;
+  knowledge: KnowledgeEntity;
 }
 
-export const ChatProvider = ({ children, chatId, knowledgeId, tenantId }: ChatProviderProps) => {
+export const ChatProvider = ({ children, chatId, knowledge, tenant }: ChatProviderProps) => {
   const { chatId: routerChatId, knowledgeSlug } = useParams<{ knowledgeSlug: string, chatId?: string }>();
+  const tenantId = tenant.id;
+  const knowledgeId = knowledge.id;
   chatId = chatId ?? routerChatId;
-
   const invalidate = useApiInvalidate();
 
   const router = useRouter();
   const { data: messages = [], isLoading: loadingMessages } = useApiMessage(
-    tenantId, knowledgeId, chatId ?? "",
-    { },
-    { query: { enabled: !!chatId } }
+    { chatId: chatId ?? "", knowledgeId, tenantId }, { query: { enabled: !!chatId } }
   );
-
   const { data: chat, isLoading: loadingChat } = useApiChatByID(
-    chatId ?? "", tenantId, knowledgeId,
-    { query: { enabled: !!chatId } }
+    { id: chatId ?? "", knowledgeId, tenantId }, { query: { enabled: !!chatId } }
   );
 
   const { mutate: createChatMutation } = useApiChatCreate();
@@ -50,15 +54,13 @@ export const ChatProvider = ({ children, chatId, knowledgeId, tenantId }: ChatPr
       return;
     }
     sendChatMessage({
-      chatId: chatId ?? "",
-      knowledgeId,
-      tenantId,
+      chatId: chatId ?? "", knowledgeId, tenantId,
       data: { content: message }
     }, {
       onSuccess: () => {
         invalidate(
-          messageQueryKeyFn(tenantId, knowledgeId, chatId ?? ""),
-          chatQueryKeyFn(tenantId, knowledgeId)
+          messageQueryKeyFn({ tenantId, knowledgeId, chatId: chatId ?? ""}),
+          chatQueryKeyFn({ tenantId, knowledgeId })
         )
       }
     });
@@ -69,7 +71,7 @@ export const ChatProvider = ({ children, chatId, knowledgeId, tenantId }: ChatPr
       {
         onSuccess: async (data) => {
           router.replace(`/${knowledgeSlug}/chat/${data.id}`);
-          await invalidate(chatQueryKeyFn(tenantId, knowledgeId));
+          await invalidate(chatQueryKeyFn({ tenantId, knowledgeId }));
           sendMessage(initialMessage, data);
         }
       }

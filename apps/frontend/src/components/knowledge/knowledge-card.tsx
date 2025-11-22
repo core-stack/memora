@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Link } from '@/components/ui/link';
 import { Tooltip, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { DialogType } from '@/dialogs';
-import { knowledgeQueryKey, useApiKnowledgeDelete } from '@/gen';
+import { knowledgeQueryKeyFn, useApiKnowledgeDelete } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useDialog } from '@/hooks/use-dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -39,7 +39,7 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
                   title: "Delete knowledge base",
                   description: "The knowledge base has been added to deletion queue, and will be deleted soon."
                 })
-                await invalidate(knowledgeQueryKey(knowledge.tenantId));
+                await invalidate(knowledgeQueryKeyFn({ tenantId: knowledge.tenantId }));
                 closeDialog(DialogType.CONFIRM)
               }
             })

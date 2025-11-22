@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryRe
 import { inviteByIDQueryResponseSchema } from "../zod/inviteByIDSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const inviteByIDSuspenseQueryKeyFn = (id: InviteByIDPathParams["id"], tenantId: InviteByIDPathParams["tenantId"]) => [{ url: '/api/tenant/:tenantId/invite/:id', params: {tenantId:tenantId,id:id} }] as const
+export const inviteByIDSuspenseQueryKeyFn = ({ id, tenantId }: { id: InviteByIDPathParams["id"]; tenantId: InviteByIDPathParams["tenantId"] }) => [{ url: '/api/tenant/:tenantId/invite/:id', params: {tenantId:tenantId,id:id} }] as const
 
 export type InviteByIDSuspenseQueryKey = ReturnType<typeof inviteByIDSuspenseQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/invite/:id}
  */
-export async function inviteByIDSuspense(id: InviteByIDPathParams["id"], tenantId: InviteByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function inviteByIDSuspense({ id, tenantId }: { id: InviteByIDPathParams["id"]; tenantId: InviteByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<InviteByIDQueryResponse, ResponseErrorConfig<InviteByID400 | InviteByID404 | InviteByID500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/invite/${id}`, baseURL : "/", ... requestConfig })  
   return inviteByIDQueryResponseSchema.parse(res.data)
 }
 
-export function inviteByIDSuspenseQueryOptions(id: InviteByIDPathParams["id"], tenantId: InviteByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = inviteByIDSuspenseQueryKeyFn(id, tenantId)
+export function inviteByIDSuspenseQueryOptions({ id, tenantId }: { id: InviteByIDPathParams["id"]; tenantId: InviteByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = inviteByIDSuspenseQueryKeyFn({ id, tenantId })
   return queryOptions<InviteByIDQueryResponse, ResponseErrorConfig<InviteByID400 | InviteByID404 | InviteByID500>, InviteByIDQueryResponse, typeof queryKey>({
    enabled: !!(id&& tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return inviteByIDSuspense(id, tenantId, config)
+      return inviteByIDSuspense({ id, tenantId }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function inviteByIDSuspenseQueryOptions(id: InviteByIDPathParams["id"], t
 /**
  * {@link /api/tenant/:tenantId/invite/:id}
  */
-export function useApiInviteByIDSuspense<TData = InviteByIDQueryResponse, TQueryKey extends QueryKey = InviteByIDSuspenseQueryKey>(id: InviteByIDPathParams["id"], tenantId: InviteByIDPathParams["tenantId"], options: 
+export function useApiInviteByIDSuspense<TData = InviteByIDQueryResponse, TQueryKey extends QueryKey = InviteByIDSuspenseQueryKey>({ id, tenantId }: { id: InviteByIDPathParams["id"]; tenantId: InviteByIDPathParams["tenantId"] }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<InviteByIDQueryResponse, ResponseErrorConfig<InviteByID400 | InviteByID404 | InviteByID500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiInviteByIDSuspense<TData = InviteByIDQueryResponse, TQuery
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? inviteByIDSuspenseQueryKeyFn(id, tenantId)
+  const queryKey = queryOptions?.queryKey ?? inviteByIDSuspenseQueryKeyFn({ id, tenantId })
 
   const query = useSuspenseQuery({
-   ...inviteByIDSuspenseQueryOptions(id, tenantId, config),
+   ...inviteByIDSuspenseQueryOptions({ id, tenantId }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<InviteByID400 | InviteByID404 | InviteByID500>> & { queryKey: TQueryKey }

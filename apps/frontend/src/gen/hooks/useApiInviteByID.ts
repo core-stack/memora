@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { inviteByIDQueryResponseSchema } from "../zod/inviteByIDSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const inviteByIDQueryKeyFn = (id: InviteByIDPathParams["id"], tenantId: InviteByIDPathParams["tenantId"]) => [{ url: '/api/tenant/:tenantId/invite/:id', params: {tenantId:tenantId,id:id} }] as const
+export const inviteByIDQueryKeyFn = ({ id, tenantId }: { id: InviteByIDPathParams["id"]; tenantId: InviteByIDPathParams["tenantId"] }) => [{ url: '/api/tenant/:tenantId/invite/:id', params: {tenantId:tenantId,id:id} }] as const
 
 export type InviteByIDQueryKey = ReturnType<typeof inviteByIDQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/invite/:id}
  */
-export async function inviteByID(id: InviteByIDPathParams["id"], tenantId: InviteByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function inviteByID({ id, tenantId }: { id: InviteByIDPathParams["id"]; tenantId: InviteByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<InviteByIDQueryResponse, ResponseErrorConfig<InviteByID400 | InviteByID404 | InviteByID500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/invite/${id}`, baseURL : "/", ... requestConfig })  
   return inviteByIDQueryResponseSchema.parse(res.data)
 }
 
-export function inviteByIDQueryOptions(id: InviteByIDPathParams["id"], tenantId: InviteByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = inviteByIDQueryKeyFn(id, tenantId)
+export function inviteByIDQueryOptions({ id, tenantId }: { id: InviteByIDPathParams["id"]; tenantId: InviteByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = inviteByIDQueryKeyFn({ id, tenantId })
   return queryOptions<InviteByIDQueryResponse, ResponseErrorConfig<InviteByID400 | InviteByID404 | InviteByID500>, InviteByIDQueryResponse, typeof queryKey>({
    enabled: !!(id&& tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return inviteByID(id, tenantId, config)
+      return inviteByID({ id, tenantId }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function inviteByIDQueryOptions(id: InviteByIDPathParams["id"], tenantId:
 /**
  * {@link /api/tenant/:tenantId/invite/:id}
  */
-export function useApiInviteByID<TData = InviteByIDQueryResponse, TQueryData = InviteByIDQueryResponse, TQueryKey extends QueryKey = InviteByIDQueryKey>(id: InviteByIDPathParams["id"], tenantId: InviteByIDPathParams["tenantId"], options: 
+export function useApiInviteByID<TData = InviteByIDQueryResponse, TQueryData = InviteByIDQueryResponse, TQueryKey extends QueryKey = InviteByIDQueryKey>({ id, tenantId }: { id: InviteByIDPathParams["id"]; tenantId: InviteByIDPathParams["tenantId"] }, options: 
 {
   query?: Partial<QueryObserverOptions<InviteByIDQueryResponse, ResponseErrorConfig<InviteByID400 | InviteByID404 | InviteByID500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiInviteByID<TData = InviteByIDQueryResponse, TQueryData = I
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? inviteByIDQueryKeyFn(id, tenantId)
+  const queryKey = queryOptions?.queryKey ?? inviteByIDQueryKeyFn({ id, tenantId })
 
   const query = useQuery({
-   ...inviteByIDQueryOptions(id, tenantId, config),
+   ...inviteByIDQueryOptions({ id, tenantId }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<InviteByID400 | InviteByID404 | InviteByID500>> & { queryKey: TQueryKey }

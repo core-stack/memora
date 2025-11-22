@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { roleByIDQueryResponseSchema } from "../zod/roleByIDSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const roleByIDQueryKeyFn = (id: RoleByIDPathParams["id"], tenantId: RoleByIDPathParams["tenantId"]) => [{ url: '/api/tenant/:tenantId/role/:id', params: {tenantId:tenantId,id:id} }] as const
+export const roleByIDQueryKeyFn = ({ id, tenantId }: { id: RoleByIDPathParams["id"]; tenantId: RoleByIDPathParams["tenantId"] }) => [{ url: '/api/tenant/:tenantId/role/:id', params: {tenantId:tenantId,id:id} }] as const
 
 export type RoleByIDQueryKey = ReturnType<typeof roleByIDQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/role/:id}
  */
-export async function roleByID(id: RoleByIDPathParams["id"], tenantId: RoleByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function roleByID({ id, tenantId }: { id: RoleByIDPathParams["id"]; tenantId: RoleByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<RoleByIDQueryResponse, ResponseErrorConfig<RoleByID400 | RoleByID404 | RoleByID500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/role/${id}`, baseURL : "/", ... requestConfig })  
   return roleByIDQueryResponseSchema.parse(res.data)
 }
 
-export function roleByIDQueryOptions(id: RoleByIDPathParams["id"], tenantId: RoleByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = roleByIDQueryKeyFn(id, tenantId)
+export function roleByIDQueryOptions({ id, tenantId }: { id: RoleByIDPathParams["id"]; tenantId: RoleByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = roleByIDQueryKeyFn({ id, tenantId })
   return queryOptions<RoleByIDQueryResponse, ResponseErrorConfig<RoleByID400 | RoleByID404 | RoleByID500>, RoleByIDQueryResponse, typeof queryKey>({
    enabled: !!(id&& tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return roleByID(id, tenantId, config)
+      return roleByID({ id, tenantId }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function roleByIDQueryOptions(id: RoleByIDPathParams["id"], tenantId: Rol
 /**
  * {@link /api/tenant/:tenantId/role/:id}
  */
-export function useApiRoleByID<TData = RoleByIDQueryResponse, TQueryData = RoleByIDQueryResponse, TQueryKey extends QueryKey = RoleByIDQueryKey>(id: RoleByIDPathParams["id"], tenantId: RoleByIDPathParams["tenantId"], options: 
+export function useApiRoleByID<TData = RoleByIDQueryResponse, TQueryData = RoleByIDQueryResponse, TQueryKey extends QueryKey = RoleByIDQueryKey>({ id, tenantId }: { id: RoleByIDPathParams["id"]; tenantId: RoleByIDPathParams["tenantId"] }, options: 
 {
   query?: Partial<QueryObserverOptions<RoleByIDQueryResponse, ResponseErrorConfig<RoleByID400 | RoleByID404 | RoleByID500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiRoleByID<TData = RoleByIDQueryResponse, TQueryData = RoleB
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? roleByIDQueryKeyFn(id, tenantId)
+  const queryKey = queryOptions?.queryKey ?? roleByIDQueryKeyFn({ id, tenantId })
 
   const query = useQuery({
-   ...roleByIDQueryOptions(id, tenantId, config),
+   ...roleByIDQueryOptions({ id, tenantId }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<RoleByID400 | RoleByID404 | RoleByID500>> & { queryKey: TQueryKey }

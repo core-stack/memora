@@ -7,7 +7,7 @@ import fetch from "@kubb/plugin-client/clients/axios";
 import type { LLMDeleteMutationResponse, LLMDeletePathParams, LLMDelete400, LLMDelete404, LLMDelete500 } from "../types/LLMDelete.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
-import { LLMDeleteMutationResponseSchema } from "../zod/LLMDeleteSchema.ts";
+import { llmdeleteMutationResponseSchema } from "../zod/LLMDeleteSchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const LLMDeleteMutationKey = () => [{ url: '/api/tenant/:tenantId/llm/:id' }] as const
@@ -17,11 +17,11 @@ export type LLMDeleteMutationKey = ReturnType<typeof LLMDeleteMutationKey>
 /**
  * {@link /api/tenant/:tenantId/llm/:id}
  */
-export async function LLMDelete(id: LLMDeletePathParams["id"], tenantId: LLMDeletePathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function LLMDelete({ id, tenantId }: { id: LLMDeletePathParams["id"]; tenantId: LLMDeletePathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<LLMDeleteMutationResponse, ResponseErrorConfig<LLMDelete400 | LLMDelete404 | LLMDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/llm/${id}`, baseURL : "/", ... requestConfig })  
-  return LLMDeleteMutationResponseSchema.parse(res.data)
+  return llmdeleteMutationResponseSchema.parse(res.data)
 }
 
 export function LLMDeleteMutationOptions(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
@@ -29,7 +29,7 @@ export function LLMDeleteMutationOptions(config: Partial<RequestConfig> & { clie
   return mutationOptions<LLMDeleteMutationResponse, ResponseErrorConfig<LLMDelete400 | LLMDelete404 | LLMDelete500>, {id: LLMDeletePathParams["id"], tenantId: LLMDeletePathParams["tenantId"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId }) => {
-      return LLMDelete(id, tenantId, config)
+      return LLMDelete({ id, tenantId }, config)
     },
   })
 }

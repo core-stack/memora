@@ -26,7 +26,6 @@ export function LLMListItem({ llm, preset, tenantId }: LLMListItemProps) {
   const { toast } = useToast();
   const { openDialog } = useDialog();
   const { mutate } = useApiLLMDelete();
-  // const { mutate } = useApiMutation("/api/tenant/:tenantId/llm/:id",  { method: "DELETE" });
 
   const handleDelete = () => {
     openDialog({
@@ -40,7 +39,7 @@ export function LLMListItem({ llm, preset, tenantId }: LLMListItemProps) {
             mutate({ id: llm.id, tenantId }, { 
               onSuccess: () => {
                 toast({ title: "Delete LLM", description: "The LLM has been deleted." })
-                invalidate(LLMQueryKeyFn(tenantId));
+                invalidate(LLMQueryKeyFn({ tenantId }));
               }
             })
           }

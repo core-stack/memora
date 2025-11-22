@@ -1,31 +1,28 @@
 "use client";
 
 import { ConfirmDialog } from './confirm';
-import { CreateKnowledgeFolderDialog } from './create-folder';
+import { CreateFolderDialog } from './create-folder';
 import { ConfigureLLDialog } from './create-llm/configure-llm';
 import { SelectPresetDialog } from './create-llm/select-preset';
 import { CreateOrUpdateKnowledgeDialog } from './create-or-update-knowledge';
 import { CreateSourceDialog } from './create-source';
 import { CreateTenantDialog } from './create-tenant';
-import { InstallPluginDialog } from './install-plugin';
 import { InviteMemberDialog } from './invite-member';
 import { SearchDialog } from './search';
 import { SelectTenantDialog } from './select-tenant';
 
 import type { SelectTenantDialogProps } from './select-tenant';
-import type { InstallPluginProps } from './install-plugin';
 import type { SelectPresetDialogProps } from './create-llm/select-preset';
 import type { ConfigureLLDialogProps } from './create-llm/configure-llm';
 import type { ConfirmDialogProps } from "./confirm";
 import type { CreateOrUpdateKnowledgeDialogProps } from "./create-or-update-knowledge";
-import type { CreateKnowledgeFolderDialogProps } from "./create-folder";
+import type { CreateFolderDialogProps } from "./create-folder";
 import type { CreateSourceDialogProps } from "./create-source";
 
 export enum DialogType {
   CREATE_SOURCE = "create-source",
   CREATE_FOLDER = "create-folder",
   CREATE_OR_UPDATE_KNOWLEDGE = "create-knowledge",
-  INSTALL_PLUGIN = "install-plugin",
   SEARCH = "search",
   CONFIRM = "confirm",
   SELECT_LLM_PRESET = "select-llm-preset",
@@ -37,9 +34,8 @@ export enum DialogType {
 
 export const dialogs = {
   [DialogType.CREATE_SOURCE]: (props: CreateSourceDialogProps) => <CreateSourceDialog {...props} />,
-  [DialogType.CREATE_FOLDER]: (props: CreateKnowledgeFolderDialogProps) => <CreateKnowledgeFolderDialog {...props} />,
+  [DialogType.CREATE_FOLDER]: (props: CreateFolderDialogProps) => <CreateFolderDialog {...props} />,
   [DialogType.CREATE_OR_UPDATE_KNOWLEDGE]: (props: CreateOrUpdateKnowledgeDialogProps) => <CreateOrUpdateKnowledgeDialog {...props} />,
-  [DialogType.INSTALL_PLUGIN]: (props: InstallPluginProps) => <InstallPluginDialog {...props} />,
   [DialogType.SEARCH]: () => <SearchDialog />,
   [DialogType.CONFIRM]: (props: ConfirmDialogProps) => <ConfirmDialog {...props} />,
   [DialogType.CONFIGURE_LLM]: (props: ConfigureLLDialogProps) => <ConfigureLLDialog {...props} />,

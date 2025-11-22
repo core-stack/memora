@@ -11,15 +11,13 @@ import { Separator } from '@/components/ui/separator';
 import { DateFormat, useDateTimeFormat } from '@/hooks/use-date-time-format';
 import { cn } from '@/lib/utils';
 import { formatBytes, formatDuration } from '@/utils/format';
-import { SourceType } from '@snipet/schemas';
 
 import { IndexStatusBadge } from './index-status-badge';
 
-import type { SourceEntity } from '@/gen';
+import type { SourceEntity, SourceImageMetadata, SourceVideoMetadata } from '@/gen';
 
 interface FileInfoPanelProps {
   item?: SourceEntity;
-  isLoading: boolean;
   onClose?: () => void
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
@@ -113,22 +111,22 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
                 </div>
               )} */}
 
-              {item?.metadata.type === SourceType.IMAGE && (
+              {item?.metadata.type === "IMAGE" && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Dimensions</span>
                   <span className="text-sm">
-                    {item?.metadata.width} × {item?.metadata.height}
+                    {(item?.metadata as SourceImageMetadata).width} × {(item?.metadata as SourceImageMetadata).height}
                   </span>
                 </div>
               )}
 
-              {item?.metadata.type === SourceType.VIDEO && (
+              {item?.metadata.type === "VIDEO" && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground flex items-center gap-2">
                     <Clock className="h-4 w-4" />
                     Duration
                   </span>
-                  <span className="text-sm">{formatDuration(item?.metadata.duration)}</span>
+                  <span className="text-sm">{formatDuration((item?.metadata as SourceVideoMetadata).duration)}</span>
                 </div>
               )}
 
@@ -148,22 +146,6 @@ export function FileInfoPanel({ item, onClose, onEdit, onDelete, onShare, classN
                   <p className="text-sm bg-muted p-2 rounded text-pretty">{item?.description}</p>
                 </div>
               )}
-
-              {/* {item?.metadata.tags && item?.metadata.tags.length > 0 && (
-                <div className="space-y-2">
-                  <span className="text-sm text-muted-foreground flex items-center gap-2">
-                    <Tag className="h-4 w-4" />
-                    Tags
-                  </span>
-                  <div className="flex flex-wrap gap-1">
-                    {item?.metadata.tags.map((tag: string, index: number) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )} */}
             </div>
           </>
         )}

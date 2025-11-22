@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { accountByIDQueryResponseSchema } from "../zod/accountByIDSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const accountByIDQueryKeyFn = (id: AccountByIDPathParams["id"]) => [{ url: '/api/account/:id', params: {id:id} }] as const
+export const accountByIDQueryKeyFn = ({ id }: { id: AccountByIDPathParams["id"] }) => [{ url: '/api/account/:id', params: {id:id} }] as const
 
 export type AccountByIDQueryKey = ReturnType<typeof accountByIDQueryKeyFn>
 
 /**
  * {@link /api/account/:id}
  */
-export async function accountByID(id: AccountByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function accountByID({ id }: { id: AccountByIDPathParams["id"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<AccountByIDQueryResponse, ResponseErrorConfig<AccountByID400 | AccountByID404 | AccountByID500>, unknown>({ method : "GET", url : `/api/account/${id}`, baseURL : "/", ... requestConfig })  
   return accountByIDQueryResponseSchema.parse(res.data)
 }
 
-export function accountByIDQueryOptions(id: AccountByIDPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = accountByIDQueryKeyFn(id)
+export function accountByIDQueryOptions({ id }: { id: AccountByIDPathParams["id"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = accountByIDQueryKeyFn({ id })
   return queryOptions<AccountByIDQueryResponse, ResponseErrorConfig<AccountByID400 | AccountByID404 | AccountByID500>, AccountByIDQueryResponse, typeof queryKey>({
    enabled: !!(id),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return accountByID(id, config)
+      return accountByID({ id }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function accountByIDQueryOptions(id: AccountByIDPathParams["id"], config:
 /**
  * {@link /api/account/:id}
  */
-export function useApiAccountByID<TData = AccountByIDQueryResponse, TQueryData = AccountByIDQueryResponse, TQueryKey extends QueryKey = AccountByIDQueryKey>(id: AccountByIDPathParams["id"], options: 
+export function useApiAccountByID<TData = AccountByIDQueryResponse, TQueryData = AccountByIDQueryResponse, TQueryKey extends QueryKey = AccountByIDQueryKey>({ id }: { id: AccountByIDPathParams["id"] }, options: 
 {
   query?: Partial<QueryObserverOptions<AccountByIDQueryResponse, ResponseErrorConfig<AccountByID400 | AccountByID404 | AccountByID500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiAccountByID<TData = AccountByIDQueryResponse, TQueryData =
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? accountByIDQueryKeyFn(id)
+  const queryKey = queryOptions?.queryKey ?? accountByIDQueryKeyFn({ id })
 
   const query = useQuery({
-   ...accountByIDQueryOptions(id, config),
+   ...accountByIDQueryOptions({ id }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<AccountByID400 | AccountByID404 | AccountByID500>> & { queryKey: TQueryKey }

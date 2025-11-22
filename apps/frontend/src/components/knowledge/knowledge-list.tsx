@@ -9,7 +9,7 @@ import { useApiKnowledge } from '@/gen';
 import { KnowledgeCard } from './knowledge-card';
 
 export function KnowledgeList({ tenantId } :{ tenantId: string } ) {
-  const { data: knowledges = [] } = useApiKnowledge(tenantId);
+  const { data: knowledges = [] } = useApiKnowledge({ tenantId });
 
   const [searchQuery, setSearchQuery] = useState("");
 

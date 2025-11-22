@@ -7,31 +7,31 @@ import fetch from "@kubb/plugin-client/clients/axios";
 import type { LLMByIDQueryResponse, LLMByIDPathParams, LLMByID400, LLMByID404, LLMByID500 } from "../types/LLMByID.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
-import { LLMByIDQueryResponseSchema } from "../zod/LLMByIDSchema.ts";
+import { llmbyIDQueryResponseSchema } from "../zod/LLMByIDSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const LLMByIDSuspenseQueryKeyFn = (id: LLMByIDPathParams["id"], tenantId: LLMByIDPathParams["tenantId"]) => [{ url: '/api/tenant/:tenantId/llm/:id', params: {tenantId:tenantId,id:id} }] as const
+export const LLMByIDSuspenseQueryKeyFn = ({ id, tenantId }: { id: LLMByIDPathParams["id"]; tenantId: LLMByIDPathParams["tenantId"] }) => [{ url: '/api/tenant/:tenantId/llm/:id', params: {tenantId:tenantId,id:id} }] as const
 
 export type LLMByIDSuspenseQueryKey = ReturnType<typeof LLMByIDSuspenseQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/llm/:id}
  */
-export async function LLMByIDSuspense(id: LLMByIDPathParams["id"], tenantId: LLMByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function LLMByIDSuspense({ id, tenantId }: { id: LLMByIDPathParams["id"]; tenantId: LLMByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<LLMByIDQueryResponse, ResponseErrorConfig<LLMByID400 | LLMByID404 | LLMByID500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/llm/${id}`, baseURL : "/", ... requestConfig })  
-  return LLMByIDQueryResponseSchema.parse(res.data)
+  return llmbyIDQueryResponseSchema.parse(res.data)
 }
 
-export function LLMByIDSuspenseQueryOptions(id: LLMByIDPathParams["id"], tenantId: LLMByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = LLMByIDSuspenseQueryKeyFn(id, tenantId)
+export function LLMByIDSuspenseQueryOptions({ id, tenantId }: { id: LLMByIDPathParams["id"]; tenantId: LLMByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = LLMByIDSuspenseQueryKeyFn({ id, tenantId })
   return queryOptions<LLMByIDQueryResponse, ResponseErrorConfig<LLMByID400 | LLMByID404 | LLMByID500>, LLMByIDQueryResponse, typeof queryKey>({
    enabled: !!(id&& tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return LLMByIDSuspense(id, tenantId, config)
+      return LLMByIDSuspense({ id, tenantId }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function LLMByIDSuspenseQueryOptions(id: LLMByIDPathParams["id"], tenantI
 /**
  * {@link /api/tenant/:tenantId/llm/:id}
  */
-export function useApiLLMByIDSuspense<TData = LLMByIDQueryResponse, TQueryKey extends QueryKey = LLMByIDSuspenseQueryKey>(id: LLMByIDPathParams["id"], tenantId: LLMByIDPathParams["tenantId"], options: 
+export function useApiLLMByIDSuspense<TData = LLMByIDQueryResponse, TQueryKey extends QueryKey = LLMByIDSuspenseQueryKey>({ id, tenantId }: { id: LLMByIDPathParams["id"]; tenantId: LLMByIDPathParams["tenantId"] }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<LLMByIDQueryResponse, ResponseErrorConfig<LLMByID400 | LLMByID404 | LLMByID500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiLLMByIDSuspense<TData = LLMByIDQueryResponse, TQueryKey ex
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? LLMByIDSuspenseQueryKeyFn(id, tenantId)
+  const queryKey = queryOptions?.queryKey ?? LLMByIDSuspenseQueryKeyFn({ id, tenantId })
 
   const query = useSuspenseQuery({
-   ...LLMByIDSuspenseQueryOptions(id, tenantId, config),
+   ...LLMByIDSuspenseQueryOptions({ id, tenantId }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<LLMByID400 | LLMByID404 | LLMByID500>> & { queryKey: TQueryKey }

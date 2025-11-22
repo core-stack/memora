@@ -17,7 +17,7 @@ export type ChatCreateMutationKey = ReturnType<typeof chatCreateMutationKey>
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat}
  */
-export async function chatCreate(tenantId: ChatCreatePathParams["tenantId"], knowledgeId: ChatCreatePathParams["knowledgeId"], data: ChatCreateMutationRequest, config: Partial<RequestConfig<ChatCreateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function chatCreate({ tenantId, knowledgeId, data }: { tenantId: ChatCreatePathParams["tenantId"]; knowledgeId: ChatCreatePathParams["knowledgeId"]; data: ChatCreateMutationRequest }, config: Partial<RequestConfig<ChatCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = chatCreateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function chatCreateMutationOptions(config: Partial<RequestConfig<ChatCrea
   return mutationOptions<ChatCreateMutationResponse, ResponseErrorConfig<ChatCreate400 | ChatCreate409 | ChatCreate500>, {tenantId: ChatCreatePathParams["tenantId"], knowledgeId: ChatCreatePathParams["knowledgeId"], data: ChatCreateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ tenantId, knowledgeId, data }) => {
-      return chatCreate(tenantId, knowledgeId, data, config)
+      return chatCreate({ tenantId, knowledgeId, data }, config)
     },
   })
 }

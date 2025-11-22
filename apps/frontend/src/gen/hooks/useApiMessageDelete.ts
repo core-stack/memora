@@ -17,7 +17,7 @@ export type MessageDeleteMutationKey = ReturnType<typeof messageDeleteMutationKe
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message/:id}
  */
-export async function messageDelete(id: MessageDeletePathParams["id"], tenantId: MessageDeletePathParams["tenantId"], knowledgeId: MessageDeletePathParams["knowledgeId"], chatId: MessageDeletePathParams["chatId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function messageDelete({ id, tenantId, knowledgeId, chatId }: { id: MessageDeletePathParams["id"]; tenantId: MessageDeletePathParams["tenantId"]; knowledgeId: MessageDeletePathParams["knowledgeId"]; chatId: MessageDeletePathParams["chatId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<MessageDeleteMutationResponse, ResponseErrorConfig<MessageDelete400 | MessageDelete404 | MessageDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/chat/${chatId}/message/${id}`, baseURL : "/", ... requestConfig })  
@@ -29,7 +29,7 @@ export function messageDeleteMutationOptions(config: Partial<RequestConfig> & { 
   return mutationOptions<MessageDeleteMutationResponse, ResponseErrorConfig<MessageDelete400 | MessageDelete404 | MessageDelete500>, {id: MessageDeletePathParams["id"], tenantId: MessageDeletePathParams["tenantId"], knowledgeId: MessageDeletePathParams["knowledgeId"], chatId: MessageDeletePathParams["chatId"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, knowledgeId, chatId }) => {
-      return messageDelete(id, tenantId, knowledgeId, chatId, config)
+      return messageDelete({ id, tenantId, knowledgeId, chatId }, config)
     },
   })
 }

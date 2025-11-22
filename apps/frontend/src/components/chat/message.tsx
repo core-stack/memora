@@ -6,13 +6,13 @@ import { DateFormat, formatDate } from '@/utils/format';
 
 import { Skeleton } from '../ui/skeleton';
 
-import type { Message } from '@snipet/schemas';
+import type { MessageEntity } from '@/gen';
 
-type Props = Message & {
+type Props = MessageEntity & {
   streaming?: boolean
 }
 export const ChatMessage = ({ content, messageRole, createdAt, streaming }: Props) => {
-  const userMessage = messageRole === "USER";
+  const userMessage = messageRole === "user";
 
   return (
     <div className={cn("flex-1 space-y-2")}>

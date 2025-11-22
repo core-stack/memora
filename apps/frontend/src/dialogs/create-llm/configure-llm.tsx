@@ -8,17 +8,18 @@ import {
   DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
+import { createLLMDtoSchema, useApiLLMCreate } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useDialog } from '@/hooks/use-dialog';
+import { useTenant } from '@/hooks/use-tenant';
 import { useToast } from '@/hooks/use-toast';
 import { capitalizeFirstLetter } from '@/lib/string';
-import { zodResolver } from '@/utils/zod-resolver';
-import { createLLMSchema } from '@snipet/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { DialogType } from '../';
 
-import type { CreateLLM, LLMPreset } from '@snipet/schemas';
+import type { LLMPreset } from '@/gen';
+
 export interface ConfigureLLDialogProps {
   preset: LLMPreset
 }
@@ -26,9 +27,9 @@ export interface ConfigureLLDialogProps {
 export function ConfigureLLDialog({ preset }: ConfigureLLDialogProps) {
   const { closeDialog } = useDialog();
   const { toast } = useToast();
-
-  const form = useForm<CreateLLM>({
-    resolver: zodResolver(createLLMSchema),
+  const { tenant } = useTenant();
+  const form = useForm({
+    resolver: zodResolver(createLLMDtoSchema),
     defaultValues: {
       ...preset.defaults,
       type: preset.config.type,
@@ -37,11 +38,11 @@ export function ConfigureLLDialog({ preset }: ConfigureLLDialogProps) {
   });
 
   const invalidate = useApiInvalidate();
-  const { mutate } = useApiMutation("/api/tenant/:tenantId/llm", { method: "POST" });
+  const { mutate } = useApiLLMCreate();
   const isLoading = form.formState.isSubmitting;
 
-  const handleSubmit = form.handleSubmit((body) => {
-    mutate({ body }, {
+  const handleSubmit = form.handleSubmit((data) => {
+    mutate({ data, tenantId: tenant?.id ?? ""  }, {
       onSuccess: async () => {
         await invalidate("/api/tenant/:tenantId/llm");
         closeDialog(DialogType.CONFIGURE_LLM);

@@ -6,19 +6,19 @@ import { Outlet } from 'react-router';
 
 import { Link } from '@/components/ui/link';
 import { SearchProvider } from '@/context/search-provider';
+import { useApiKnowledge } from '@/gen';
 import { useKnowledge } from '@/hooks/use-knowledge';
 import { useLocation } from '@/hooks/use-location';
+import { useTenant } from '@/hooks/use-tenant';
 import { cn } from '@/lib/utils';
 
 import { Button } from '../ui/button';
-import { UserInfo } from '../user';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import { useApiKnowledge } from '@/gen';
-import { useTenant } from '@/hooks/use-tenant';
+import { UserInfo } from '../user';
 
 export function KnowledgeLayout() {
   const { tenant } = useTenant();
-  const { data: knowledges = [] } = useApiKnowledge(tenant.id ?? "");
+  const { data: knowledges = [] } = useApiKnowledge({ tenantId: tenant?.id ?? "" });
   const { pathname } = useLocation();
   const { slug } = useKnowledge();
   const knowledge = knowledges.find((knowledge) => knowledge.slug === slug);

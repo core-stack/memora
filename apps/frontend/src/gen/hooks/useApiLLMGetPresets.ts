@@ -7,31 +7,31 @@ import fetch from "@kubb/plugin-client/clients/axios";
 import type { LLMGetPresetsQueryResponse, LLMGetPresetsPathParams } from "../types/LLMGetPresets.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
-import { LLMGetPresetsQueryResponseSchema } from "../zod/LLMGetPresetsSchema.ts";
+import { llmgetPresetsQueryResponseSchema } from "../zod/LLMGetPresetsSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const LLMGetPresetsQueryKeyFn = (tenantId: LLMGetPresetsPathParams["tenantId"]) => [{ url: '/api/tenant/:tenantId/llm/presets', params: {tenantId:tenantId} }] as const
+export const LLMGetPresetsQueryKeyFn = ({ tenantId }: { tenantId: LLMGetPresetsPathParams["tenantId"] }) => [{ url: '/api/tenant/:tenantId/llm/presets', params: {tenantId:tenantId} }] as const
 
 export type LLMGetPresetsQueryKey = ReturnType<typeof LLMGetPresetsQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/llm/presets}
  */
-export async function LLMGetPresets(tenantId: LLMGetPresetsPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function LLMGetPresets({ tenantId }: { tenantId: LLMGetPresetsPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<LLMGetPresetsQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/llm/presets`, baseURL : "/", ... requestConfig })  
-  return LLMGetPresetsQueryResponseSchema.parse(res.data)
+  return llmgetPresetsQueryResponseSchema.parse(res.data)
 }
 
-export function LLMGetPresetsQueryOptions(tenantId: LLMGetPresetsPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = LLMGetPresetsQueryKeyFn(tenantId)
+export function LLMGetPresetsQueryOptions({ tenantId }: { tenantId: LLMGetPresetsPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = LLMGetPresetsQueryKeyFn({ tenantId })
   return queryOptions<LLMGetPresetsQueryResponse, ResponseErrorConfig<Error>, LLMGetPresetsQueryResponse, typeof queryKey>({
    enabled: !!(tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return LLMGetPresets(tenantId, config)
+      return LLMGetPresets({ tenantId }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function LLMGetPresetsQueryOptions(tenantId: LLMGetPresetsPathParams["ten
 /**
  * {@link /api/tenant/:tenantId/llm/presets}
  */
-export function useApiLLMGetPresets<TData = LLMGetPresetsQueryResponse, TQueryData = LLMGetPresetsQueryResponse, TQueryKey extends QueryKey = LLMGetPresetsQueryKey>(tenantId: LLMGetPresetsPathParams["tenantId"], options: 
+export function useApiLLMGetPresets<TData = LLMGetPresetsQueryResponse, TQueryData = LLMGetPresetsQueryResponse, TQueryKey extends QueryKey = LLMGetPresetsQueryKey>({ tenantId }: { tenantId: LLMGetPresetsPathParams["tenantId"] }, options: 
 {
   query?: Partial<QueryObserverOptions<LLMGetPresetsQueryResponse, ResponseErrorConfig<Error>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiLLMGetPresets<TData = LLMGetPresetsQueryResponse, TQueryDa
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? LLMGetPresetsQueryKeyFn(tenantId)
+  const queryKey = queryOptions?.queryKey ?? LLMGetPresetsQueryKeyFn({ tenantId })
 
   const query = useQuery({
-   ...LLMGetPresetsQueryOptions(tenantId, config),
+   ...LLMGetPresetsQueryOptions({ tenantId }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Error>> & { queryKey: TQueryKey }

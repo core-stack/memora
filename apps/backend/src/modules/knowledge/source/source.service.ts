@@ -1,17 +1,18 @@
-import { Queue } from "bullmq";
-import { randomUUID } from "crypto";
-import { EntityManager } from "typeorm";
+import { Queue } from 'bullmq';
+import { randomUUID } from 'crypto';
+import { EntityManager } from 'typeorm';
 
-import { IndexStatus, SourceEntity } from "@/entities/source.entity";
-import { PrivateStorageService } from "@/infra/storage/private-storage.service";
-import { JobType } from "@/jobs/types";
-import { Service } from "@/shared/service";
-import { InjectQueue } from "@nestjs/bullmq";
-import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { IndexStatus, SourceEntity } from '@/entities/source.entity';
+import { PrivateStorageService } from '@/infra/storage/private-storage.service';
+import { JobType } from '@/jobs/types';
+import { Service } from '@/shared/service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import { FolderService } from "../folder/folder.service";
-import { KnowledgeService } from "../knowledge.service";
-import { GetUploadUrlDto } from "./dto/get-upload-url.dto";
+import { FolderService } from '../folder/folder.service';
+import { KnowledgeService } from '../knowledge.service';
+import { CreateSourceDto } from './dto/create-source.dto';
+import { GetUploadUrlDto } from './dto/get-upload-url.dto';
 
 @Injectable()
 export class SourceService extends Service<SourceEntity> {
@@ -23,32 +24,22 @@ export class SourceService extends Service<SourceEntity> {
   @Inject() private readonly storageService: PrivateStorageService;
   @InjectQueue(JobType.INGEST) private readonly ingestQueue: Queue;
 
-  override async create(input: SourceEntity, manager?: EntityManager) {
-    if (!input.key) throw new BadRequestException("Key is required");
-
-    input.indexStatus = IndexStatus.PENDING;
-    input.path = await this.folderService.getPathByFolderId(
-      input.originalName ?? input.name!,
-      input.folderId,
-      manager
-    );
-
-    try {
-      input.key = await this.storageService.confirmTempUpload(input.key);
-    } catch (error) {
-      throw new BadRequestException("Invalid key");
-    }
-
-    const createdSource = await super.create(input, manager);
+  override async create(input: CreateSourceDto, manager?: EntityManager) {
+    const source = await super.create(new SourceEntity({
+      ...input,
+      indexStatus: IndexStatus.PENDING,
+      path: await this.folderService.getPathByFolderId(
+        input.originalName ?? input.name!,
+        input.folderId,
+        manager
+      ),
+      key: await this.storageService.confirmTempUpload(input.key),
+    }), manager);
 
     await this.knowledgeService.increaseFileCount(input.knowledgeId, 1, manager);
-    await this.knowledgeService.increaseStorageCount(input.knowledgeId, createdSource.metadata.size, manager);
-    await this.ingestQueue.add(
-      JobType.INGEST,
-      createdSource,
-      { jobId: createdSource.id }
-    );
-    return createdSource;
+    await this.knowledgeService.increaseStorageCount(input.knowledgeId, source.metadata.size, manager);
+    await this.ingestQueue.add(JobType.INGEST, source, { jobId: source.id });
+    return source;
   }
 
   async getUploadUrl(input: GetUploadUrlDto) {

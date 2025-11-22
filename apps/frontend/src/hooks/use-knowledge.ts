@@ -1,16 +1,29 @@
-import { useApiKnowledge, type KnowledgeEntity } from "@/gen";
-import { useParams } from "./use-params";
-import { useTenant } from "./use-tenant";
+import { useApiKnowledge } from '@/gen';
 
-export const useKnowledge = (): { slug: string | undefined, knowledge: KnowledgeEntity | undefined } => {
-  const { tenant } = useTenant();
+import { useParams } from './use-params';
+import { useTenant } from './use-tenant';
+
+import type  { KnowledgeEntity } from "@/gen";
+
+export const useKnowledge = (): { slug?: string, knowledge?: KnowledgeEntity, error?: string } => {
+  const { tenant, error: tenantError } = useTenant();
   const { knowledgeSlug } = useParams<{ knowledgeSlug: string }>();
   const { data = [] } = useApiKnowledge(
-    tenant?.id ?? "",
-    { "filter[slug]": knowledgeSlug },
+    { tenantId: tenant?.id ?? "", params: { "filter[slug]": knowledgeSlug } },
     { query: { enabled: !!knowledgeSlug && !!tenant?.id } }
   );
 
-  if (!knowledgeSlug || knowledgeSlug === "") console.warn("Missing knowledge knowledgeSlug", knowledgeSlug);
-  return { slug: knowledgeSlug, knowledge: data?.[0] ?? undefined };
+  const error = () => {
+    if (tenantError) {
+      if (typeof tenantError === "object") {
+        return tenantError.error;
+      } else { 
+        return tenantError
+      }
+    }
+    if (!knowledgeSlug) return "Invalid knowledge";
+    if (!tenant) return "No tenant selected";
+  }
+
+  return { slug: knowledgeSlug, knowledge: data?.[0] ?? undefined, error: error() };
 }

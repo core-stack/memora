@@ -1,9 +1,10 @@
-import { buildBooleanDecorators } from "./boolean.builder";
-import { buildClassDecorators } from "./class.builder";
-import { buildDateDecorators } from "./date.builder";
-import { buildEnumDecorators } from "./enum.builder";
-import { buildNumberDecorators } from "./number.builder";
-import { buildStringDecorators } from "./string.builder";
+import { buildBooleanDecorators } from './boolean.builder';
+import { buildClassDecorators } from './class.builder';
+import { buildDateDecorators } from './date.builder';
+import { buildEnumDecorators } from './enum.builder';
+import { buildNumberDecorators } from './number.builder';
+import { buildOneOfDecorators } from './one-of.builder';
+import { buildStringDecorators } from './string.builder';
 
 export const builder = {
   string: buildStringDecorators,
@@ -11,5 +12,6 @@ export const builder = {
   enum: buildEnumDecorators,
   boolean: buildBooleanDecorators,
   date: buildDateDecorators,
-  class: buildClassDecorators
+  class: buildClassDecorators,
+  oneOf: buildOneOfDecorators
 };

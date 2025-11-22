@@ -3,6 +3,7 @@
 * Do not edit manually.
 */
 
+import type { CreateLLMDto } from "./CreateLLMDto.ts";
 import type { ErrorResponse } from "./ErrorResponse.ts";
 import type { LLMEntity } from "./LLMEntity.ts";
 
@@ -33,7 +34,7 @@ export type LLMCreate409 = ErrorResponse;
 */
 export type LLMCreate500 = ErrorResponse;
 
-export type LLMCreateMutationRequest = string;
+export type LLMCreateMutationRequest = CreateLLMDto;
 
 export type LLMCreateMutationResponse = LLMCreate201;
 

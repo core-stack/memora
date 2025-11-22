@@ -17,21 +17,21 @@ export type TenantSuspenseQueryKey = ReturnType<typeof tenantSuspenseQueryKeyFn>
 /**
  * {@link /api/tenant}
  */
-export async function tenantSuspense(params?: TenantQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function tenantSuspense({ params }: { params?: TenantQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<TenantQueryResponse, ResponseErrorConfig<Tenant400 | Tenant500>, unknown>({ method : "GET", url : `/api/tenant`, baseURL : "/", params, ... requestConfig })  
   return tenantQueryResponseSchema.parse(res.data)
 }
 
-export function tenantSuspenseQueryOptions(params?: TenantQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export function tenantSuspenseQueryOptions({ params }: { params?: TenantQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const queryKey = tenantSuspenseQueryKeyFn(params)
   return queryOptions<TenantQueryResponse, ResponseErrorConfig<Tenant400 | Tenant500>, TenantQueryResponse, typeof queryKey>({
  
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return tenantSuspense(params, config)
+      return tenantSuspense({ params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function tenantSuspenseQueryOptions(params?: TenantQueryParams, config: P
 /**
  * {@link /api/tenant}
  */
-export function useApiTenantSuspense<TData = TenantQueryResponse, TQueryKey extends QueryKey = TenantSuspenseQueryKey>(params?: TenantQueryParams, options: 
+export function useApiTenantSuspense<TData = TenantQueryResponse, TQueryKey extends QueryKey = TenantSuspenseQueryKey>({ params }: { params?: TenantQueryParams }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<TenantQueryResponse, ResponseErrorConfig<Tenant400 | Tenant500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -50,7 +50,7 @@ export function useApiTenantSuspense<TData = TenantQueryResponse, TQueryKey exte
   const queryKey = queryOptions?.queryKey ?? tenantSuspenseQueryKeyFn(params)
 
   const query = useSuspenseQuery({
-   ...tenantSuspenseQueryOptions(params, config),
+   ...tenantSuspenseQueryOptions({ params }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<Tenant400 | Tenant500>> & { queryKey: TQueryKey }

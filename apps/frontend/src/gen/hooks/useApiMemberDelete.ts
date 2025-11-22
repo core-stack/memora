@@ -17,7 +17,7 @@ export type MemberDeleteMutationKey = ReturnType<typeof memberDeleteMutationKey>
 /**
  * {@link /api/tenant/:tenantId/member/:id}
  */
-export async function memberDelete(id: MemberDeletePathParams["id"], tenantId: MemberDeletePathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function memberDelete({ id, tenantId }: { id: MemberDeletePathParams["id"]; tenantId: MemberDeletePathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<MemberDeleteMutationResponse, ResponseErrorConfig<MemberDelete400 | MemberDelete404 | MemberDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/member/${id}`, baseURL : "/", ... requestConfig })  
@@ -29,7 +29,7 @@ export function memberDeleteMutationOptions(config: Partial<RequestConfig> & { c
   return mutationOptions<MemberDeleteMutationResponse, ResponseErrorConfig<MemberDelete400 | MemberDelete404 | MemberDelete500>, {id: MemberDeletePathParams["id"], tenantId: MemberDeletePathParams["tenantId"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId }) => {
-      return memberDelete(id, tenantId, config)
+      return memberDelete({ id, tenantId }, config)
     },
   })
 }

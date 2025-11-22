@@ -17,7 +17,7 @@ export type SourceDownloadMutationKey = ReturnType<typeof sourceDownloadMutation
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/download-url}
  */
-export async function sourceDownload(id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeId: SourceDownloadPathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function sourceDownload({ id, tenantId, knowledgeId }: { id: SourceDownloadPathParams["id"]; tenantId: SourceDownloadPathParams["tenantId"]; knowledgeId: SourceDownloadPathParams["knowledgeId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<SourceDownloadMutationResponse, ResponseErrorConfig<Error>, unknown>({ method : "POST", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/source/${id}/download-url`, baseURL : "/", ... requestConfig })  
@@ -29,7 +29,7 @@ export function sourceDownloadMutationOptions(config: Partial<RequestConfig> & {
   return mutationOptions<SourceDownloadMutationResponse, ResponseErrorConfig<Error>, {id: SourceDownloadPathParams["id"], tenantId: SourceDownloadPathParams["tenantId"], knowledgeId: SourceDownloadPathParams["knowledgeId"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, knowledgeId }) => {
-      return sourceDownload(id, tenantId, knowledgeId, config)
+      return sourceDownload({ id, tenantId, knowledgeId }, config)
     },
   })
 }

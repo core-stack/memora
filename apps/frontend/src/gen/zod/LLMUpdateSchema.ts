@@ -4,48 +4,48 @@
 */
 
 import { errorResponseSchema } from "./errorResponseSchema.ts";
-import { LLMEntitySchema } from "./LLMEntitySchema.ts";
+import { llmentitySchema } from "./LLMEntitySchema.ts";
 import { z } from "zod/v4";
 
-export const LLMUpdatePathParamsSchema = z.object({
+export const llmupdatePathParamsSchema = z.object({
     "id": z.string(),
 "tenantId": z.string()
     })
 
-export type LLMUpdatePathParamsSchema = z.infer<typeof LLMUpdatePathParamsSchema>
+export type LLMUpdatePathParamsSchema = z.infer<typeof llmupdatePathParamsSchema>
 
 /**
  * @description Record updated successfully
  */
-export const LLMUpdate200Schema = LLMEntitySchema
+export const llmupdate200Schema = llmentitySchema
 
-export type LLMUpdate200Schema = z.infer<typeof LLMUpdate200Schema>
+export type LLMUpdate200Schema = z.infer<typeof llmupdate200Schema>
 
 /**
  * @description Bad request
  */
-export const LLMUpdate400Schema = errorResponseSchema
+export const llmupdate400Schema = errorResponseSchema
 
-export type LLMUpdate400Schema = z.infer<typeof LLMUpdate400Schema>
+export type LLMUpdate400Schema = z.infer<typeof llmupdate400Schema>
 
 /**
  * @description Record not found
  */
-export const LLMUpdate404Schema = errorResponseSchema
+export const llmupdate404Schema = errorResponseSchema
 
-export type LLMUpdate404Schema = z.infer<typeof LLMUpdate404Schema>
+export type LLMUpdate404Schema = z.infer<typeof llmupdate404Schema>
 
 /**
  * @description Internal server error
  */
-export const LLMUpdate500Schema = errorResponseSchema
+export const llmupdate500Schema = errorResponseSchema
 
-export type LLMUpdate500Schema = z.infer<typeof LLMUpdate500Schema>
+export type LLMUpdate500Schema = z.infer<typeof llmupdate500Schema>
 
-export const LLMUpdateMutationRequestSchema = z.string()
+export const llmupdateMutationRequestSchema = z.string()
 
-export type LLMUpdateMutationRequestSchema = z.infer<typeof LLMUpdateMutationRequestSchema>
+export type LLMUpdateMutationRequestSchema = z.infer<typeof llmupdateMutationRequestSchema>
 
-export const LLMUpdateMutationResponseSchema = LLMUpdate200Schema
+export const llmupdateMutationResponseSchema = llmupdate200Schema
 
-export type LLMUpdateMutationResponseSchema = z.infer<typeof LLMUpdateMutationResponseSchema>
+export type LLMUpdateMutationResponseSchema = z.infer<typeof llmupdateMutationResponseSchema>

@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryRe
 import { sourceViewQueryResponseSchema } from "../zod/sourceViewSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const sourceViewSuspenseQueryKeyFn = (id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeId: SourceViewPathParams["knowledgeId"]) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/view', params: {tenantId:tenantId,knowledgeId:knowledgeId,id:id} }] as const
+export const sourceViewSuspenseQueryKeyFn = ({ id, tenantId, knowledgeId }: { id: SourceViewPathParams["id"]; tenantId: SourceViewPathParams["tenantId"]; knowledgeId: SourceViewPathParams["knowledgeId"] }) => [{ url: '/api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/view', params: {tenantId:tenantId,knowledgeId:knowledgeId,id:id} }] as const
 
 export type SourceViewSuspenseQueryKey = ReturnType<typeof sourceViewSuspenseQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/view}
  */
-export async function sourceViewSuspense(id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeId: SourceViewPathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function sourceViewSuspense({ id, tenantId, knowledgeId }: { id: SourceViewPathParams["id"]; tenantId: SourceViewPathParams["tenantId"]; knowledgeId: SourceViewPathParams["knowledgeId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<SourceViewQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/knowledge/${knowledgeId}/source/${id}/view`, baseURL : "/", ... requestConfig })  
   return sourceViewQueryResponseSchema.parse(res.data)
 }
 
-export function sourceViewSuspenseQueryOptions(id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeId: SourceViewPathParams["knowledgeId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = sourceViewSuspenseQueryKeyFn(id, tenantId, knowledgeId)
+export function sourceViewSuspenseQueryOptions({ id, tenantId, knowledgeId }: { id: SourceViewPathParams["id"]; tenantId: SourceViewPathParams["tenantId"]; knowledgeId: SourceViewPathParams["knowledgeId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = sourceViewSuspenseQueryKeyFn({ id, tenantId, knowledgeId })
   return queryOptions<SourceViewQueryResponse, ResponseErrorConfig<Error>, SourceViewQueryResponse, typeof queryKey>({
    enabled: !!(id&& tenantId&& knowledgeId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return sourceViewSuspense(id, tenantId, knowledgeId, config)
+      return sourceViewSuspense({ id, tenantId, knowledgeId }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function sourceViewSuspenseQueryOptions(id: SourceViewPathParams["id"], t
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/:id/view}
  */
-export function useApiSourceViewSuspense<TData = SourceViewQueryResponse, TQueryKey extends QueryKey = SourceViewSuspenseQueryKey>(id: SourceViewPathParams["id"], tenantId: SourceViewPathParams["tenantId"], knowledgeId: SourceViewPathParams["knowledgeId"], options: 
+export function useApiSourceViewSuspense<TData = SourceViewQueryResponse, TQueryKey extends QueryKey = SourceViewSuspenseQueryKey>({ id, tenantId, knowledgeId }: { id: SourceViewPathParams["id"]; tenantId: SourceViewPathParams["tenantId"]; knowledgeId: SourceViewPathParams["knowledgeId"] }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<SourceViewQueryResponse, ResponseErrorConfig<Error>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiSourceViewSuspense<TData = SourceViewQueryResponse, TQuery
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? sourceViewSuspenseQueryKeyFn(id, tenantId, knowledgeId)
+  const queryKey = queryOptions?.queryKey ?? sourceViewSuspenseQueryKeyFn({ id, tenantId, knowledgeId })
 
   const query = useSuspenseQuery({
-   ...sourceViewSuspenseQueryOptions(id, tenantId, knowledgeId, config),
+   ...sourceViewSuspenseQueryOptions({ id, tenantId, knowledgeId }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<Error>> & { queryKey: TQueryKey }

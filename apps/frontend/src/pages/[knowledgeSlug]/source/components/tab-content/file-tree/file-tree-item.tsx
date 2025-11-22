@@ -8,44 +8,48 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  folderQueryKeyFn, sourceEntitySourceTypeEnum, sourceQueryKeyFn, useApiSourceRetry
+} from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useApiMutation } from '@/hooks/use-api-mutation';
+import { useKnowledge } from '@/hooks/use-knowledge';
+import { useTenant } from '@/hooks/use-tenant';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { formatBytes } from '@/utils/format';
-import { SourceType } from '@snipet/schemas';
 
 import { useExplorer } from '../../../hooks/use-explorer';
 import { useSource } from '../../../hooks/use-source';
 
-import type { KnowledgeFolder, Source } from '@snipet/schemas';
+import type { SourceEntity, FolderEntity } from "@/gen";
+
 interface FileTreeItemProps {
-  item: Source | KnowledgeFolder
+  item: SourceEntity | FolderEntity
   level: number
 }
 
-const isSource = (item: KnowledgeFolder | Source): item is Source => "folderId" in item;
+const isSource = (item: FolderEntity | SourceEntity): item is SourceEntity => "folderId" in item;
 
-const getFileIcon = (item: Source | KnowledgeFolder) => {
+const getFileIcon = (item: SourceEntity | FolderEntity): React.ReactNode => {
   if (isSource(item)) {
-    switch  (item.sourceType) {
-      case SourceType.TEXT:
-        return FileText;
-      case SourceType.IMAGE:
-        return ImageIcon;
-      case SourceType.VIDEO:
-        return Video;
-      case SourceType.AUDIO:
-        return Music;
-      case SourceType.DOC:
-        return File;
+    switch (item.sourceType) {
+      case sourceEntitySourceTypeEnum.TEXT:
+        return <FileText className='w-4 h-4 shrink-0' />;
+      case sourceEntitySourceTypeEnum.IMAGE:
+        return <ImageIcon className='w-4 h-4 shrink-0' />;
+      case sourceEntitySourceTypeEnum.VIDEO:
+        return <Video className='w-4 h-4 shrink-0' />;
+      case sourceEntitySourceTypeEnum.AUDIO:
+        return <Music className='w-4 h-4 shrink-0' />;
+      case sourceEntitySourceTypeEnum.DOC:
+        return <File className='w-4 h-4 shrink-0' />;
     }
   } else {
-    return Folder;
+    return <Folder className='w-4 h-4 shrink-0' />;
   }
 }
 
-const getIndexingColor = (item: Source | KnowledgeFolder): string | undefined => {
+const getIndexingColor = (item: SourceEntity | FolderEntity): string | undefined => {
   if (isSource(item)) {
     switch (item.indexStatus) {
       case 'PENDING':
@@ -68,14 +72,15 @@ export function FileTreeItem({
   const { toast } = useToast();
   const { setSelectedFolderId, setSelectedFileId, selectedFileId, selectedFolderId } = useSource();
   const [isHovered, setIsHovered] = useState(false);
-  const Icon = getFileIcon(item);
+  const { knowledge } = useKnowledge();
+  const { tenant } = useTenant();
   const isFolder = !isSource(item);
   const isIndexing = isSource(item) && item.indexStatus === 'INDEXING';
   const indexError = isSource(item) && item.indexStatus === 'ERROR';
   const isSelected = isFolder ? selectedFolderId === item.id : selectedFileId === item.id;
-  const { data: childs } = useExplorer(item.id, isFolder);
+  const { data: childs } = useExplorer(tenant?.id, knowledge?.id, item.id, isFolder);
   const invalidate = useApiInvalidate();
-  const { mutateAsync: retryIndexing } = useApiMutation("/api/tenant/:tenantId/knowledge/:knowledgeSlug/source/:id/retry")
+  const { mutateAsync: retryIndexing } = useApiSourceRetry();
   const handleClick = () => {
     if (isFolder) {
       setOpen(!open);
@@ -93,10 +98,15 @@ export function FileTreeItem({
     }
   }
   const handleRetryIndexing = async () => {
-    await retryIndexing({ params: { id: item.id } });
-    
-    invalidate("/api/tenant/:tenantId/knowledge/:knowledgeSlug/source");
-    invalidate("/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder");
+    await retryIndexing({
+      knowledgeId: knowledge?.id ?? "",
+      id: item.id,
+      tenantId: tenant?.id ?? ""
+    });
+    await invalidate(
+      sourceQueryKeyFn({ knowledgeId: knowledge?.id ?? "", tenantId: tenant?.id ?? "" }),
+      folderQueryKeyFn({ knowledgeId: knowledge?.id ?? "", tenantId: tenant?.id ?? "" }),
+    )
     toast({
       title: "Indexing retried",
       description: "The indexing process has been retried.",
@@ -127,7 +137,7 @@ export function FileTreeItem({
           <div className="flex items-center gap-1">
             { isIndexing &&
               <Spinner className="fill-yellow-500" size="sm" /> ||
-              <Icon className="h-4 w-4 shrink-0" />
+              getFileIcon(item)
             }
           </div>
 

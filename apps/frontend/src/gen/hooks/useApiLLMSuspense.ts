@@ -7,31 +7,31 @@ import fetch from "@kubb/plugin-client/clients/axios";
 import type { LLMQueryResponse, LLMPathParams, LLMQueryParams, LLM400, LLM500 } from "../types/LLM.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
-import { LLMQueryResponseSchema } from "../zod/LLMSchema.ts";
+import { llmqueryResponseSchema } from "../zod/LLMSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const LLMSuspenseQueryKeyFn = (tenantId: LLMPathParams["tenantId"], params?: LLMQueryParams) => [{ url: '/api/tenant/:tenantId/llm', params: {tenantId:tenantId} }, ...(params ? [params] : [])] as const
+export const LLMSuspenseQueryKeyFn = ({ tenantId }: { tenantId: LLMPathParams["tenantId"] }, params?: LLMQueryParams) => [{ url: '/api/tenant/:tenantId/llm', params: {tenantId:tenantId} }, ...(params ? [params] : [])] as const
 
 export type LLMSuspenseQueryKey = ReturnType<typeof LLMSuspenseQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/llm}
  */
-export async function LLMSuspense(tenantId: LLMPathParams["tenantId"], params?: LLMQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function LLMSuspense({ tenantId, params }: { tenantId: LLMPathParams["tenantId"]; params?: LLMQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<LLMQueryResponse, ResponseErrorConfig<LLM400 | LLM500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/llm`, baseURL : "/", params, ... requestConfig })  
-  return LLMQueryResponseSchema.parse(res.data)
+  return llmqueryResponseSchema.parse(res.data)
 }
 
-export function LLMSuspenseQueryOptions(tenantId: LLMPathParams["tenantId"], params?: LLMQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = LLMSuspenseQueryKeyFn(tenantId, params)
+export function LLMSuspenseQueryOptions({ tenantId, params }: { tenantId: LLMPathParams["tenantId"]; params?: LLMQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = LLMSuspenseQueryKeyFn({ tenantId }, params)
   return queryOptions<LLMQueryResponse, ResponseErrorConfig<LLM400 | LLM500>, LLMQueryResponse, typeof queryKey>({
    enabled: !!(tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return LLMSuspense(tenantId, params, config)
+      return LLMSuspense({ tenantId, params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function LLMSuspenseQueryOptions(tenantId: LLMPathParams["tenantId"], par
 /**
  * {@link /api/tenant/:tenantId/llm}
  */
-export function useApiLLMSuspense<TData = LLMQueryResponse, TQueryKey extends QueryKey = LLMSuspenseQueryKey>(tenantId: LLMPathParams["tenantId"], params?: LLMQueryParams, options: 
+export function useApiLLMSuspense<TData = LLMQueryResponse, TQueryKey extends QueryKey = LLMSuspenseQueryKey>({ tenantId, params }: { tenantId: LLMPathParams["tenantId"]; params?: LLMQueryParams }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<LLMQueryResponse, ResponseErrorConfig<LLM400 | LLM500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiLLMSuspense<TData = LLMQueryResponse, TQueryKey extends Qu
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? LLMSuspenseQueryKeyFn(tenantId, params)
+  const queryKey = queryOptions?.queryKey ?? LLMSuspenseQueryKeyFn({ tenantId }, params)
 
   const query = useSuspenseQuery({
-   ...LLMSuspenseQueryOptions(tenantId, params, config),
+   ...LLMSuspenseQueryOptions({ tenantId, params }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<LLM400 | LLM500>> & { queryKey: TQueryKey }

@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { roleQueryResponseSchema } from "../zod/roleSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const roleQueryKeyFn = (tenantId: RolePathParams["tenantId"], params?: RoleQueryParams) => [{ url: '/api/tenant/:tenantId/role', params: {tenantId:tenantId} }, ...(params ? [params] : [])] as const
+export const roleQueryKeyFn = ({ tenantId }: { tenantId: RolePathParams["tenantId"] }, params?: RoleQueryParams) => [{ url: '/api/tenant/:tenantId/role', params: {tenantId:tenantId} }, ...(params ? [params] : [])] as const
 
 export type RoleQueryKey = ReturnType<typeof roleQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/role}
  */
-export async function role(tenantId: RolePathParams["tenantId"], params?: RoleQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function role({ tenantId, params }: { tenantId: RolePathParams["tenantId"]; params?: RoleQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<RoleQueryResponse, ResponseErrorConfig<Role400 | Role500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/role`, baseURL : "/", params, ... requestConfig })  
   return roleQueryResponseSchema.parse(res.data)
 }
 
-export function roleQueryOptions(tenantId: RolePathParams["tenantId"], params?: RoleQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = roleQueryKeyFn(tenantId, params)
+export function roleQueryOptions({ tenantId, params }: { tenantId: RolePathParams["tenantId"]; params?: RoleQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = roleQueryKeyFn({ tenantId }, params)
   return queryOptions<RoleQueryResponse, ResponseErrorConfig<Role400 | Role500>, RoleQueryResponse, typeof queryKey>({
    enabled: !!(tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return role(tenantId, params, config)
+      return role({ tenantId, params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function roleQueryOptions(tenantId: RolePathParams["tenantId"], params?: 
 /**
  * {@link /api/tenant/:tenantId/role}
  */
-export function useApiRole<TData = RoleQueryResponse, TQueryData = RoleQueryResponse, TQueryKey extends QueryKey = RoleQueryKey>(tenantId: RolePathParams["tenantId"], params?: RoleQueryParams, options: 
+export function useApiRole<TData = RoleQueryResponse, TQueryData = RoleQueryResponse, TQueryKey extends QueryKey = RoleQueryKey>({ tenantId, params }: { tenantId: RolePathParams["tenantId"]; params?: RoleQueryParams }, options: 
 {
   query?: Partial<QueryObserverOptions<RoleQueryResponse, ResponseErrorConfig<Role400 | Role500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiRole<TData = RoleQueryResponse, TQueryData = RoleQueryResp
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? roleQueryKeyFn(tenantId, params)
+  const queryKey = queryOptions?.queryKey ?? roleQueryKeyFn({ tenantId }, params)
 
   const query = useQuery({
-   ...roleQueryOptions(tenantId, params, config),
+   ...roleQueryOptions({ tenantId, params }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Role400 | Role500>> & { queryKey: TQueryKey }

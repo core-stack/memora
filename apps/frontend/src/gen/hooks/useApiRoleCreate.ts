@@ -17,7 +17,7 @@ export type RoleCreateMutationKey = ReturnType<typeof roleCreateMutationKey>
 /**
  * {@link /api/tenant/:tenantId/role}
  */
-export async function roleCreate(tenantId: RoleCreatePathParams["tenantId"], data: RoleCreateMutationRequest, config: Partial<RequestConfig<RoleCreateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function roleCreate({ tenantId, data }: { tenantId: RoleCreatePathParams["tenantId"]; data: RoleCreateMutationRequest }, config: Partial<RequestConfig<RoleCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = roleCreateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function roleCreateMutationOptions(config: Partial<RequestConfig<RoleCrea
   return mutationOptions<RoleCreateMutationResponse, ResponseErrorConfig<RoleCreate400 | RoleCreate409 | RoleCreate500>, {tenantId: RoleCreatePathParams["tenantId"], data: RoleCreateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ tenantId, data }) => {
-      return roleCreate(tenantId, data, config)
+      return roleCreate({ tenantId, data }, config)
     },
   })
 }

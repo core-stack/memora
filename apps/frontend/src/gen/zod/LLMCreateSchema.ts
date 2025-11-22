@@ -3,48 +3,49 @@
 * Do not edit manually.
 */
 
+import { createLLMDtoSchema } from "./createLLMDtoSchema.ts";
 import { errorResponseSchema } from "./errorResponseSchema.ts";
-import { LLMEntitySchema } from "./LLMEntitySchema.ts";
+import { llmentitySchema } from "./LLMEntitySchema.ts";
 import { z } from "zod/v4";
 
-export const LLMCreatePathParamsSchema = z.object({
+export const llmcreatePathParamsSchema = z.object({
     "tenantId": z.string()
     })
 
-export type LLMCreatePathParamsSchema = z.infer<typeof LLMCreatePathParamsSchema>
+export type LLMCreatePathParamsSchema = z.infer<typeof llmcreatePathParamsSchema>
 
 /**
  * @description Record created successfully
  */
-export const LLMCreate201Schema = LLMEntitySchema
+export const llmcreate201Schema = llmentitySchema
 
-export type LLMCreate201Schema = z.infer<typeof LLMCreate201Schema>
+export type LLMCreate201Schema = z.infer<typeof llmcreate201Schema>
 
 /**
  * @description Bad request
  */
-export const LLMCreate400Schema = errorResponseSchema
+export const llmcreate400Schema = errorResponseSchema
 
-export type LLMCreate400Schema = z.infer<typeof LLMCreate400Schema>
+export type LLMCreate400Schema = z.infer<typeof llmcreate400Schema>
 
 /**
  * @description Conflict - duplicate record
  */
-export const LLMCreate409Schema = errorResponseSchema
+export const llmcreate409Schema = errorResponseSchema
 
-export type LLMCreate409Schema = z.infer<typeof LLMCreate409Schema>
+export type LLMCreate409Schema = z.infer<typeof llmcreate409Schema>
 
 /**
  * @description Internal server error
  */
-export const LLMCreate500Schema = errorResponseSchema
+export const llmcreate500Schema = errorResponseSchema
 
-export type LLMCreate500Schema = z.infer<typeof LLMCreate500Schema>
+export type LLMCreate500Schema = z.infer<typeof llmcreate500Schema>
 
-export const LLMCreateMutationRequestSchema = z.string()
+export const llmcreateMutationRequestSchema = createLLMDtoSchema
 
-export type LLMCreateMutationRequestSchema = z.infer<typeof LLMCreateMutationRequestSchema>
+export type LLMCreateMutationRequestSchema = z.infer<typeof llmcreateMutationRequestSchema>
 
-export const LLMCreateMutationResponseSchema = LLMCreate201Schema
+export const llmcreateMutationResponseSchema = llmcreate201Schema
 
-export type LLMCreateMutationResponseSchema = z.infer<typeof LLMCreateMutationResponseSchema>
+export type LLMCreateMutationResponseSchema = z.infer<typeof llmcreateMutationResponseSchema>

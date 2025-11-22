@@ -17,7 +17,7 @@ export type AuthCreateAccountMutationKey = ReturnType<typeof authCreateAccountMu
 /**
  * {@link /api/auth/create-account}
  */
-export async function authCreateAccount(data: AuthCreateAccountMutationRequest, config: Partial<RequestConfig<AuthCreateAccountMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function authCreateAccount({ data }: { data: AuthCreateAccountMutationRequest }, config: Partial<RequestConfig<AuthCreateAccountMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = authCreateAccountMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function authCreateAccountMutationOptions(config: Partial<RequestConfig<A
   return mutationOptions<AuthCreateAccountMutationResponse, ResponseErrorConfig<Error>, {data: AuthCreateAccountMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ data }) => {
-      return authCreateAccount(data, config)
+      return authCreateAccount({ data }, config)
     },
   })
 }

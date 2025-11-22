@@ -1,8 +1,8 @@
-import { SourceMemoryService } from "@/modules/memory/source-memory/source-memory.service";
-import { Inject, Injectable, Logger } from "@nestjs/common";
-
-import { KnowledgeService } from "../knowledge.service";
-import { GenericService } from "@/shared/generic-service";
+import { SourceFragment } from '@/fragment';
+import { SourceMemoryService } from '@/modules/memory/source-memory/source-memory.service';
+import { RecentSearch } from '@/modules/memory/source-memory/types';
+import { GenericService } from '@/shared/generic-service';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class SearchService extends GenericService {
@@ -10,13 +10,11 @@ export class SearchService extends GenericService {
 
   @Inject() private memoryService: SourceMemoryService;
 
-  async searchByTerm() {
-    const knowledgeId = this.context.params.shouldGetString("knowledgeId");
-    const text = this.context.query.shouldGetString("text");
-    return (await this.memoryService.findByTerm(knowledgeId, text)).toArray();
+  async searchByTerm(knowledgeId: string, term: string): Promise<SourceFragment[]> {
+    return (await this.memoryService.findByTerm(knowledgeId, term)).toArray();
   }
 
-  async recent() {
-    return this.memoryService.findRecent(this.context.params.shouldGetString("knowledgeId"));
+  async recent(knowledgeId: string): Promise<RecentSearch[]> {
+    return this.memoryService.findRecent(knowledgeId);
   }
 }

@@ -17,7 +17,7 @@ export type TenantDeleteMutationKey = ReturnType<typeof tenantDeleteMutationKey>
 /**
  * {@link /api/tenant/:id}
  */
-export async function tenantDelete(id: TenantDeletePathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function tenantDelete({ id }: { id: TenantDeletePathParams["id"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<TenantDeleteMutationResponse, ResponseErrorConfig<TenantDelete400 | TenantDelete404 | TenantDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${id}`, baseURL : "/", ... requestConfig })  
@@ -29,7 +29,7 @@ export function tenantDeleteMutationOptions(config: Partial<RequestConfig> & { c
   return mutationOptions<TenantDeleteMutationResponse, ResponseErrorConfig<TenantDelete400 | TenantDelete404 | TenantDelete500>, {id: TenantDeletePathParams["id"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id }) => {
-      return tenantDelete(id, config)
+      return tenantDelete({ id }, config)
     },
   })
 }

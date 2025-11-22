@@ -4,7 +4,7 @@
 */
 
 import { knowledgeEntitySchema } from "./knowledgeEntitySchema.ts";
-import { LLMEntitySchema } from "./LLMEntitySchema.ts";
+import { llmentitySchema } from "./LLMEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const knowledgeLLMEntitySchema = z.object({
@@ -14,7 +14,7 @@ get "knowledge"(){
                 return knowledgeEntitySchema
               },
 get "llm"(){
-                return LLMEntitySchema
+                return llmentitySchema
               },
 "knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
 "llmId": z.uuid().describe("The ID of the associated LLM"),

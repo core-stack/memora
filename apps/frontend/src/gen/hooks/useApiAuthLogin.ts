@@ -17,7 +17,7 @@ export type AuthLoginMutationKey = ReturnType<typeof authLoginMutationKey>
 /**
  * {@link /api/auth/login}
  */
-export async function authLogin(data: AuthLoginMutationRequest, config: Partial<RequestConfig<AuthLoginMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function authLogin({ data }: { data: AuthLoginMutationRequest }, config: Partial<RequestConfig<AuthLoginMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = authLoginMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function authLoginMutationOptions(config: Partial<RequestConfig<AuthLogin
   return mutationOptions<AuthLoginMutationResponse, ResponseErrorConfig<Error>, {data: AuthLoginMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ data }) => {
-      return authLogin(data, config)
+      return authLogin({ data }, config)
     },
   })
 }

@@ -1,13 +1,14 @@
-import { LLMEntity } from "@/entities/llm.entity";
-import { BaseController } from "@/shared/controller";
-import { Controller, HttpGet } from "@/shared/controller/decorators";
-import { LLMPreset } from "@/types/llm-preset";
-import { ApiResponse } from "@nestjs/swagger";
+import { LLMEntity } from '@/entities/llm.entity';
+import { BaseController } from '@/shared/controller';
+import { Controller, HttpGet } from '@/shared/controller/decorators';
+import { LLMPreset } from '@/types/llm-preset';
+import { ApiResponse } from '@nestjs/swagger';
 
-import { LLMService } from "./llm.service";
+import { CreateLLMDto } from './dto/create-llm.dto';
+import { LLMService } from './llm.service';
 
 @Controller("tenant/:tenantId/llm")
-export class LLMController extends BaseController({ entity: LLMEntity }) {
+export class LLMController extends BaseController({ entity: LLMEntity, createDto: CreateLLMDto }) {
   constructor(public service: LLMService) {
     super(service);
   }

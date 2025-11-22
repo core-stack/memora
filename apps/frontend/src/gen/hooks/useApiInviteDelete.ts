@@ -17,7 +17,7 @@ export type InviteDeleteMutationKey = ReturnType<typeof inviteDeleteMutationKey>
 /**
  * {@link /api/tenant/:tenantId/invite/:id}
  */
-export async function inviteDelete(id: InviteDeletePathParams["id"], tenantId: InviteDeletePathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function inviteDelete({ id, tenantId }: { id: InviteDeletePathParams["id"]; tenantId: InviteDeletePathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<InviteDeleteMutationResponse, ResponseErrorConfig<InviteDelete400 | InviteDelete404 | InviteDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/invite/${id}`, baseURL : "/", ... requestConfig })  
@@ -29,7 +29,7 @@ export function inviteDeleteMutationOptions(config: Partial<RequestConfig> & { c
   return mutationOptions<InviteDeleteMutationResponse, ResponseErrorConfig<InviteDelete400 | InviteDelete404 | InviteDelete500>, {id: InviteDeletePathParams["id"], tenantId: InviteDeletePathParams["tenantId"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId }) => {
-      return inviteDelete(id, tenantId, config)
+      return inviteDelete({ id, tenantId }, config)
     },
   })
 }

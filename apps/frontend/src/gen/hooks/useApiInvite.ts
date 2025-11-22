@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from
 import { inviteQueryResponseSchema } from "../zod/inviteSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const inviteQueryKeyFn = (tenantId: InvitePathParams["tenantId"], params?: InviteQueryParams) => [{ url: '/api/tenant/:tenantId/invite', params: {tenantId:tenantId} }, ...(params ? [params] : [])] as const
+export const inviteQueryKeyFn = ({ tenantId }: { tenantId: InvitePathParams["tenantId"] }, params?: InviteQueryParams) => [{ url: '/api/tenant/:tenantId/invite', params: {tenantId:tenantId} }, ...(params ? [params] : [])] as const
 
 export type InviteQueryKey = ReturnType<typeof inviteQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/invite}
  */
-export async function invite(tenantId: InvitePathParams["tenantId"], params?: InviteQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function invite({ tenantId, params }: { tenantId: InvitePathParams["tenantId"]; params?: InviteQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<InviteQueryResponse, ResponseErrorConfig<Invite400 | Invite500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/invite`, baseURL : "/", params, ... requestConfig })  
   return inviteQueryResponseSchema.parse(res.data)
 }
 
-export function inviteQueryOptions(tenantId: InvitePathParams["tenantId"], params?: InviteQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = inviteQueryKeyFn(tenantId, params)
+export function inviteQueryOptions({ tenantId, params }: { tenantId: InvitePathParams["tenantId"]; params?: InviteQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = inviteQueryKeyFn({ tenantId }, params)
   return queryOptions<InviteQueryResponse, ResponseErrorConfig<Invite400 | Invite500>, InviteQueryResponse, typeof queryKey>({
    enabled: !!(tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return invite(tenantId, params, config)
+      return invite({ tenantId, params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function inviteQueryOptions(tenantId: InvitePathParams["tenantId"], param
 /**
  * {@link /api/tenant/:tenantId/invite}
  */
-export function useApiInvite<TData = InviteQueryResponse, TQueryData = InviteQueryResponse, TQueryKey extends QueryKey = InviteQueryKey>(tenantId: InvitePathParams["tenantId"], params?: InviteQueryParams, options: 
+export function useApiInvite<TData = InviteQueryResponse, TQueryData = InviteQueryResponse, TQueryKey extends QueryKey = InviteQueryKey>({ tenantId, params }: { tenantId: InvitePathParams["tenantId"]; params?: InviteQueryParams }, options: 
 {
   query?: Partial<QueryObserverOptions<InviteQueryResponse, ResponseErrorConfig<Invite400 | Invite500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiInvite<TData = InviteQueryResponse, TQueryData = InviteQue
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? inviteQueryKeyFn(tenantId, params)
+  const queryKey = queryOptions?.queryKey ?? inviteQueryKeyFn({ tenantId }, params)
 
   const query = useQuery({
-   ...inviteQueryOptions(tenantId, params, config),
+   ...inviteQueryOptions({ tenantId, params }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Invite400 | Invite500>> & { queryKey: TQueryKey }

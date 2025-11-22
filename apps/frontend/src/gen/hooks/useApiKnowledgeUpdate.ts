@@ -17,7 +17,7 @@ export type KnowledgeUpdateMutationKey = ReturnType<typeof knowledgeUpdateMutati
 /**
  * {@link /api/tenant/:tenantId/knowledge/:id}
  */
-export async function knowledgeUpdate(id: KnowledgeUpdatePathParams["id"], tenantId: KnowledgeUpdatePathParams["tenantId"], data?: KnowledgeUpdateMutationRequest, config: Partial<RequestConfig<KnowledgeUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function knowledgeUpdate({ id, tenantId, data }: { id: KnowledgeUpdatePathParams["id"]; tenantId: KnowledgeUpdatePathParams["tenantId"]; data?: KnowledgeUpdateMutationRequest }, config: Partial<RequestConfig<KnowledgeUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = knowledgeUpdateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function knowledgeUpdateMutationOptions(config: Partial<RequestConfig<Kno
   return mutationOptions<KnowledgeUpdateMutationResponse, ResponseErrorConfig<KnowledgeUpdate400 | KnowledgeUpdate404 | KnowledgeUpdate500>, {id: KnowledgeUpdatePathParams["id"], tenantId: KnowledgeUpdatePathParams["tenantId"], data?: KnowledgeUpdateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, data }) => {
-      return knowledgeUpdate(id, tenantId, data, config)
+      return knowledgeUpdate({ id, tenantId, data }, config)
     },
   })
 }

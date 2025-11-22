@@ -1,8 +1,8 @@
-import { TransformOptions } from "class-transformer";
-import { ValidationOptions } from "class-validator";
-import * as ValidatorJS from "validator";
+import { TransformOptions } from 'class-transformer';
+import { ValidationOptions } from 'class-validator';
+import * as ValidatorJS from 'validator';
 
-import { Constructor } from "@/types/constructor";
+import { Constructor } from '@/types/constructor';
 
 export type EnumAllowedTypes =
   | any[]
@@ -62,7 +62,11 @@ export type FieldDateOptions = BaseFieldOptions & {
 
 export type FieldClassOptions<T = any> = BaseFieldOptions & {
   type: "class";
-  class: () => Constructor<T>
+  class: () => Constructor<T>;
+};
+export type FieldOneOfOptions<T = any> = BaseFieldOptions & {
+  type: "oneOf";
+  classes: Array<() => Constructor<T>>;
 };
 
 
@@ -73,3 +77,4 @@ export type FieldOptions =
   | FieldBooleanOptions
   | FieldDateOptions
   | FieldClassOptions
+  | FieldOneOfOptions;

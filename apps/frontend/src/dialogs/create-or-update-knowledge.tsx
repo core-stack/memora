@@ -1,27 +1,26 @@
-import { ChevronsUpDown } from 'lucide-react';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { FormInput } from '@/components/form/input';
-import { FormSelect } from '@/components/form/select';
 import { FormTextarea } from '@/components/form/textarea';
 import { Button } from '@/components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
+import {
+  createKnowledgeDtoSchema, knowledgeQueryKeyFn, useApiKnowledgeCreate, useApiKnowledgeUpdate
+} from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useApiMutation } from '@/hooks/use-api-mutation';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useDialog } from '@/hooks/use-dialog';
+import { useTenant } from '@/hooks/use-tenant';
 import { useToast } from '@/hooks/use-toast';
-import { zodResolver } from '@/utils/zod-resolver';
-import { createKnowledgeSchema } from '@snipet/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { DialogType } from './';
 
-import type { CreateKnowledge, Knowledge } from '@snipet/schemas';
+import type { KnowledgeEntity } from "@/gen";
+
 const generateSlug = (name: string) => {
   return name
     .toLowerCase()
@@ -31,39 +30,39 @@ const generateSlug = (name: string) => {
 }
 
 export type CreateOrUpdateKnowledgeDialogProps = {
-  knowledge?: Knowledge
+  knowledge?: KnowledgeEntity
 }
 export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowledgeDialogProps) => {
   const { closeDialog } = useDialog();
 
+  const { tenant } = useTenant();
   const isEditing = !!knowledge;
-  const defaultValues: Omit<CreateKnowledge, "embeddingModelId"> = {
-    title: knowledge?.title || "",
-    description: knowledge?.description || "",
-    slug: knowledge?.slug || "",
-    instructions: knowledge?.instructions || "",
-    tags: knowledge?.tags.map(tag => tag.name) || []
-  }
 
-  const form = useForm<CreateKnowledge>({ resolver: zodResolver(createKnowledgeSchema), defaultValues });
+  const form = useForm({
+    resolver: zodResolver(createKnowledgeDtoSchema),
+    defaultValues: {
+      title: knowledge?.title || "",
+      description: knowledge?.description || "",
+      slug: knowledge?.slug || "",
+    }
+  });
+
   const isLoading = form.formState.isSubmitting;
   const invalidate = useApiInvalidate();
   const { toast } = useToast();
 
-  const { mutateAsync: createKnowledge } = useApiMutation("/api/tenant/:tenantId/knowledge", { method: "POST" });
-  const { mutateAsync: updateKnowledge } = useApiMutation("/api/tenant/:tenantId/knowledge/:id", { method: "PUT" });
-  const { data: llms = [] } = useApiQuery("/api/tenant/:tenantId/llm", { method: "GET", query: { filter: { type: "EMBEDDING" }} });
+  const { mutateAsync: createKnowledge } = useApiKnowledgeCreate();
+  const { mutateAsync: updateKnowledge } = useApiKnowledgeUpdate();
 
-  const onSubmit = form.handleSubmit(async (body) => {
-    if (!body.embeddingModelId) body.embeddingModelId = llms[0]?.id;
+  const onSubmit = form.handleSubmit(async (data) => {
     try {
       if (isEditing) {
-        await updateKnowledge({ body, params: { id: knowledge!.id } });
+        await updateKnowledge({ id: knowledge?.id ?? "", tenantId: tenant?.id ?? "", data });
       } else {
-        await createKnowledge({ body });
+        await createKnowledge({ data, tenantId: tenant?.id ?? "" });
       }
 
-      invalidate("/api/tenant/:tenantId/knowledge");
+      await invalidate(knowledgeQueryKeyFn({ tenantId: tenant?.id ?? "" }));
       closeDialog(DialogType.CREATE_OR_UPDATE_KNOWLEDGE);
       toast({
         title: isEditing ? "Knowledge updated" : "Knowledge created",
@@ -76,11 +75,6 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
   });
 
   const watchName = form.watch("title");
-
-  useEffect(() => {
-    if (!llms.length) return;
-    form.setValue("embeddingModelId", llms[0]?.id);
-  }, [form, llms]);
 
   useEffect(() => {
     if (watchName && !isEditing) form.setValue("slug", generateSlug(watchName))
@@ -103,53 +97,20 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
             required
             help='A name for the knowledge base'
           />
+          <FormInput
+            name='slug'
+            placeholder='Slug of knowledge'
+            label='Slug'
+            disabled={isEditing}
+            required
+            help='A unique identifier for the knowledge base that will be used in the URL'
+          />
           <FormTextarea
             name='description'
             placeholder='Description of knowledge'
             label='Description'
             help='A description for the knowledge base'
           />
-          <Collapsible>
-            <CollapsibleTrigger asChild>
-              <div className='w-full flex justify-between text-sm cursor-pointer pb-4'>
-                Advanced Options
-                <ChevronsUpDown className='w-4 h-4' />
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <div className="space-y-6">
-                <FormInput
-                  name='slug'
-                  placeholder='Slug of knowledge'
-                  label='Slug'
-                  disabled={isEditing}
-                  required
-                  help='A unique identifier for the knowledge base that will be used in the URL'
-                />
-                <FormSelect
-                  name='embeddingModelId'
-                  data={llms.map(llm => ({ label: llm.name, value: llm.id }))}
-                  placeholder='Select a embedding model'
-                  label='Embedding Model'
-                  defaultValue={isEditing ? knowledge?.embeddingModelId : llms.length > 0 ? llms[0].id : undefined}
-                  required
-                  help='The embedding model to use for the knowledge base'
-                />
-                <FormTextarea
-                  name='instructions'
-                  placeholder='Instructions of knowledge'
-                  label='Instructions'
-                  help='Instructions for the knowledge base'
-                />
-                <FormInput
-                  name='tags'
-                  placeholder='Tags of knowledge'
-                  label='Tags'
-                  help='Tags for the knowledge base'
-                />
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
           <DialogFooter>
             <Button
               type="button"

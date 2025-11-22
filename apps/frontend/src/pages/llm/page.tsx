@@ -3,24 +3,38 @@
 import { Plus, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
+import { AsyncBoundary } from '@/components/suspense-boundary';
 import { TenantPageHeader } from '@/components/tenant-page-header';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DialogType } from '@/dialogs';
-import { useApiLLM, useApiLLMGetPresets } from '@/gen';
+import { useApiLLMGetPresetsSuspense, useApiLLMSuspense } from '@/gen';
 import { useDialog } from '@/hooks/use-dialog';
 import { useTenant } from '@/hooks/use-tenant';
 
 import { LLMListItem } from './components/llm-list-item';
 
-export default function LLMManagementPage() {
-  const { openDialog } = useDialog();
-  const { tenant } = useTenant();
+import type { TenantEntity } from "@/gen";
 
-  const hasTenant = !!tenant;
-  const { data: llms = [] } = useApiLLM(tenant?.id!, { sort: [ 'createdAt' ] }, { query: { enabled: hasTenant } });
-  const { data: presets = [] } = useApiLLMGetPresets(tenant?.id!, { query: { enabled: hasTenant } });
+export default function LLMManagementPage() {
+  const { tenant, isLoading, error } = useTenant();
+  return (
+    <AsyncBoundary error={error} isLoading={isLoading}>
+      <Page tenant={tenant!} />
+    </AsyncBoundary>
+  )
+}
+
+function Page({ tenant }: { tenant: TenantEntity }) {
+  const { openDialog } = useDialog();
+
+  const { data: llms = [] } = useApiLLMSuspense({ 
+    tenantId: tenant.id,
+    params: { sort: [ 'createdAt' ] }
+  });
+
+  const { data: presets = [] } = useApiLLMGetPresetsSuspense({ tenantId: tenant.id });
 
   const [activeTab, setActiveTab] = useState("all")
 

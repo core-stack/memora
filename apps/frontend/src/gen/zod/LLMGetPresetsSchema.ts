@@ -3,19 +3,19 @@
 * Do not edit manually.
 */
 
-import { LLMPresetSchema } from "./LLMPresetSchema.ts";
+import { llmpresetSchema } from "./LLMPresetSchema.ts";
 import { z } from "zod/v4";
 
-export const LLMGetPresetsPathParamsSchema = z.object({
+export const llmgetPresetsPathParamsSchema = z.object({
     "tenantId": z.string()
     })
 
-export type LLMGetPresetsPathParamsSchema = z.infer<typeof LLMGetPresetsPathParamsSchema>
+export type LLMGetPresetsPathParamsSchema = z.infer<typeof llmgetPresetsPathParamsSchema>
 
-export const LLMGetPresets200Schema = z.array(LLMPresetSchema)
+export const llmgetPresets200Schema = z.array(llmpresetSchema)
 
-export type LLMGetPresets200Schema = z.infer<typeof LLMGetPresets200Schema>
+export type LLMGetPresets200Schema = z.infer<typeof llmgetPresets200Schema>
 
-export const LLMGetPresetsQueryResponseSchema = LLMGetPresets200Schema
+export const llmgetPresetsQueryResponseSchema = llmgetPresets200Schema
 
-export type LLMGetPresetsQueryResponseSchema = z.infer<typeof LLMGetPresetsQueryResponseSchema>
+export type LLMGetPresetsQueryResponseSchema = z.infer<typeof llmgetPresetsQueryResponseSchema>

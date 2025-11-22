@@ -17,21 +17,21 @@ export type UserQueryKey = ReturnType<typeof useApirQueryKeyFn>
 /**
  * {@link /api/user}
  */
-export async function useApir(params?: UserQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function useApir({ params }: { params?: UserQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<UserQueryResponse, ResponseErrorConfig<User400 | User500>, unknown>({ method : "GET", url : `/api/user`, baseURL : "/", params, ... requestConfig })  
   return useApirQueryResponseSchema.parse(res.data)
 }
 
-export function useApirQueryOptions(params?: UserQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export function useApirQueryOptions({ params }: { params?: UserQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const queryKey = useApirQueryKeyFn(params)
   return queryOptions<UserQueryResponse, ResponseErrorConfig<User400 | User500>, UserQueryResponse, typeof queryKey>({
  
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return useApir(params, config)
+      return useApir({ params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function useApirQueryOptions(params?: UserQueryParams, config: Partial<Re
 /**
  * {@link /api/user}
  */
-export function useApiUser<TData = UserQueryResponse, TQueryData = UserQueryResponse, TQueryKey extends QueryKey = UserQueryKey>(params?: UserQueryParams, options: 
+export function useApiUser<TData = UserQueryResponse, TQueryData = UserQueryResponse, TQueryKey extends QueryKey = UserQueryKey>({ params }: { params?: UserQueryParams }, options: 
 {
   query?: Partial<QueryObserverOptions<UserQueryResponse, ResponseErrorConfig<User400 | User500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -50,7 +50,7 @@ export function useApiUser<TData = UserQueryResponse, TQueryData = UserQueryResp
   const queryKey = queryOptions?.queryKey ?? useApirQueryKeyFn(params)
 
   const query = useQuery({
-   ...useApirQueryOptions(params, config),
+   ...useApirQueryOptions({ params }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<User400 | User500>> & { queryKey: TQueryKey }

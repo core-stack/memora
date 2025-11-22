@@ -17,7 +17,7 @@ export type SourceUploadMutationKey = ReturnType<typeof sourceUploadMutationKey>
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/source/upload-url}
  */
-export async function sourceUpload(tenantId: SourceUploadPathParams["tenantId"], knowledgeId: SourceUploadPathParams["knowledgeId"], data: SourceUploadMutationRequest, config: Partial<RequestConfig<SourceUploadMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function sourceUpload({ tenantId, knowledgeId, data }: { tenantId: SourceUploadPathParams["tenantId"]; knowledgeId: SourceUploadPathParams["knowledgeId"]; data: SourceUploadMutationRequest }, config: Partial<RequestConfig<SourceUploadMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = sourceUploadMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function sourceUploadMutationOptions(config: Partial<RequestConfig<Source
   return mutationOptions<SourceUploadMutationResponse, ResponseErrorConfig<Error>, {tenantId: SourceUploadPathParams["tenantId"], knowledgeId: SourceUploadPathParams["knowledgeId"], data: SourceUploadMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ tenantId, knowledgeId, data }) => {
-      return sourceUpload(tenantId, knowledgeId, data, config)
+      return sourceUpload({ tenantId, knowledgeId, data }, config)
     },
   })
 }

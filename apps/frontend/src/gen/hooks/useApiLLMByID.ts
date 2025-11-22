@@ -7,31 +7,31 @@ import fetch from "@kubb/plugin-client/clients/axios";
 import type { LLMByIDQueryResponse, LLMByIDPathParams, LLMByID400, LLMByID404, LLMByID500 } from "../types/LLMByID.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
-import { LLMByIDQueryResponseSchema } from "../zod/LLMByIDSchema.ts";
+import { llmbyIDQueryResponseSchema } from "../zod/LLMByIDSchema.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const LLMByIDQueryKeyFn = (id: LLMByIDPathParams["id"], tenantId: LLMByIDPathParams["tenantId"]) => [{ url: '/api/tenant/:tenantId/llm/:id', params: {tenantId:tenantId,id:id} }] as const
+export const LLMByIDQueryKeyFn = ({ id, tenantId }: { id: LLMByIDPathParams["id"]; tenantId: LLMByIDPathParams["tenantId"] }) => [{ url: '/api/tenant/:tenantId/llm/:id', params: {tenantId:tenantId,id:id} }] as const
 
 export type LLMByIDQueryKey = ReturnType<typeof LLMByIDQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/llm/:id}
  */
-export async function LLMByID(id: LLMByIDPathParams["id"], tenantId: LLMByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function LLMByID({ id, tenantId }: { id: LLMByIDPathParams["id"]; tenantId: LLMByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<LLMByIDQueryResponse, ResponseErrorConfig<LLMByID400 | LLMByID404 | LLMByID500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/llm/${id}`, baseURL : "/", ... requestConfig })  
-  return LLMByIDQueryResponseSchema.parse(res.data)
+  return llmbyIDQueryResponseSchema.parse(res.data)
 }
 
-export function LLMByIDQueryOptions(id: LLMByIDPathParams["id"], tenantId: LLMByIDPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = LLMByIDQueryKeyFn(id, tenantId)
+export function LLMByIDQueryOptions({ id, tenantId }: { id: LLMByIDPathParams["id"]; tenantId: LLMByIDPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = LLMByIDQueryKeyFn({ id, tenantId })
   return queryOptions<LLMByIDQueryResponse, ResponseErrorConfig<LLMByID400 | LLMByID404 | LLMByID500>, LLMByIDQueryResponse, typeof queryKey>({
    enabled: !!(id&& tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return LLMByID(id, tenantId, config)
+      return LLMByID({ id, tenantId }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function LLMByIDQueryOptions(id: LLMByIDPathParams["id"], tenantId: LLMBy
 /**
  * {@link /api/tenant/:tenantId/llm/:id}
  */
-export function useApiLLMByID<TData = LLMByIDQueryResponse, TQueryData = LLMByIDQueryResponse, TQueryKey extends QueryKey = LLMByIDQueryKey>(id: LLMByIDPathParams["id"], tenantId: LLMByIDPathParams["tenantId"], options: 
+export function useApiLLMByID<TData = LLMByIDQueryResponse, TQueryData = LLMByIDQueryResponse, TQueryKey extends QueryKey = LLMByIDQueryKey>({ id, tenantId }: { id: LLMByIDPathParams["id"]; tenantId: LLMByIDPathParams["tenantId"] }, options: 
 {
   query?: Partial<QueryObserverOptions<LLMByIDQueryResponse, ResponseErrorConfig<LLMByID400 | LLMByID404 | LLMByID500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiLLMByID<TData = LLMByIDQueryResponse, TQueryData = LLMByID
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? LLMByIDQueryKeyFn(id, tenantId)
+  const queryKey = queryOptions?.queryKey ?? LLMByIDQueryKeyFn({ id, tenantId })
 
   const query = useQuery({
-   ...LLMByIDQueryOptions(id, tenantId, config),
+   ...LLMByIDQueryOptions({ id, tenantId }, config),
    queryKey,
    ...queryOptions
   } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<LLMByID400 | LLMByID404 | LLMByID500>> & { queryKey: TQueryKey }

@@ -6,11 +6,10 @@ import {
   DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
-import { useApiMutation } from '@/hooks/use-api-mutation';
+import { createTenantDtoSchema, useApiTenantCreate } from '@/gen';
 import { useDialog } from '@/hooks/use-dialog';
 import { useTenant } from '@/hooks/use-tenant';
-import { zodResolver } from '@/utils/zod-resolver';
-import { createTenantSchema } from '@snipet/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { DialogType } from './';
 
@@ -24,13 +23,13 @@ export const CreateTenantDialog = () => {
   };
 
   const form = useForm({
-    resolver: zodResolver(createTenantSchema),
+    resolver: zodResolver(createTenantDtoSchema),
     defaultValues
   });
 
-  const { mutate, isPending } = useApiMutation('/api/tenant', { method: 'POST' });
-  const onSubmit = form.handleSubmit(async (body) => {
-    mutate({ body }, {
+  const { mutate, isPending } = useApiTenantCreate();
+  const onSubmit = form.handleSubmit(async (data) => {
+    mutate({ data }, {
       onSuccess: ({ id }) => {
         setTenant(id);
         closeDialog(DialogType.CREATE_TENANT);

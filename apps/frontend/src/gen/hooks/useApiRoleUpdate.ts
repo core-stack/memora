@@ -17,7 +17,7 @@ export type RoleUpdateMutationKey = ReturnType<typeof roleUpdateMutationKey>
 /**
  * {@link /api/tenant/:tenantId/role/:id}
  */
-export async function roleUpdate(id: RoleUpdatePathParams["id"], tenantId: RoleUpdatePathParams["tenantId"], data: RoleUpdateMutationRequest, config: Partial<RequestConfig<RoleUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function roleUpdate({ id, tenantId, data }: { id: RoleUpdatePathParams["id"]; tenantId: RoleUpdatePathParams["tenantId"]; data: RoleUpdateMutationRequest }, config: Partial<RequestConfig<RoleUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = roleUpdateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function roleUpdateMutationOptions(config: Partial<RequestConfig<RoleUpda
   return mutationOptions<RoleUpdateMutationResponse, ResponseErrorConfig<RoleUpdate400 | RoleUpdate404 | RoleUpdate500>, {id: RoleUpdatePathParams["id"], tenantId: RoleUpdatePathParams["tenantId"], data: RoleUpdateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, data }) => {
-      return roleUpdate(id, tenantId, data, config)
+      return roleUpdate({ id, tenantId, data }, config)
     },
   })
 }

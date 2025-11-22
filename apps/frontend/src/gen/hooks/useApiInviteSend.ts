@@ -17,7 +17,7 @@ export type InviteSendMutationKey = ReturnType<typeof inviteSendMutationKey>
 /**
  * {@link /api/tenant/:tenantId/invite/send}
  */
-export async function inviteSend(tenantId: InviteSendPathParams["tenantId"], data: InviteSendMutationRequest, config: Partial<RequestConfig<InviteSendMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function inviteSend({ tenantId, data }: { tenantId: InviteSendPathParams["tenantId"]; data: InviteSendMutationRequest }, config: Partial<RequestConfig<InviteSendMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = inviteSendMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function inviteSendMutationOptions(config: Partial<RequestConfig<InviteSe
   return mutationOptions<InviteSendMutationResponse, ResponseErrorConfig<Error>, {tenantId: InviteSendPathParams["tenantId"], data: InviteSendMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ tenantId, data }) => {
-      return inviteSend(tenantId, data, config)
+      return inviteSend({ tenantId, data }, config)
     },
   })
 }

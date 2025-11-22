@@ -17,7 +17,7 @@ export type KnowledgeCreateMutationKey = ReturnType<typeof knowledgeCreateMutati
 /**
  * {@link /api/tenant/:tenantId/knowledge}
  */
-export async function knowledgeCreate(tenantId: KnowledgeCreatePathParams["tenantId"], data: KnowledgeCreateMutationRequest, config: Partial<RequestConfig<KnowledgeCreateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function knowledgeCreate({ tenantId, data }: { tenantId: KnowledgeCreatePathParams["tenantId"]; data: KnowledgeCreateMutationRequest }, config: Partial<RequestConfig<KnowledgeCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = knowledgeCreateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function knowledgeCreateMutationOptions(config: Partial<RequestConfig<Kno
   return mutationOptions<KnowledgeCreateMutationResponse, ResponseErrorConfig<KnowledgeCreate400 | KnowledgeCreate409 | KnowledgeCreate500>, {tenantId: KnowledgeCreatePathParams["tenantId"], data: KnowledgeCreateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ tenantId, data }) => {
-      return knowledgeCreate(tenantId, data, config)
+      return knowledgeCreate({ tenantId, data }, config)
     },
   })
 }

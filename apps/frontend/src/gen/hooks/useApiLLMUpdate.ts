@@ -7,7 +7,7 @@ import fetch from "@kubb/plugin-client/clients/axios";
 import type { LLMUpdateMutationRequest, LLMUpdateMutationResponse, LLMUpdatePathParams, LLMUpdate400, LLMUpdate404, LLMUpdate500 } from "../types/LLMUpdate.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
-import { LLMUpdateMutationResponseSchema, LLMUpdateMutationRequestSchema } from "../zod/LLMUpdateSchema.ts";
+import { llmupdateMutationResponseSchema, llmupdateMutationRequestSchema } from "../zod/LLMUpdateSchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const LLMUpdateMutationKey = () => [{ url: '/api/tenant/:tenantId/llm/:id' }] as const
@@ -17,13 +17,13 @@ export type LLMUpdateMutationKey = ReturnType<typeof LLMUpdateMutationKey>
 /**
  * {@link /api/tenant/:tenantId/llm/:id}
  */
-export async function LLMUpdate(id: LLMUpdatePathParams["id"], tenantId: LLMUpdatePathParams["tenantId"], data?: LLMUpdateMutationRequest, config: Partial<RequestConfig<LLMUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function LLMUpdate({ id, tenantId, data }: { id: LLMUpdatePathParams["id"]; tenantId: LLMUpdatePathParams["tenantId"]; data?: LLMUpdateMutationRequest }, config: Partial<RequestConfig<LLMUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const requestData = LLMUpdateMutationRequestSchema.parse(data)  
+  const requestData = llmupdateMutationRequestSchema.parse(data)  
   
   const res = await request<LLMUpdateMutationResponse, ResponseErrorConfig<LLMUpdate400 | LLMUpdate404 | LLMUpdate500>, LLMUpdateMutationRequest>({ method : "PUT", url : `/api/tenant/${tenantId}/llm/${id}`, baseURL : "/", data : requestData, ... requestConfig })  
-  return LLMUpdateMutationResponseSchema.parse(res.data)
+  return llmupdateMutationResponseSchema.parse(res.data)
 }
 
 export function LLMUpdateMutationOptions(config: Partial<RequestConfig<LLMUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
@@ -31,7 +31,7 @@ export function LLMUpdateMutationOptions(config: Partial<RequestConfig<LLMUpdate
   return mutationOptions<LLMUpdateMutationResponse, ResponseErrorConfig<LLMUpdate400 | LLMUpdate404 | LLMUpdate500>, {id: LLMUpdatePathParams["id"], tenantId: LLMUpdatePathParams["tenantId"], data?: LLMUpdateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, data }) => {
-      return LLMUpdate(id, tenantId, data, config)
+      return LLMUpdate({ id, tenantId, data }, config)
     },
   })
 }

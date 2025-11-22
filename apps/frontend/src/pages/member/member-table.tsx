@@ -1,6 +1,7 @@
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
 
+import { AsyncBoundary } from '@/components/suspense-boundary';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
@@ -11,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { useApiMember } from '@/gen';
 import { useAuth } from '@/hooks/use-auth';
+import { useTenant } from '@/hooks/use-tenant';
 import { DateFormat, formatDate } from '@/utils/format';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { Permission } from '@snipet/permission';
@@ -19,15 +21,22 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 
-import type { MemberEntity } from "@/gen";
+import type { MemberEntity, TenantEntity } from "@/gen";
 import type {
   ColumnDef, ColumnFiltersState, SortingState, VisibilityState
 } from "@tanstack/react-table";
-export const MembersTable = ({ tenantId }: { tenantId: string }) => {
-  const { data: members = [] } = useApiMember(
-    tenantId,
-    { relations: ["user", "role"] },
-  );
+
+export const MembersTable = () => {
+  const { tenant, isLoading, error } = useTenant();
+  return (
+    <AsyncBoundary isLoading={isLoading} error={error}>
+      <Component tenant={tenant!} />
+    </AsyncBoundary>
+  )
+}
+
+const Component = ({ tenant }: { tenant: TenantEntity }) => {
+  const { data: members = [] } = useApiMember({ tenantId: tenant.id, params: { relations: ["user", "role"] }});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

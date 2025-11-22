@@ -1,6 +1,7 @@
 import { ArrowUpDown } from 'lucide-react';
 import { useState } from 'react';
 
+import { AsyncBoundary } from '@/components/suspense-boundary';
 import { Button } from '@/components/ui/button';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
@@ -8,6 +9,7 @@ import {
 import { useApiInvite, useApiInviteDelete } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useAuth } from '@/hooks/use-auth';
+import { useTenant } from '@/hooks/use-tenant';
 import { useToast } from '@/hooks/use-toast';
 import { Permission } from '@snipet/permission';
 import {
@@ -15,17 +17,26 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 
-import type { InviteEntity } from "@/gen";
+import type { InviteEntity, TenantEntity } from "@/gen";
 import type {
   ColumnDef, ColumnFiltersState, SortingState, VisibilityState
 } from "@tanstack/react-table";
 
-export const InvitesTable = ({ tenantId }: { tenantId: string }) => {
+export const InvitesTable = () => {
+  const { tenant, isLoading, error } = useTenant();
+  return (
+    <AsyncBoundary isLoading={isLoading} error={error}>
+      <Component tenant={tenant!} />
+    </AsyncBoundary>
+  )
+}
+
+const Component = ({ tenant }: { tenant: TenantEntity }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({});
-  const { data: invites = [] } = useApiInvite(tenantId);
+  const { data: invites = [] } = useApiInvite({ tenantId: tenant.id });
   const { mutate: deleteInvite } = useApiInviteDelete();
 
   const invalidate = useApiInvalidate();
@@ -110,7 +121,7 @@ export const InvitesTable = ({ tenantId }: { tenantId: string }) => {
               size="sm"
               onClick={() => {
                 deleteInvite(
-                  { tenantId, id: row.getValue("id") },
+                  { tenantId: tenant.id, id: row.getValue("id") },
                   { 
                     onSuccess: () => {
                       toast({ title: "Invite canceled", description: "The invite has been canceled." })

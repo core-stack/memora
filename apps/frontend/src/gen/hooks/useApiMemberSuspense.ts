@@ -10,28 +10,28 @@ import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryRe
 import { memberQueryResponseSchema } from "../zod/memberSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const memberSuspenseQueryKeyFn = (tenantId: MemberPathParams["tenantId"], params?: MemberQueryParams) => [{ url: '/api/tenant/:tenantId/member', params: {tenantId:tenantId} }, ...(params ? [params] : [])] as const
+export const memberSuspenseQueryKeyFn = ({ tenantId }: { tenantId: MemberPathParams["tenantId"] }, params?: MemberQueryParams) => [{ url: '/api/tenant/:tenantId/member', params: {tenantId:tenantId} }, ...(params ? [params] : [])] as const
 
 export type MemberSuspenseQueryKey = ReturnType<typeof memberSuspenseQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/member}
  */
-export async function memberSuspense(tenantId: MemberPathParams["tenantId"], params?: MemberQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function memberSuspense({ tenantId, params }: { tenantId: MemberPathParams["tenantId"]; params?: MemberQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<MemberQueryResponse, ResponseErrorConfig<Member400 | Member500>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/member`, baseURL : "/", params, ... requestConfig })  
   return memberQueryResponseSchema.parse(res.data)
 }
 
-export function memberSuspenseQueryOptions(tenantId: MemberPathParams["tenantId"], params?: MemberQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = memberSuspenseQueryKeyFn(tenantId, params)
+export function memberSuspenseQueryOptions({ tenantId, params }: { tenantId: MemberPathParams["tenantId"]; params?: MemberQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = memberSuspenseQueryKeyFn({ tenantId }, params)
   return queryOptions<MemberQueryResponse, ResponseErrorConfig<Member400 | Member500>, MemberQueryResponse, typeof queryKey>({
    enabled: !!(tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return memberSuspense(tenantId, params, config)
+      return memberSuspense({ tenantId, params }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function memberSuspenseQueryOptions(tenantId: MemberPathParams["tenantId"
 /**
  * {@link /api/tenant/:tenantId/member}
  */
-export function useApiMemberSuspense<TData = MemberQueryResponse, TQueryKey extends QueryKey = MemberSuspenseQueryKey>(tenantId: MemberPathParams["tenantId"], params?: MemberQueryParams, options: 
+export function useApiMemberSuspense<TData = MemberQueryResponse, TQueryKey extends QueryKey = MemberSuspenseQueryKey>({ tenantId, params }: { tenantId: MemberPathParams["tenantId"]; params?: MemberQueryParams }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<MemberQueryResponse, ResponseErrorConfig<Member400 | Member500>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiMemberSuspense<TData = MemberQueryResponse, TQueryKey exte
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? memberSuspenseQueryKeyFn(tenantId, params)
+  const queryKey = queryOptions?.queryKey ?? memberSuspenseQueryKeyFn({ tenantId }, params)
 
   const query = useSuspenseQuery({
-   ...memberSuspenseQueryOptions(tenantId, params, config),
+   ...memberSuspenseQueryOptions({ tenantId, params }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<Member400 | Member500>> & { queryKey: TQueryKey }

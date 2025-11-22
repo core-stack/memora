@@ -7,31 +7,31 @@ import fetch from "@kubb/plugin-client/clients/axios";
 import type { LLMGetPresetsQueryResponse, LLMGetPresetsPathParams } from "../types/LLMGetPresets.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
-import { LLMGetPresetsQueryResponseSchema } from "../zod/LLMGetPresetsSchema.ts";
+import { llmgetPresetsQueryResponseSchema } from "../zod/LLMGetPresetsSchema.ts";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-export const LLMGetPresetsSuspenseQueryKeyFn = (tenantId: LLMGetPresetsPathParams["tenantId"]) => [{ url: '/api/tenant/:tenantId/llm/presets', params: {tenantId:tenantId} }] as const
+export const LLMGetPresetsSuspenseQueryKeyFn = ({ tenantId }: { tenantId: LLMGetPresetsPathParams["tenantId"] }) => [{ url: '/api/tenant/:tenantId/llm/presets', params: {tenantId:tenantId} }] as const
 
 export type LLMGetPresetsSuspenseQueryKey = ReturnType<typeof LLMGetPresetsSuspenseQueryKeyFn>
 
 /**
  * {@link /api/tenant/:tenantId/llm/presets}
  */
-export async function LLMGetPresetsSuspense(tenantId: LLMGetPresetsPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function LLMGetPresetsSuspense({ tenantId }: { tenantId: LLMGetPresetsPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<LLMGetPresetsQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/tenant/${tenantId}/llm/presets`, baseURL : "/", ... requestConfig })  
-  return LLMGetPresetsQueryResponseSchema.parse(res.data)
+  return llmgetPresetsQueryResponseSchema.parse(res.data)
 }
 
-export function LLMGetPresetsSuspenseQueryOptions(tenantId: LLMGetPresetsPathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = LLMGetPresetsSuspenseQueryKeyFn(tenantId)
+export function LLMGetPresetsSuspenseQueryOptions({ tenantId }: { tenantId: LLMGetPresetsPathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = LLMGetPresetsSuspenseQueryKeyFn({ tenantId })
   return queryOptions<LLMGetPresetsQueryResponse, ResponseErrorConfig<Error>, LLMGetPresetsQueryResponse, typeof queryKey>({
    enabled: !!(tenantId),
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return LLMGetPresetsSuspense(tenantId, config)
+      return LLMGetPresetsSuspense({ tenantId }, config)
    },
   })
 }
@@ -39,7 +39,7 @@ export function LLMGetPresetsSuspenseQueryOptions(tenantId: LLMGetPresetsPathPar
 /**
  * {@link /api/tenant/:tenantId/llm/presets}
  */
-export function useApiLLMGetPresetsSuspense<TData = LLMGetPresetsQueryResponse, TQueryKey extends QueryKey = LLMGetPresetsSuspenseQueryKey>(tenantId: LLMGetPresetsPathParams["tenantId"], options: 
+export function useApiLLMGetPresetsSuspense<TData = LLMGetPresetsQueryResponse, TQueryKey extends QueryKey = LLMGetPresetsSuspenseQueryKey>({ tenantId }: { tenantId: LLMGetPresetsPathParams["tenantId"] }, options: 
 {
   query?: Partial<UseSuspenseQueryOptions<LLMGetPresetsQueryResponse, ResponseErrorConfig<Error>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
@@ -47,10 +47,10 @@ export function useApiLLMGetPresetsSuspense<TData = LLMGetPresetsQueryResponse, 
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? LLMGetPresetsSuspenseQueryKeyFn(tenantId)
+  const queryKey = queryOptions?.queryKey ?? LLMGetPresetsSuspenseQueryKeyFn({ tenantId })
 
   const query = useSuspenseQuery({
-   ...LLMGetPresetsSuspenseQueryOptions(tenantId, config),
+   ...LLMGetPresetsSuspenseQueryOptions({ tenantId }, config),
    queryKey,
    ...queryOptions
   } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<Error>> & { queryKey: TQueryKey }

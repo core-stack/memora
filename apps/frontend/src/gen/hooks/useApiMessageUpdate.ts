@@ -17,7 +17,7 @@ export type MessageUpdateMutationKey = ReturnType<typeof messageUpdateMutationKe
 /**
  * {@link /api/tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message/:id}
  */
-export async function messageUpdate(id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeId: MessageUpdatePathParams["knowledgeId"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest, config: Partial<RequestConfig<MessageUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function messageUpdate({ id, tenantId, knowledgeId, chatId, data }: { id: MessageUpdatePathParams["id"]; tenantId: MessageUpdatePathParams["tenantId"]; knowledgeId: MessageUpdatePathParams["knowledgeId"]; chatId: MessageUpdatePathParams["chatId"]; data?: MessageUpdateMutationRequest }, config: Partial<RequestConfig<MessageUpdateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const requestData = messageUpdateMutationRequestSchema.parse(data)  
@@ -31,7 +31,7 @@ export function messageUpdateMutationOptions(config: Partial<RequestConfig<Messa
   return mutationOptions<MessageUpdateMutationResponse, ResponseErrorConfig<MessageUpdate400 | MessageUpdate404 | MessageUpdate500>, {id: MessageUpdatePathParams["id"], tenantId: MessageUpdatePathParams["tenantId"], knowledgeId: MessageUpdatePathParams["knowledgeId"], chatId: MessageUpdatePathParams["chatId"], data?: MessageUpdateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId, knowledgeId, chatId, data }) => {
-      return messageUpdate(id, tenantId, knowledgeId, chatId, data, config)
+      return messageUpdate({ id, tenantId, knowledgeId, chatId, data }, config)
     },
   })
 }

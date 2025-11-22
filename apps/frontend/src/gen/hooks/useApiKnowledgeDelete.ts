@@ -17,7 +17,7 @@ export type KnowledgeDeleteMutationKey = ReturnType<typeof knowledgeDeleteMutati
 /**
  * {@link /api/tenant/:tenantId/knowledge/:id}
  */
-export async function knowledgeDelete(id: KnowledgeDeletePathParams["id"], tenantId: KnowledgeDeletePathParams["tenantId"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function knowledgeDelete({ id, tenantId }: { id: KnowledgeDeletePathParams["id"]; tenantId: KnowledgeDeletePathParams["tenantId"] }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
   const res = await request<KnowledgeDeleteMutationResponse, ResponseErrorConfig<KnowledgeDelete400 | KnowledgeDelete404 | KnowledgeDelete500>, unknown>({ method : "DELETE", url : `/api/tenant/${tenantId}/knowledge/${id}`, baseURL : "/", ... requestConfig })  
@@ -29,7 +29,7 @@ export function knowledgeDeleteMutationOptions(config: Partial<RequestConfig> & 
   return mutationOptions<KnowledgeDeleteMutationResponse, ResponseErrorConfig<KnowledgeDelete400 | KnowledgeDelete404 | KnowledgeDelete500>, {id: KnowledgeDeletePathParams["id"], tenantId: KnowledgeDeletePathParams["tenantId"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, tenantId }) => {
-      return knowledgeDelete(id, tenantId, config)
+      return knowledgeDelete({ id, tenantId }, config)
     },
   })
 }

@@ -7,7 +7,7 @@ import fetch from "@kubb/plugin-client/clients/axios";
 import type { LLMCreateMutationRequest, LLMCreateMutationResponse, LLMCreatePathParams, LLMCreate400, LLMCreate409, LLMCreate500 } from "../types/LLMCreate.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
-import { LLMCreateMutationResponseSchema, LLMCreateMutationRequestSchema } from "../zod/LLMCreateSchema.ts";
+import { llmcreateMutationResponseSchema, llmcreateMutationRequestSchema } from "../zod/LLMCreateSchema.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const LLMCreateMutationKey = () => [{ url: '/api/tenant/:tenantId/llm' }] as const
@@ -17,21 +17,21 @@ export type LLMCreateMutationKey = ReturnType<typeof LLMCreateMutationKey>
 /**
  * {@link /api/tenant/:tenantId/llm}
  */
-export async function LLMCreate(tenantId: LLMCreatePathParams["tenantId"], data?: LLMCreateMutationRequest, config: Partial<RequestConfig<LLMCreateMutationRequest>> & { client?: typeof fetch } = {}) {
+export async function LLMCreate({ tenantId, data }: { tenantId: LLMCreatePathParams["tenantId"]; data: LLMCreateMutationRequest }, config: Partial<RequestConfig<LLMCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const requestData = LLMCreateMutationRequestSchema.parse(data)  
+  const requestData = llmcreateMutationRequestSchema.parse(data)  
   
   const res = await request<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, LLMCreateMutationRequest>({ method : "POST", url : `/api/tenant/${tenantId}/llm`, baseURL : "/", data : requestData, ... requestConfig })  
-  return LLMCreateMutationResponseSchema.parse(res.data)
+  return llmcreateMutationResponseSchema.parse(res.data)
 }
 
 export function LLMCreateMutationOptions(config: Partial<RequestConfig<LLMCreateMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = LLMCreateMutationKey()
-  return mutationOptions<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, {tenantId: LLMCreatePathParams["tenantId"], data?: LLMCreateMutationRequest}, typeof mutationKey>({
+  return mutationOptions<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, {tenantId: LLMCreatePathParams["tenantId"], data: LLMCreateMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ tenantId, data }) => {
-      return LLMCreate(tenantId, data, config)
+      return LLMCreate({ tenantId, data }, config)
     },
   })
 }
@@ -41,7 +41,7 @@ export function LLMCreateMutationOptions(config: Partial<RequestConfig<LLMCreate
  */
 export function useApiLLMCreate<TContext>(options: 
 {
-  mutation?: UseMutationOptions<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, {tenantId: LLMCreatePathParams["tenantId"], data?: LLMCreateMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, {tenantId: LLMCreatePathParams["tenantId"], data: LLMCreateMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<LLMCreateMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -49,11 +49,11 @@ export function useApiLLMCreate<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? LLMCreateMutationKey()
 
-  const baseOptions = LLMCreateMutationOptions(config) as UseMutationOptions<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, {tenantId: LLMCreatePathParams["tenantId"], data?: LLMCreateMutationRequest}, TContext>
+  const baseOptions = LLMCreateMutationOptions(config) as UseMutationOptions<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, {tenantId: LLMCreatePathParams["tenantId"], data: LLMCreateMutationRequest}, TContext>
 
-  return useMutation<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, {tenantId: LLMCreatePathParams["tenantId"], data?: LLMCreateMutationRequest}, TContext>({
+  return useMutation<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, {tenantId: LLMCreatePathParams["tenantId"], data: LLMCreateMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, {tenantId: LLMCreatePathParams["tenantId"], data?: LLMCreateMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<LLMCreateMutationResponse, ResponseErrorConfig<LLMCreate400 | LLMCreate409 | LLMCreate500>, {tenantId: LLMCreatePathParams["tenantId"], data: LLMCreateMutationRequest}, TContext>
 }

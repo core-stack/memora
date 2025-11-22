@@ -4,60 +4,63 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useApiSourceDownload, useApiSourceViewSuspense } from '@/gen';
+import { useDownload } from '@/hooks/use-download';
+import { useKnowledge } from '@/hooks/use-knowledge';
+import { useTenant } from '@/hooks/use-tenant';
+import { useToast } from '@/hooks/use-toast';
 import {
   IndexStatusBadge
 } from '@/pages/[knowledgeSlug]/source/components/content/file-preview/index-status-badge';
 import { DateFormat, formatBytes, formatDate } from '@/utils/format';
 
+import { AsyncBoundary } from '../suspense-boundary';
 import { PDFViewer } from './pdf';
 
-import { useToast } from '@/hooks/use-toast';
-import { useDownload } from '@/hooks/use-download';
-import { useApiSourceDownload, useApiSourceView, type SourceEntity } from '@/gen';
-import { useTenant } from '@/hooks/use-tenant';
-import { useKnowledge } from '@/hooks/use-knowledge';
+import type { KnowledgeEntity, SourceEntity, TenantEntity } from '@/gen';
+
+export const FileViewer = ({ source }: { source?: SourceEntity }) => {
+  const { tenant, error: tenantError, isLoading } = useTenant();
+  const { knowledge, error: knowledgeError } = useKnowledge();
+  const error = tenantError || knowledgeError;
+
+  return (
+    <AsyncBoundary error={error} isLoading={isLoading}>
+      <Component source={source} knowledge={knowledge!} tenant={tenant!} />
+    </AsyncBoundary>
+  )
+}
 
 type Props = {
   source?: SourceEntity;
-  isLoading: boolean;
+  tenant: TenantEntity;
+  knowledge: KnowledgeEntity;
 }
 
-export const FileViewer = ({ source }: Props) => {
+const Component = ({ source, knowledge, tenant }: Props) => {
   const { toast } = useToast();
-  const { tenant } = useTenant();
-  const { knowledge } = useKnowledge();
-  const { data: preview } = useApiSourceView(
-    source?.id ?? "",
-    tenant?.id ?? "",
-    knowledge?.id ?? "",
-  );
+  const { data: preview } = useApiSourceViewSuspense({
+    id: source?.id ?? "",
+    tenantId: tenant.id,
+    knowledgeId: knowledge.id
+  });
+
   const { download } = useDownload();
-  const { mutate } = useApiSourceDownload()
+  const { mutate } = useApiSourceDownload();
 
   const [showHeader, setShowHeader] = useState(false);
 
   const handleDownload = () => {
     if (!source) return;
     mutate(
+      { id: source?.id ?? "", tenantId: tenant.id, knowledgeId: knowledge.id },
       {
-        id: source?.id ?? "",
-        tenantId: tenant?.id ?? "",
-        knowledgeId: knowledge?.id ?? "",
-      },
-      {
-        onSuccess: (data) => {
-          download(data.url, source?.originalName);
-        },
-        onError: (error) => {
-          toast({
-            title: "Error downloading file",
-            description: (error as Error).message,
-            variant: "destructive",
-          })
-        }
+        onSuccess: (data) =>  download(data.url, source?.originalName),
+        onError: (error) => toast({ title: "Error downloading file", description: (error as Error).message, variant: "destructive" })
       },
     );
   }
+
   return (
     <Card
       className="flex flex-col w-full h-full relative overflow-hidden group"

@@ -5,18 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@/components/ui/link';
 import { Spinner } from '@/components/ui/spinner';
-import { useApiMutation } from '@/hooks/use-api-mutation';
+import { useApiAuthActiveAccount } from '@/gen';
 import { useParams } from '@/hooks/use-params';
 
 export function ActivateAccountPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { token } = useParams<{ token?: string }>();
   const errorMessage = useRef<string | null>(token ? null : "Invalid activation code");
-  const { mutate: activeAccount } = useApiMutation("/api/auth/active-account", { method: "POST" });
-
+  const { mutate: activeAccount } = useApiAuthActiveAccount();
+  
   useEffect(() => {
     if (!errorMessage.current && token) {
-      activeAccount({ body: { token } }, {
+      activeAccount({ data: { token } }, {
         onSuccess: ()  => setIsLoading(false),
         onError: (error) => {
           setIsLoading(false);
