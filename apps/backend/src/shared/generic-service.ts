@@ -10,7 +10,10 @@ export abstract class GenericService {
 
   abstract readonly logger: Logger;
 
-  async transaction<T>(callback: (manager: EntityManager) => Promise<T>, manager?: EntityManager): Promise<T> {
+  async transaction<T>(
+    callback: (manager: EntityManager) => Promise<T>,
+    manager?: EntityManager
+  ): Promise<T> {
     if (manager) return await callback(manager);
     return await this.dataSource.transaction(callback);
   }
