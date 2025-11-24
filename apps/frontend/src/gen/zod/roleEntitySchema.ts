@@ -15,8 +15,8 @@ export const roleEntitySchema = z.object({
 "name": z.string().describe("The name of the role"),
 "permissions": z.number().describe("The permissions of the role as a bitmask"),
 "scope": z.enum(["TENANT", "GLOBAL"]).describe("The scope of the role"),
-"tenantId": z.optional(z.uuid().describe("The ID of the tenant this role belongs to")),
-"createdById": z.optional(z.uuid().describe("The ID of the user who created the role")),
+"tenantId": z.nullable(z.uuid().describe("The ID of the tenant this role belongs to")),
+"createdById": z.nullable(z.uuid().describe("The ID of the user who created the role")),
 "createdAt": z.string().datetime().describe("The timestamp when the role was created"),
 "updatedAt": z.string().datetime().describe("The timestamp when the role was last updated"),
 get "tenant"(){

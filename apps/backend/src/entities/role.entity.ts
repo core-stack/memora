@@ -41,12 +41,12 @@ export class RoleEntity {
   scope: RoleScope;
 
   @TenantId()
-  @Field({ type: "string", uuid: true, required: false, description: "The ID of the tenant this role belongs to" })
+  @Field({ type: "string", uuid: true, nullable: true, description: "The ID of the tenant this role belongs to" })
   @Column({ name: "tenant_id", nullable: true })
   tenantId?: string;
 
   @CreatedBy()
-  @Field({ type: "string", uuid: true, required: false, description: "The ID of the user who created the role" })
+  @Field({ type: "string", uuid: true, nullable: true, description: "The ID of the user who created the role" })
   @Column({ name: "created_by", nullable: true })
   createdById?: string;
 

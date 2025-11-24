@@ -1,15 +1,20 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import {
+  ApiHideProperty, ApiProperty, ApiPropertyOptional, ApiPropertyOptions
+} from '@nestjs/swagger';
 
-import { FieldOptions } from "../types";
+import { FieldOptions } from '../types';
 
 export const buildApiProperty = (opts: FieldOptions): PropertyDecorator => {
+  if (opts.hidden) return ApiHideProperty();
+
   const isRequired = opts.required ?? true;
 
-  const baseConfig: Record<string, any> = {
+  const baseConfig: ApiPropertyOptions = {
     description: opts.description,
     example: opts.example,
     default: opts.default,
-    isArray: opts.isArray
+    isArray: opts.isArray,
+    nullable: opts.nullable
   };
 
   switch (opts.type) {
@@ -36,6 +41,7 @@ export const buildApiProperty = (opts: FieldOptions): PropertyDecorator => {
       baseConfig.enum = enumValues;
       break;
   }
+
   if (opts.debug) console.log(baseConfig);
   return isRequired ? ApiProperty(baseConfig) : ApiPropertyOptional(baseConfig);
 };

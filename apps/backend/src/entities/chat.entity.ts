@@ -28,7 +28,7 @@ export class ChatEntity {
 
   @Field({ type: "class", class: () => MessageEntity, isArray: true })
   @OneToMany(() => MessageEntity, (message) => message.chat)
-  messages: MessageEntity[];
+  messages?: MessageEntity[];
 
   @Field({ type: "string", uuid: true, description: "The ID of the tenant this chat belongs to" })
   @Column({ name: "tenant_id", type: "uuid" })

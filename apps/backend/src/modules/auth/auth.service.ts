@@ -234,19 +234,27 @@ export class AuthService extends GenericService {
 
   async oauth2Callback(provider: string, code: string): Promise<LoginResponseDto> {
     if (!this.authManager.hasProvider(provider)) throw new NotFoundException("Provider not found");
-    const { token, session } = await this.authManager.oauth2Callback(provider, code);
-    
-    this.context.setCookie("access-token", token.accessToken, {
-      maxAge: token.accessTokenDuration,
-      httpOnly: true,
-      path: "/"
-    });
-    this.context.setCookie("refresh-token", token.refreshToken, {
-      maxAge: token.refreshTokenDuration,
-      httpOnly: true,
-      path: "/"
-    });
-
-    return new LoginResponseDto({ redirect: "/" });
+    return this.transaction(async (manager) => {      
+      const { token, user } = await this.authManager.oauth2Callback(provider, code, manager);
+      
+      await this.tenantService.create({
+        name: `${user.name}'s Org`,
+        backgroundImage: "",
+        userId: user.id
+      }, manager);
+      
+      this.context.setCookie("access-token", token.accessToken, {
+        maxAge: token.accessTokenDuration,
+        httpOnly: true,
+        path: "/"
+      });
+      this.context.setCookie("refresh-token", token.refreshToken, {
+        maxAge: token.refreshTokenDuration,
+        httpOnly: true,
+        path: "/"
+      });
+  
+      return new LoginResponseDto({ redirect: "/" });
+    })
   }
 }

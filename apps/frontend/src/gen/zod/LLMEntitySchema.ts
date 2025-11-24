@@ -16,7 +16,7 @@ export const llmentitySchema = z.object({
     }).describe("The configuration for the LLM"),
 "type": z.enum(["EMBEDDING", "TEXT"]).describe("The type of the LLM"),
 "tenantId": z.uuid().describe("The ID of the tenant this LLM belongs to"),
-"creatorId": z.optional(z.uuid().describe("The ID of the user who created the LLM")),
+"creatorId": z.uuid().describe("The ID of the user who created the LLM").nullish(),
 get "knowledgeLLMs"(){
                 return z.array(knowledgeLLMEntitySchema)
               },

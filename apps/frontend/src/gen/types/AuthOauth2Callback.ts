@@ -37,9 +37,9 @@ export type AuthOauth2Callback404 = ErrorResponse;
 */
 export type AuthOauth2Callback500 = ErrorResponse;
 
-export type AuthOauth2CallbackMutationResponse = AuthOauth2Callback200;
+export type AuthOauth2CallbackQueryResponse = AuthOauth2Callback200;
 
-export type AuthOauth2CallbackMutation = {
+export type AuthOauth2CallbackQuery = {
     Response: AuthOauth2Callback200;
     PathParams: AuthOauth2CallbackPathParams;
     QueryParams: AuthOauth2CallbackQueryParams;

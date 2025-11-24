@@ -22,18 +22,14 @@ export type TenantEntity = {
     name: string;
     /**
      * @description A brief description of the tenant
-     * @type string | undefined
+     * @type string
     */
-    description?: string;
+    description?: string | null;
     /**
      * @description The URL of the background image for the tenant
-     * @type string, uri
+     * @type string
     */
-    backgroundImage: string;
-    /**
-     * @type string | undefined, date-time
-    */
-    disabledAt?: string;
+    backgroundImage: string | null;
     /**
      * @description The timestamp when the tenant was created
      * @type string, date-time

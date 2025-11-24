@@ -10,7 +10,7 @@ export type { AuthCreateAccount201Schema, AuthCreateAccountMutationRequestSchema
 export type { AuthForgetPassword201Schema, AuthForgetPasswordMutationRequestSchema, AuthForgetPasswordMutationResponseSchema } from "./authForgetPasswordSchema.ts";
 export type { AuthLogin201Schema, AuthLoginMutationRequestSchema, AuthLoginMutationResponseSchema } from "./authLoginSchema.ts";
 export type { AuthLogout201Schema, AuthLogoutMutationResponseSchema } from "./authLogoutSchema.ts";
-export type { AuthOauth2CallbackPathParamsSchema, AuthOauth2CallbackQueryParamsSchema, AuthOauth2Callback200Schema, AuthOauth2Callback404Schema, AuthOauth2Callback500Schema, AuthOauth2CallbackMutationResponseSchema } from "./authOauth2CallbackSchema.ts";
+export type { AuthOauth2CallbackPathParamsSchema, AuthOauth2CallbackQueryParamsSchema, AuthOauth2Callback200Schema, AuthOauth2Callback404Schema, AuthOauth2Callback500Schema, AuthOauth2CallbackQueryResponseSchema } from "./authOauth2CallbackSchema.ts";
 export type { AuthOauth2PathParamsSchema, AuthOauth2200Schema, AuthOauth2404Schema, AuthOauth2500Schema, AuthOauth2MutationResponseSchema } from "./authOauth2Schema.ts";
 export type { AuthProviders200Schema, AuthProvidersQueryResponseSchema } from "./authProvidersSchema.ts";
 export type { ChatByIDPathParamsSchema, ChatByID200Schema, ChatByID400Schema, ChatByID404Schema, ChatByID500Schema, ChatByIDQueryResponseSchema } from "./chatByIDSchema.ts";
@@ -168,7 +168,7 @@ export { authOauth2CallbackQueryParamsSchema } from "./authOauth2CallbackSchema.
 export { authOauth2Callback200Schema } from "./authOauth2CallbackSchema.ts";
 export { authOauth2Callback404Schema } from "./authOauth2CallbackSchema.ts";
 export { authOauth2Callback500Schema } from "./authOauth2CallbackSchema.ts";
-export { authOauth2CallbackMutationResponseSchema } from "./authOauth2CallbackSchema.ts";
+export { authOauth2CallbackQueryResponseSchema } from "./authOauth2CallbackSchema.ts";
 export { authOauth2PathParamsSchema } from "./authOauth2Schema.ts";
 export { authOauth2200Schema } from "./authOauth2Schema.ts";
 export { authOauth2404Schema } from "./authOauth2Schema.ts";

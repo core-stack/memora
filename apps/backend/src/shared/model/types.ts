@@ -15,6 +15,8 @@ export type BaseFieldOptions = {
   description?: string;
   example?: any;
   default?: any;
+  hidden?: boolean;
+  nullable?: boolean;
 
   transform?: (value: any) => any;
 

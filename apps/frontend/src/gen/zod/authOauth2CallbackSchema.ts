@@ -40,6 +40,6 @@ export const authOauth2Callback500Schema = errorResponseSchema
 
 export type AuthOauth2Callback500Schema = z.infer<typeof authOauth2Callback500Schema>
 
-export const authOauth2CallbackMutationResponseSchema = authOauth2Callback200Schema
+export const authOauth2CallbackQueryResponseSchema = authOauth2Callback200Schema
 
-export type AuthOauth2CallbackMutationResponseSchema = z.infer<typeof authOauth2CallbackMutationResponseSchema>
+export type AuthOauth2CallbackQueryResponseSchema = z.infer<typeof authOauth2CallbackQueryResponseSchema>

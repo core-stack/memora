@@ -14,9 +14,8 @@ export const useApirEntitySchema = z.object({
     "id": z.uuid().describe("The unique identifier of the user"),
 "name": z.string().describe("The name of the user"),
 "email": z.email().describe("The email of the user"),
-"password": z.string().describe("The password of the user"),
-"emailVerified": z.string().datetime().describe("The date the user email was verified"),
-"image": z.url().describe("The image of the user"),
+"emailVerified": z.nullable(z.string().datetime().describe("The date the user email was verified")),
+"image": z.nullable(z.url().describe("The image of the user")),
 "roleId": z.uuid().describe("The unique identifier of the role"),
 "createdAt": z.string().datetime().describe("The date the user was created"),
 "updatedAt": z.string().datetime().describe("The date the user was updated"),
@@ -24,16 +23,16 @@ get "role"(){
                 return roleEntitySchema
               },
 get "accounts"(){
-                return z.array(accountEntitySchema)
+                return z.array(accountEntitySchema).optional()
               },
 get "invites"(){
-                return z.array(inviteEntitySchema)
+                return z.array(inviteEntitySchema).optional()
               },
 get "members"(){
-                return z.array(memberEntitySchema)
+                return z.array(memberEntitySchema).optional()
               },
 get "verificationTokens"(){
-                return z.array(verificationTokenEntitySchema)
+                return z.array(verificationTokenEntitySchema).optional()
               }
     })
 

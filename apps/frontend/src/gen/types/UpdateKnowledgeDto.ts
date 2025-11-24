@@ -12,7 +12,7 @@ export type UpdateKnowledgeDto = {
     title?: string;
     /**
      * @description A brief description of the knowledge base
-     * @type string | undefined
+     * @type string
     */
-    description?: string;
+    description?: string | null;
 };

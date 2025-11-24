@@ -3323,10 +3323,12 @@ components:
         tenantId:
           type: string
           description: The ID of the tenant this role belongs to
+          nullable: true
           format: uuid
         createdById:
           type: string
           description: The ID of the user who created the role
+          nullable: true
           format: uuid
         createdAt:
           format: date-time
@@ -3358,6 +3360,8 @@ components:
         - name
         - permissions
         - scope
+        - tenantId
+        - createdById
         - createdAt
         - updatedAt
     AccountEntity:
@@ -3385,12 +3389,12 @@ components:
           format: date-time
           type: string
           description: The date the account was created
-          example: 2025-11-22T14:41:25.300Z
+          example: 2025-11-24T08:56:18.600Z
         updatedAt:
           format: date-time
           type: string
           description: The date the account was updated
-          example: 2025-11-22T14:41:25.300Z
+          example: 2025-11-24T08:56:18.600Z
       required:
         - id
         - provider
@@ -3445,18 +3449,16 @@ components:
           type: string
           description: The email of the user
           format: email
-        password:
-          type: string
-          description: The password of the user
-          format: password
         emailVerified:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-22T14:41:25.299Z
+          example: 2025-11-24T08:56:18.599Z
+          nullable: true
         image:
           type: string
           description: The image of the user
+          nullable: true
           format: uri
         roleId:
           type: string
@@ -3466,12 +3468,12 @@ components:
           format: date-time
           type: string
           description: The date the user was created
-          example: 2025-11-22T14:41:25.299Z
+          example: 2025-11-24T08:56:18.599Z
         updatedAt:
           format: date-time
           type: string
           description: The date the user was updated
-          example: 2025-11-22T14:41:25.299Z
+          example: 2025-11-24T08:56:18.599Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:
@@ -3494,17 +3496,12 @@ components:
         - id
         - name
         - email
-        - password
         - emailVerified
         - image
         - roleId
         - createdAt
         - updatedAt
         - role
-        - accounts
-        - invites
-        - members
-        - verificationTokens
     NotificationEntity:
       type: object
       properties:
@@ -3627,13 +3624,11 @@ components:
         description:
           type: string
           description: A brief description of the tenant
+          nullable: true
         backgroundImage:
           type: string
           description: The URL of the background image for the tenant
-          format: uri
-        disabledAt:
-          format: date-time
-          type: string
+          nullable: true
         createdAt:
           format: date-time
           type: string
@@ -3947,6 +3942,7 @@ components:
         creatorId:
           type: string
           description: The ID of the user who created the LLM
+          nullable: true
           format: uuid
         knowledgeLLMs:
           type: array
@@ -4027,6 +4023,7 @@ components:
         description:
           type: string
           description: A brief description of the knowledge base
+          nullable: true
         status:
           type: string
           description: The status of the knowledge base
@@ -4037,6 +4034,7 @@ components:
         deleteError:
           type: string
           description: The error message if deletion fails
+          nullable: true
         files:
           type: number
           description: The number of files in the knowledge base
@@ -4164,6 +4162,7 @@ components:
         description:
           type: string
           description: A brief description of the knowledge base
+          nullable: true
       required:
         - slug
         - title
@@ -4176,6 +4175,7 @@ components:
         description:
           type: string
           description: A brief description of the knowledge base
+          nullable: true
     LoginDto:
       type: object
       properties:
@@ -4284,10 +4284,11 @@ components:
         description:
           type: string
           description: A brief description of the tenant
+          nullable: true
         backgroundImage:
           type: string
           description: The URL of the background image for the tenant
-          format: uri
+          nullable: true
       required:
         - name
         - backgroundImage

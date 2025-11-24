@@ -33,26 +33,25 @@ export class KnowledgeEntity {
   @Column({ length: 255 })
   title: string;
 
-  @Field({ type: "string", required: false, description: "A brief description of the knowledge base" })
+  @Field({ type: "string", required: false, nullable: true, description: "A brief description of the knowledge base" })
   @Column({ type: "text", nullable: true })
-  description?: string;
+  description?: string | null;
 
   @Field({ type: "enum", enum: KnowledgeStatus, description: "The status of the knowledge base" })
   @Column({ type: "enum", enum: KnowledgeStatus, default: KnowledgeStatus.OK })
   status: KnowledgeStatus;
 
-  @Field({ type: "string", required: false, description: "The error message if deletion fails" })
+  @Field({ type: "string", required: false, nullable: true, description: "The error message if deletion fails" })
   @Column({ name: "delete_error", type: "text", nullable: true })
-  deleteError?: string;
+  deleteError?: string | null;
 
   @Field({ type: "number", integer: true, description: "The number of files in the knowledge base" })
   @Column({ name: "file_count", type: "integer", default: 0 })
   files: number;
 
   @Field({ type: "number", description: "The total storage used by the knowledge base in bytes" })
-  // note: depending on your driver you may want a transformer to convert string->number
   @Column({ name: "storage", type: "bigint", default: 0 })
-  storage: string | number;
+  storage: number;
 
   @TenantId()
   @Field({ type: "string", uuid: true, description: "The ID of the tenant this knowledge base belongs to" })
@@ -70,21 +69,25 @@ export class KnowledgeEntity {
   // relations
   @Field({ type: "class", class: () => FolderEntity, isArray: true })
   @OneToMany(() => FolderEntity, (f) => f.knowledge)
-  folders: FolderEntity[];
+  folders?: FolderEntity[];
 
   @Field({ type: "class", class: () => SourceEntity, isArray: true })
   @OneToMany(() => SourceEntity, (s) => s.knowledge)
-  sources: SourceEntity[];
+  sources?: SourceEntity[];
 
   @Field({ type: "class", class: () => ChatEntity, isArray: true })
   @OneToMany(() => ChatEntity, (c) => c.knowledge)
-  chats: ChatEntity[];
+  chats?: ChatEntity[];
 
   @Field({ type: "class", class: () => MessageEntity, isArray: true })
   @OneToMany(() => MessageEntity, (c) => c.knowledge)
-  messages: MessageEntity[];
+  messages?: MessageEntity[];
 
   @Field({ type: "class", class: () => KnowledgeLLMEntity, isArray: true })
   @OneToMany(() => KnowledgeLLMEntity, (kllm) => kllm.knowledge)
-  knowledgeLLMs: KnowledgeLLMEntity[];
+  knowledgeLLMs?: KnowledgeLLMEntity[];
+
+  constructor(data: Partial<KnowledgeEntity>) {
+    Object.assign(this, data);
+  }
 }

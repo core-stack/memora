@@ -1,17 +1,17 @@
-import { EntityManager } from "typeorm";
+import { EntityManager } from 'typeorm';
 
-import { LLMEntity } from "@/entities/llm.entity";
-import { env } from "@/env";
-import { LLMManagerService } from "@/infra/llm-manager/llm-manager.service";
-import { EmbeddingProvider } from "@/infra/llm-manager/provider/embedding/base";
-import { TextProvider } from "@/infra/llm-manager/provider/text/base";
-import { SecurityService } from "@/infra/security/security.service";
-import { Service } from "@/shared/service";
-import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { LLMEntity } from '@/entities/llm.entity';
+import { env } from '@/env';
+import { LLMManagerService } from '@/infra/llm-manager/llm-manager.service';
+import { EmbeddingProvider } from '@/infra/llm-manager/provider/embedding/base';
+import { TextProvider } from '@/infra/llm-manager/provider/text/base';
+import { SecurityService } from '@/infra/security/security.service';
+import { Service } from '@/shared/service';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import { KnowledgeLLMEntity } from "../../entities/knowledge-llm.entity";
-import { KnowledgeEntity } from "../../entities/knowledge.entity";
-import { KnowledgeService } from "../knowledge/knowledge.service";
+import { KnowledgeLLMEntity } from '../../entities/knowledge-llm.entity';
+import { KnowledgeEntity } from '../../entities/knowledge.entity';
+import { KnowledgeService } from '../knowledge/knowledge.service';
 
 @Injectable()
 export class LLMService extends Service<LLMEntity> {
@@ -28,13 +28,18 @@ export class LLMService extends Service<LLMEntity> {
       relations: [ "knowledgeLLMs.llm" ]
     }, manager);
     if (!knowledge) throw new NotFoundException("Knowledge not found");
-    const llms = knowledge.knowledgeLLMs;
+    const llms = knowledge.knowledgeLLMs ?? [];
     for (const kLLM of llms) {
-      const preset = this.manager.getPresets().find(preset => preset.config.model === kLLM.llm.model);
+      const preset = this.manager.getPresets().find(preset => preset.config.model === kLLM.llm?.model);
       if (!preset) throw new NotFoundException("Model not found");
-      await Promise.all(Object.entries(kLLM.llm.config).map(async ([ key, value ]) => {
+      if (!kLLM.llm) {
+        this.logger.warn(`LLM not found for knowledge ${knowledgeId}`);
+        continue;
+      }
+      const config = kLLM.llm.config;
+      await Promise.all(Object.entries(config).map(async ([ key, value ]) => {
         const isSecret = preset.fields?.[key] === "secret-string";
-        if (isSecret) kLLM.llm.config[key] = await this.securityService.decrypt(value as any, env.ENCRYPT_MASTER_PASSWORD);
+        if (isSecret) config[key] = await this.securityService.decrypt(value as any, env.ENCRYPT_MASTER_PASSWORD);
       }));
     }
     return llms;
@@ -45,8 +50,9 @@ export class LLMService extends Service<LLMEntity> {
   async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: "EMBEDDING" | "TEXT", manager?: EntityManager): Promise<EmbeddingProvider | TextProvider | null> {
     const knowledgeId = typeof entityOrId === "string" ? entityOrId : entityOrId.id;
     const llms = await this.findByKnowledge(knowledgeId, manager);
-    const llm = llms.find(llm => llm.llm.type === type && llm.default);
+    const llm = llms.find(llm => llm.llm?.type === type && llm.default);
     if (!llm) return null;
+    if (!llm.llm) return null
     if (type == "EMBEDDING") return this.manager.getEmbedding(llm.llm);
     return this.manager.getInstance(llm.llm);
   }

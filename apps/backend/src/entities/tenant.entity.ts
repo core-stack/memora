@@ -19,15 +19,15 @@ export class TenantEntity {
   @Column()
   name: string;
 
-  @Field({ type: "string", required: false, description: "A brief description of the tenant" })
+  @Field({ type: "string", required: false, nullable: true, description: "A brief description of the tenant" })
   @Column({ nullable: true })
   description?: string;
 
-  @Field({ type: "string", url: true, description: "The URL of the background image for the tenant" })
-  @Column({ name: "background_image" })
+  @Field({ type: "string", nullable: true, description: "The URL of the background image for the tenant" })
+  @Column({ name: "background_image", nullable: true })
   backgroundImage: string;
 
-  @Field({ type: "date", required: false })
+  @Field({ type: "date", required: false, hidden: true, nullable: true, description: "The timestamp when the tenant was disabled" })
   @Column({ name: "disabled_at", type: "timestamptz", nullable: true })
   disabledAt?: Date;
 

@@ -25,17 +25,17 @@ export class UserEntity {
   @Column({ unique: true, type: "text" })
   email: string;
 
-  @Field({ type: "string", description: "The password of the user", password: true, min: 6, max: 100 })
+  @Field({ type: "string", password: true, min: 6, max: 100, hidden: true })
   @Column({ type: "text", nullable: true })
   password?: string;
 
-  @Field({ type: "date", description: "The date the user email was verified", example: new Date().toISOString() })
+  @Field({ type: "date", description: "The date the user email was verified", example: new Date().toISOString(), nullable: true })
   @Column({ name: "email_verified", type: "timestamptz", nullable: true })
-  emailVerified?: Date;
+  emailVerified?: Date | null;
 
-  @Field({ type: "string", description: "The image of the user", url: true })
+  @Field({ type: "string", description: "The image of the user", url: true, nullable: true })
   @Column({ type: "text", nullable: true })
-  image?: string;
+  image?: string | null;
 
   @Field({ type: "string", description: "The unique identifier of the role", uuid: true })
   @Column({ name: "role_id" })
@@ -55,19 +55,19 @@ export class UserEntity {
   @JoinColumn({ name: "role_id" })
   role?: RoleEntity;
 
-  @Field({ type: "class", class: () => AccountEntity, isArray: true })
+  @Field({ type: "class", class: () => AccountEntity, isArray: true, required: false })
   @OneToMany(() => AccountEntity, (account) => account.user)
   accounts?: AccountEntity[];
 
-  @Field({ type: "class", class: () => InviteEntity, isArray: true })
+  @Field({ type: "class", class: () => InviteEntity, isArray: true, required: false })
   @OneToMany(() => InviteEntity, (invite) => invite.user)
   invites?: InviteEntity[];
 
-  @Field({ type: "class", class: () => MemberEntity, isArray: true })
+  @Field({ type: "class", class: () => MemberEntity, isArray: true, required: false })
   @OneToMany(() => MemberEntity, (member) => member.user)
   members?: MemberEntity[];
 
-  @Field({ type: "class", class: () => VerificationTokenEntity, isArray: true })
+  @Field({ type: "class", class: () => VerificationTokenEntity, isArray: true, required: false })
   @OneToMany(() => VerificationTokenEntity, (token) => token.user)
   verificationTokens?: VerificationTokenEntity[];
 

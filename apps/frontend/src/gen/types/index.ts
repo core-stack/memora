@@ -11,7 +11,7 @@ export type { AuthForgetPassword201, AuthForgetPasswordMutationRequest, AuthForg
 export type { AuthLogin201, AuthLoginMutationRequest, AuthLoginMutationResponse, AuthLoginMutation } from "./AuthLogin.ts";
 export type { AuthLogout201, AuthLogoutMutationResponse, AuthLogoutMutation } from "./AuthLogout.ts";
 export type { AuthOauth2PathParams, AuthOauth2200, AuthOauth2404, AuthOauth2500, AuthOauth2MutationResponse, AuthOauth2Mutation } from "./AuthOauth2.ts";
-export type { AuthOauth2CallbackPathParams, AuthOauth2CallbackQueryParams, AuthOauth2Callback200, AuthOauth2Callback404, AuthOauth2Callback500, AuthOauth2CallbackMutationResponse, AuthOauth2CallbackMutation } from "./AuthOauth2Callback.ts";
+export type { AuthOauth2CallbackPathParams, AuthOauth2CallbackQueryParams, AuthOauth2Callback200, AuthOauth2Callback404, AuthOauth2Callback500, AuthOauth2CallbackQueryResponse, AuthOauth2CallbackQuery } from "./AuthOauth2Callback.ts";
 export type { AuthProviders200, AuthProvidersQueryResponse, AuthProvidersQuery } from "./AuthProviders.ts";
 export type { ChatPathParams, ChatQueryParams, Chat200, Chat400, Chat500, ChatQueryResponse, ChatQuery } from "./Chat.ts";
 export type { ChatByIDPathParams, ChatByID200, ChatByID400, ChatByID404, ChatByID500, ChatByIDQueryResponse, ChatByIDQuery } from "./ChatByID.ts";

@@ -26,20 +26,15 @@ export type UserEntity = {
     */
     email: string;
     /**
-     * @description The password of the user
-     * @type string, password
-    */
-    password: string;
-    /**
      * @description The date the user email was verified
      * @type string, date-time
     */
-    emailVerified: string;
+    emailVerified: string | null;
     /**
      * @description The image of the user
      * @type string, uri
     */
-    image: string;
+    image: string | null;
     /**
      * @description The unique identifier of the role
      * @type string, uuid
@@ -60,19 +55,19 @@ export type UserEntity = {
     */
     role: RoleEntity;
     /**
-     * @type array
+     * @type array | undefined
     */
-    accounts: AccountEntity[];
+    accounts?: AccountEntity[];
     /**
-     * @type array
+     * @type array | undefined
     */
-    invites: InviteEntity[];
+    invites?: InviteEntity[];
     /**
-     * @type array
+     * @type array | undefined
     */
-    members: MemberEntity[];
+    members?: MemberEntity[];
     /**
-     * @type array
+     * @type array | undefined
     */
-    verificationTokens: VerificationTokenEntity[];
+    verificationTokens?: VerificationTokenEntity[];
 };

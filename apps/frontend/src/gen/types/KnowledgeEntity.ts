@@ -35,9 +35,9 @@ export type KnowledgeEntity = {
     title: string;
     /**
      * @description A brief description of the knowledge base
-     * @type string | undefined
+     * @type string
     */
-    description?: string;
+    description?: string | null;
     /**
      * @description The status of the knowledge base
      * @type string
@@ -45,9 +45,9 @@ export type KnowledgeEntity = {
     status: KnowledgeEntityStatusEnumKey;
     /**
      * @description The error message if deletion fails
-     * @type string | undefined
+     * @type string
     */
-    deleteError?: string;
+    deleteError?: string | null;
     /**
      * @description The number of files in the knowledge base
      * @type number

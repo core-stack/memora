@@ -1,16 +1,16 @@
-import { EntityManager } from "typeorm";
+import { EntityManager } from 'typeorm';
 
-import { Service } from "@/shared/service";
-import { BadRequestException, Inject, Injectable, Logger } from "@nestjs/common";
-import { permissionsToNumber, ROLES } from "@snipet/permission";
+import { Service } from '@/shared/service';
+import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
+import { permissionsToNumber, ROLES } from '@snipet/permission';
 
-import { MemberEntity } from "../../entities/member.entity";
-import { RoleEntity, RoleScope } from "../../entities/role.entity";
-import { TenantEntity } from "../../entities/tenant.entity";
-import { AuthManager } from "../auth/auth-manager.service";
-import { MemberService } from "../member/member.service";
-import { RoleService } from "../role/role.service";
-import { CreateTenantDto } from "./dto/create-tenant.dto";
+import { MemberEntity } from '../../entities/member.entity';
+import { RoleEntity, RoleScope } from '../../entities/role.entity';
+import { TenantEntity } from '../../entities/tenant.entity';
+import { AuthManager } from '../auth/auth-manager.service';
+import { MemberService } from '../member/member.service';
+import { RoleService } from '../role/role.service';
+import { CreateTenantDto } from './dto/create-tenant.dto';
 
 @Injectable()
 export class TenantService extends Service<TenantEntity> {
@@ -23,7 +23,8 @@ export class TenantService extends Service<TenantEntity> {
 
   override async create(input: CreateTenantDto, manager?: EntityManager): Promise<TenantEntity> {
     return this.transaction(async (manager) => {
-      if (!this.context.user) throw new BadRequestException("User not found");
+      const userId = input.userId ?? this.context.user?.id;
+      if (!userId) throw new BadRequestException("User not found");
       const tenant = await this.repository(manager).save({
         name: input.name,
         description: input.description,
@@ -45,12 +46,12 @@ export class TenantService extends Service<TenantEntity> {
           roleId: adminRole.id,
           owner: true,
           tenantId: tenant.id,
-          userId: this.context.user.id
+          userId
         })
       );
 
       await this.memberService.create(member, manager);
-      await this.authManager.reloadSession(this.context.session!.id);
+      if (this.context.session?.id) await this.authManager.reloadSession(this.context.session.id);
       return tenant;
     }, manager);
   }

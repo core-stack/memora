@@ -43,14 +43,14 @@ export type RoleEntity = {
     scope: RoleEntityScopeEnumKey;
     /**
      * @description The ID of the tenant this role belongs to
-     * @type string | undefined, uuid
+     * @type string, uuid
     */
-    tenantId?: string;
+    tenantId: string | null;
     /**
      * @description The ID of the user who created the role
-     * @type string | undefined, uuid
+     * @type string, uuid
     */
-    createdById?: string;
+    createdById: string | null;
     /**
      * @description The timestamp when the role was created
      * @type string, date-time

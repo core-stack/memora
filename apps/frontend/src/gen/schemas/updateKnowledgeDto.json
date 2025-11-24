@@ -1,1 +1,1 @@
-{"type":"object","properties":{"title":{"type":"string","description":"The title of the knowledge base"},"description":{"type":"string","description":"A brief description of the knowledge base"}},"x-readme-ref-name":"UpdateKnowledgeDto"}
+{"type":"object","properties":{"title":{"type":"string","description":"The title of the knowledge base"},"description":{"type":"string","description":"A brief description of the knowledge base","nullable":true}},"x-readme-ref-name":"UpdateKnowledgeDto"}

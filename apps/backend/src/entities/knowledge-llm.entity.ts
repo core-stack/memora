@@ -1,6 +1,6 @@
 // knowledge-llm.entity.ts
 import {
-  Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn, Unique,
+  Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique,
   UpdateDateColumn
 } from 'typeorm';
 
@@ -21,23 +21,24 @@ export class KnowledgeLLMEntity {
   @Column({ type: "boolean", default: false })
   default: boolean;
 
+
   @Field({ type: "class", class: () => KnowledgeEntity })
   @ManyToOne(() => KnowledgeEntity, (k) => k.knowledgeLLMs, { onDelete: "CASCADE" })
-  knowledge: KnowledgeEntity;
+  @JoinColumn({ name: "knowledge_id" })
+  knowledge?: KnowledgeEntity;
 
   @Field({ type: "class", class: () => LLMEntity })
   @ManyToOne(() => LLMEntity, (llm) => llm.knowledgeLLMs, { onDelete: "CASCADE" })
-  llm: LLMEntity;
+  @JoinColumn({ name: "llm_id" })
+  llm?: LLMEntity;
 
   @Field({ type: "string", uuid: true, description: "The ID of the associated knowledge base" })
-  get knowledgeId() {
-    return this.knowledge.id;
-  }
+  @Column({ name: "knowledge_id", type: "uuid" })
+  knowledgeId: string;
 
   @Field({ type: "string", uuid: true, description: "The ID of the associated LLM" })
-  get llmId() {
-    return this.llm.id;
-  }
+  @Column({ name: "llm_id", type: "uuid",  })
+  llmId: string;
 
   @Field({ type: "date", description: "The timestamp when the link was created" })
   @CreateDateColumn({ name: "created_at", type: "timestamptz" })

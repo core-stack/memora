@@ -45,13 +45,13 @@ export class LLMEntity {
   tenantId: string;
 
   @CreatedBy()
-  @Field({ type: "string", uuid: true, required: false, description: "The ID of the user who created the LLM" })
+  @Field({ type: "string", uuid: true, required: false, nullable: true, description: "The ID of the user who created the LLM" })
   @Column({ name: "creator_id", length: 36, nullable: true })
   creatorId?: string;
 
   @Field({ type: "class", class: () => KnowledgeLLMEntity, isArray: true })
   @OneToMany(() => KnowledgeLLMEntity, (kllm) => kllm.knowledge)
-  knowledgeLLMs: KnowledgeLLMEntity[];
+  knowledgeLLMs?: KnowledgeLLMEntity[];
 
   @Field({ type: "date", description: "The timestamp when the LLM was created" })
   @CreateDateColumn({ name: "created_at", type: "timestamptz" })

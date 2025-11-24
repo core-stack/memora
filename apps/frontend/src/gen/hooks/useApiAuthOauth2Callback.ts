@@ -4,15 +4,15 @@
 */
 
 import fetch from "@kubb/plugin-client/clients/axios";
-import type { AuthOauth2CallbackMutationResponse, AuthOauth2CallbackPathParams, AuthOauth2CallbackQueryParams, AuthOauth2Callback404, AuthOauth2Callback500 } from "../types/AuthOauth2Callback.ts";
+import type { AuthOauth2CallbackQueryResponse, AuthOauth2CallbackPathParams, AuthOauth2CallbackQueryParams, AuthOauth2Callback404, AuthOauth2Callback500 } from "../types/AuthOauth2Callback.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
-import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
-import { authOauth2CallbackMutationResponseSchema } from "../zod/authOauth2CallbackSchema.ts";
-import { mutationOptions, useMutation } from "@tanstack/react-query";
+import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
+import { authOauth2CallbackQueryResponseSchema } from "../zod/authOauth2CallbackSchema.ts";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const authOauth2CallbackMutationKey = () => [{ url: '/api/auth/:provider/callback' }] as const
+export const authOauth2CallbackQueryKeyFn = ({ provider }: { provider: AuthOauth2CallbackPathParams["provider"] }, params: AuthOauth2CallbackQueryParams) => [{ url: '/api/auth/:provider/callback', params: {provider:provider} }, ...(params ? [params] : [])] as const
 
-export type AuthOauth2CallbackMutationKey = ReturnType<typeof authOauth2CallbackMutationKey>
+export type AuthOauth2CallbackQueryKey = ReturnType<typeof authOauth2CallbackQueryKeyFn>
 
 /**
  * {@link /api/auth/:provider/callback}
@@ -20,38 +20,42 @@ export type AuthOauth2CallbackMutationKey = ReturnType<typeof authOauth2Callback
 export async function authOauth2Callback({ provider, params }: { provider: AuthOauth2CallbackPathParams["provider"]; params: AuthOauth2CallbackQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<AuthOauth2CallbackMutationResponse, ResponseErrorConfig<AuthOauth2Callback404 | AuthOauth2Callback500>, unknown>({ method : "POST", url : `/api/auth/${provider}/callback`, baseURL : "/", params, ... requestConfig })  
-  return authOauth2CallbackMutationResponseSchema.parse(res.data)
+  const res = await request<AuthOauth2CallbackQueryResponse, ResponseErrorConfig<AuthOauth2Callback404 | AuthOauth2Callback500>, unknown>({ method : "GET", url : `/api/auth/${provider}/callback`, baseURL : "/", params, ... requestConfig })  
+  return authOauth2CallbackQueryResponseSchema.parse(res.data)
 }
 
-export function authOauth2CallbackMutationOptions(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const mutationKey = authOauth2CallbackMutationKey()
-  return mutationOptions<AuthOauth2CallbackMutationResponse, ResponseErrorConfig<AuthOauth2Callback404 | AuthOauth2Callback500>, {provider: AuthOauth2CallbackPathParams["provider"], params: AuthOauth2CallbackQueryParams}, typeof mutationKey>({
-    mutationKey,
-    mutationFn: async({ provider, params }) => {
+export function authOauth2CallbackQueryOptions({ provider, params }: { provider: AuthOauth2CallbackPathParams["provider"]; params: AuthOauth2CallbackQueryParams }, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = authOauth2CallbackQueryKeyFn({ provider }, params)
+  return queryOptions<AuthOauth2CallbackQueryResponse, ResponseErrorConfig<AuthOauth2Callback404 | AuthOauth2Callback500>, AuthOauth2CallbackQueryResponse, typeof queryKey>({
+   enabled: !!(provider&& params),
+   queryKey,
+   queryFn: async ({ signal }) => {
+      config.signal = signal
       return authOauth2Callback({ provider, params }, config)
-    },
+   },
   })
 }
 
 /**
  * {@link /api/auth/:provider/callback}
  */
-export function useApiAuthOauth2Callback<TContext>(options: 
+export function useApiAuthOauth2Callback<TData = AuthOauth2CallbackQueryResponse, TQueryData = AuthOauth2CallbackQueryResponse, TQueryKey extends QueryKey = AuthOauth2CallbackQueryKey>({ provider, params }: { provider: AuthOauth2CallbackPathParams["provider"]; params: AuthOauth2CallbackQueryParams }, options: 
 {
-  mutation?: UseMutationOptions<AuthOauth2CallbackMutationResponse, ResponseErrorConfig<AuthOauth2Callback404 | AuthOauth2Callback500>, {provider: AuthOauth2CallbackPathParams["provider"], params: AuthOauth2CallbackQueryParams}, TContext> & { client?: QueryClient },
-  client?: Partial<RequestConfig> & { client?: typeof fetch },
+  query?: Partial<QueryObserverOptions<AuthOauth2CallbackQueryResponse, ResponseErrorConfig<AuthOauth2Callback404 | AuthOauth2Callback500>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
+  client?: Partial<RequestConfig> & { client?: typeof fetch }
 }
  = {}) {
-  const { mutation = {}, client: config = {} } = options ?? {}
-  const { client: queryClient, ...mutationOptions } = mutation;
-  const mutationKey = mutationOptions.mutationKey ?? authOauth2CallbackMutationKey()
+  const { query: queryConfig = {}, client: config = {} } = options ?? {}
+  const { client: queryClient, ...queryOptions } = queryConfig
+  const queryKey = queryOptions?.queryKey ?? authOauth2CallbackQueryKeyFn({ provider }, params)
 
-  const baseOptions = authOauth2CallbackMutationOptions(config) as UseMutationOptions<AuthOauth2CallbackMutationResponse, ResponseErrorConfig<AuthOauth2Callback404 | AuthOauth2Callback500>, {provider: AuthOauth2CallbackPathParams["provider"], params: AuthOauth2CallbackQueryParams}, TContext>
+  const query = useQuery({
+   ...authOauth2CallbackQueryOptions({ provider, params }, config),
+   queryKey,
+   ...queryOptions
+  } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<AuthOauth2Callback404 | AuthOauth2Callback500>> & { queryKey: TQueryKey }
 
-  return useMutation<AuthOauth2CallbackMutationResponse, ResponseErrorConfig<AuthOauth2Callback404 | AuthOauth2Callback500>, {provider: AuthOauth2CallbackPathParams["provider"], params: AuthOauth2CallbackQueryParams}, TContext>({
-    ...baseOptions,
-    mutationKey,
-    ...mutationOptions,
-  }, queryClient) as UseMutationResult<AuthOauth2CallbackMutationResponse, ResponseErrorConfig<AuthOauth2Callback404 | AuthOauth2Callback500>, {provider: AuthOauth2CallbackPathParams["provider"], params: AuthOauth2CallbackQueryParams}, TContext>
+  query.queryKey = queryKey as TQueryKey
+
+  return query
 }

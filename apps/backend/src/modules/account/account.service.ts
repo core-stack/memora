@@ -29,7 +29,7 @@ export class AccountService extends Service<AccountEntity> {
       if (account) return account;
 
       // get user by email
-      let user = await this.userService.findFirst({ where: { email: data.email } });
+      let user = await this.userService.findFirst({ where: { email: data.email } }, manager);
       // if user not found, create user with user role and account
       if (!user) {
         const role = await this.roleService.findUnique({
@@ -42,7 +42,7 @@ export class AccountService extends Service<AccountEntity> {
           email: data.email,
           roleId: role.id,
           emailVerified: data.emailVerified ? new Date() : undefined
-        }));
+        }), manager);
       }
       // create account
       return await this.repository(manager).save(new AccountEntity({

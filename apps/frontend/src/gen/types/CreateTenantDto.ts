@@ -12,12 +12,12 @@ export type CreateTenantDto = {
     name: string;
     /**
      * @description A brief description of the tenant
-     * @type string | undefined
+     * @type string
     */
-    description?: string;
+    description?: string | null;
     /**
      * @description The URL of the background image for the tenant
-     * @type string, uri
+     * @type string
     */
-    backgroundImage: string;
+    backgroundImage: string | null;
 };

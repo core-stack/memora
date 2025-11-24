@@ -1,3 +1,5 @@
+import { EntityManager } from 'typeorm';
+
 import { isUUID } from '@/utils/uuid';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
@@ -29,10 +31,12 @@ export class AuthManager {
   }
 
   async oauth2GetUrl(provider: string): Promise<string> {
+    console.log(this._providers[provider].getAuthUrl());
+    
     return this._providers[provider].getAuthUrl();
-  }
+  } 
 
-  async oauth2Callback(provider: string, code: string): Promise<{ token: Tokens; session: Session }> {
+  async oauth2Callback(provider: string, code: string, manager?: EntityManager): Promise<{ token: Tokens; session: Session, user: UserEntity }> {
     const { providerAccountId, email, name, image } = await this._providers[provider].callback(code);
     
     const acc = await this.accountService.createIfNotExists({
@@ -42,11 +46,11 @@ export class AuthManager {
       image,
       provider,
       providerAccountId
-    });
+    }, manager);
 
-    const user = await this.userService.findFirstWithMemberRoleTenant({ where: { id: acc.userId } });
+    const user = await this.userService.findFirstWithMemberRoleTenant({ where: { id: acc.userId } }, manager);
     if (!user) throw new UnauthorizedException();
-    return await this.createSessionAndTokens(user);
+    return { ...await this.createSessionAndTokens(user), user };
   }
 
   async createSessionAndTokens(user: UserEntity): Promise<{ token: Tokens; session: Session }> {

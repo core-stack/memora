@@ -13,9 +13,8 @@ import { z } from "zod/v4";
 export const tenantEntitySchema = z.object({
     "id": z.uuid().describe("The unique identifier of the tenant"),
 "name": z.string().describe("The name of the tenant"),
-"description": z.optional(z.string().describe("A brief description of the tenant")),
-"backgroundImage": z.url().describe("The URL of the background image for the tenant"),
-"disabledAt": z.optional(z.string().datetime()),
+"description": z.string().describe("A brief description of the tenant").nullish(),
+"backgroundImage": z.nullable(z.string().describe("The URL of the background image for the tenant")),
 "createdAt": z.string().datetime().describe("The timestamp when the tenant was created"),
 "updatedAt": z.string().datetime().describe("The timestamp when the tenant was last updated"),
 get "members"(){

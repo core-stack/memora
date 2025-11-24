@@ -2,7 +2,7 @@ import { env } from '@/env';
 import { ErrorResponse } from '@/shared/controller';
 import { ApiResponses, HttpGet, HttpPost } from '@/shared/controller/decorators';
 import { Public } from '@/shared/controller/decorators/public';
-import { Body, Controller, Param, Query, Res } from '@nestjs/common';
+import { Body, Controller, Logger, Param, Query, Res } from '@nestjs/common';
 import { ApiParam, ApiQuery } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
@@ -17,6 +17,7 @@ import type { Response } from 'express';
 @Public("login", "logout", "createAccount", "activeAccount", "forgetPassword")
 @Controller("auth")
 export class AuthController {
+  private logger = new Logger(AuthController.name);
   constructor(private readonly authService: AuthService) {}
 
   @ApiResponses([ { status: 200, type: String, isArray: true, description: "The list of active providers" } ])
@@ -78,6 +79,7 @@ export class AuthController {
       const { redirect } = await this.authService.oauth2Callback(provider, code);
       return res.redirect(redirect);
     } catch (error) {
+      this.logger.error(error);      
       return res.redirect("/");
     }
   }

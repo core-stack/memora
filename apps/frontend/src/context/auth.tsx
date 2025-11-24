@@ -36,11 +36,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: user, isLoading: loadingUserSelf, error, refetch } = useApiUserSelf();
 
   const isAuthenticated = !!user && !error;
-  const currentMember = user?.members.find((member) => member.tenantId === tenantId);
+  const currentMember = user?.members?.find((member) => member.tenantId === tenantId);
   const isLoading = loadingUserSelf;
 
   //#region Permissions
-  const tenantPermissions = user?.members.map((member) => ({ tenantId: member.tenantId, role: member.role }));
+  const tenantPermissions = user?.members?.map((member) => ({ tenantId: member.tenantId, role: member.role }));
   const canInTenant = (
     permission: Permission | Permission[],
     tenant: string | undefined = tenantId ?? undefined
@@ -83,6 +83,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (isLoading) return;
     const publicRoute = publicRoutes.find(route => pathname.startsWith(route.path));
+    console.log(isAuthenticated, publicRoute, user, error);
+    
 
     if (!isAuthenticated && publicRoute) {
       return;

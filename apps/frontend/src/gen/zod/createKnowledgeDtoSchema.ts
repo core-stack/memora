@@ -8,7 +8,7 @@ import { z } from "zod/v4";
 export const createKnowledgeDtoSchema = z.object({
     "slug": z.string().describe("The URL-friendly slug for the knowledge base"),
 "title": z.string().describe("The title of the knowledge base"),
-"description": z.optional(z.string().describe("A brief description of the knowledge base"))
+"description": z.string().describe("A brief description of the knowledge base").nullish()
     })
 
 export type CreateKnowledgeDtoSchema = z.infer<typeof createKnowledgeDtoSchema>

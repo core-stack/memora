@@ -20,7 +20,7 @@ export class FolderEntity {
   @Field({ type: "class", class: () => KnowledgeEntity })
   @ManyToOne(() => KnowledgeEntity, (knowledge) => knowledge.folders, { onDelete: "CASCADE" })
   @JoinColumn({ name: "knowledge_id" })
-  knowledge: KnowledgeEntity;
+  knowledge?: KnowledgeEntity;
 
   @Field({ type: "string", min: 1, max: 100, description: "The name of the folder" })
   @Column({ length: 100 })
@@ -41,11 +41,11 @@ export class FolderEntity {
 
   @Field({ type: "class", class: () => FolderEntity, isArray: true })
   @OneToMany(() => FolderEntity, (folder) => folder.parent)
-  children: FolderEntity[];
+  children?: FolderEntity[];
 
   @Field({ type: "class", class: () => SourceEntity, isArray: true })
   @OneToMany(() => SourceEntity, (source) => source.folder)
-  sources: SourceEntity[];
+  sources?: SourceEntity[];
 
   @Field({ type: "string", uuid: true, description: "The ID of the tenant this folder belongs to" })
   @Column({ name: "tenant_id", type: "uuid" })

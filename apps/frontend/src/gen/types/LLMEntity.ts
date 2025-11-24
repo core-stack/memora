@@ -51,9 +51,9 @@ export type LLMEntity = {
     tenantId: string;
     /**
      * @description The ID of the user who created the LLM
-     * @type string | undefined, uuid
+     * @type string, uuid
     */
-    creatorId?: string;
+    creatorId?: string | null;
     /**
      * @type array
     */
