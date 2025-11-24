@@ -1,11 +1,11 @@
 import type { SourceMetadata } from "@/entities/metadata.types";
 import {
   SourceAudioMetadata, SourceDocMetadata, SourceImageMetadata, SourceType, SourceVideoMetadata
-} from '@/entities';
-import { Field } from '@/shared/model';
-import { ApiExtraModels } from '@nestjs/swagger';
+} from "@/entities";
+import { Field } from "@/shared/model";
+import { ApiExtraModels } from "@nestjs/swagger";
 
-import { BaseFragment } from './fragment';
+import { BaseFragment } from "./fragment";
 
 @ApiExtraModels(SourceDocMetadata, SourceImageMetadata, SourceVideoMetadata, SourceAudioMetadata)
 export class SourceFragment extends BaseFragment {
@@ -31,7 +31,7 @@ export class SourceFragment extends BaseFragment {
       () => SourceImageMetadata,
       () => SourceVideoMetadata,
       () => SourceAudioMetadata
-    ],
+    ]
   })
   // @ApiProperty({
   //   required: true, description: "The metadata of the source",

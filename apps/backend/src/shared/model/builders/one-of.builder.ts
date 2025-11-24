@@ -1,10 +1,10 @@
-import { ValidateNested } from 'class-validator';
+import { ValidateNested } from "class-validator";
 
 import {
   ApiExtraModels, ApiProperty, ApiPropertyOptional, ApiPropertyOptions, getSchemaPath
-} from '@nestjs/swagger';
+} from "@nestjs/swagger";
 
-import { FieldOneOfOptions } from '../types';
+import { FieldOneOfOptions } from "../types";
 
 export const buildOneOfDecorators = (opts: FieldOneOfOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];

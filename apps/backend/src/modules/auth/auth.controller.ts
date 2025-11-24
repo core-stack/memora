@@ -1,18 +1,18 @@
-import { env } from '@/env';
-import { ErrorResponse } from '@/shared/controller';
-import { ApiResponses, HttpGet, HttpPost } from '@/shared/controller/decorators';
-import { Public } from '@/shared/controller/decorators/public';
-import { Body, Controller, Logger, Param, Query, Res } from '@nestjs/common';
-import { ApiParam, ApiQuery } from '@nestjs/swagger';
+import { env } from "@/env";
+import { ErrorResponse } from "@/shared/controller";
+import { ApiResponses, HttpGet, HttpPost } from "@/shared/controller/decorators";
+import { Public } from "@/shared/controller/decorators/public";
+import { Body, Controller, Logger, Param, Query, Res } from "@nestjs/common";
+import { ApiParam, ApiQuery } from "@nestjs/swagger";
 
-import { AuthService } from './auth.service';
-import { ActiveAccountDto } from './dto/active-account.dto';
-import { CreateAccountDto } from './dto/create-account.dto';
-import { ForgetPasswordDto } from './dto/forget-password.dto';
-import { GetOAuth2UrlResponseDto } from './dto/get-oauth2-url.dto';
-import { LoginDto, LoginResponseDto } from './dto/login.dto';
+import { AuthService } from "./auth.service";
+import { ActiveAccountDto } from "./dto/active-account.dto";
+import { CreateAccountDto } from "./dto/create-account.dto";
+import { ForgetPasswordDto } from "./dto/forget-password.dto";
+import { GetOAuth2UrlResponseDto } from "./dto/get-oauth2-url.dto";
+import { LoginDto, LoginResponseDto } from "./dto/login.dto";
 
-import type { Response } from 'express';
+import type { Response } from "express";
 
 @Public("login", "logout", "createAccount", "activeAccount", "forgetPassword")
 @Controller("auth")
@@ -51,23 +51,23 @@ export class AuthController {
     return this.authService.forgetPassword(body);
   }
 
-  @ApiParam({ name: "provider", type: String, required: true, description: 'The provider name', example: "google" })
+  @ApiParam({ name: "provider", type: String, required: true, description: "The provider name", example: "google" })
   @ApiResponses([
     { status: 200, type: GetOAuth2UrlResponseDto, description: "The oauth2 url response" },
     { status: 404, description: "The provider not found", type: ErrorResponse },
-    { status: 500, description: "Internal server error", type: ErrorResponse },
+    { status: 500, description: "Internal server error", type: ErrorResponse }
   ])
   @HttpPost(":provider")
   async oauth2(@Param("provider") provider: string): Promise<GetOAuth2UrlResponseDto> {
     return this.authService.getOAuth2Url(provider);
   }
-  
-  @ApiParam({ name: "provider", type: String, required: true, description: 'The provider name', example: "google" })
-  @ApiQuery({ name: "code", type: String, required: true, description: 'The provider code', example: "code" })
+
+  @ApiParam({ name: "provider", type: String, required: true, description: "The provider name", example: "google" })
+  @ApiQuery({ name: "code", type: String, required: true, description: "The provider code", example: "code" })
   @ApiResponses([
     { status: 200, type: LoginResponseDto, description: "The login response" },
     { status: 404, description: "The provider not found", type: ErrorResponse },
-    { status: 500, description: "Internal server error", type: ErrorResponse },
+    { status: 500, description: "Internal server error", type: ErrorResponse }
   ])
   @HttpGet(":provider/callback")
   async oauth2Callback(
@@ -79,7 +79,7 @@ export class AuthController {
       const { redirect } = await this.authService.oauth2Callback(provider, code);
       return res.redirect(redirect);
     } catch (error) {
-      this.logger.error(error);      
+      this.logger.error(error);
       return res.redirect("/");
     }
   }

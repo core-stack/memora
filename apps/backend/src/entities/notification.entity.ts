@@ -1,9 +1,9 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-import { CreatedBy, MemberId, TenantId } from '../shared/controller/decorators/context';
-import { Field } from '../shared/model';
-import { MemberEntity } from './member.entity';
-import { TenantEntity } from './tenant.entity';
+import { CreatedBy, MemberId, TenantId } from "../shared/controller/decorators/context";
+import { Field } from "../shared/model";
+import { MemberEntity } from "./member.entity";
+import { TenantEntity } from "./tenant.entity";
 
 @Entity("notifications")
 export class NotificationEntity {

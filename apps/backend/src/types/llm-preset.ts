@@ -1,4 +1,4 @@
-import { Field } from '@/shared/model';
+import { Field } from "@/shared/model";
 
 export class LLMPreset {
   @Field({ type: "string", description: "The unique identifier of the LLM preset." })
@@ -39,7 +39,7 @@ export class LLMPreset {
   @Field({ type: "string", description: "Name of the adapter responsible for executing the LLM.", example: "openai" })
   adapter: string;
 
-  @Field({ 
+  @Field({
     type: "class",
     class: () => Object,
     description: "Adapter configuration.",

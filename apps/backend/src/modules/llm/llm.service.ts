@@ -1,17 +1,17 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager } from "typeorm";
 
-import { LLMEntity } from '@/entities/llm.entity';
-import { env } from '@/env';
-import { LLMManagerService } from '@/infra/llm-manager/llm-manager.service';
-import { EmbeddingProvider } from '@/infra/llm-manager/provider/embedding/base';
-import { TextProvider } from '@/infra/llm-manager/provider/text/base';
-import { SecurityService } from '@/infra/security/security.service';
-import { Service } from '@/shared/service';
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { LLMEntity } from "@/entities/llm.entity";
+import { env } from "@/env";
+import { LLMManagerService } from "@/infra/llm-manager/llm-manager.service";
+import { EmbeddingProvider } from "@/infra/llm-manager/provider/embedding/base";
+import { TextProvider } from "@/infra/llm-manager/provider/text/base";
+import { SecurityService } from "@/infra/security/security.service";
+import { Service } from "@/shared/service";
+import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 
-import { KnowledgeLLMEntity } from '../../entities/knowledge-llm.entity';
-import { KnowledgeEntity } from '../../entities/knowledge.entity';
-import { KnowledgeService } from '../knowledge/knowledge.service';
+import { KnowledgeLLMEntity } from "../../entities/knowledge-llm.entity";
+import { KnowledgeEntity } from "../../entities/knowledge.entity";
+import { KnowledgeService } from "../knowledge/knowledge.service";
 
 @Injectable()
 export class LLMService extends Service<LLMEntity> {
@@ -52,7 +52,7 @@ export class LLMService extends Service<LLMEntity> {
     const llms = await this.findByKnowledge(knowledgeId, manager);
     const llm = llms.find(llm => llm.llm?.type === type && llm.default);
     if (!llm) return null;
-    if (!llm.llm) return null
+    if (!llm.llm) return null;
     if (type == "EMBEDDING") return this.manager.getEmbedding(llm.llm);
     return this.manager.getInstance(llm.llm);
   }

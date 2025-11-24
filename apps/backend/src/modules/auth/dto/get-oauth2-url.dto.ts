@@ -1,11 +1,11 @@
-import { Field } from '@/shared/model';
+import { Field } from "@/shared/model";
 
 export class GetOAuth2UrlResponseDto {
   @Field({
     type: "string",
     url: true,
     description: "The url to redirect to",
-    example: "https://google.com",
+    example: "https://google.com"
   })
   url: string;
 

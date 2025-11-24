@@ -1,15 +1,15 @@
 import {
   Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
-} from 'typeorm';
+} from "typeorm";
 
-import { TenantId } from '../shared/controller/decorators/context';
-import { Field } from '../shared/model';
-import { InviteEntity } from './invite.entity';
-import { NotificationEntity } from './notification.entity';
-import { RoleEntity } from './role.entity';
-import { TenantEntity } from './tenant.entity';
-import { UserEntity } from './user.entity';
+import { TenantId } from "../shared/controller/decorators/context";
+import { Field } from "../shared/model";
+import { InviteEntity } from "./invite.entity";
+import { NotificationEntity } from "./notification.entity";
+import { RoleEntity } from "./role.entity";
+import { TenantEntity } from "./tenant.entity";
+import { UserEntity } from "./user.entity";
 
 @Entity("members")
 @Index([ "tenantId", "userId" ], { unique: true })

@@ -1,13 +1,13 @@
 import {
   Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn
-} from 'typeorm';
+} from "typeorm";
 
-import { Field } from '../shared/model';
-import { InviteEntity } from './invite.entity';
-import { MemberEntity } from './member.entity';
-import { NotificationEntity } from './notification.entity';
-import { RoleEntity } from './role.entity';
-import { SourceEntity } from './source.entity';
+import { Field } from "../shared/model";
+import { InviteEntity } from "./invite.entity";
+import { MemberEntity } from "./member.entity";
+import { NotificationEntity } from "./notification.entity";
+import { RoleEntity } from "./role.entity";
+import { SourceEntity } from "./source.entity";
 
 @Entity("tenants")
 export class TenantEntity {

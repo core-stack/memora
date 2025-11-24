@@ -1,10 +1,10 @@
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique,
   UpdateDateColumn
-} from 'typeorm';
+} from "typeorm";
 
-import { Field } from '../shared/model';
-import { UserEntity } from './user.entity';
+import { Field } from "../shared/model";
+import { UserEntity } from "./user.entity";
 
 @Entity("accounts")
 @Unique([ "provider", "providerAccountId" ])
@@ -32,7 +32,7 @@ export class AccountEntity {
   user?: UserEntity;
 
   @Field({ type: "date", description: "The date the account was created", example: new Date().toISOString() })
-  @CreateDateColumn({ name: "created_at", type: "timestamptz",  })
+  @CreateDateColumn({ name: "created_at", type: "timestamptz"  })
   createdAt: Date;
 
   @Field({ type: "date", description: "The date the account was updated", example: new Date().toISOString() })

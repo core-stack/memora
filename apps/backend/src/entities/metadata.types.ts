@@ -1,4 +1,4 @@
-import { Field } from '../shared/model';
+import { Field } from "../shared/model";
 
 export enum SourceType {
   TEXT = "TEXT",

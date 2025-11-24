@@ -1,15 +1,15 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager } from "typeorm";
 
-import { Service } from '@/shared/service';
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { ROLES } from '@snipet/permission';
+import { Service } from "@/shared/service";
+import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { ROLES } from "@snipet/permission";
 
-import { AccountEntity } from '../../entities/account.entity';
-import { RoleScope } from '../../entities/role.entity';
-import { UserEntity } from '../../entities/user.entity';
-import { RoleService } from '../role/role.service';
-import { UserService } from '../user/user.service';
-import { CreateAccountDto } from './dto/crete-account.dto';
+import { AccountEntity } from "../../entities/account.entity";
+import { RoleScope } from "../../entities/role.entity";
+import { UserEntity } from "../../entities/user.entity";
+import { RoleService } from "../role/role.service";
+import { UserService } from "../user/user.service";
+import { CreateAccountDto } from "./dto/crete-account.dto";
 
 @Injectable()
 export class AccountService extends Service<AccountEntity> {

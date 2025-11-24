@@ -1,7 +1,7 @@
-import { randomUUID } from 'crypto';
-import moment from 'moment';
+import { randomUUID } from "crypto";
+import moment from "moment";
 
-import { Field } from '@/shared/model';
+import { Field } from "@/shared/model";
 
 export abstract class BaseFragment {
   @Field({ type: "string", uuid: true })

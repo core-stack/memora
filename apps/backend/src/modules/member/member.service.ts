@@ -1,10 +1,10 @@
-import { EntityManager, In } from 'typeorm';
+import { EntityManager, In } from "typeorm";
 
-import { FilterOptions } from '@/shared/filter-options';
-import { Service } from '@/shared/service';
-import { Injectable, Logger } from '@nestjs/common';
+import { FilterOptions } from "@/shared/filter-options";
+import { Service } from "@/shared/service";
+import { Injectable, Logger } from "@nestjs/common";
 
-import { MemberEntity } from '../../entities/member.entity';
+import { MemberEntity } from "../../entities/member.entity";
 
 @Injectable()
 export class MemberService extends Service<MemberEntity> {
@@ -25,7 +25,7 @@ export class MemberService extends Service<MemberEntity> {
 
   override find(filterOptions: FilterOptions<MemberEntity>, manager?: EntityManager): Promise<MemberEntity[]> {
     console.log(filterOptions);
-    
+
     return super.find(filterOptions, manager);
   }
 }

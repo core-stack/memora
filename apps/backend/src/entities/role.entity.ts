@@ -1,16 +1,16 @@
 import {
   Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique,
   UpdateDateColumn
-} from 'typeorm';
+} from "typeorm";
 
-import { permissionsToNumber, RoleSchema } from '@snipet/permission';
+import { permissionsToNumber, RoleSchema } from "@snipet/permission";
 
-import { CreatedBy, TenantId } from '../shared/controller/decorators/context';
-import { Field } from '../shared/model';
-import { InviteEntity } from './invite.entity';
-import { MemberEntity } from './member.entity';
-import { TenantEntity } from './tenant.entity';
-import { UserEntity } from './user.entity';
+import { CreatedBy, TenantId } from "../shared/controller/decorators/context";
+import { Field } from "../shared/model";
+import { InviteEntity } from "./invite.entity";
+import { MemberEntity } from "./member.entity";
+import { TenantEntity } from "./tenant.entity";
+import { UserEntity } from "./user.entity";
 
 export enum RoleScope {
   TENANT = "TENANT",

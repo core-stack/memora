@@ -14,7 +14,7 @@ export class KnowledgeController extends BaseController({
   entity: KnowledgeEntity,
   createDto: CreateKnowledgeDto,
   updateDto: UpdateKnowledgeDto,
-  allowedFilters: [ 'slug', 'storage', 'title' ],
+  allowedFilters: [ "slug", "storage", "title" ]
 }) {
   constructor(public service: KnowledgeService) { super(service); }
 }

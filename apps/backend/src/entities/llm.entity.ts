@@ -1,10 +1,10 @@
 import {
   Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn
-} from 'typeorm';
+} from "typeorm";
 
-import { CreatedBy, TenantId } from '../shared/controller/decorators/context';
-import { Field } from '../shared/model';
-import { KnowledgeLLMEntity } from './knowledge-llm.entity';
+import { CreatedBy, TenantId } from "../shared/controller/decorators/context";
+import { Field } from "../shared/model";
+import { KnowledgeLLMEntity } from "./knowledge-llm.entity";
 
 export enum LLMType {
   EMBEDDING = "EMBEDDING",

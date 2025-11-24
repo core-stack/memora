@@ -1,6 +1,6 @@
-import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext, SetMetadata } from "@nestjs/common";
 
-import { FilterOptions } from '../../filter-options';
+import { FilterOptions } from "../../filter-options";
 
 const FILTER_METADATA_KEY = Symbol("filter_options");
 
@@ -44,7 +44,7 @@ export const Filter = <TEntity>(config?: {
         }
       }
     }
-    
+
     if (mergedConfig.allowedRelations.length && options.relations) {
       options.relations = options.relations.filter((i) =>
         mergedConfig.allowedRelations.includes(i as any)

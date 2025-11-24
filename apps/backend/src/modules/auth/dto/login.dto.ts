@@ -1,7 +1,7 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from "class-validator";
 
-import { Field } from '@/shared/model';
-import { ApiProperty } from '@nestjs/swagger';
+import { Field } from "@/shared/model";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class LoginDto {
   @Field({

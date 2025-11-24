@@ -1,4 +1,4 @@
-import { CallbackResponse, Provider } from './types';
+import { CallbackResponse, Provider } from "./types";
 
 type Opts = {
   GOOGLE_CLIENT_ID: string;
@@ -38,7 +38,7 @@ export const GoogleProvider = ({ GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIREC
         throw new Error(`Erro ao obter token: ${tokenRes.statusText}`);
       }
       const { access_token } = (await tokenRes.json() as any);
-      
+
       const profileRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
         method: "GET",
         headers: {
@@ -51,7 +51,7 @@ export const GoogleProvider = ({ GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIREC
         throw new Error(`Erro ao obter token: ${profileRes.statusText}`);
       }
       const profile = (await profileRes.json() as any);
-      
+
       return {
         providerAccountId: profile.sub,
         email: profile.email,

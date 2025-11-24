@@ -1,8 +1,8 @@
 import {
   ApiHideProperty, ApiProperty, ApiPropertyOptional, ApiPropertyOptions
-} from '@nestjs/swagger';
+} from "@nestjs/swagger";
 
-import { FieldOptions } from '../types';
+import { FieldOptions } from "../types";
 
 export const buildApiProperty = (opts: FieldOptions): PropertyDecorator => {
   if (opts.hidden) return ApiHideProperty();
