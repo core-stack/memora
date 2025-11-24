@@ -11,22 +11,30 @@ export class UserService extends Service<UserEntity> {
   entity = UserEntity;
   logger = new Logger(UserService.name);
 
-  async findWithMemberRoleTenant(filterOpts: FilterOptions<UserEntity>, manager?: EntityManager): Promise<UserEntity[]> {
+  async findWithMemberRoleTenant(
+    filterOpts: FilterOptions<UserEntity>,
+    manager?: EntityManager
+  ): Promise<UserEntity[]> {
     return await this.repository(manager).find({
       ...filterOpts,
       relations: [ "role", "members", "members.role", "members.tenant" ]
     });
   }
 
-  async findFirstWithMemberRoleTenant(filterOpts: FilterOptions<UserEntity>, manager?: EntityManager): Promise<UserEntity | null> {
+  async findFirstWithMemberRoleTenant(
+    filterOpts: FilterOptions<UserEntity>,
+    manager?: EntityManager
+  ): Promise<UserEntity | null> {
     return await this.repository(manager).findOne({
       ...filterOpts,
       relations: [ "role", "members", "members.role", "members.tenant" ]
     });
   }
 
-  async self() {
+  async self(): Promise<UserEntity> {
     if (!this.context.session?.user.id) throw new UnauthorizedException();
-    return await this.findFirstWithMemberRoleTenant({ where: { id: this.context.session.user.id } });
+    const user = await this.findFirstWithMemberRoleTenant({ where: { id: this.context.session.user.id } });
+    if (!user) throw new UnauthorizedException();
+    return user;
   }
 }

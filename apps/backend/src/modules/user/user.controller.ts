@@ -15,7 +15,7 @@ export class UserController extends BaseController({
   }
 
   @HttpGet("self", { responses: getDefaultFindByIDResponses(UserEntity) })
-  async self() {
+  async self(): Promise<UserEntity> {
     return await this.service.self();
   }
 }
