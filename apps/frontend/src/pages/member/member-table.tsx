@@ -1,7 +1,7 @@
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
 
-import { AsyncBoundary } from '@/components/suspense-boundary';
+import { AsyncBoundary } from '@/components/async-boundary';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
@@ -35,14 +35,15 @@ export const MembersTable = () => {
   )
 }
 
+const empty: MemberEntity[] = [];
 const Component = ({ tenant }: { tenant: TenantEntity }) => {
-  const { data: members = [] } = useApiMember({ tenantId: tenant.id, params: { relations: ["user", "role"] }});
+  const { data: members } = useApiMember({ tenantId: tenant.id, params: { relations: ["user", "role"] }});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const { canInTenant } = useAuth();
-
+  
   const memberColumns: ColumnDef<MemberEntity>[] = [
     {
       accessorKey: "user.name",
@@ -133,7 +134,7 @@ const Component = ({ tenant }: { tenant: TenantEntity }) => {
   ]
 
   const membersTable = useReactTable({
-    data: members,
+    data: members ?? empty,
     columns: memberColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

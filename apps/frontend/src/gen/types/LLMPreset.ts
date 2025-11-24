@@ -4,16 +4,9 @@
 */
 
 
-export const fieldsEnum = {
-    "string": "string",
-    "secret-string": "secret-string"
-} as const;
-
-export type FieldsEnumKey = (typeof fieldsEnum)[keyof typeof fieldsEnum];
-
 export type LLMPreset = {
     /**
-     * @description The name of the LLM preset.
+     * @description The unique identifier of the LLM preset.
      * @type string
     */
     name: string;
@@ -31,21 +24,17 @@ export type LLMPreset = {
      * @description Fields required to configure this LLM.
      * @type object
     */
-    fields: {
-        [key: string]: FieldsEnumKey;
-    };
+    fields: object;
     /**
      * @description Default values for any configuration fields.
-     * @type object
+     * @type object | undefined
     */
-    defaults: {
-        [key: string]: any;
-    };
+    defaults?: object;
     /**
      * @description List of required field names.
-     * @type array
+     * @type array | undefined
     */
-    required: string[];
+    required?: string[];
     /**
      * @description Name of the adapter responsible for executing the LLM.
      * @type string
@@ -55,7 +44,5 @@ export type LLMPreset = {
      * @description Adapter configuration.
      * @type object
     */
-    config: {
-        [key: string]: any;
-    };
+    config: object;
 };

@@ -1,7 +1,7 @@
 import { ArrowUpDown } from 'lucide-react';
 import { useState } from 'react';
 
-import { AsyncBoundary } from '@/components/suspense-boundary';
+import { AsyncBoundary } from '@/components/async-boundary';
 import { Button } from '@/components/ui/button';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
@@ -30,13 +30,13 @@ export const InvitesTable = () => {
     </AsyncBoundary>
   )
 }
-
+const empty: InviteEntity[] = [];
 const Component = ({ tenant }: { tenant: TenantEntity }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({});
-  const { data: invites = [] } = useApiInvite({ tenantId: tenant.id });
+  const { data: invites } = useApiInvite({ tenantId: tenant.id });
   const { mutate: deleteInvite } = useApiInviteDelete();
 
   const invalidate = useApiInvalidate();
@@ -140,7 +140,7 @@ const Component = ({ tenant }: { tenant: TenantEntity }) => {
   ]
 
   const invitesTable = useReactTable({
-    data: invites,
+    data: invites ?? empty,
     columns: inviteColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -160,73 +160,67 @@ const Component = ({ tenant }: { tenant: TenantEntity }) => {
 
   return (
     <>
-      {invites.length === 0 ? (
-        <div className="text-center py-6 text-muted-foreground">No invites found</div>
-      ) : (
-        <>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                {invitesTable.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
-                        </TableHead>
-                      )
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {invitesTable.getRowModel().rows?.length ? (
-                  invitesTable.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={inviteColumns.length} className="h-24 text-center">
-                      No results.
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {invitesTable.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  )
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {invitesTable.getRowModel().rows?.length ? (
+              invitesTable.getRowModel().rows.map((row) => (
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <div className="flex-1 text-sm text-muted-foreground">
-              {invitesTable.getFilteredRowModel().rows.length} invite(s).
-            </div>
-            <div className="space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => invitesTable.previousPage()}
-                disabled={!invitesTable.getCanPreviousPage()}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => invitesTable.nextPage()}
-                disabled={!invitesTable.getCanNextPage()}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        </>
-      )}
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={inviteColumns.length} className="h-24 text-center">
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {invitesTable.getFilteredRowModel().rows.length} invite(s).
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => invitesTable.previousPage()}
+            disabled={!invitesTable.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => invitesTable.nextPage()}
+            disabled={!invitesTable.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </>
   )
 }

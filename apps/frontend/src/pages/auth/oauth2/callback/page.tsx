@@ -1,4 +1,4 @@
-import { AsyncBoundary } from '@/components/suspense-boundary';
+import { AsyncBoundary } from '@/components/async-boundary';
 import { useApiAuthOauth2Callback } from '@/gen';
 
 export const OAuth2CallbackPage = () => {

@@ -3,7 +3,7 @@
 import { Plus, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
-import { AsyncBoundary } from '@/components/suspense-boundary';
+import { AsyncBoundary } from '@/components/async-boundary';
 import { TenantPageHeader } from '@/components/tenant-page-header';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -72,7 +72,7 @@ function Page({ tenant }: { tenant: TenantEntity }) {
               <LLMListItem
                 key={llm.id} 
                 llm={llm}
-                preset={presets.find((p) => p.config.model === llm.model)}
+                preset={presets.find((p) => (p.config as any).model === llm.model)}
                 tenantId={tenant?.id!}
               />
             ))}

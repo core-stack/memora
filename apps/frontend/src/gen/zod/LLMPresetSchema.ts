@@ -6,20 +6,20 @@
 import { z } from "zod/v4";
 
 export const llmpresetSchema = z.object({
-    "name": z.string().describe("The name of the LLM preset."),
+    "name": z.string().describe("The unique identifier of the LLM preset."),
 "description": z.string().describe("A description of the LLM preset."),
 "iconPath": z.string().describe("The URL or path of the icon representing the LLM."),
 "fields": z.object({
     
-    }).catchall(z.enum(["string", "secret-string"])).describe("Fields required to configure this LLM."),
-"defaults": z.object({
+    }).describe("Fields required to configure this LLM."),
+"defaults": z.optional(z.object({
     
-    }).catchall(z.any()).describe("Default values for any configuration fields."),
-"required": z.array(z.string()).describe("List of required field names."),
+    }).describe("Default values for any configuration fields.")),
+"required": z.optional(z.array(z.string()).describe("List of required field names.")),
 "adapter": z.string().describe("Name of the adapter responsible for executing the LLM."),
 "config": z.object({
     
-    }).catchall(z.any()).describe("Adapter configuration.")
+    }).describe("Adapter configuration.")
     })
 
 export type LLMPresetSchema = z.infer<typeof llmpresetSchema>

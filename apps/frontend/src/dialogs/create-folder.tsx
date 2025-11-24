@@ -11,36 +11,34 @@ import {
 } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useDialog } from '@/hooks/use-dialog';
-import { useKnowledge } from '@/hooks/use-knowledge';
-import { useTenant } from '@/hooks/use-tenant';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { DialogType } from './';
 
 export type CreateFolderDialogProps = {
-  folderId?: string
+  parentId?: string
+  tenantId: string
+  knowledgeId: string
 }
-export const CreateFolderDialog = ({ folderId }: CreateFolderDialogProps) => {
+export const CreateFolderDialog = ({ parentId, knowledgeId, tenantId }: CreateFolderDialogProps) => {
   const { closeDialog } = useDialog();
-  const { knowledge } = useKnowledge();
-  const { tenant } = useTenant();
   const form = useForm({ resolver: zodResolver(createFolderDtoSchema) });
   const isLoading = form.formState.isSubmitting;
 
   const { data: folder } = useApiFolderByID({
-    id: folderId ?? "",
-    knowledgeId: knowledge?.id ?? "",
-    tenantId: tenant?.id ?? ""
-  }, { query: { enabled: !!folderId } });
+    id: parentId ?? "",
+    knowledgeId,
+    tenantId
+  }, { query: { enabled: !!parentId } });
 
   const invalidate = useApiInvalidate();
   const { mutate } = useApiFolderCreate();
   const onSubmit = form.handleSubmit(async (data) => {
-    mutate({ knowledgeId: knowledge?.id ?? "", tenantId: tenant?.id ?? "", data }, {
+    mutate({ knowledgeId, tenantId, data }, {
       onSuccess: async () => {
         await invalidate(
-          folderQueryKeyFn({ knowledgeId: knowledge?.id ?? "", tenantId: tenant?.id ?? "" }),
-          sourceQueryKeyFn({ knowledgeId: knowledge?.id ?? "", tenantId: tenant?.id ?? "" }),
+          folderQueryKeyFn({ knowledgeId, tenantId }),
+          sourceQueryKeyFn({ knowledgeId, tenantId }),
         );
         closeDialog(DialogType.CREATE_FOLDER);
       }

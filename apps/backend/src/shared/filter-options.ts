@@ -1,5 +1,5 @@
-import { Request } from "express";
-import { FindManyOptions, FindOptionsOrder, FindOptionsWhere } from "typeorm";
+import { Request } from 'express';
+import { FindManyOptions, FindOptionsOrder, FindOptionsWhere } from 'typeorm';
 
 export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
   take?: number;
@@ -36,7 +36,6 @@ export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
           where[field as string] = value === "null" ? null : value;
         }
       }
-
     }
 
     if (params) {
@@ -57,7 +56,12 @@ export class FilterOptions<TEntity> implements FindManyOptions<TEntity> {
       }
     }
 
-    const relations = (query.relations as string[])?.filter(relation => allowedRelations.includes(relation as keyof TEntity));
+    const relationsInQuery: string[] = Array.isArray(query.relations) ? query.relations as string[] : [query.relations as string];
+    if (query["relations[]"]) {
+      relationsInQuery.push(...(Array.isArray(query['relations[]']) ? query['relations[]'] as string[] : [query['relations[]'] as string]));
+    }
+
+    const relations = relationsInQuery.filter(relation => allowedRelations.includes(relation as keyof TEntity)).filter(relation => !!relation);
 
     return new FilterOptions<TEntity>({
       take: query.limit ? parseInt(query.limit as string) : undefined,

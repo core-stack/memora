@@ -8,14 +8,15 @@ import {
 import { Form } from '@/components/ui/form';
 import { createTenantDtoSchema, useApiTenantCreate } from '@/gen';
 import { useDialog } from '@/hooks/use-dialog';
-import { useTenant } from '@/hooks/use-tenant';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { DialogType } from './';
 
-export const CreateTenantDialog = () => {
+export type CreateTenantDialogProps = {
+  setTenant: (tenantId: string) => void;
+}
+export const CreateTenantDialog = ({ setTenant }: CreateTenantDialogProps) => {
   const { closeDialog } = useDialog();
-  const { setTenant } = useTenant();
   const defaultValues = {
     name: "",
     description: "",

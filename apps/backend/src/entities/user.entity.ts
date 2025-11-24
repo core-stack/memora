@@ -50,7 +50,7 @@ export class UserEntity {
   updatedAt: Date;
 
   // Relations
-  @Field({ type: "class", class: () => RoleEntity })
+  @Field({ type: "class", class: () => RoleEntity, required: false })
   @ManyToOne(() => RoleEntity, (role) => role.users, { eager: false })
   @JoinColumn({ name: "role_id" })
   role?: RoleEntity;

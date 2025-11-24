@@ -6,16 +6,18 @@ import { CreateSourceFile } from './file';
 
 export type CreateSourceDialogProps = {
   folderId?: string
+  knowledgeId: string
+  tenantId: string
 }
 
-export const CreateSourceDialog = ({ folderId }: CreateSourceDialogProps) => {
+export const CreateSourceDialog = (props: CreateSourceDialogProps) => {
   return (
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Create Source</DialogTitle>
         <DialogDescription>Create a new source</DialogDescription>
       </DialogHeader>
-      <CreateSourceFile folderId={folderId} />
+      <CreateSourceFile {...props} />
     </DialogContent>
   )
 }

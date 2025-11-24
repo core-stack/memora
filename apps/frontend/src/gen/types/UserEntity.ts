@@ -51,9 +51,9 @@ export type UserEntity = {
     */
     updatedAt: string;
     /**
-     * @type object
+     * @type object | undefined
     */
-    role: RoleEntity;
+    role?: RoleEntity;
     /**
      * @type array | undefined
     */

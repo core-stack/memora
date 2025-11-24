@@ -236,12 +236,14 @@ export class AuthService extends GenericService {
     if (!this.authManager.hasProvider(provider)) throw new NotFoundException("Provider not found");
     return this.transaction(async (manager) => {      
       const { token, user } = await this.authManager.oauth2Callback(provider, code, manager);
-      
-      await this.tenantService.create({
-        name: `${user.name}'s Org`,
-        backgroundImage: "",
-        userId: user.id
-      }, manager);
+      const existingTenant = await this.tenantService.find({ where: { members: { userId: user.id } } });
+      if (existingTenant.length === 0) {
+        await this.tenantService.create({
+          name: `${user.name}'s Org`,
+          backgroundImage: "",
+          userId: user.id
+        }, manager);
+      }
       
       this.context.setCookie("access-token", token.accessToken, {
         maxAge: token.accessTokenDuration,

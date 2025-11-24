@@ -23,7 +23,7 @@ export function FileTreeSidebar() {
   }
 
   const handleCreateFolder = () => {
-    openDialog({ type: DialogType.CREATE_FOLDER, props: { folderId: selectedFolderId } });
+    openDialog({ type: DialogType.CREATE_FOLDER, props: { parentId: selectedFolderId } });
   }
 
   const handleCreateFile = () => {

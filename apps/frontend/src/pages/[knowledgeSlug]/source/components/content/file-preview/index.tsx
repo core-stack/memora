@@ -1,6 +1,6 @@
 "use client"
 
-import { AsyncBoundary } from '@/components/suspense-boundary';
+import { AsyncBoundary } from '@/components/async-boundary';
 import { useApiSourceByIDSuspense } from '@/gen';
 import { useKnowledge } from '@/hooks/use-knowledge';
 import { useTenant } from '@/hooks/use-tenant';

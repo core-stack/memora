@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeftRight, Brain, Database, Plug, Settings, Users } from 'lucide-react';
+import { ArrowLeftRight, Brain, Database, Users } from 'lucide-react';
 import { Outlet } from 'react-router';
 
 import { Button } from '@/components/ui/button';
@@ -11,8 +11,8 @@ import { useLocation } from '@/hooks/use-location';
 import { useTenant } from '@/hooks/use-tenant';
 import { cn } from '@/lib/utils';
 
-import { UserInfo } from '../user';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { UserInfo } from '../user';
 
 const menuItems = [
   {
@@ -27,24 +27,24 @@ const menuItems = [
     path: '/llm',
     icon: Brain,
   },
-  {
-    id: "integrations",
-    label: "Integrations",
-    path: '/integrations',
-    icon: Plug,
-  },
+  // {
+  //   id: "integrations",
+  //   label: "Integrations",
+  //   path: '/integrations',
+  //   icon: Plug,
+  // },
   {
     id: "member",
     label: "Members",
     path: '/member',
     icon: Users,
   },
-  {
-    id: "settings",
-    label: "Settings",
-    path: '/settings',
-    icon: Settings,
-  }
+  // {
+  //   id: "settings",
+  //   label: "Settings",
+  //   path: '/settings',
+  //   icon: Settings,
+  // }
 
 ]
 

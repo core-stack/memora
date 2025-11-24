@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeftRight, Database, Home, MessageCircle, Plug } from 'lucide-react';
+import { ArrowLeftRight, Database, Home, MessageCircle } from 'lucide-react';
 import { useMemo } from 'react';
 import { Outlet } from 'react-router';
 
@@ -27,27 +27,27 @@ export function KnowledgeLayout() {
     {
       id: "home",
       label: "Home",
-      path: `/${slug}`,
+      path: `/kn/${slug}`,
       icon: Home,
     },
     {
       id: "chat",
       label: "Chats",
-      path: `/${slug}/chat`,
+      path: `/kn/${slug}/chat`,
       icon: MessageCircle,
     },
     {
       id: "source",
       label: "Source",
-      path: `/${slug}/source`,
+      path: `/kn/${slug}/source`,
       icon: Database,
     },
-    {
-      id: "plugin",
-      label: "Plugin",
-      path: `/${slug}/plugin`,
-      icon: Plug,
-    },
+    // {
+    //   id: "plugin",
+    //   label: "Plugin",
+    //   path: `/kn/${slug}/plugin`,
+    //   icon: Plug,
+    // },
   ], [slug]);
 
   const activeSection = menuItems.find((item) => pathname === item.path)?.id ?? "knowledge";

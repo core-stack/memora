@@ -32,7 +32,7 @@ export const Router = () => {
               <Route path='/llm' element={ <LLMManagementPage />} />
               <Route path='/member' element={ <MembersPage />} />
             </Route>
-            <Route path="/:knowledgeSlug" element={ <KnowledgeLayout /> }>
+            <Route path="/kn/:knowledgeSlug" element={ <KnowledgeLayout /> }>
               <Route path='' element={ <KnowledgePage /> } />
               <Route path='chat' element={ <ChatPage /> } />
               <Route path='chat/:chatId' element={ <ChatPage /> } />

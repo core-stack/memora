@@ -1,71 +1,52 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { Field } from '@/shared/model';
 
 export class LLMPreset {
-  @ApiProperty({
-    example: "OpenAI GPT-4",
-    description: "The name of the LLM preset."
-  })
+  @Field({ type: "string", description: "The unique identifier of the LLM preset." })
   name: string;
 
-  @ApiProperty({
-    example: "A state-of-the-art LLM for general reasoning.",
-    description: "A description of the LLM preset."
-  })
+  @Field({ type: "string", description: "A description of the LLM preset.", example: "A state-of-the-art LLM for general reasoning." })
   description: string;
 
-  @ApiProperty({
-    example: "https://cdn.example.com/icons/gpt4.png",
-    description: "The URL or path of the icon representing the LLM."
-  })
+  @Field({ type: "string", description: "The URL or path of the icon representing the LLM." })
   iconPath: string;
 
-  @ApiProperty({
+  @Field({
+    type: "class",
+    class: () => Object,
     description: "Fields required to configure this LLM.",
     example: {
       apiKey: "secret-string",
       model: "string"
-    },
-    type: "object",
-    additionalProperties: {
-      type: "string",
-      enum: [ "string", "secret-string" ]
     }
   })
   fields: Record<string, "string" | "secret-string">;
 
-  @ApiProperty({
+  @Field({
+    type: "class",
+    class: () => Object,
     description: "Default values for any configuration fields.",
     example: {
       model: "gpt-4",
       temperature: 0.7
     },
-    type: "object",
-    additionalProperties: true
+    required: false
   })
   defaults: Record<string, any>;
 
-  @ApiProperty({
-    description: "List of required field names.",
-    example: [ "apiKey", "model" ],
-    type: "array",
-    items: { type: "string" }
-  })
+  @Field({ type: "string", isArray: true, required: false, description: "List of required field names.", example: [ "apiKey", "model" ] })
   required: string[];
 
-  @ApiProperty({
-    description: "Name of the adapter responsible for executing the LLM.",
-    example: "openai"
-  })
+  @Field({ type: "string", description: "Name of the adapter responsible for executing the LLM.", example: "openai" })
   adapter: string;
 
-  @ApiProperty({
+  @Field({ 
+    type: "class",
+    class: () => Object,
     description: "Adapter configuration.",
     example: {
       baseUrl: "https://api.openai.com/v1",
       timeout: 30000
-    },
-    type: "object",
-    additionalProperties: true
+    }
   })
   config: Record<string, any>;
 

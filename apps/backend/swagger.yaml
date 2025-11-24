@@ -3389,12 +3389,12 @@ components:
           format: date-time
           type: string
           description: The date the account was created
-          example: 2025-11-24T08:56:18.600Z
+          example: 2025-11-24T09:50:06.874Z
         updatedAt:
           format: date-time
           type: string
           description: The date the account was updated
-          example: 2025-11-24T08:56:18.600Z
+          example: 2025-11-24T09:50:06.874Z
       required:
         - id
         - provider
@@ -3453,7 +3453,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-24T08:56:18.599Z
+          example: 2025-11-24T09:50:06.872Z
           nullable: true
         image:
           type: string
@@ -3468,12 +3468,12 @@ components:
           format: date-time
           type: string
           description: The date the user was created
-          example: 2025-11-24T08:56:18.599Z
+          example: 2025-11-24T09:50:06.873Z
         updatedAt:
           format: date-time
           type: string
           description: The date the user was updated
-          example: 2025-11-24T08:56:18.599Z
+          example: 2025-11-24T09:50:06.873Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:
@@ -3501,7 +3501,6 @@ components:
         - roleId
         - createdAt
         - updatedAt
-        - role
     NotificationEntity:
       type: object
       properties:
@@ -4444,15 +4443,13 @@ components:
       properties:
         name:
           type: string
-          example: OpenAI GPT-4
-          description: The name of the LLM preset.
+          description: The unique identifier of the LLM preset.
         description:
           type: string
-          example: A state-of-the-art LLM for general reasoning.
           description: A description of the LLM preset.
+          example: A state-of-the-art LLM for general reasoning.
         iconPath:
           type: string
-          example: https://cdn.example.com/icons/gpt4.png
           description: The URL or path of the icon representing the LLM.
         fields:
           type: object
@@ -4460,24 +4457,18 @@ components:
           example:
             apiKey: secret-string
             model: string
-          additionalProperties:
-            type: string
-            enum:
-              - string
-              - secret-string
         defaults:
           type: object
           description: Default values for any configuration fields.
           example:
             model: gpt-4
             temperature: 0.7
-          additionalProperties: true
         required:
-          type: array
           description: List of required field names.
           example:
             - apiKey
             - model
+          type: array
           items:
             type: string
         adapter:
@@ -4490,14 +4481,11 @@ components:
           example:
             baseUrl: https://api.openai.com/v1
             timeout: 30000
-          additionalProperties: true
       required:
         - name
         - description
         - iconPath
         - fields
-        - defaults
-        - required
         - adapter
         - config
     CreateLLMDto:

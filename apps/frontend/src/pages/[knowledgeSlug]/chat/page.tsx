@@ -1,5 +1,5 @@
+import { AsyncBoundary } from '@/components/async-boundary';
 import { Chat } from '@/components/chat';
-import { AsyncBoundary } from '@/components/suspense-boundary';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { useKnowledge } from '@/hooks/use-knowledge';
 import { useParams } from '@/hooks/use-params';

@@ -18,7 +18,6 @@ import {
 import { sendInviteDtoSchema, useApiInviteSend, useApiRole } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useDialog } from '@/hooks/use-dialog';
-import { useTenant } from '@/hooks/use-tenant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ROLES } from '@snipet/permission';
 
@@ -26,15 +25,17 @@ import { DialogType } from './';
 
 import type { SendInviteDto } from "@/gen";
 
-export function InviteMemberDialog() {
+export type InviteMemberDialogProps = {
+  tenantId: string;
+}
+export function InviteMemberDialog({ tenantId }: InviteMemberDialogProps) {
   const form = useForm({
     resolver: zodResolver(sendInviteDtoSchema),
     defaultValues: {
       emails: [],
     },
   });
-  const { tenant } = useTenant();
-  const { data: roles = [] } = useApiRole({ tenantId: tenant?.id ?? "" });
+  const { data: roles = [] } = useApiRole({ tenantId });
 
   const defaultEmail = useMemo(() => ({
     email: "",
@@ -51,7 +52,7 @@ export function InviteMemberDialog() {
   const addField = useCallback((index: number) => insert(index + 1, defaultEmail), [defaultEmail, insert]);
 
   async function onSubmit(data: SendInviteDto) {
-    mutate({ data, tenantId: tenant?.id ?? "" }, {
+    mutate({ data, tenantId }, {
       onSuccess: async () => {
         await invalidate("/api/tenant/:tenantId/invite");
         form.reset();

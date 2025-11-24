@@ -14,7 +14,7 @@ import {
 } from '@/pages/[knowledgeSlug]/source/components/content/file-preview/index-status-badge';
 import { DateFormat, formatBytes, formatDate } from '@/utils/format';
 
-import { AsyncBoundary } from '../suspense-boundary';
+import { AsyncBoundary } from '../async-boundary';
 import { PDFViewer } from './pdf';
 
 import type { KnowledgeEntity, SourceEntity, TenantEntity } from '@/gen';

@@ -20,7 +20,7 @@ export const useApirEntitySchema = z.object({
 "createdAt": z.string().datetime().describe("The date the user was created"),
 "updatedAt": z.string().datetime().describe("The date the user was updated"),
 get "role"(){
-                return roleEntitySchema
+                return roleEntitySchema.optional()
               },
 get "accounts"(){
                 return z.array(accountEntitySchema).optional()

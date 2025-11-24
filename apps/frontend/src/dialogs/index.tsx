@@ -18,6 +18,9 @@ import type { ConfirmDialogProps } from "./confirm";
 import type { CreateOrUpdateKnowledgeDialogProps } from "./create-or-update-knowledge";
 import type { CreateFolderDialogProps } from "./create-folder";
 import type { CreateSourceDialogProps } from "./create-source";
+import type { InviteMemberDialogProps } from "./invite-member";
+import type { SearchDialogProps } from "./search";
+import type { CreateTenantDialogProps } from "./create-tenant";
 
 export enum DialogType {
   CREATE_SOURCE = "create-source",
@@ -36,11 +39,11 @@ export const dialogs = {
   [DialogType.CREATE_SOURCE]: (props: CreateSourceDialogProps) => <CreateSourceDialog {...props} />,
   [DialogType.CREATE_FOLDER]: (props: CreateFolderDialogProps) => <CreateFolderDialog {...props} />,
   [DialogType.CREATE_OR_UPDATE_KNOWLEDGE]: (props: CreateOrUpdateKnowledgeDialogProps) => <CreateOrUpdateKnowledgeDialog {...props} />,
-  [DialogType.SEARCH]: () => <SearchDialog />,
+  [DialogType.SEARCH]: (props: SearchDialogProps) => <SearchDialog {...props} />,
   [DialogType.CONFIRM]: (props: ConfirmDialogProps) => <ConfirmDialog {...props} />,
   [DialogType.CONFIGURE_LLM]: (props: ConfigureLLDialogProps) => <ConfigureLLDialog {...props} />,
   [DialogType.SELECT_LLM_PRESET]: (props: SelectPresetDialogProps) => <SelectPresetDialog {...props} />,
-  [DialogType.CREATE_TENANT]: () => <CreateTenantDialog />,
-  [DialogType.INVITE_MEMBER]: () => <InviteMemberDialog />,
+  [DialogType.CREATE_TENANT]: (props: CreateTenantDialogProps) => <CreateTenantDialog {...props} />,
+  [DialogType.INVITE_MEMBER]: (props: InviteMemberDialogProps) => <InviteMemberDialog {...props} />,
   [DialogType.SELECT_TENANT]: (props: SelectTenantDialogProps) => <SelectTenantDialog {...props} />,
 } as const;

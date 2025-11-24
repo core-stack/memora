@@ -61,8 +61,8 @@ export function LLMListItem({ llm, preset, tenantId }: LLMListItemProps) {
               <div className="flex items-center gap-2 mb-1">
                 <h4 className="font-medium text-foreground truncate">{llm.name}</h4>
                 <Badge 
-                  variant={preset?.config.type === "TEXT" ? "default" : "secondary"}
-                  className={cn("text-xs", preset?.config.type === "TEXT" && "text-foreground")}
+                  variant={(preset?.config as any).type === "TEXT" ? "default" : "secondary"}
+                  className={cn("text-xs", (preset?.config as any).type === "TEXT" && "text-foreground")}
                 >
                   {llm.type}
                 </Badge>

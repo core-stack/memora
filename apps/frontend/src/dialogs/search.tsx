@@ -14,19 +14,19 @@ import { Spinner } from '@/components/ui/spinner';
 import { useApiSearchByTerm, useApiSearchRecent } from '@/gen';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useDialog } from '@/hooks/use-dialog';
-import { useKnowledge } from '@/hooks/use-knowledge';
-import { useTenant } from '@/hooks/use-tenant';
 
 import { DialogType } from './';
 
 import type { SourceFragment } from '@/gen';
 
-export function SearchDialog() {
-  const { tenant } = useTenant();
-  const { knowledge } = useKnowledge();
+export type SearchDialogProps = {
+  tenantId: string;
+  knowledgeId: string;
+}
+export function SearchDialog({ knowledgeId, tenantId }: SearchDialogProps) {
   const [query, setQuery] = useState("");
   const { mutateAsync: search, data: results = []  } = useApiSearchByTerm();
-  const { data: recent = [] } = useApiSearchRecent({ tenantId: tenant?.id ?? "", knowledgeId: knowledge?.slug ?? "" });
+  const { data: recent = [] } = useApiSearchRecent({ tenantId, knowledgeId });
   const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -44,7 +44,7 @@ export function SearchDialog() {
   useEffect(() => {
     startTransition(async () => {
       const term = debouncedQuery.trim();
-      if (term) await search({ params: { term }, knowledgeId: knowledge?.id ?? "", tenantId: tenant?.id ?? "" });
+      if (term) await search({ params: { term }, knowledgeId, tenantId });
       setSelectedIndex(0);
     })
   }, [debouncedQuery, search]);

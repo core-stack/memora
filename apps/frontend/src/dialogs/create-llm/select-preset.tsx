@@ -37,7 +37,7 @@ export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true, te
   const handleSelectPreset = (preset: LLMPreset) => {
     onSelectPreset?.(preset);
     setSearchQuery("")
-    if (openConfigDialog) openDialog({ type: DialogType.CONFIGURE_LLM, props: { preset }});
+    if (openConfigDialog) openDialog({ type: DialogType.CONFIGURE_LLM, props: { preset, tenantId }});
     closeDialog(DialogType.SELECT_LLM_PRESET);
   }
 
@@ -80,10 +80,10 @@ export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true, te
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-foreground">{preset.name}</h3>
                     <Badge
-                      variant={preset.config.type === "TEXT" ? "default" : "secondary"}
-                      className={cn("text-xs", preset.config.type === "TEXT" && "text-foreground")}
+                      variant={(preset.config as any).type === "TEXT" ? "default" : "secondary"}
+                      className={cn("text-xs", (preset.config as any).type === "TEXT" && "text-foreground")}
                     >
-                      {preset.config.type}
+                      {(preset.config as any).type}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground line-clamp-1">{preset.description}</p>

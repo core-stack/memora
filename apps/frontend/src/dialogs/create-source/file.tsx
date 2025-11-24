@@ -3,11 +3,9 @@
 import type { UploadedFile } from '@/components/file-uploader';
 
 import { FileUploader } from '@/components/file-uploader';
-import { useApiSourceCreate, useApiSourceUpload } from '@/gen';
+import { folderQueryKeyFn, sourceQueryKeyFn, useApiSourceCreate, useApiSourceUpload } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useDialog } from '@/hooks/use-dialog';
-import { useKnowledge } from '@/hooks/use-knowledge';
-import { useTenant } from '@/hooks/use-tenant';
 import { useToast } from '@/hooks/use-toast';
 import { getFileMetadata } from '@/lib/metadata';
 
@@ -15,13 +13,14 @@ import { DialogType } from '../';
 
 import type { FileURLResponseDto } from '@/gen';
 
-type Props = { folderId?: string; }
+export type CreateSourceFileProps = {
+  folderId?: string;
+  tenantId: string;
+  knowledgeId: string;
+}
 
-export const CreateSourceFile = ({ folderId }: Props) => {
+export const CreateSourceFile = ({ folderId, knowledgeId, tenantId }: CreateSourceFileProps) => {
   const { mutateAsync: generateUrl } = useApiSourceUpload();
-  
-  const { tenant } = useTenant();
-  const { knowledge } = useKnowledge();
 
   const { closeDialog } = useDialog();
   const { toast } = useToast();
@@ -29,8 +28,8 @@ export const CreateSourceFile = ({ folderId }: Props) => {
   const generateUploadUrl = async (info: UploadedFile): Promise<FileURLResponseDto> => {
     return await generateUrl({
       data: { fileName: info.name, contentType: info.type, fileSize: info.size },
-      tenantId: tenant?.id ?? "",
-      knowledgeId: knowledge?.id ?? ""
+      tenantId,
+      knowledgeId
     });
   }
 
@@ -39,8 +38,8 @@ export const CreateSourceFile = ({ folderId }: Props) => {
   const onUploadComplete = async (f: UploadedFile) => {
     const metadata = await getFileMetadata(f.file);
     await createSource({ 
-      knowledgeId: knowledge?.id ?? "",
-      tenantId: tenant?.id ?? "",
+      knowledgeId,
+      tenantId,
       data: {
         originalName: f.name,
         name: f.name,
@@ -57,8 +56,10 @@ export const CreateSourceFile = ({ folderId }: Props) => {
   }
 
   const onFinish = () => {
-    invalidate('/api/tenant/:tenantId/knowledge/:knowledgeSlug/folder');
-    invalidate('/api/tenant/:tenantId/knowledge/:knowledgeSlug/source');
+    invalidate(
+      folderQueryKeyFn({ knowledgeId, tenantId }),
+      sourceQueryKeyFn({ knowledgeId, tenantId }),
+    )
     closeDialog(DialogType.CREATE_SOURCE);
   }
 

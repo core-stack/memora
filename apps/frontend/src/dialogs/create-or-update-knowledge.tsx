@@ -13,7 +13,6 @@ import {
 } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useDialog } from '@/hooks/use-dialog';
-import { useTenant } from '@/hooks/use-tenant';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -31,11 +30,11 @@ const generateSlug = (name: string) => {
 
 export type CreateOrUpdateKnowledgeDialogProps = {
   knowledge?: KnowledgeEntity
+  tenantId: string;
 }
-export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowledgeDialogProps) => {
+export const CreateOrUpdateKnowledgeDialog = ({ knowledge, tenantId }: CreateOrUpdateKnowledgeDialogProps) => {
   const { closeDialog } = useDialog();
 
-  const { tenant } = useTenant();
   const isEditing = !!knowledge;
 
   const form = useForm({
@@ -57,12 +56,12 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge }: CreateOrUpdateKnowl
   const onSubmit = form.handleSubmit(async (data) => {
     try {
       if (isEditing) {
-        await updateKnowledge({ id: knowledge?.id ?? "", tenantId: tenant?.id ?? "", data });
+        await updateKnowledge({ id: knowledge?.id ?? "", tenantId, data });
       } else {
-        await createKnowledge({ data, tenantId: tenant?.id ?? "" });
+        await createKnowledge({ data, tenantId });
       }
 
-      await invalidate(knowledgeQueryKeyFn({ tenantId: tenant?.id ?? "" }));
+      await invalidate(knowledgeQueryKeyFn({ tenantId }));
       closeDialog(DialogType.CREATE_OR_UPDATE_KNOWLEDGE);
       toast({
         title: isEditing ? "Knowledge updated" : "Knowledge created",
