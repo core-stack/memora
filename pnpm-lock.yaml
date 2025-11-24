@@ -502,28 +502,6 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  packages/schemas:
-    dependencies:
-      dotenv:
-        specifier: ^16.5.0
-        version: 16.6.1
-      zod:
-        specifier: ^4.1.12
-        version: 4.1.12
-    devDependencies:
-      '@types/node':
-        specifier: ^20.17.24
-        version: 20.19.24
-      bunchee:
-        specifier: ^6.4.0
-        version: 6.6.2(typescript@5.8.3)
-      eslint:
-        specifier: ^9.26.0
-        version: 9.38.0(jiti@2.6.1)
-      typescript:
-        specifier: 5.8.3
-        version: 5.8.3
-
 packages:
 
   '@aduh95/viz.js@3.4.0':

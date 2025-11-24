@@ -30,8 +30,8 @@ export const TenantProvider = () => {
     query: { retry: (failureCount) => failureCount < 1 }
   });
 
-  const tenant = user?.members.find((member) => member.tenantId === tenantId)?.tenant;
-  const tenants = user?.members.map((member) => member.tenant).filter((tenant) => !!tenant);
+  const tenant = user?.members?.find((member) => member.tenantId === tenantId)?.tenant;
+  const tenants = user?.members?.map((member) => member.tenant).filter((tenant) => !!tenant);
 
   const setTenant = useCallback(async (tenantId: string) => {
     setTenantId(tenantId);

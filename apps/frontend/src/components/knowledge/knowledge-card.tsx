@@ -52,7 +52,7 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
   const handleEdit = () => {
     openDialog({
       type: DialogType.CREATE_OR_UPDATE_KNOWLEDGE,
-      props: { knowledge }
+      props: { knowledge, tenantId: knowledge.tenantId }
     })
   }
 

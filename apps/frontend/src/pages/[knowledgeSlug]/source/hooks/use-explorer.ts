@@ -30,7 +30,7 @@ export const useExplorer = (tenantId?: string, knowledgeId?: string, parentId?: 
   );
 
   const isLoading = folderLoading || sourceLoading;
-  const error = folderError || sourceError;
+  const error = folderError?.response?.data || sourceError?.response?.data;
   const data = [...(folders || []), ...(sources || [])];
 
   return { isLoading, error, data }

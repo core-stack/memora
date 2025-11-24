@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return false;
   }
 
-  const can = (permission: Permission | Permission[]): boolean => canPermission(user?.role.permissions ?? [], permission);
+  const can = (permission: Permission | Permission[]): boolean => canPermission(user?.role?.permissions ?? [], permission);
   //#endregion
 
   const logout = useCallback(() => {

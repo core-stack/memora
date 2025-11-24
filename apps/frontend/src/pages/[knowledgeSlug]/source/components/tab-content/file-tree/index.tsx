@@ -2,19 +2,42 @@
 
 import { FolderPlus, Minimize2, Plus, Search } from 'lucide-react';
 
+import { AsyncBoundary } from '@/components/async-boundary';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { DialogType } from '@/dialogs';
 import { useDialog } from '@/hooks/use-dialog';
+import { useKnowledge } from '@/hooks/use-knowledge';
+import { useTenant } from '@/hooks/use-tenant';
 import { cn } from '@/lib/utils';
 
 import { useExplorer } from '../../../hooks/use-explorer';
 import { useSource } from '../../../hooks/use-source';
 import { FileTreeItem } from './file-tree-item';
 
+import type { FolderEntity, KnowledgeEntity, SourceEntity, TenantEntity } from '@/gen';
+
 export function FileTreeSidebar() {
-  const { data } = useExplorer();
+  const { tenant, error: tenantError, isLoading: tenantLoading } = useTenant();
+  const { knowledge, error: knowledgeError } = useKnowledge();
+  const { data, isLoading: explorerLoading, error: explorerError } = useExplorer();
+  const isLoading = tenantLoading || explorerLoading;
+  const error = tenantError || knowledgeError || explorerError;
+  return (
+    <AsyncBoundary isLoading={isLoading} error={error}>
+      <Component data={data!} knowledge={knowledge!} tenant={tenant!} />
+    </AsyncBoundary>
+  )
+}
+
+type Props = {
+  tenant: TenantEntity;
+  knowledge: KnowledgeEntity;
+  data: Array<SourceEntity | FolderEntity>;
+}
+
+function Component({ data, knowledge, tenant }: Props) {
   const { openDialog } = useDialog();
   const { selectedFolderId } = useSource();
   
@@ -23,11 +46,11 @@ export function FileTreeSidebar() {
   }
 
   const handleCreateFolder = () => {
-    openDialog({ type: DialogType.CREATE_FOLDER, props: { parentId: selectedFolderId } });
+    openDialog({ type: DialogType.CREATE_FOLDER, props: { parentId: selectedFolderId, knowledgeId: knowledge.id, tenantId: tenant.id } });
   }
 
   const handleCreateFile = () => {
-    openDialog({ type: DialogType.CREATE_SOURCE, props: { folderId: selectedFolderId } });
+    openDialog({ type: DialogType.CREATE_SOURCE, props: { folderId: selectedFolderId, knowledgeId: knowledge.id, tenantId: tenant.id } });
   }
 
   
