@@ -63,3 +63,12 @@ files
 out
 
 documentation
+
+/data/grafana-data/*
+!data/grafana-data/
+!data/grafana-data/.gitkeep
+
+data/prometheus-data/data/*
+
+!data/prometheus-data/data/
+!data/prometheus-data/data/.gitkeep

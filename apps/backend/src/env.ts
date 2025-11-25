@@ -7,7 +7,7 @@ import { __root } from "./root";
 
 const envFile = process.env.ENV_FILE;
 
-const buildEnvPaths = (envFile?: string) => {
+const buildEnvPaths = (envFile?: string): string[] => {
   if (envFile) {
     return [ envFile, `../../${envFile}` ];
   }
@@ -67,7 +67,8 @@ const envSchema = z.object({
   PLUGINS_BUCKET: z.string().optional().default("plugins"),
 
   // CORS
-  CORS_ORIGINS: z.string().transform((s) => s.split(",")).optional().default([ "*", "http://localhost:3000", "http://localhost:5173" ]),
+  CORS_ORIGINS: z.string().transform((s) => s.split(",")).optional()
+    .default([ "*", "http://localhost:3000", "http://localhost:5173" ]),
   CORS_METHODS: z.string().array().optional().default([ "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS" ]),
   CORS_HEADERS: z.string().array().optional().default([ "*" ]),
   CORS_CREDENTIALS: z.boolean().optional().default(true),
@@ -121,7 +122,16 @@ const envSchema = z.object({
 
   IGNORE_PLUGINS: z.coerce.boolean().optional().default(false),
 
-  ENABLE_TRACING: z.coerce.boolean().optional().default(false)
+  OTEL_ENABLED: z.coerce.boolean().optional().default(false),
+  OTEL_LOGS_EXPORTER: z.string().default("none"),
+  OTEL_TRACES_EXPORTER: z.string().default("otlp"),
+  OTEL_METRICS_EXPORTER: z.string().default("otlp"),
+
+  OTEL_EXPORTER_OTLP_PROTOCOL: z.string().default("grpc"),
+  OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: z.string().default("http://opentelemetry-collector:4317"),
+
+  OTEL_METRIC_EXPORT_INTERVAL: z.coerce.number().default(5000),
+  OTEL_METRIC_EXPORT_TIMEOUT: z.coerce.number().default(5000)
 }).transform((data) => {
   if (!data.API_URL) {
     return {

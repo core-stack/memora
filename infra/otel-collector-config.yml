@@ -1,0 +1,37 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+exporters:
+  debug:
+    verbosity: detailed
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    send_timestamps: true
+
+processors:
+  batch:
+  attributes:
+    actions:
+      - action: insert
+        key: env
+        value: "${DEPLOY_ENV}"
+
+extensions:
+  zpages:
+     endpoint: 0.0.0.0:55679
+
+service:
+  extensions: [zpages]  # Enable zpages
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch, attributes]
+      exporters: [prometheus]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      # exporters: [otlp]
+      exporters: [debug]

@@ -3372,12 +3372,12 @@ components:
           format: date-time
           type: string
           description: The date the account was created
-          example: 2025-11-25T13:35:25.151Z
+          example: 2025-11-25T19:12:10.032Z
         updatedAt:
           format: date-time
           type: string
           description: The date the account was updated
-          example: 2025-11-25T13:35:25.151Z
+          example: 2025-11-25T19:12:10.032Z
       required:
         - id
         - provider
@@ -3435,7 +3435,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-25T13:35:25.149Z
+          example: 2025-11-25T19:12:10.029Z
           nullable: true
         image:
           type: string
@@ -3450,12 +3450,12 @@ components:
           format: date-time
           type: string
           description: The date the user was created
-          example: 2025-11-25T13:35:25.150Z
+          example: 2025-11-25T19:12:10.030Z
         updatedAt:
           format: date-time
           type: string
           description: The date the user was updated
-          example: 2025-11-25T13:35:25.150Z
+          example: 2025-11-25T19:12:10.030Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:
