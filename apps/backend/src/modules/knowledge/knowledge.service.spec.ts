@@ -1,14 +1,13 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
 import { Queue } from "bullmq";
-import { DataSource, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { NotFoundException } from "@nestjs/common";
 
 import { KnowledgeService } from "./knowledge.service";
 import { KnowledgeEntity } from "../../entities/knowledge.entity";
 import { JobType } from "@/jobs/types";
-import { HTTPContext } from "@/shared/http-context/http-context";
 import { buildBullInject } from "@/utils/build-bull-inject";
+import { createServiceProvidersMock } from "@/@mocks/service-providers";
 
 describe("KnowledgeService", () => {
   let service: KnowledgeService;
@@ -16,50 +15,24 @@ describe("KnowledgeService", () => {
   let deleteQueue: Queue;
 
   beforeEach(async () => {
-    const repoMock = {
-      findOne: jest.fn(),
-      findOneOrFail: jest.fn(),
-      increment: jest.fn()
-    };
 
     const deleteQueueMock = {
       add: jest.fn()
-    };
-
-    const httpContextMock = {
-      session: undefined,
-      req: {},
-      res: {}
-    };
-    const dataSourceMock = {
-      transaction: jest.fn().mockImplementation((cb) => cb(repoMock)),
-      getRepository: () => repoMock
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         KnowledgeService,
         {
-          provide: getRepositoryToken(KnowledgeEntity),
-          useValue: repoMock
-        },
-        {
           provide: buildBullInject(JobType.DELETE_KNOWLEDGE),
           useValue: deleteQueueMock
         },
-        {
-          provide: HTTPContext,
-          useValue: httpContextMock
-        },
-        {
-          provide: DataSource,
-          useValue: dataSourceMock
-        }
+        ...createServiceProvidersMock(KnowledgeEntity)
       ]
     }).compile();
 
     service = module.get<KnowledgeService>(KnowledgeService);
-    repo = module.get(getRepositoryToken(KnowledgeEntity));
+    repo = (service as any).dataSource.getRepository(KnowledgeEntity);
     deleteQueue = module.get(buildBullInject(JobType.DELETE_KNOWLEDGE));
   });
 
