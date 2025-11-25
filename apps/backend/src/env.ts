@@ -119,7 +119,9 @@ const envSchema = z.object({
   PROMPT_TEMPLATES_DIR: z.string().optional().default(path.join(__root, "prompts")),
   DEBUG_PROMPTS: z.coerce.boolean().optional().default(false),
 
-  IGNORE_PLUGINS: z.coerce.boolean().optional().default(false)
+  IGNORE_PLUGINS: z.coerce.boolean().optional().default(false),
+
+  ENABLE_TRACING: z.coerce.boolean().optional().default(false)
 }).transform((data) => {
   if (!data.API_URL) {
     return {
