@@ -66,7 +66,7 @@ export function KnowledgeCard({ knowledge }: KnowledgeCardProps) {
 
           <div className="flex-1 min-w-0">
             <div className="flex flex-col mb-1">
-              <Link href={`/${knowledge.slug}`} className="font-semibold text-lg truncate hover:underline">{knowledge.title}</Link>
+              <Link href={`/kn/${knowledge.slug}`} className="font-semibold text-lg truncate hover:underline">{knowledge.title}</Link>
               { knowledge.status === "DELETING" && <p>Deleting...</p> }
               { knowledge.status === "DELETE_ERROR" && <p className="text-destructive">{knowledge.deleteError}</p> }
             </div>

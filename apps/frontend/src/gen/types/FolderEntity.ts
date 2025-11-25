@@ -18,9 +18,9 @@ export type FolderEntity = {
     */
     knowledgeId: string;
     /**
-     * @type object
+     * @type object | undefined
     */
-    knowledge: KnowledgeEntity;
+    knowledge?: KnowledgeEntity;
     /**
      * @description The name of the folder
      * @type string
@@ -33,21 +33,21 @@ export type FolderEntity = {
     root?: boolean;
     /**
      * @description The ID of the parent folder
-     * @type string | undefined, uuid
+     * @type string, uuid
     */
-    parentId?: string;
+    parentId?: string | null;
     /**
      * @type object | undefined
     */
     parent?: FolderEntity;
     /**
-     * @type array
+     * @type array | undefined
     */
-    children: FolderEntity[];
+    children?: FolderEntity[];
     /**
-     * @type array
+     * @type array | undefined
     */
-    sources: SourceEntity[];
+    sources?: SourceEntity[];
     /**
      * @description The ID of the tenant this folder belongs to
      * @type string, uuid

@@ -20,16 +20,16 @@ export const inviteEntitySchema = z.object({
 "createdAt": z.string().datetime().describe("The timestamp when the invite was created"),
 "updatedAt": z.string().datetime().describe("The timestamp when the invite was last updated"),
 get "tenant"(){
-                return tenantEntitySchema
+                return tenantEntitySchema.optional()
               },
 get "role"(){
-                return roleEntitySchema
+                return roleEntitySchema.optional()
               },
 get "user"(){
                 return useApirEntitySchema.optional()
               },
 get "creator"(){
-                return memberEntitySchema
+                return memberEntitySchema.optional()
               }
     })
 

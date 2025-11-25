@@ -12,10 +12,10 @@ export const chatEntitySchema = z.object({
 "name": z.string().describe("The name of the chat"),
 "knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
 get "knowledge"(){
-                return knowledgeEntitySchema
+                return knowledgeEntitySchema.optional()
               },
 get "messages"(){
-                return z.array(messageEntitySchema)
+                return z.array(messageEntitySchema).optional()
               },
 "tenantId": z.uuid().describe("The ID of the tenant this chat belongs to"),
 "createdAt": z.string().datetime().describe("The timestamp when the chat was created"),

@@ -19,13 +19,13 @@ export type KnowledgeLLMEntity = {
     */
     default: boolean;
     /**
-     * @type object
+     * @type object | undefined
     */
-    knowledge: KnowledgeEntity;
+    knowledge?: KnowledgeEntity;
     /**
-     * @type object
+     * @type object | undefined
     */
-    llm: LLMEntity;
+    llm?: LLMEntity;
     /**
      * @description The ID of the associated knowledge base
      * @type string, uuid

@@ -1,10 +1,10 @@
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique,
   UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { Field } from "../shared/model";
-import { UserEntity } from "./user.entity";
+import { Field } from '../shared/model';
+import { UserEntity } from './user.entity';
 
 @Entity("accounts")
 @Unique([ "provider", "providerAccountId" ])
@@ -23,10 +23,10 @@ export class AccountEntity {
 
   @Field({ type: "string", description: "The unique identifier of the user", uuid: true })
   @Column({ name: "user_id" })
-  userId?: string;
+  userId: string;
 
   // Relations
-  @Field({ type: "class", class: () => UserEntity })
+  @Field({ type: "class", class: () => UserEntity, required: false })
   @ManyToOne(() => UserEntity, (user) => user.accounts, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
   user?: UserEntity;

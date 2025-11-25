@@ -22,6 +22,7 @@ export function ContextField(options: ContextFieldOptions): PropertyDecorator {
 
 // Mantenha os helpers
 export const TenantId = () => ContextField({ source: "params", key: "tenantId" });
+export const KnowledgeId = () => ContextField({ source: "params", key: "knowledgeId" });
 export const CreatedBy = () => ContextField({ source: "session", key: "userId" });
 export const MemberId = () => ContextField({ source: "memberId" });
 

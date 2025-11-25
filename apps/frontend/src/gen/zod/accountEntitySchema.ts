@@ -12,7 +12,7 @@ export const accountEntitySchema = z.object({
 "providerAccountId": z.string().describe("The provider account id of the account"),
 "userId": z.uuid().describe("The unique identifier of the user"),
 get "user"(){
-                return useApirEntitySchema
+                return useApirEntitySchema.optional()
               },
 "createdAt": z.string().datetime().describe("The date the account was created"),
 "updatedAt": z.string().datetime().describe("The date the account was updated")

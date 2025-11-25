@@ -6,7 +6,7 @@ import { CONTEXT_FIELDS_KEY } from './context';
 
 export const ApplyFromContext = createParamDecorator((data: Constructor<any>, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest<AuthRequest>();
-    const contextSources = {
+  const contextSources = {
     params: request.params,
     query: request.query,
     session: request.session,
@@ -27,6 +27,8 @@ export const ApplyFromContext = createParamDecorator((data: Constructor<any>, ct
       data[propertyKey] = contextValue;
     }
   }
+  console.log("fields", fields);
+  
   request.body = { ...request.body, ...data};
 })
 

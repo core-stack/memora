@@ -11,10 +11,10 @@ export const knowledgeLLMEntitySchema = z.object({
     "id": z.uuid().describe("The unique identifier of the knowledge-llm link"),
 "default": z.boolean().default(false).describe("Indicates if this is the default LLM for the knowledge base"),
 get "knowledge"(){
-                return knowledgeEntitySchema
+                return knowledgeEntitySchema.optional()
               },
 get "llm"(){
-                return llmentitySchema
+                return llmentitySchema.optional()
               },
 "knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
 "llmId": z.uuid().describe("The ID of the associated LLM"),

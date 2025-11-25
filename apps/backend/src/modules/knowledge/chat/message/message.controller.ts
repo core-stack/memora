@@ -1,11 +1,11 @@
-import { MessageEntity } from "@/entities/message.entity";
-import { BaseController } from "@/shared/controller";
-import { Controller, HttpPost } from "@/shared/controller/decorators";
-import { Body } from "@nestjs/common";
-import { ApiResponse } from "@nestjs/swagger";
+import { MessageEntity } from '@/entities/message.entity';
+import { BaseController } from '@/shared/controller';
+import { Controller, HttpPost } from '@/shared/controller/decorators';
+import { HttpBody } from '@/shared/controller/decorators/body';
+import { ApiResponse } from '@nestjs/swagger';
 
-import { CreateMessageDto, CreateMessageResponseDto } from "./dto/create-message.dto";
-import { MessageService } from "./message.service";
+import { CreateMessageDto, CreateMessageResponseDto } from './dto/create-message.dto';
+import { MessageService } from './message.service';
 
 @Controller("tenant/:tenantId/knowledge/:knowledgeId/chat/:chatId/message")
 export class MessageController extends BaseController({ entity: MessageEntity }) {
@@ -15,7 +15,7 @@ export class MessageController extends BaseController({ entity: MessageEntity })
 
   @HttpPost("new")
   @ApiResponse({ type: CreateMessageResponseDto, status: 200 })
-  async newMessage(@Body() body: CreateMessageDto) {
+  async newMessage(@HttpBody(CreateMessageDto) body: CreateMessageDto) {
     return this.service.sendMessage(body.content);
   }
 }

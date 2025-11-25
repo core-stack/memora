@@ -1,10 +1,12 @@
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { Field } from "../shared/model";
-import { ChatEntity } from "./chat.entity";
-import { KnowledgeEntity } from "./knowledge.entity";
+import { KnowledgeId } from '@/shared/controller/decorators';
+
+import { Field } from '../shared/model';
+import { ChatEntity } from './chat.entity';
+import { KnowledgeEntity } from './knowledge.entity';
 
 export enum MessageRole {
   USER = "user",
@@ -35,6 +37,7 @@ export class MessageEntity {
   @JoinColumn({ name: "chat_id" })
   chat?: ChatEntity;
 
+  @KnowledgeId()
   @Field({ type: "string", uuid: true, description: "The ID of the knowledge base associated with this message" })
   @Column({ name: "knowledge_id", type: "uuid" })
   knowledgeId: string;

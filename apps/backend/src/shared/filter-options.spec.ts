@@ -1,5 +1,6 @@
-import { FilterOptions } from "./filter-options";
-import { Request } from "express";
+import { Request } from 'express';
+
+import { FilterOptions } from './filter-options';
 
 class TestUser {
   id: string;
@@ -90,7 +91,6 @@ describe("FilterOptions.fromRequest", () => {
     });
 
     const result = FilterOptions.fromRequest<TestUser>(req, [ "name", "age" ]);
-    console.log(result.order);
     expect(result.order).toEqual({
       name: "ASC",
       age: "DESC"

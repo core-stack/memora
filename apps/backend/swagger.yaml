@@ -3295,9 +3295,6 @@ components:
         - expiresAt
         - createdAt
         - updatedAt
-        - tenant
-        - role
-        - creator
     RoleEntity:
       type: object
       properties:
@@ -3389,18 +3386,17 @@ components:
           format: date-time
           type: string
           description: The date the account was created
-          example: 2025-11-25T00:54:17.616Z
+          example: 2025-11-25T10:30:18.620Z
         updatedAt:
           format: date-time
           type: string
           description: The date the account was updated
-          example: 2025-11-25T00:54:17.616Z
+          example: 2025-11-25T10:30:18.620Z
       required:
         - id
         - provider
         - providerAccountId
         - userId
-        - user
         - createdAt
         - updatedAt
     VerificationTokenEntity:
@@ -3453,7 +3449,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-25T00:54:17.614Z
+          example: 2025-11-25T10:30:18.618Z
           nullable: true
         image:
           type: string
@@ -3468,12 +3464,12 @@ components:
           format: date-time
           type: string
           description: The date the user was created
-          example: 2025-11-25T00:54:17.615Z
+          example: 2025-11-25T10:30:18.618Z
         updatedAt:
           format: date-time
           type: string
           description: The date the user was updated
-          example: 2025-11-25T00:54:17.615Z
+          example: 2025-11-25T10:30:18.619Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:
@@ -3556,7 +3552,6 @@ components:
         - destinationId
         - createdAt
         - tenant
-        - destination
     MemberEntity:
       type: object
       properties:
@@ -3780,9 +3775,11 @@ components:
         root:
           type: boolean
           description: Indicates if the folder is a root folder
+          nullable: true
         parentId:
           type: string
           description: The ID of the parent folder
+          nullable: true
           format: uuid
         parent:
           $ref: "#/components/schemas/FolderEntity"
@@ -3809,10 +3806,7 @@ components:
       required:
         - id
         - knowledgeId
-        - knowledge
         - name
-        - children
-        - sources
         - tenantId
         - createdAt
         - updatedAt
@@ -3902,8 +3896,6 @@ components:
         - id
         - name
         - knowledgeId
-        - knowledge
-        - messages
         - tenantId
         - createdAt
         - updatedAt
@@ -3963,7 +3955,6 @@ components:
         - config
         - type
         - tenantId
-        - knowledgeLLMs
         - createdAt
         - updatedAt
     KnowledgeLLMEntity:
@@ -4000,8 +3991,6 @@ components:
       required:
         - id
         - default
-        - knowledge
-        - llm
         - knowledgeId
         - llmId
         - createdAt
@@ -4133,6 +4122,7 @@ components:
         parentId:
           type: string
           description: The ID of the parent folder
+          nullable: true
           format: uuid
       required:
         - name

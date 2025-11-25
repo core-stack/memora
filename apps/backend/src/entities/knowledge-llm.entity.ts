@@ -2,11 +2,11 @@
 import {
   Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique,
   UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { Field } from "../shared/model";
-import { KnowledgeEntity } from "./knowledge.entity";
-import { LLMEntity } from "./llm.entity";
+import { Field } from '../shared/model';
+import { KnowledgeEntity } from './knowledge.entity';
+import { LLMEntity } from './llm.entity';
 
 @Entity("knowledge_llms")
 @Unique("knowledge_llm_unique", [ "knowledge", "llm" ])
@@ -21,13 +21,12 @@ export class KnowledgeLLMEntity {
   @Column({ type: "boolean", default: false })
   default: boolean;
 
-
-  @Field({ type: "class", class: () => KnowledgeEntity })
+  @Field({ type: "class", class: () => KnowledgeEntity, required: false })
   @ManyToOne(() => KnowledgeEntity, (k) => k.knowledgeLLMs, { onDelete: "CASCADE" })
   @JoinColumn({ name: "knowledge_id" })
   knowledge?: KnowledgeEntity;
 
-  @Field({ type: "class", class: () => LLMEntity })
+  @Field({ type: "class", class: () => LLMEntity, required: false })
   @ManyToOne(() => LLMEntity, (llm) => llm.knowledgeLLMs, { onDelete: "CASCADE" })
   @JoinColumn({ name: "llm_id" })
   llm?: LLMEntity;

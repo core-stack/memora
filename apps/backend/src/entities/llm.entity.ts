@@ -1,10 +1,10 @@
 import {
   Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { CreatedBy, TenantId } from "../shared/controller/decorators/context";
-import { Field } from "../shared/model";
-import { KnowledgeLLMEntity } from "./knowledge-llm.entity";
+import { CreatedBy, TenantId } from '../shared/controller/decorators/context';
+import { Field } from '../shared/model';
+import { KnowledgeLLMEntity } from './knowledge-llm.entity';
 
 export enum LLMType {
   EMBEDDING = "EMBEDDING",
@@ -49,7 +49,7 @@ export class LLMEntity {
   @Column({ name: "creator_id", length: 36, nullable: true })
   creatorId?: string;
 
-  @Field({ type: "class", class: () => KnowledgeLLMEntity, isArray: true })
+  @Field({ type: "class", class: () => KnowledgeLLMEntity, isArray: true, required: false })
   @OneToMany(() => KnowledgeLLMEntity, (kllm) => kllm.knowledge)
   knowledgeLLMs?: KnowledgeLLMEntity[];
 

@@ -67,7 +67,7 @@ export type NotificationEntity = {
     */
     createdBy?: MemberEntity;
     /**
-     * @type object
+     * @type object | undefined
     */
-    destination: MemberEntity;
+    destination?: MemberEntity;
 };

@@ -25,7 +25,7 @@ get "createdBy"(){
                 return memberEntitySchema.optional()
               },
 get "destination"(){
-                return memberEntitySchema
+                return memberEntitySchema.optional()
               }
     })
 

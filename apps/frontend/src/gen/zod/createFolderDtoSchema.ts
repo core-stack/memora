@@ -7,7 +7,7 @@ import { z } from "zod/v4";
 
 export const createFolderDtoSchema = z.object({
     "name": z.string().describe("The name of the folder"),
-"parentId": z.optional(z.uuid().describe("The ID of the parent folder"))
+"parentId": z.uuid().describe("The ID of the parent folder").nullish()
     })
 
 export type CreateFolderDtoSchema = z.infer<typeof createFolderDtoSchema>

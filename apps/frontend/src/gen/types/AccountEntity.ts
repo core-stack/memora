@@ -27,9 +27,9 @@ export type AccountEntity = {
     */
     userId: string;
     /**
-     * @type object
+     * @type object | undefined
     */
-    user: UserEntity;
+    user?: UserEntity;
     /**
      * @description The date the account was created
      * @type string, date-time

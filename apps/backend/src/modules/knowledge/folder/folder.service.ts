@@ -1,9 +1,10 @@
-import { EntityManager } from "typeorm";
+import { EntityManager, IsNull } from 'typeorm';
 
-import { Service } from "@/shared/service";
-import { Injectable, Logger } from "@nestjs/common";
+import { FilterOptions } from '@/shared/filter-options';
+import { Service } from '@/shared/service';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { FolderEntity } from "../../../entities/folder.entity";
+import { FolderEntity } from '../../../entities/folder.entity';
 
 @Injectable()
 export class FolderService extends Service<FolderEntity> {
@@ -25,5 +26,11 @@ export class FolderService extends Service<FolderEntity> {
       }
     }
     return path.join("/") + "/" + fileName;
+  }
+
+  override find(filterOptions: FilterOptions<FolderEntity>, manager?: EntityManager): Promise<FolderEntity[]> {
+    filterOptions.where ??= {};
+    if (filterOptions.where.parentId === undefined) filterOptions.where.parentId = IsNull();
+    return super.find(filterOptions, manager);
   }
 }

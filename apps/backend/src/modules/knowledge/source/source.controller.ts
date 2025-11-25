@@ -1,13 +1,14 @@
-import { SourceEntity } from "@/entities/source.entity";
-import { BaseController } from "@/shared/controller";
-import { Controller, HttpGet, HttpPost } from "@/shared/controller/decorators";
-import { Body, Param, ParseUUIDPipe } from "@nestjs/common";
-import { ApiResponse } from "@nestjs/swagger";
+import { SourceEntity } from '@/entities/source.entity';
+import { BaseController } from '@/shared/controller';
+import { Controller, HttpGet, HttpPost } from '@/shared/controller/decorators';
+import { HttpBody } from '@/shared/controller/decorators/body';
+import { Param, ParseUUIDPipe } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 
-import { CreateSourceDto } from "./dto/create-source.dto";
-import { FileURLResponseDto } from "./dto/file-url-response.dto";
-import { GetUploadUrlDto } from "./dto/get-upload-url.dto";
-import { SourceService } from "./source.service";
+import { CreateSourceDto } from './dto/create-source.dto';
+import { FileURLResponseDto } from './dto/file-url-response.dto';
+import { GetUploadUrlDto } from './dto/get-upload-url.dto';
+import { SourceService } from './source.service';
 
 @Controller("tenant/:tenantId/knowledge/:knowledgeId/source")
 export class SourceController extends BaseController({
@@ -34,7 +35,7 @@ export class SourceController extends BaseController({
 
   @HttpPost("upload-url")
   @ApiResponse({ type: FileURLResponseDto, status: 200 })
-  async upload(@Body() body: GetUploadUrlDto) {
+  async upload(@HttpBody(GetUploadUrlDto) body: GetUploadUrlDto) {
     return this.service.getUploadUrl(body);
   }
 

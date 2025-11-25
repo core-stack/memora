@@ -1,17 +1,17 @@
 import {
   Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { ApiExtraModels } from "@nestjs/swagger";
+import { ApiExtraModels } from '@nestjs/swagger';
 
-import { FromParams, TenantId } from "../shared/controller/decorators/context";
-import { Field } from "../shared/model";
-import { FolderEntity } from "./folder.entity";
-import { KnowledgeEntity } from "./knowledge.entity";
+import { KnowledgeId, TenantId } from '../shared/controller/decorators/context';
+import { Field } from '../shared/model';
+import { FolderEntity } from './folder.entity';
+import { KnowledgeEntity } from './knowledge.entity';
 import {
   SourceAudioMetadata, SourceDocMetadata, SourceImageMetadata, SourceType, SourceVideoMetadata
-} from "./metadata.types";
-import { TenantEntity } from "./tenant.entity";
+} from './metadata.types';
+import { TenantEntity } from './tenant.entity';
 
 import type { SourceMetadata } from "./metadata.types";
 export enum IndexStatus {
@@ -88,7 +88,7 @@ export class SourceEntity {
   @Column({ name: "memory_id", length: 36, nullable: true })
   memoryId?: string;
 
-  @FromParams("knowledgeId")
+  @KnowledgeId()
   @Field({ type: "string", uuid: true, description: "The ID of the knowledge base this source belongs to" })
   @Column({ name: "knowledge_id", length: 36 })
   knowledgeId: string;

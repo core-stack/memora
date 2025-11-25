@@ -55,19 +55,19 @@ export type InviteEntity = {
     */
     updatedAt: string;
     /**
-     * @type object
+     * @type object | undefined
     */
-    tenant: TenantEntity;
+    tenant?: TenantEntity;
     /**
-     * @type object
+     * @type object | undefined
     */
-    role: RoleEntity;
+    role?: RoleEntity;
     /**
      * @type object | undefined
     */
     user?: UserEntity;
     /**
-     * @type object
+     * @type object | undefined
     */
-    creator: MemberEntity;
+    creator?: MemberEntity;
 };

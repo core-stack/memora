@@ -24,8 +24,9 @@ export function FileTreeSidebar() {
   const { data, isLoading: explorerLoading, error: explorerError } = useExplorer();
   const isLoading = tenantLoading || explorerLoading;
   const error = tenantError || knowledgeError || explorerError;
+
   return (
-    <AsyncBoundary isLoading={isLoading} error={error}>
+    <AsyncBoundary isLoading={isLoading} error={error} message='Loading files' size={'sm'}>
       <Component data={data!} knowledge={knowledge!} tenant={tenant!} />
     </AsyncBoundary>
   )
@@ -52,7 +53,6 @@ function Component({ data, knowledge, tenant }: Props) {
   const handleCreateFile = () => {
     openDialog({ type: DialogType.CREATE_SOURCE, props: { folderId: selectedFolderId, knowledgeId: knowledge.id, tenantId: tenant.id } });
   }
-
   
   return (
     <div className={cn("flex flex-col h-full bg-sidebar border-r border-sidebar-border w-full")}>

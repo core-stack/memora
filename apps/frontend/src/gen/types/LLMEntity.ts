@@ -55,9 +55,9 @@ export type LLMEntity = {
     */
     creatorId?: string | null;
     /**
-     * @type array
+     * @type array | undefined
     */
-    knowledgeLLMs: KnowledgeLLMEntity[];
+    knowledgeLLMs?: KnowledgeLLMEntity[];
     /**
      * @description The timestamp when the LLM was created
      * @type string, date-time

@@ -11,19 +11,19 @@ export const folderEntitySchema = z.object({
     "id": z.uuid().describe("The unique identifier of the folder"),
 "knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
 get "knowledge"(){
-                return knowledgeEntitySchema
+                return knowledgeEntitySchema.optional()
               },
 "name": z.string().describe("The name of the folder"),
-"root": z.optional(z.boolean().describe("Indicates if the folder is a root folder")),
-"parentId": z.optional(z.uuid().describe("The ID of the parent folder")),
+"root": z.boolean().describe("Indicates if the folder is a root folder").nullish(),
+"parentId": z.uuid().describe("The ID of the parent folder").nullish(),
 get "parent"(){
                 return folderEntitySchema.optional()
               },
 get "children"(){
-                return z.array(folderEntitySchema)
+                return z.array(folderEntitySchema).optional()
               },
 get "sources"(){
-                return z.array(sourceEntitySchema)
+                return z.array(sourceEntitySchema).optional()
               },
 "tenantId": z.uuid().describe("The ID of the tenant this folder belongs to"),
 "createdAt": z.string().datetime().describe("The timestamp when the folder was created"),

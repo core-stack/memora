@@ -12,7 +12,7 @@ export type CreateFolderDto = {
     name: string;
     /**
      * @description The ID of the parent folder
-     * @type string | undefined, uuid
+     * @type string, uuid
     */
-    parentId?: string;
+    parentId?: string | null;
 };

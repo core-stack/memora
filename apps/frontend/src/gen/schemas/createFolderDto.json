@@ -1,1 +1,1 @@
-{"type":"object","properties":{"name":{"type":"string","description":"The name of the folder"},"parentId":{"type":"string","description":"The ID of the parent folder","format":"uuid"}},"required":["name"],"x-readme-ref-name":"CreateFolderDto"}
+{"type":"object","properties":{"name":{"type":"string","description":"The name of the folder"},"parentId":{"type":"string","description":"The ID of the parent folder","nullable":true,"format":"uuid"}},"required":["name"],"x-readme-ref-name":"CreateFolderDto"}

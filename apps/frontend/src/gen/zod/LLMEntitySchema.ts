@@ -18,7 +18,7 @@ export const llmentitySchema = z.object({
 "tenantId": z.uuid().describe("The ID of the tenant this LLM belongs to"),
 "creatorId": z.uuid().describe("The ID of the user who created the LLM").nullish(),
 get "knowledgeLLMs"(){
-                return z.array(knowledgeLLMEntitySchema)
+                return z.array(knowledgeLLMEntitySchema).optional()
               },
 "createdAt": z.string().datetime().describe("The timestamp when the LLM was created"),
 "updatedAt": z.string().datetime().describe("The timestamp when the LLM was last updated")

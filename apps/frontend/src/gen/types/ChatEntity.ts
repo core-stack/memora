@@ -23,13 +23,13 @@ export type ChatEntity = {
     */
     knowledgeId: string;
     /**
-     * @type object
+     * @type object | undefined
     */
-    knowledge: KnowledgeEntity;
+    knowledge?: KnowledgeEntity;
     /**
-     * @type array
+     * @type array | undefined
     */
-    messages: MessageEntity[];
+    messages?: MessageEntity[];
     /**
      * @description The ID of the tenant this chat belongs to
      * @type string, uuid

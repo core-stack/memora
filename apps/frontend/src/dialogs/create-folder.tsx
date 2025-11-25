@@ -22,7 +22,11 @@ export type CreateFolderDialogProps = {
 }
 export const CreateFolderDialog = ({ parentId, knowledgeId, tenantId }: CreateFolderDialogProps) => {
   const { closeDialog } = useDialog();
-  const form = useForm({ resolver: zodResolver(createFolderDtoSchema) });
+  const form = useForm({
+    resolver: zodResolver(createFolderDtoSchema),
+    defaultValues: { parentId, name: ""}
+  });
+  
   const isLoading = form.formState.isSubmitting;
 
   const { data: folder } = useApiFolderByID({

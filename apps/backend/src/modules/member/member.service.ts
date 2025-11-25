@@ -1,10 +1,9 @@
-import { EntityManager, In } from "typeorm";
+import { EntityManager, In } from 'typeorm';
 
-import { FilterOptions } from "@/shared/filter-options";
-import { Service } from "@/shared/service";
-import { Injectable, Logger } from "@nestjs/common";
+import { Service } from '@/shared/service';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { MemberEntity } from "../../entities/member.entity";
+import { MemberEntity } from '../../entities/member.entity';
 
 @Injectable()
 export class MemberService extends Service<MemberEntity> {
@@ -21,11 +20,5 @@ export class MemberService extends Service<MemberEntity> {
     return this.repository(manager).find({
       where: { user: { email: Array.isArray(email) ? In(email) : email }, tenantId }
     });
-  }
-
-  override find(filterOptions: FilterOptions<MemberEntity>, manager?: EntityManager): Promise<MemberEntity[]> {
-    console.log(filterOptions);
-
-    return super.find(filterOptions, manager);
   }
 }

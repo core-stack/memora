@@ -1,19 +1,19 @@
-import { env } from "@/env";
-import { ErrorResponse } from "@/shared/controller";
-import { ApiResponses, HttpGet, HttpPost } from "@/shared/controller/decorators";
-import { Public } from "@/shared/controller/decorators/public";
-import { Body, Controller, Logger, Param, Query, Res } from "@nestjs/common";
-import { ApiParam, ApiQuery } from "@nestjs/swagger";
+import { env } from '@/env';
+import { ErrorResponse } from '@/shared/controller';
+import { ApiResponses, HttpGet, HttpPost } from '@/shared/controller/decorators';
+import { HttpBody } from '@/shared/controller/decorators/body';
+import { Public } from '@/shared/controller/decorators/public';
+import { Controller, Logger, Param, Query, Res } from '@nestjs/common';
+import { ApiParam, ApiQuery } from '@nestjs/swagger';
 
-import { AuthService } from "./auth.service";
-import { ActiveAccountDto } from "./dto/active-account.dto";
-import { CreateAccountDto } from "./dto/create-account.dto";
-import { ForgetPasswordDto } from "./dto/forget-password.dto";
-import { GetOAuth2UrlResponseDto } from "./dto/get-oauth2-url.dto";
-import { LoginDto, LoginResponseDto } from "./dto/login.dto";
+import { AuthService } from './auth.service';
+import { ActiveAccountDto } from './dto/active-account.dto';
+import { CreateAccountDto } from './dto/create-account.dto';
+import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { GetOAuth2UrlResponseDto } from './dto/get-oauth2-url.dto';
+import { LoginDto, LoginResponseDto } from './dto/login.dto';
 
 import type { Response } from "express";
-
 @Public("login", "logout", "createAccount", "activeAccount", "forgetPassword")
 @Controller("auth")
 export class AuthController {
@@ -27,7 +27,7 @@ export class AuthController {
   }
 
   @HttpPost("login")
-  async login(@Body() body: LoginDto): Promise<LoginResponseDto> {
+  async login(@HttpBody(LoginDto) body: LoginDto): Promise<LoginResponseDto> {
     return await this.authService.login(body);
   }
 
@@ -37,17 +37,17 @@ export class AuthController {
   }
 
   @HttpPost("create-account")
-  async createAccount(@Body() body: CreateAccountDto): Promise<void>  {
+  async createAccount(@HttpBody(CreateAccountDto) body: CreateAccountDto): Promise<void>  {
     return this.authService.createAccount(body);
   }
 
   @HttpPost("active-account", { ignore: !env.REQUIRE_EMAIL_VERIFICATION })
-  async activeAccount(@Body() body: ActiveAccountDto): Promise<void>  {
+  async activeAccount(@HttpBody(ActiveAccountDto) body: ActiveAccountDto): Promise<void>  {
     return this.authService.activeAccount(body);
   }
 
   @HttpPost("forget-password")
-  async forgetPassword(@Body() body: ForgetPasswordDto): Promise<void>  {
+  async forgetPassword(@HttpBody(ForgetPasswordDto) body: ForgetPasswordDto): Promise<void>  {
     return this.authService.forgetPassword(body);
   }
 

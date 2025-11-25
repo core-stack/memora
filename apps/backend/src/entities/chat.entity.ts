@@ -1,11 +1,13 @@
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { Field } from "../shared/model";
-import { KnowledgeEntity } from "./knowledge.entity";
-import { MessageEntity } from "./message.entity";
+import { KnowledgeId } from '@/shared/controller/decorators';
+
+import { Field } from '../shared/model';
+import { KnowledgeEntity } from './knowledge.entity';
+import { MessageEntity } from './message.entity';
 
 @Entity("chats")
 export class ChatEntity {
@@ -17,16 +19,17 @@ export class ChatEntity {
   @Column({ length: 50 })
   name: string;
 
+  @KnowledgeId()
   @Field({ type: "string", uuid: true, description: "The ID of the associated knowledge base" })
   @Column({ name: "knowledge_id", type: "uuid" })
   knowledgeId: string;
 
-  @Field({ type: "class", class: () => KnowledgeEntity })
+  @Field({ type: "class", class: () => KnowledgeEntity, required: false })
   @ManyToOne(() => KnowledgeEntity, (knowledge) => knowledge.chats, { onDelete: "CASCADE" })
   @JoinColumn({ name: "knowledge_id" })
   knowledge: KnowledgeEntity;
 
-  @Field({ type: "class", class: () => MessageEntity, isArray: true })
+  @Field({ type: "class", class: () => MessageEntity, isArray: true, required: false })
   @OneToMany(() => MessageEntity, (message) => message.chat)
   messages?: MessageEntity[];
 
