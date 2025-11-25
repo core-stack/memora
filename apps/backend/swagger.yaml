@@ -3389,12 +3389,12 @@ components:
           format: date-time
           type: string
           description: The date the account was created
-          example: 2025-11-24T21:01:57.105Z
+          example: 2025-11-25T00:54:17.616Z
         updatedAt:
           format: date-time
           type: string
           description: The date the account was updated
-          example: 2025-11-24T21:01:57.105Z
+          example: 2025-11-25T00:54:17.616Z
       required:
         - id
         - provider
@@ -3453,7 +3453,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-24T21:01:57.104Z
+          example: 2025-11-25T00:54:17.614Z
           nullable: true
         image:
           type: string
@@ -3468,12 +3468,12 @@ components:
           format: date-time
           type: string
           description: The date the user was created
-          example: 2025-11-24T21:01:57.105Z
+          example: 2025-11-25T00:54:17.615Z
         updatedAt:
           format: date-time
           type: string
           description: The date the user was updated
-          example: 2025-11-24T21:01:57.105Z
+          example: 2025-11-25T00:54:17.615Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:
@@ -4038,7 +4038,7 @@ components:
           type: number
           description: The number of files in the knowledge base
         storage:
-          type: number
+          type: string
           description: The total storage used by the knowledge base in bytes
         tenantId:
           type: string
@@ -4082,11 +4082,6 @@ components:
         - tenantId
         - createdAt
         - updatedAt
-        - folders
-        - sources
-        - chats
-        - messages
-        - knowledgeLLMs
     ErrorResponse:
       type: object
       properties:

@@ -55,9 +55,9 @@ export type KnowledgeEntity = {
     files: number;
     /**
      * @description The total storage used by the knowledge base in bytes
-     * @type number
+     * @type string
     */
-    storage: number;
+    storage: string;
     /**
      * @description The ID of the tenant this knowledge base belongs to
      * @type string, uuid
@@ -74,23 +74,23 @@ export type KnowledgeEntity = {
     */
     updatedAt: string;
     /**
-     * @type array
+     * @type array | undefined
     */
-    folders: FolderEntity[];
+    folders?: FolderEntity[];
     /**
-     * @type array
+     * @type array | undefined
     */
-    sources: SourceEntity[];
+    sources?: SourceEntity[];
     /**
-     * @type array
+     * @type array | undefined
     */
-    chats: ChatEntity[];
+    chats?: ChatEntity[];
     /**
-     * @type array
+     * @type array | undefined
     */
-    messages: MessageEntity[];
+    messages?: MessageEntity[];
     /**
-     * @type array
+     * @type array | undefined
     */
-    knowledgeLLMs: KnowledgeLLMEntity[];
+    knowledgeLLMs?: KnowledgeLLMEntity[];
 };

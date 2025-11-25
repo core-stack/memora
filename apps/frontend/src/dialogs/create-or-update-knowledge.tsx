@@ -36,7 +36,7 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge, tenantId }: CreateOrU
   const { closeDialog } = useDialog();
 
   const isEditing = !!knowledge;
-
+  
   const form = useForm({
     resolver: zodResolver(createKnowledgeDtoSchema),
     defaultValues: {
@@ -54,6 +54,8 @@ export const CreateOrUpdateKnowledgeDialog = ({ knowledge, tenantId }: CreateOrU
   const { mutateAsync: updateKnowledge } = useApiKnowledgeUpdate();
 
   const onSubmit = form.handleSubmit(async (data) => {
+    console.log(tenantId);
+    
     try {
       if (isEditing) {
         await updateKnowledge({ id: knowledge?.id ?? "", tenantId, data });

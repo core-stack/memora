@@ -18,24 +18,24 @@ export const knowledgeEntitySchema = z.object({
 "status": z.enum(["DELETING", "DELETE_ERROR", "OK"]).describe("The status of the knowledge base"),
 "deleteError": z.string().describe("The error message if deletion fails").nullish(),
 "files": z.number().describe("The number of files in the knowledge base"),
-"storage": z.number().describe("The total storage used by the knowledge base in bytes"),
+"storage": z.string().describe("The total storage used by the knowledge base in bytes"),
 "tenantId": z.uuid().describe("The ID of the tenant this knowledge base belongs to"),
 "createdAt": z.string().datetime().describe("The timestamp when the knowledge base was created"),
 "updatedAt": z.string().datetime().describe("The timestamp when the knowledge base was last updated"),
 get "folders"(){
-                return z.array(folderEntitySchema)
+                return z.array(folderEntitySchema).optional()
               },
 get "sources"(){
-                return z.array(sourceEntitySchema)
+                return z.array(sourceEntitySchema).optional()
               },
 get "chats"(){
-                return z.array(chatEntitySchema)
+                return z.array(chatEntitySchema).optional()
               },
 get "messages"(){
-                return z.array(messageEntitySchema)
+                return z.array(messageEntitySchema).optional()
               },
 get "knowledgeLLMs"(){
-                return z.array(knowledgeLLMEntitySchema)
+                return z.array(knowledgeLLMEntitySchema).optional()
               }
     })
 

@@ -1,9 +1,12 @@
-import { PickType } from "@nestjs/swagger";
-
-import { KnowledgeEntity } from "@/entities";
+import { KnowledgeEntity } from '@/entities';
+import { TenantId } from '@/shared/controller/decorators';
+import { PickType } from '@nestjs/swagger';
 
 export class CreateKnowledgeDto extends PickType(KnowledgeEntity, [
   "slug",
   "title",
   "description"
-] as const) {}
+] as const) {
+  @TenantId()
+  tenantId: string;
+}

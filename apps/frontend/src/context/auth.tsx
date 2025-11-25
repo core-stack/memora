@@ -83,8 +83,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (isLoading) return;
     const publicRoute = publicRoutes.find(route => pathname.startsWith(route.path));
-    console.log(isAuthenticated, publicRoute, user, error);
-    
 
     if (!isAuthenticated && publicRoute) {
       return;

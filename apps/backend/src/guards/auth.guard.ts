@@ -1,11 +1,11 @@
-import { Response } from "express";
+import { Response } from 'express';
 
-import { AuthManager } from "@/modules/auth/auth-manager.service";
-import { Session } from "@/modules/auth/types";
-import { IS_PUBLIC_KEY } from "@/shared/controller/decorators/public";
-import { AuthRequest } from "@/types/auth-request";
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
+import { AuthManager } from '@/modules/auth/auth-manager.service';
+import { Session } from '@/modules/auth/types';
+import { IS_PUBLIC_KEY } from '@/shared/controller/decorators/public';
+import { AuthRequest } from '@/types/auth-request';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -53,6 +53,7 @@ export class AuthGuard implements CanActivate {
 
     if (!session) throw new UnauthorizedException();
     request.session = session;
+    
     return true;
   }
 }

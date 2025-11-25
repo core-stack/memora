@@ -1,15 +1,15 @@
 import {
   Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, Unique,
   UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 
-import { TenantId } from "../shared/controller/decorators/context";
-import { Field } from "../shared/model";
-import { ChatEntity } from "./chat.entity";
-import { FolderEntity } from "./folder.entity";
-import { KnowledgeLLMEntity } from "./knowledge-llm.entity";
-import { MessageEntity } from "./message.entity";
-import { SourceEntity } from "./source.entity";
+import { TenantId } from '../shared/controller/decorators/context';
+import { Field } from '../shared/model';
+import { ChatEntity } from './chat.entity';
+import { FolderEntity } from './folder.entity';
+import { KnowledgeLLMEntity } from './knowledge-llm.entity';
+import { MessageEntity } from './message.entity';
+import { SourceEntity } from './source.entity';
 
 export enum KnowledgeStatus {
   DELETING = "DELETING",
@@ -49,9 +49,9 @@ export class KnowledgeEntity {
   @Column({ name: "file_count", type: "integer", default: 0 })
   files: number;
 
-  @Field({ type: "number", description: "The total storage used by the knowledge base in bytes" })
+  @Field({ type: "string", description: "The total storage used by the knowledge base in bytes" })
   @Column({ name: "storage", type: "bigint", default: 0 })
-  storage: number;
+  storage: string;
 
   @TenantId()
   @Field({ type: "string", uuid: true, description: "The ID of the tenant this knowledge base belongs to" })
@@ -67,23 +67,23 @@ export class KnowledgeEntity {
   updatedAt: Date;
 
   // relations
-  @Field({ type: "class", class: () => FolderEntity, isArray: true })
+  @Field({ type: "class", class: () => FolderEntity, isArray: true, required: false })
   @OneToMany(() => FolderEntity, (f) => f.knowledge)
   folders?: FolderEntity[];
 
-  @Field({ type: "class", class: () => SourceEntity, isArray: true })
+  @Field({ type: "class", class: () => SourceEntity, isArray: true, required: false })
   @OneToMany(() => SourceEntity, (s) => s.knowledge)
   sources?: SourceEntity[];
 
-  @Field({ type: "class", class: () => ChatEntity, isArray: true })
+  @Field({ type: "class", class: () => ChatEntity, isArray: true, required: false })
   @OneToMany(() => ChatEntity, (c) => c.knowledge)
   chats?: ChatEntity[];
 
-  @Field({ type: "class", class: () => MessageEntity, isArray: true })
+  @Field({ type: "class", class: () => MessageEntity, isArray: true, required: false })
   @OneToMany(() => MessageEntity, (c) => c.knowledge)
   messages?: MessageEntity[];
 
-  @Field({ type: "class", class: () => KnowledgeLLMEntity, isArray: true })
+  @Field({ type: "class", class: () => KnowledgeLLMEntity, isArray: true, required: false })
   @OneToMany(() => KnowledgeLLMEntity, (kllm) => kllm.knowledge)
   knowledgeLLMs?: KnowledgeLLMEntity[];
 
