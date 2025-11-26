@@ -31,11 +31,11 @@ export class AccountEntity {
   @JoinColumn({ name: "user_id" })
   user?: UserEntity;
 
-  @Field({ type: "date", description: "The date the account was created", example: new Date().toISOString() })
+  @Field({ type: "date", description: "The date the account was created", example: "2025-10-05T14:48:00.000Z"})
   @CreateDateColumn({ name: "created_at", type: "timestamptz"  })
   createdAt: Date;
 
-  @Field({ type: "date", description: "The date the account was updated", example: new Date().toISOString() })
+  @Field({ type: "date", description: "The date the account was updated", example: "2025-10-05T14:48:00.000Z"})
   @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
   updatedAt: Date;
 

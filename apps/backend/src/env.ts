@@ -1,9 +1,9 @@
-import dotenv from "dotenv";
-import moment from "moment";
-import path from "path";
-import z from "zod";
+import dotenv from 'dotenv';
+import moment from 'moment';
+import path from 'path';
+import z from 'zod';
 
-import { __root } from "./root";
+import { __root } from './root';
 
 const envFile = process.env.ENV_FILE;
 
@@ -123,12 +123,12 @@ const envSchema = z.object({
   IGNORE_PLUGINS: z.coerce.boolean().optional().default(false),
 
   OTEL_ENABLED: z.coerce.boolean().optional().default(false),
-  OTEL_LOGS_EXPORTER: z.string().default("none"),
-  OTEL_TRACES_EXPORTER: z.string().default("otlp"),
-  OTEL_METRICS_EXPORTER: z.string().default("otlp"),
+  OTEL_LOGS_EXPORTER: z.string().optional().default("none"),
+  OTEL_TRACES_EXPORTER: z.string().optional().default("otlp"),
+  OTEL_METRICS_EXPORTER: z.string().optional().default("otlp"),
 
-  OTEL_EXPORTER_OTLP_PROTOCOL: z.string().default("grpc"),
-  OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: z.string().default("http://opentelemetry-collector:4317"),
+  OTEL_EXPORTER_OTLP_PROTOCOL: z.string().optional().default("grpc"),
+  OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: z.string().optional().default("http://opentelemetry-collector:4317"),
 
   OTEL_METRIC_EXPORT_INTERVAL: z.coerce.number().default(5000),
   OTEL_METRIC_EXPORT_TIMEOUT: z.coerce.number().default(5000)

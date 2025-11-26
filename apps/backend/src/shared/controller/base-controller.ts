@@ -63,8 +63,6 @@ export function BaseController<
     @HttpPost("", { ignore: ignore.includes("create"), responses: responses.create })
     @ApiBody({ type: createDto })
     async create(@HttpBody(createDto ?? entity) body: TCreateDto): Promise<TEntity> {
-      console.log(body);
-      
       return this.service.create(body as unknown as TEntity);
     }
 

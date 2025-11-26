@@ -3,6 +3,7 @@
 * Do not edit manually.
 */
 
+import { llmpresetConfigSchema } from "./LLMPresetConfigSchema.ts";
 import { z } from "zod/v4";
 
 export const llmpresetSchema = z.object({
@@ -17,9 +18,9 @@ export const llmpresetSchema = z.object({
     }).describe("Default values for any configuration fields.")),
 "required": z.optional(z.array(z.string()).describe("List of required field names.")),
 "adapter": z.string().describe("Name of the adapter responsible for executing the LLM."),
-"config": z.object({
-    
-    }).describe("Adapter configuration.")
+get "config"(){
+                return llmpresetConfigSchema.describe("Adapter configuration.")
+              }
     })
 
 export type LLMPresetSchema = z.infer<typeof llmpresetSchema>

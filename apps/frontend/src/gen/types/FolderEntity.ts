@@ -28,9 +28,9 @@ export type FolderEntity = {
     name: string;
     /**
      * @description Indicates if the folder is a root folder
-     * @type boolean | undefined
+     * @type boolean
     */
-    root?: boolean;
+    root?: boolean | null;
     /**
      * @description The ID of the parent folder
      * @type string, uuid

@@ -40,6 +40,13 @@ function Page({ tenant }: { tenant: TenantEntity }) {
 
   const filteredLLMs = activeTab === "all" ? llms : llms.filter((llm) => llm.type === activeTab);
 
+  const createLLM = () => {
+    openDialog({ 
+      type: DialogType.SELECT_LLM_PRESET,
+      props: { tenantId: tenant.id }
+    });
+  }
+
   return (
     <>
       {/* Header */}
@@ -49,7 +56,7 @@ function Page({ tenant }: { tenant: TenantEntity }) {
         icon={<Sparkles className="h-6 w-6 text-primary" />}
         action={{
           text: "Add LLM",
-          action: () => openDialog({ type: DialogType.SELECT_LLM_PRESET }),
+          action: createLLM,
           icon: <Plus className="h-5 w-5 mr-2" />
         }}
       />
@@ -83,7 +90,7 @@ function Page({ tenant }: { tenant: TenantEntity }) {
           <Sparkles className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-foreground mb-2">No LLMs configured yet</h3>
           <p className="text-muted-foreground mb-6">Get started by adding your first language model</p>
-          <Button onClick={() => openDialog({ type: DialogType.SELECT_LLM_PRESET })}>
+          <Button onClick={createLLM}>
             <Plus className="h-4 w-4 mr-2" />
             Add Your First LLM
           </Button>

@@ -882,6 +882,20 @@ paths:
         "201":
           description: ""
       tags: *a4
+  /api/auth/active-account:
+    post:
+      operationId: AuthController_activeAccount
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActiveAccountDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
   /api/auth/forget-password:
     post:
       operationId: AuthController_forgetPassword
@@ -3372,12 +3386,12 @@ components:
           format: date-time
           type: string
           description: The date the account was created
-          example: 2025-11-25T19:12:10.032Z
+          example: 2025-10-05T14:48:00.000Z
         updatedAt:
           format: date-time
           type: string
           description: The date the account was updated
-          example: 2025-11-25T19:12:10.032Z
+          example: 2025-10-05T14:48:00.000Z
       required:
         - id
         - provider
@@ -3435,7 +3449,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-25T19:12:10.029Z
+          example: 2025-11-26T09:10:03.024Z
           nullable: true
         image:
           type: string
@@ -3450,12 +3464,12 @@ components:
           format: date-time
           type: string
           description: The date the user was created
-          example: 2025-11-25T19:12:10.030Z
+          example: 2025-10-05T14:48:00.000Z
         updatedAt:
           format: date-time
           type: string
           description: The date the user was updated
-          example: 2025-11-25T19:12:10.030Z
+          example: 2025-10-05T14:48:00.000Z
         role:
           $ref: "#/components/schemas/RoleEntity"
         accounts:
@@ -4409,6 +4423,17 @@ components:
       required:
         - userMessage
         - aiMessage
+    LLMPresetConfig:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the LLM
+          enum:
+            - EMBEDDING
+            - TEXT
+      required:
+        - type
     LLMPreset:
       type: object
       properties:
@@ -4447,11 +4472,13 @@ components:
           description: Name of the adapter responsible for executing the LLM.
           example: openai
         config:
-          type: object
           description: Adapter configuration.
           example:
+            type: TEXT
             baseUrl: https://api.openai.com/v1
             timeout: 30000
+          allOf:
+            - $ref: "#/components/schemas/LLMPresetConfig"
       required:
         - name
         - description

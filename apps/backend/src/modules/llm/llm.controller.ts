@@ -15,7 +15,7 @@ export class LLMController extends BaseController({ entity: LLMEntity, createDto
 
   @HttpGet("presets")
   @ApiResponse({ status: 200, type: LLMPreset, isArray: true })
-  getPresets() {
+  getPresets(): LLMPreset[] {
     return this.service.manager.getPresets();
   }
 }

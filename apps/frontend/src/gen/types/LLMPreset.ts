@@ -3,6 +3,7 @@
 * Do not edit manually.
 */
 
+import type { LLMPresetConfig } from "./LLMPresetConfig.ts";
 
 export type LLMPreset = {
     /**
@@ -42,7 +43,6 @@ export type LLMPreset = {
     adapter: string;
     /**
      * @description Adapter configuration.
-     * @type object
     */
-    config: object;
+    config: LLMPresetConfig;
 };

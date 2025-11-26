@@ -10,7 +10,11 @@ export default tseslint.config(
     ignores: ["*.js"],
     files: ["**/*.ts", "**/*.tsx"],
     languageOptions: {
-      globals: globals.browser
+      globals: globals.browser,
+      parserOptions: {
+        project: "./tsconfig.json",
+        tsconfigRootDir: import.meta.dirname
+      }
     },
     plugins: {
       "@stylistic/ts": stylisticTs,

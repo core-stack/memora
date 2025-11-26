@@ -61,6 +61,7 @@ export type { LLMDeletePathParams, LLMDelete200, LLMDelete400, LLMDelete404, LLM
 export type { LLMEntityTypeEnumKey, LLMEntity } from "./LLMEntity.ts";
 export type { LLMGetPresetsPathParams, LLMGetPresets200, LLMGetPresetsQueryResponse, LLMGetPresetsQuery } from "./LLMGetPresets.ts";
 export type { LLMPreset } from "./LLMPreset.ts";
+export type { LLMPresetConfigTypeEnumKey, LLMPresetConfig } from "./LLMPresetConfig.ts";
 export type { LLMUpdatePathParams, LLMUpdate200, LLMUpdate400, LLMUpdate404, LLMUpdate500, LLMUpdateMutationRequest, LLMUpdateMutationResponse, LLMUpdateMutation } from "./LLMUpdate.ts";
 export type { LoginDto } from "./LoginDto.ts";
 export type { LoginResponseDto } from "./LoginResponseDto.ts";
@@ -121,6 +122,7 @@ export { createLLMDtoTypeEnum } from "./CreateLLMDto.ts";
 export { createSourceDtoSourceTypeEnum } from "./CreateSourceDto.ts";
 export { knowledgeEntityStatusEnum } from "./KnowledgeEntity.ts";
 export { LLMEntityTypeEnum } from "./LLMEntity.ts";
+export { LLMPresetConfigTypeEnum } from "./LLMPresetConfig.ts";
 export { messageEntityMessageRoleEnum } from "./MessageEntity.ts";
 export { roleEntityScopeEnum } from "./RoleEntity.ts";
 export { sourceAudioMetadataTypeEnum } from "./SourceAudioMetadata.ts";

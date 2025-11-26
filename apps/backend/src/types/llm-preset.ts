@@ -1,4 +1,19 @@
-import { Field } from "@/shared/model";
+import { Field } from '@/shared/model';
+
+enum LLMType {
+  EMBEDDING = "EMBEDDING",
+  TEXT = "TEXT",
+}
+export class LLMPresetConfig {
+  @Field({
+    type: 'enum',
+    enum: LLMType,
+    description: 'The type of the LLM'
+  })
+  type: LLMType;
+  
+  [key: string]: any
+}
 
 export class LLMPreset {
   @Field({ type: "string", description: "The unique identifier of the LLM preset." })
@@ -41,14 +56,15 @@ export class LLMPreset {
 
   @Field({
     type: "class",
-    class: () => Object,
+    class: () => LLMPresetConfig,
     description: "Adapter configuration.",
     example: {
+      type: LLMType.TEXT,
       baseUrl: "https://api.openai.com/v1",
       timeout: 30000
     }
   })
-  config: Record<string, any>;
+  config: LLMPresetConfig;
 
   constructor(data: LLMPreset) {
     Object.assign(this, data);

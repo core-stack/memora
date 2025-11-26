@@ -1,24 +1,23 @@
-import './tracing';
+import "./tracing";
+import "./utils/aux";
 
-import cookieParser from 'cookie-parser';
-import * as fs from 'fs';
-import * as yaml from 'yaml';
+import cookieParser from "cookie-parser";
+import * as fs from "fs";
+import * as yaml from "yaml";
 
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { apiReference } from '@scalar/nestjs-api-reference';
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { apiReference } from "@scalar/nestjs-api-reference";
 
-import { AppModule } from './app.module';
-import { env } from './env';
-import { ErrorsInterceptor } from './interceptors/error.interceptor';
+import { AppModule } from "./app.module";
+import { env } from "./env";
+import { ErrorsInterceptor } from "./interceptors/error.interceptor";
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new ErrorsInterceptor());
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-  }));
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.setGlobalPrefix("api");
   app.enableCors({
     origin: env.CORS_ORIGINS, // ou "*"

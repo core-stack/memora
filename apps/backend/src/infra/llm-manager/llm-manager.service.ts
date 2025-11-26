@@ -1,17 +1,17 @@
-import { readdir, readFile } from "fs/promises";
-import { join } from "path";
+import { readdir, readFile } from 'fs/promises';
+import { join } from 'path';
 
-import { LLMEntity } from "@/entities/llm.entity";
-import { env } from "@/env";
-import { __root } from "@/root";
-import { LLMPreset } from "@/types/llm-preset";
-import { Injectable, Logger } from "@nestjs/common";
-import { Cron, CronExpression } from "@nestjs/schedule";
+import { LLMEntity } from '@/entities/llm.entity';
+import { env } from '@/env';
+import { __root } from '@/root';
+import { LLMPreset } from '@/types/llm-preset';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
-import { NotFoundError } from "./errors/not-found.error";
-import { LLMLoaderService } from "./llm-loader.service";
-import { EmbeddingProvider } from "./provider/embedding/base";
-import { TextProvider } from "./provider/text/base";
+import { NotFoundError } from './errors/not-found.error';
+import { LLMLoaderService } from './llm-loader.service';
+import { EmbeddingProvider } from './provider/embedding/base';
+import { TextProvider } from './provider/text/base';
 
 @Injectable()
 export class LLMManagerService {
@@ -48,8 +48,7 @@ export class LLMManagerService {
         } catch (err) {
           this.logger.error(`Error loading preset ${file}:`, err);
         }
-      }
-
+      }      
       this.presets = presets || [];
       this.logger.verbose(`LLM Manager inicializado com ${this.presets.length} presets`);
       this.presets.forEach(preset => {
