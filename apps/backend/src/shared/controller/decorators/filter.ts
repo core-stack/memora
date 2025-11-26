@@ -1,4 +1,9 @@
-import { createParamDecorator, ExecutionContext, SetMetadata } from "@nestjs/common";
+import { Request } from "express";
+
+import { env } from "@/env";
+import {
+  createParamDecorator, CustomDecorator, ExecutionContext, SetMetadata
+} from "@nestjs/common";
 
 import { FilterOptions } from "../../filter-options";
 
@@ -7,14 +12,14 @@ const FILTER_METADATA_KEY = Symbol("filter_options");
 export const ControllerFilter = <TEntity>(config: {
   allowedFilters?: (keyof TEntity)[];
   allowedRelations?: (keyof TEntity)[];
-}) => SetMetadata(FILTER_METADATA_KEY, config);
+}): CustomDecorator<typeof FILTER_METADATA_KEY> => SetMetadata(FILTER_METADATA_KEY, config);
 
 export const Filter = <TEntity>(config?: {
   allowedFilters?: (keyof TEntity)[];
   allowedRelations?: (keyof TEntity)[];
-}) =>
+}): ParameterDecorator =>
   createParamDecorator((_: unknown, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
+    const request: Request = ctx.switchToHttp().getRequest();
 
     const controller = ctx.getClass();
     const reflector = (Reflect as any);
@@ -40,6 +45,9 @@ export const Filter = <TEntity>(config?: {
     if (mergedConfig.allowedFilters.length && options.where) {
       for (const key of Object.keys(options.where)) {
         if (!mergedConfig.allowedFilters.includes(key as keyof TEntity)) {
+          if (env.NODE_ENV !== "production" && Object.keys(request.params).some((i) => i === key)) {
+            console.warn(`The "${key}" filter is not allowed for ${controller.name} controller.`);
+          }
           delete options.where[key as any];
         }
       }

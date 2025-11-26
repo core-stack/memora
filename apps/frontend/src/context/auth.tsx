@@ -1,17 +1,17 @@
-import { createContext, useCallback, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from "react";
 
-import { useApiAuthLogout, useApiUserSelf } from '@/gen';
-import { useLocalStorage } from '@/hooks/use-local-storage';
-import { useLocation } from '@/hooks/use-location';
-import { useRouter } from '@/hooks/use-router';
-import { useToast } from '@/hooks/use-toast';
-import { publicRoutes, REDIRECT_WHEN_NOT_AUTHENTICATED_PATH } from '@/routes';
-import { can as canPermission } from '@snipet/permission';
-import { useQueryClient } from '@tanstack/react-query';
+import { AsyncBoundary } from "@/components/async-boundary";
+import { useApiAuthLogout, useApiUserSelf } from "@/gen";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useLocation } from "@/hooks/use-location";
+import { useRouter } from "@/hooks/use-router";
+import { useToast } from "@/hooks/use-toast";
+import { publicRoutes, REDIRECT_WHEN_NOT_AUTHENTICATED_PATH } from "@/routes";
+import { can as canPermission } from "@snipet/permission";
+import { useQueryClient } from "@tanstack/react-query";
 
 import type { MemberEntity, UserEntity } from '@/gen';
 import type { Permission } from "@snipet/permission";
-
 type AuthContextType = {
   user: UserEntity | undefined;
   currentMember: MemberEntity | undefined;
@@ -33,11 +33,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
 
   const { mutate } = useApiAuthLogout()
-  const { data: user, isLoading: loadingUserSelf, error, refetch } = useApiUserSelf();
+  const { data: user, isLoading: loadingUserSelf, error, refetch } = useApiUserSelf({ query: { retry: false } });
 
   const isAuthenticated = !!user && !error;
   const currentMember = user?.members?.find((member) => member.tenantId === tenantId);
-  const isLoading = loadingUserSelf;
+  const isLoading = loadingUserSelf || exiting;
 
   //#region Permissions
   const tenantPermissions = user?.members?.map((member) => ({ tenantId: member.tenantId, role: member.role }));
@@ -59,7 +59,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //#endregion
 
   const logout = useCallback(() => {
-    setExiting(true);
     setExiting(true);
     mutate(undefined, {
       onSuccess: async () => {
@@ -108,7 +107,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         canInTenant,
       }}
     >
-      { isLoading ? <div>Loading...</div> : children }
+      <AsyncBoundary isLoading={isLoading}>
+        {children}
+      </AsyncBoundary>
     </AuthContext.Provider>
   )
 }

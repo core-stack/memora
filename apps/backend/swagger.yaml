@@ -736,7 +736,8 @@ paths:
         - name: sort
           required: false
           in: query
-          description: 'Sort order. Use "-" to DESC. Allowed fields: slug, storage, title'
+          description: 'Sort order. Use "-" to DESC. Allowed fields: slug, storage, title,
+            tenantId'
           schema:
             type: array
             items:
@@ -757,6 +758,12 @@ paths:
           required: false
           in: query
           description: Filter by title
+          schema:
+            type: string
+        - name: filter[tenantId]
+          required: false
+          in: query
+          description: Filter by tenantId
           schema:
             type: string
         - name: tenantId
@@ -3449,7 +3456,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-26T10:22:59.064Z
+          example: 2025-11-26T10:45:16.303Z
           nullable: true
         image:
           type: string
