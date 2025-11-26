@@ -3,6 +3,7 @@ import { buildClassDecorators } from "./class.builder";
 import { buildDateDecorators } from "./date.builder";
 import { buildEnumDecorators } from "./enum.builder";
 import { buildNumberDecorators } from "./number.builder";
+import { buildObjectDecorators } from "./object.builder";
 import { buildOneOfDecorators } from "./one-of.builder";
 import { buildStringDecorators } from "./string.builder";
 
@@ -13,5 +14,6 @@ export const builder = {
   boolean: buildBooleanDecorators,
   date: buildDateDecorators,
   class: buildClassDecorators,
-  oneOf: buildOneOfDecorators
+  oneOf: buildOneOfDecorators,
+  object: buildObjectDecorators
 };

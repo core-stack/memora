@@ -1,21 +1,21 @@
 "use client"
 
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
 
-import { FormInput } from '@/components/form/input';
-import { Button } from '@/components/ui/button';
+import { FormInput } from "@/components/form/input";
+import { Button } from "@/components/ui/button";
 import {
   DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
-} from '@/components/ui/dialog';
-import { Form } from '@/components/ui/form';
-import { createLLMDtoSchema, useApiLLMCreate } from '@/gen';
-import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useDialog } from '@/hooks/use-dialog';
-import { useToast } from '@/hooks/use-toast';
-import { capitalizeFirstLetter } from '@/lib/string';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from "@/components/ui/dialog";
+import { Form } from "@/components/ui/form";
+import { createLLMDtoSchema, useApiLLMCreate } from "@/gen";
+import { useApiInvalidate } from "@/hooks/use-api-invalidate";
+import { useDialog } from "@/hooks/use-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { capitalizeFirstLetter } from "@/lib/string";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { DialogType } from '../';
+import { DialogType } from "../";
 
 import type { LLMPreset } from '@/gen';
 
@@ -31,11 +31,11 @@ export function ConfigureLLDialog({ preset, tenantId }: ConfigureLLDialogProps) 
     resolver: zodResolver(createLLMDtoSchema),
     defaultValues: {
       ...preset.defaults,
-      type: (preset.config as any).type,
-      model: (preset.config as any).model
+      type: preset.config?.type,
+      model: preset.config?.model
     }
   });
-
+  
   const invalidate = useApiInvalidate();
   const { mutate } = useApiLLMCreate();
   const isLoading = form.formState.isSubmitting;

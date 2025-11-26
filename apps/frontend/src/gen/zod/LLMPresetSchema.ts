@@ -3,24 +3,23 @@
 * Do not edit manually.
 */
 
-import { llmpresetConfigSchema } from "./LLMPresetConfigSchema.ts";
 import { z } from "zod/v4";
 
 export const llmpresetSchema = z.object({
     "name": z.string().describe("The unique identifier of the LLM preset."),
 "description": z.string().describe("A description of the LLM preset."),
 "iconPath": z.string().describe("The URL or path of the icon representing the LLM."),
-"fields": z.object({
+"fields": z.optional(z.object({
     
-    }).describe("Fields required to configure this LLM."),
+    }).catchall(z.enum(["string", "secret-string"]))),
 "defaults": z.optional(z.object({
     
-    }).describe("Default values for any configuration fields.")),
+    }).catchall(z.string())),
 "required": z.optional(z.array(z.string()).describe("List of required field names.")),
 "adapter": z.string().describe("Name of the adapter responsible for executing the LLM."),
-get "config"(){
-                return llmpresetConfigSchema.describe("Adapter configuration.")
-              }
+"config": z.optional(z.object({
+    
+    }).catchall(z.any()).describe("Adapter configuration."))
     })
 
 export type LLMPresetSchema = z.infer<typeof llmpresetSchema>

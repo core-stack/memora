@@ -3,7 +3,13 @@
 * Do not edit manually.
 */
 
-import type { LLMPresetConfig } from "./LLMPresetConfig.ts";
+
+export const fieldsEnum = {
+    "string": "string",
+    "secret-string": "secret-string"
+} as const;
+
+export type FieldsEnumKey = (typeof fieldsEnum)[keyof typeof fieldsEnum];
 
 export type LLMPreset = {
     /**
@@ -22,15 +28,17 @@ export type LLMPreset = {
     */
     iconPath: string;
     /**
-     * @description Fields required to configure this LLM.
-     * @type object
-    */
-    fields: object;
-    /**
-     * @description Default values for any configuration fields.
      * @type object | undefined
     */
-    defaults?: object;
+    fields?: {
+        [key: string]: FieldsEnumKey;
+    };
+    /**
+     * @type object | undefined
+    */
+    defaults?: {
+        [key: string]: string;
+    };
     /**
      * @description List of required field names.
      * @type array | undefined
@@ -43,6 +51,9 @@ export type LLMPreset = {
     adapter: string;
     /**
      * @description Adapter configuration.
+     * @type object | undefined
     */
-    config: LLMPresetConfig;
+    config?: {
+        [key: string]: any;
+    };
 };

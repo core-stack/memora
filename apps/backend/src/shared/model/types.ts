@@ -3,6 +3,9 @@ import { ValidationOptions } from "class-validator";
 import * as ValidatorJS from "validator";
 
 import { Constructor } from "@/types/constructor";
+import {
+  ReferenceObject, SchemaObject
+} from "@nestjs/swagger/dist/interfaces/open-api-spec.interface";
 
 export type EnumAllowedTypes =
   | any[]
@@ -66,6 +69,12 @@ export type FieldClassOptions<T = any> = BaseFieldOptions & {
   type: "class";
   class: () => Constructor<T>;
 };
+
+export type FieldObjectOptions = BaseFieldOptions & {
+  type: "object";
+  additionalProperties: boolean | SchemaObject | ReferenceObject;
+};
+
 export type FieldOneOfOptions<T = any> = BaseFieldOptions & {
   type: "oneOf";
   classes: Array<() => Constructor<T>>;
@@ -79,4 +88,5 @@ export type FieldOptions =
   | FieldBooleanOptions
   | FieldDateOptions
   | FieldClassOptions
-  | FieldOneOfOptions;
+  | FieldOneOfOptions
+  | FieldObjectOptions;

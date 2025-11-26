@@ -1,19 +1,19 @@
 "use client"
 
-import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { Search } from "lucide-react";
+import { useState } from "react";
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 import {
   DialogContent, DialogDescription, DialogHeader, DialogTitle
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useApiLLMGetPresets } from '@/gen';
-import { useDialog } from '@/hooks/use-dialog';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useApiLLMGetPresets } from "@/gen";
+import { useDialog } from "@/hooks/use-dialog";
+import { cn } from "@/lib/utils";
 
-import { DialogType } from '../';
+import { DialogType } from "../";
 
 import type { LLMPreset } from "@/gen";
 
@@ -27,14 +27,14 @@ export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true, te
   const [searchQuery, setSearchQuery] = useState("");
   const { openDialog, closeDialog } = useDialog();
   const { data: presets = [] } = useApiLLMGetPresets({ tenantId });
-
+  
   const filteredPresets = presets.filter(
     (preset) =>
       preset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       preset.description.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
-  const handleSelectPreset = (preset: LLMPreset) => {
+  const handleSelectPreset = (preset: LLMPreset) => {    
     onSelectPreset?.(preset);
     setSearchQuery("")
     if (openConfigDialog) openDialog({ type: DialogType.CONFIGURE_LLM, props: { preset, tenantId }});
@@ -80,10 +80,10 @@ export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true, te
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-foreground">{preset.name}</h3>
                     <Badge
-                      variant={(preset.config as any).type === "TEXT" ? "default" : "secondary"}
-                      className={cn("text-xs", (preset.config as any).type === "TEXT" && "text-foreground")}
+                      variant={(preset.config as Record<string, string>).type === "TEXT" ? "default" : "secondary"}
+                      className={cn("text-xs", (preset.config as Record<string, string>).type === "TEXT" && "text-foreground")}
                     >
-                      {(preset.config as any).type}
+                      {(preset.config as Record<string, string>).type}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground line-clamp-1">{preset.description}</p>

@@ -1,17 +1,17 @@
-import { readdir, readFile } from 'fs/promises';
-import { join } from 'path';
+import { readdir, readFile } from "fs/promises";
+import { join } from "path";
 
-import { LLMEntity } from '@/entities/llm.entity';
-import { env } from '@/env';
-import { __root } from '@/root';
-import { LLMPreset } from '@/types/llm-preset';
-import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { LLMEntity } from "@/entities/llm.entity";
+import { env } from "@/env";
+import { __root } from "@/root";
+import { LLMPreset } from "@/types/llm-preset";
+import { Injectable, Logger } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
 
-import { NotFoundError } from './errors/not-found.error';
-import { LLMLoaderService } from './llm-loader.service';
-import { EmbeddingProvider } from './provider/embedding/base';
-import { TextProvider } from './provider/text/base';
+import { NotFoundError } from "./errors/not-found.error";
+import { LLMLoaderService } from "./llm-loader.service";
+import { EmbeddingProvider } from "./provider/embedding/base";
+import { TextProvider } from "./provider/text/base";
 
 @Injectable()
 export class LLMManagerService {
@@ -23,13 +23,13 @@ export class LLMManagerService {
 
   constructor(private readonly loader: LLMLoaderService) {}
 
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     try {
       const presetsPath = join(__root, "llm-presets");
 
       try {
         await readdir(presetsPath);
-      } catch (dirError) {
+      } catch {
         this.logger.warn(`Preset directory not found: ${presetsPath}`);
         this.presets = [];
         return;
@@ -48,7 +48,7 @@ export class LLMManagerService {
         } catch (err) {
           this.logger.error(`Error loading preset ${file}:`, err);
         }
-      }      
+      }
       this.presets = presets || [];
       this.logger.verbose(`LLM Manager inicializado com ${this.presets.length} presets`);
       this.presets.forEach(preset => {
@@ -61,7 +61,8 @@ export class LLMManagerService {
   }
 
   getPresets(): LLMPreset[] {
-    return this.presets.map(preset => ({ ...preset, iconPath: `${env.AWS_PUBLIC_BASE_URL}/${preset.iconPath}` }));
+    return this.presets
+      .map(preset => ({ ...preset, iconPath: `${env.AWS_PUBLIC_BASE_URL}/${preset.iconPath}` }));
   }
 
   async getEmbedding(entityOrId: LLMEntity | string): Promise<EmbeddingProvider | null> {
@@ -89,16 +90,20 @@ export class LLMManagerService {
     return instance as any;
   }
 
-  private addInstance(llm: LLMEntity, instance: EmbeddingProvider | TextProvider) {
+  private addInstance(llm: LLMEntity, instance: EmbeddingProvider | TextProvider): void {
     this.instances.set(llm.id, { instance, lastUse: Date.now() });
   }
 
   @Cron(CronExpression.EVERY_MINUTE)
-  async cleanupInstances() {
+  async cleanupInstances(): Promise<void> {
     if (this.instances.size > env.LLM_INSTANCE_LIMIT) {
       this.logger.verbose(`Cleaning up ${this.instances.size - env.LLM_INSTANCE_LIMIT} instances...`);
       // remove most old usages
-      this.instances = new Map(Array.from(this.instances).sort((a, b) => a[1].lastUse - b[1].lastUse).slice(0, env.LLM_INSTANCE_LIMIT));
+      this.instances = new Map(
+        Array.from(this.instances)
+          .sort((a, b) => a[1].lastUse - b[1].lastUse)
+          .slice(0, env.LLM_INSTANCE_LIMIT)
+      );
     }
 
     this.instances.forEach((instance, key) => {

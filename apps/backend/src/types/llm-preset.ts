@@ -1,18 +1,8 @@
-import { Field } from '@/shared/model';
+import { Field } from "@/shared/model";
 
 enum LLMType {
   EMBEDDING = "EMBEDDING",
   TEXT = "TEXT",
-}
-export class LLMPresetConfig {
-  @Field({
-    type: 'enum',
-    enum: LLMType,
-    description: 'The type of the LLM'
-  })
-  type: LLMType;
-  
-  [key: string]: any
 }
 
 export class LLMPreset {
@@ -26,20 +16,24 @@ export class LLMPreset {
   iconPath: string;
 
   @Field({
-    type: "class",
-    class: () => Object,
-    description: "Fields required to configure this LLM.",
+    type: "object",
+    additionalProperties: {
+      type: "string",
+      enum: [ "string", "secret-string" ]
+    },
     example: {
       apiKey: "secret-string",
       model: "string"
-    }
+    },
+    required: false
   })
   fields: Record<string, "string" | "secret-string">;
 
   @Field({
-    type: "class",
-    class: () => Object,
-    description: "Default values for any configuration fields.",
+    type: "object",
+    additionalProperties: {
+      type: "string"
+    },
     example: {
       model: "gpt-4",
       temperature: 0.7
@@ -54,17 +48,19 @@ export class LLMPreset {
   @Field({ type: "string", description: "Name of the adapter responsible for executing the LLM.", example: "openai" })
   adapter: string;
 
+
   @Field({
-    type: "class",
-    class: () => LLMPresetConfig,
+    type: "object",
     description: "Adapter configuration.",
+    additionalProperties: true,
     example: {
       type: LLMType.TEXT,
       baseUrl: "https://api.openai.com/v1",
       timeout: 30000
-    }
+    },
+    required: false
   })
-  config: LLMPresetConfig;
+  config: Record<string, string | number | boolean>;
 
   constructor(data: LLMPreset) {
     Object.assign(this, data);

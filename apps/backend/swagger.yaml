@@ -3449,7 +3449,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-26T09:10:03.024Z
+          example: 2025-11-26T10:22:59.064Z
           nullable: true
         image:
           type: string
@@ -4423,17 +4423,6 @@ components:
       required:
         - userMessage
         - aiMessage
-    LLMPresetConfig:
-      type: object
-      properties:
-        type:
-          type: string
-          description: The type of the LLM
-          enum:
-            - EMBEDDING
-            - TEXT
-      required:
-        - type
     LLMPreset:
       type: object
       properties:
@@ -4449,16 +4438,21 @@ components:
           description: The URL or path of the icon representing the LLM.
         fields:
           type: object
-          description: Fields required to configure this LLM.
           example:
             apiKey: secret-string
             model: string
+          additionalProperties:
+            type: string
+            enum:
+              - string
+              - secret-string
         defaults:
           type: object
-          description: Default values for any configuration fields.
           example:
             model: gpt-4
             temperature: 0.7
+          additionalProperties:
+            type: string
         required:
           description: List of required field names.
           example:
@@ -4472,20 +4466,18 @@ components:
           description: Name of the adapter responsible for executing the LLM.
           example: openai
         config:
+          type: object
           description: Adapter configuration.
           example:
             type: TEXT
             baseUrl: https://api.openai.com/v1
             timeout: 30000
-          allOf:
-            - $ref: "#/components/schemas/LLMPresetConfig"
+          additionalProperties: true
       required:
         - name
         - description
         - iconPath
-        - fields
         - adapter
-        - config
     CreateLLMDto:
       type: object
       properties:

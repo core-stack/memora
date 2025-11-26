@@ -1,9 +1,9 @@
-import dotenv from 'dotenv';
-import moment from 'moment';
-import path from 'path';
-import z from 'zod';
+import dotenv from "dotenv";
+import moment from "moment";
+import path from "path";
+import z from "zod";
 
-import { __root } from './root';
+import { __root } from "./root";
 
 const envFile = process.env.ENV_FILE;
 
@@ -122,6 +122,7 @@ const envSchema = z.object({
 
   IGNORE_PLUGINS: z.coerce.boolean().optional().default(false),
 
+  // OPEN TELEMETRY
   OTEL_ENABLED: z.coerce.boolean().optional().default(false),
   OTEL_LOGS_EXPORTER: z.string().optional().default("none"),
   OTEL_TRACES_EXPORTER: z.string().optional().default("otlp"),

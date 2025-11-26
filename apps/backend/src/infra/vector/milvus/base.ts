@@ -1,8 +1,10 @@
-import { Constructor } from "@/types/constructor";
+/* eslint-disable camelcase */
 import { env } from "@/env";
 import { BaseFragment, Fragments } from "@/fragment";
 import { InvalidPresetError } from "@/infra/llm-manager/errors/invalid-preset.error";
 import { LLMManagerService } from "@/infra/llm-manager/llm-manager.service";
+import { Constructor } from "@/types/constructor";
+import { LLMPreset } from "@/types/llm-preset";
 import { Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import {
   CreateIndexesReq, FieldType, FunctionObject, HybridSearchSingleReq, MilvusClient, RerankerObj,
@@ -14,7 +16,6 @@ import { InvalidVectorFiltersError } from "../errors/invalid-vector-filters";
 import { VectorMutationError } from "../errors/vector-mutation";
 import { VectorSearchError } from "../errors/vector-search";
 import { VectorStore, WithSearchOptions } from "../vector-store.service";
-import { LLMPreset } from "@/types/llm-preset";
 
 export abstract class MilvusService<T extends BaseFragment>
   extends VectorStore<T> implements OnModuleInit, OnModuleDestroy {
@@ -34,7 +35,7 @@ export abstract class MilvusService<T extends BaseFragment>
     this.client = new MilvusClient({ address: env.MILVUS_URL });
   }
 
-  protected buildCollectionName(preset: LLMPreset) {
+  protected buildCollectionName(preset: LLMPreset): string {
     if (preset.config.type === "TEXT") {
       throw new InvalidPresetError("Cannot create collection for TEXT preset");
     }
@@ -55,9 +56,14 @@ export abstract class MilvusService<T extends BaseFragment>
     return name;
   }
 
-  private async setupCollection(preset: LLMPreset) {
+  private async setupCollection(preset: LLMPreset): Promise<void> {
     if (preset.config.type === "TEXT") return;
     const { dimension, model } = preset.config;
+    if (typeof model !== "string" || typeof dimension !== "number") {
+      this.logger.warn("Invalid model name or dimension:", model, dimension);
+      return;
+    }
+
     const collectionName = this.buildCollectionName(preset);
 
     const existsCollection = (await this.client.hasCollection({ collection_name: collectionName })).value;
@@ -79,14 +85,14 @@ export abstract class MilvusService<T extends BaseFragment>
     await this.client.loadCollectionAsync({ collection_name: collectionName });
   }
 
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     await this.client.connectPromise;
     for (const preset of this.llmManager.getPresets()) {
       await this.setupCollection(preset);
     }
   }
 
-  async onModuleDestroy() {
+  async onModuleDestroy(): Promise<void> {
     await this.client.closeConnection();
   }
 
@@ -143,7 +149,7 @@ export abstract class MilvusService<T extends BaseFragment>
 
     const options = this.buildSearchOptions(...opts);
 
-    const escapeFilterValue = (value: string) => value.replace(/['"]/g, "\\$&");
+    const escapeFilterValue = (value: string): string => value.replace(/['"]/g, "\\$&");
 
     let filter = this.buildFilters(options.filters);
     if (options.term) {
@@ -221,8 +227,7 @@ export abstract class MilvusService<T extends BaseFragment>
     Object.entries(filters ?? {}).map(([ key, value ]) => {
       switch (typeof value) {
         case "string":
-          const safe = String(value).replace(/"/g, "\\\"");
-          exprParts.push(`${key} == "${safe}"`);
+          exprParts.push(`${key} == "${String(value).replace(/"/g, "\\\"")}"`);
           break;
         case "number":
         case "boolean":

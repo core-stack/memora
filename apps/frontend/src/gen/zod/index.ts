@@ -59,7 +59,6 @@ export type { LLMCreatePathParamsSchema, LLMCreate201Schema, LLMCreate400Schema,
 export type { LLMDeletePathParamsSchema, LLMDelete200Schema, LLMDelete400Schema, LLMDelete404Schema, LLMDelete500Schema, LLMDeleteMutationResponseSchema } from "./LLMDeleteSchema.ts";
 export type { LLMEntitySchema } from "./LLMEntitySchema.ts";
 export type { LLMGetPresetsPathParamsSchema, LLMGetPresets200Schema, LLMGetPresetsQueryResponseSchema } from "./LLMGetPresetsSchema.ts";
-export type { LLMPresetConfigSchema } from "./LLMPresetConfigSchema.ts";
 export type { LLMPresetSchema } from "./LLMPresetSchema.ts";
 export type { LLMPathParamsSchema, LLMQueryParamsSchema, LLM200Schema, LLM400Schema, LLM500Schema, LLMQueryResponseSchema } from "./LLMSchema.ts";
 export type { LLMUpdatePathParamsSchema, LLMUpdate200Schema, LLMUpdate400Schema, LLMUpdate404Schema, LLMUpdate500Schema, LLMUpdateMutationRequestSchema, LLMUpdateMutationResponseSchema } from "./LLMUpdateSchema.ts";
@@ -352,7 +351,6 @@ export { llmentitySchema } from "./LLMEntitySchema.ts";
 export { llmgetPresetsPathParamsSchema } from "./LLMGetPresetsSchema.ts";
 export { llmgetPresets200Schema } from "./LLMGetPresetsSchema.ts";
 export { llmgetPresetsQueryResponseSchema } from "./LLMGetPresetsSchema.ts";
-export { llmpresetConfigSchema } from "./LLMPresetConfigSchema.ts";
 export { llmpresetSchema } from "./LLMPresetSchema.ts";
 export { llmpathParamsSchema } from "./LLMSchema.ts";
 export { llmqueryParamsSchema } from "./LLMSchema.ts";

@@ -39,15 +39,29 @@ export class LLMService extends Service<LLMEntity> {
       const config = kLLM.llm.config;
       await Promise.all(Object.entries(config).map(async ([ key, value ]) => {
         const isSecret = preset.fields?.[key] === "secret-string";
-        if (isSecret) config[key] = await this.securityService.decrypt(value as any, env.ENCRYPT_MASTER_PASSWORD);
+        if (isSecret) {
+          config[key] = await this.securityService.decrypt(value as any, env.ENCRYPT_MASTER_PASSWORD);
+        }
       }));
     }
     return llms;
   }
 
-  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: "EMBEDDING", manager?: EntityManager): Promise<EmbeddingProvider | null>
-  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: "TEXT", manager?: EntityManager): Promise<TextProvider | null>
-  async getInstanceByKnowledge(entityOrId: string | KnowledgeEntity, type: "EMBEDDING" | "TEXT", manager?: EntityManager): Promise<EmbeddingProvider | TextProvider | null> {
+  async getInstanceByKnowledge(
+    entityOrId: string | KnowledgeEntity,
+    type: "EMBEDDING",
+    manager?: EntityManager
+  ): Promise<EmbeddingProvider | null>
+  async getInstanceByKnowledge(
+    entityOrId: string | KnowledgeEntity,
+    type: "TEXT",
+    manager?: EntityManager
+  ): Promise<TextProvider | null>
+  async getInstanceByKnowledge(
+    entityOrId: string | KnowledgeEntity,
+    type: "EMBEDDING" | "TEXT",
+    manager?: EntityManager
+  ): Promise<EmbeddingProvider | TextProvider | null> {
     const knowledgeId = typeof entityOrId === "string" ? entityOrId : entityOrId.id;
     const llms = await this.findByKnowledge(knowledgeId, manager);
     const llm = llms.find(llm => llm.llm?.type === type && llm.default);
@@ -62,7 +76,9 @@ export class LLMService extends Service<LLMEntity> {
     if (!preset) throw new NotFoundException("Model not found");
     await Promise.all(Object.entries(input.config).map(async ([ key, value ]) => {
       const isSecret = preset.fields?.[key] === "secret-string";
-      if (isSecret) input.config[key] = await this.securityService.encrypt(value as string, env.ENCRYPT_MASTER_PASSWORD);
+      if (isSecret) {
+        input.config[key] = await this.securityService.encrypt(value as string, env.ENCRYPT_MASTER_PASSWORD);
+      }
     }));
 
     return super.create(input, manager);
