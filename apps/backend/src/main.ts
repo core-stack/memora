@@ -2,8 +2,6 @@ import "./tracing";
 import "./utils/aux";
 
 import cookieParser from "cookie-parser";
-import * as fs from "fs";
-import * as yaml from "yaml";
 
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
@@ -12,6 +10,7 @@ import { apiReference } from "@scalar/nestjs-api-reference";
 
 import { AppModule } from "./app.module";
 import { env } from "./env";
+import { generateApi } from "./generate-api";
 import { ErrorsInterceptor } from "./interceptors/error.interceptor";
 
 async function bootstrap(): Promise<void> {
@@ -39,13 +38,12 @@ async function bootstrap(): Promise<void> {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  const yamlDocument = yaml.stringify(document);
-  fs.writeFileSync("./swagger.yaml", yamlDocument);
-
   app.use("/scalar", apiReference({ content: document }));
   SwaggerModule.setup("swagger", app, document);
 
   app.use(cookieParser());
+
+  await generateApi(document, true);
   await app.listen(env.APP_PORT);
 }
 

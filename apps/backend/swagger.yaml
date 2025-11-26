@@ -889,6 +889,20 @@ paths:
         "201":
           description: ""
       tags: *a4
+  /api/auth/active-account:
+    post:
+      operationId: AuthController_activeAccount
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActiveAccountDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
   /api/auth/forget-password:
     post:
       operationId: AuthController_forgetPassword
@@ -3442,7 +3456,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-26T17:51:41.921Z
+          example: 2025-11-26T22:09:45.565Z
           nullable: true
         image:
           type: string

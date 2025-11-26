@@ -13,6 +13,9 @@ export type InviteSendPathParams = {
     tenantId: string;
 };
 
+/**
+ * @description Emails sent
+*/
 export type InviteSend200 = SendInviteResponseDto[];
 
 export type InviteSendMutationRequest = SendInviteDto;

@@ -25,7 +25,7 @@ export type KnowledgeQueryParams = {
     */
     offset?: number;
     /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields: slug, storage, title
+     * @description Sort order. Use \"-\" to DESC. Allowed fields: slug, storage, title, tenantId
      * @type array | undefined
     */
     sort?: string[];
@@ -44,6 +44,11 @@ export type KnowledgeQueryParams = {
      * @type string | undefined
     */
     "filter[title]"?: string;
+    /**
+     * @description Filter by tenantId
+     * @type string | undefined
+    */
+    "filter[tenantId]"?: string;
 };
 
 /**
