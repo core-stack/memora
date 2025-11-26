@@ -1,11 +1,10 @@
-import { InviteEntity } from '@/entities/invite.entity';
-import { BaseController } from '@/shared/controller';
-import { Controller, HttpPost } from '@/shared/controller/decorators';
-import { HttpBody } from '@/shared/controller/decorators/body';
-import { ApiResponse } from '@nestjs/swagger';
+import { InviteEntity } from "@/entities/invite.entity";
+import { BaseController } from "@/shared/controller";
+import { ApiResponses, Controller, HttpPost } from "@/shared/controller/decorators";
+import { HttpBody } from "@/shared/controller/decorators/body";
 
-import { SendInviteDto, SendInviteResponseDto } from './dto/send-invites.dto';
-import { InviteService } from './invite.service';
+import { SendInviteDto, SendInviteResponseDto } from "./dto/send-invites.dto";
+import { InviteService } from "./invite.service";
 
 @Controller("tenant/:tenantId/invite")
 export class InviteController extends BaseController({ entity: InviteEntity }) {
@@ -14,8 +13,10 @@ export class InviteController extends BaseController({ entity: InviteEntity }) {
   }
 
   @HttpPost("send")
-  @ApiResponse({ status: 200, type: SendInviteResponseDto, isArray: true })
-  async send(@HttpBody(SendInviteDto) invites: SendInviteDto) {
+  @ApiResponses([
+    { status: 200, type: SendInviteResponseDto, isArray: true, description: "Emails sent" }
+  ])
+  async send(@HttpBody(SendInviteDto) invites: SendInviteDto): Promise<SendInviteResponseDto> {
     return this.service.send(invites);
   }
 }

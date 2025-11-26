@@ -12,12 +12,14 @@ import { Permission } from '@snipet/permission';
 
 import { InvitesTable } from './invite-table';
 import { MembersTable } from './member-table';
+import { useTenant } from '@/hooks/use-tenant';
 
 export default function MembersPage() {
   const [activeTab, setActiveTab] = useState("members")
   const { canInTenant } = useAuth();
   const { openDialog } = useDialog();
-  
+  const { tenant } = useTenant();
+
   return (
     <>
       <TenantPageHeader
@@ -28,7 +30,7 @@ export default function MembersPage() {
           canInTenant(Permission.CREATE_INVITE) ? {
             icon: <UserPlus className="mr-2 h-4 w-4" />,
             text: "Invite Member",
-            action: () => openDialog({ type: DialogType.INVITE_MEMBER })
+            action: () => openDialog({ type: DialogType.INVITE_MEMBER, props: { tenantId: tenant!.id } })
           } : undefined
         }
       />

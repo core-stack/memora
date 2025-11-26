@@ -11,13 +11,13 @@ import { HTTPContext } from "../../shared/http-context/http-context";
 import { ClsService } from "nestjs-cls";
 import { UserEntity } from "../../entities/user.entity";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
-import { RoleEntity } from "../../entities/role.entity";
+import { RoleEntity, RoleScope } from "../../entities/role.entity";
 import { ROLES } from "@snipet/permission";
-import { RoleScope } from "../../entities/role.entity";
 import { env } from "../../env";
 import { VerificationTokenEntity, VerificationType } from "../../entities/verification-token.entity";
 import moment from "moment";
 import { randomUUID } from "crypto";
+import { TenantService } from "../tenant/tenant.service";
 
 describe("AuthService", () => {
   let service: AuthService;
@@ -43,6 +43,11 @@ describe("AuthService", () => {
 
   const mockRoleService = {
     findUnique: jest.fn()
+  };
+
+  const mockTenantService = {
+    find: jest.fn(),
+    create: jest.fn()
   };
 
   const mockVerificationTokenService = {
@@ -77,6 +82,7 @@ describe("AuthService", () => {
         { provide: AuthManager, useValue: mockAuthManager },
         { provide: UserService, useValue: mockUserService },
         { provide: RoleService, useValue: mockRoleService },
+        { provide: TenantService, useValue: mockTenantService },
         { provide: VerificationTokenService, useValue: mockVerificationTokenService },
         {
           provide: getQueueToken(JobType.SEND_EMAIL),
@@ -266,8 +272,10 @@ describe("AuthService", () => {
       const result = await service.login(loginDto);
 
       expect(authManager.createSessionAndTokens).toHaveBeenCalledWith(user);
-      expect(mockHttpContext.setCookie).toHaveBeenCalledWith("access-token", "access-token", expect.any(Object));
-      expect(mockHttpContext.setCookie).toHaveBeenCalledWith("refresh-token", "refresh-token", expect.any(Object));
+      expect(mockHttpContext.setCookie)
+        .toHaveBeenCalledWith("access-token", "access-token", expect.any(Object));
+      expect(mockHttpContext.setCookie)
+        .toHaveBeenCalledWith("refresh-token", "refresh-token", expect.any(Object));
       expect(result).toEqual({ redirect: "/" });
     });
   });

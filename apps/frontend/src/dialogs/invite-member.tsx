@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select';
-import { sendInviteDtoSchema, useApiInviteSend, useApiRole } from '@/gen';
+import { inviteQueryKeyFn, sendInviteDtoSchema, useApiInviteSend, useApiRole } from '@/gen';
 import { useApiInvalidate } from '@/hooks/use-api-invalidate';
 import { useDialog } from '@/hooks/use-dialog';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,7 +23,7 @@ import { ROLES } from '@snipet/permission';
 
 import { DialogType } from './';
 
-import type { SendInviteDto } from "@/gen";
+import type { SendInviteDto, SendInviteItemDto } from "@/gen";
 
 export type InviteMemberDialogProps = {
   tenantId: string;
@@ -35,12 +35,13 @@ export function InviteMemberDialog({ tenantId }: InviteMemberDialogProps) {
       emails: [],
     },
   });
-  const { data: roles = [] } = useApiRole({ tenantId });
+
+  const { data: roles } = useApiRole({ tenantId });
 
   const defaultEmail = useMemo(() => ({
     email: "",
-    roleId: roles.find(role => role.key === ROLES.tenant.user.key)?.id
-  } as SendInviteDto["emails"][0]), [roles]);
+    roleId: roles?.find(role => role.key === ROLES.tenant.user.key)?.id
+  } as SendInviteItemDto), [roles]);
 
   const isLoading = form.formState.isSubmitting;
   const invalidate = useApiInvalidate();
@@ -54,7 +55,7 @@ export function InviteMemberDialog({ tenantId }: InviteMemberDialogProps) {
   async function onSubmit(data: SendInviteDto) {
     mutate({ data, tenantId }, {
       onSuccess: async () => {
-        await invalidate("/api/tenant/:tenantId/invite");
+        await invalidate(inviteQueryKeyFn({ tenantId }));
         form.reset();
         closeDialog(DialogType.INVITE_MEMBER);
       }
@@ -62,10 +63,12 @@ export function InviteMemberDialog({ tenantId }: InviteMemberDialogProps) {
   }
 
   useEffect(() => {
-    if (fields.length === 0 && roles.length > 0) {
-      addField(0);
-    }
-  }, [addField, fields.length, roles])
+    if (fields.length === 0 && roles && roles.length > 0) addField(0);
+  }, [addField, fields, roles]);
+
+  useEffect(() => {
+    return () => form.reset({ emails: [] });
+  }, [form]);
 
   return (
     <DialogContent className="sm:max-w-[565px]">
@@ -77,7 +80,7 @@ export function InviteMemberDialog({ tenantId }: InviteMemberDialogProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {
-            fields.map((field, index) => (
+            fields?.map((field, index) => (
               <div className='grid grid-cols-5 gap-2' key={field.id}>
                 <FormField
                   control={form.control}
@@ -98,15 +101,15 @@ export function InviteMemberDialog({ tenantId }: InviteMemberDialogProps) {
                   name={`emails.${index}.roleId`}
                   render={({ field }) => (
                     <FormItem className='col-span-1'>
-                      <FormLabel>Função</FormLabel>
+                      <FormLabel>Role</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Selecione uma função" />
+                            <SelectValue placeholder="Select a role" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {roles.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
+                          {roles?.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -133,11 +136,11 @@ export function InviteMemberDialog({ tenantId }: InviteMemberDialogProps) {
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => closeDialog(DialogType.INVITE_MEMBER)}>
-              Cancelar
+              Cancel
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Enviar convite
+              Send invite
             </Button>
           </DialogFooter>
         </form>

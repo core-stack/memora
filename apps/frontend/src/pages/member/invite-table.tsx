@@ -30,6 +30,7 @@ export const InvitesTable = () => {
     </AsyncBoundary>
   )
 }
+
 const empty: InviteEntity[] = [];
 const Component = ({ tenant }: { tenant: TenantEntity }) => {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -40,7 +41,7 @@ const Component = ({ tenant }: { tenant: TenantEntity }) => {
   const { mutate: deleteInvite } = useApiInviteDelete();
 
   const invalidate = useApiInvalidate();
-  
+
   const { toast } = useToast();
   const { canInTenant } = useAuth();
 
@@ -122,7 +123,7 @@ const Component = ({ tenant }: { tenant: TenantEntity }) => {
               onClick={() => {
                 deleteInvite(
                   { tenantId: tenant.id, id: row.getValue("id") },
-                  { 
+                  {
                     onSuccess: () => {
                       toast({ title: "Invite canceled", description: "The invite has been canceled." })
                       invalidate("/api/tenant/:tenantId/invite");
@@ -157,6 +158,7 @@ const Component = ({ tenant }: { tenant: TenantEntity }) => {
       rowSelection,
     },
   });
+  console.log(invitesTable.getRowModel(), invites, tenant);
 
   return (
     <>

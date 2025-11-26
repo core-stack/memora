@@ -1,8 +1,8 @@
-import { AuthRequest } from '@/types/auth-request';
-import { Constructor } from '@/types/constructor';
-import { Body, createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { AuthRequest } from "@/types/auth-request";
+import { Constructor } from "@/types/constructor";
+import { Body, createParamDecorator, ExecutionContext } from "@nestjs/common";
 
-import { CONTEXT_FIELDS_KEY } from './context';
+import { CONTEXT_FIELDS_KEY } from "./context";
 
 export const ApplyFromContext = createParamDecorator((data: Constructor<any>, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest<AuthRequest>();
@@ -27,16 +27,14 @@ export const ApplyFromContext = createParamDecorator((data: Constructor<any>, ct
       data[propertyKey] = contextValue;
     }
   }
-  console.log("fields", fields);
-  
-  request.body = { ...request.body, ...data};
-})
+  request.body = { ...request.body, ...data };
+});
 
 export const HttpBody = (dto: Constructor<any>) => {
   const httpBodyFn = ApplyFromContext(dto);
   const bodyFn = Body();
   return (target: any, key: string, index: number) => {
-    httpBodyFn(target, key, index)
-    bodyFn(target, key, index)
-  }
-}
+    httpBodyFn(target, key, index);
+    bodyFn(target, key, index);
+  };
+};

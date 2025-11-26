@@ -72,7 +72,7 @@ export class HTTPContext {
   get user(): Session["user"] | undefined { return this.session?.user; }
 
   get memberId(): string | undefined {
-    const tenantId = this.params["tenantId"];
+    const tenantId = this.params.shouldGetString("tenantId");
     return this.session?.tenants.find(w => w.id === tenantId)?.memberId;
   }
 
@@ -80,14 +80,14 @@ export class HTTPContext {
     return this.req.cookies[name];
   }
 
-  setCookie(name: string, value: string, options: CookieOptions = {}) {
+  setCookie(name: string, value: string, options: CookieOptions = {}): Response<any, Record<string, any>> {
     if (!this.res) {
       console.warn("Missing response in http context to set cookie");
     }
     return this.res.cookie(name, value, options);
   }
 
-  deleteCookies(names: string | string[]) {
+  deleteCookies(names: string | string[]): void {
     if (!this.res) {
       console.warn("Missing response in http context to delete cookie");
     }

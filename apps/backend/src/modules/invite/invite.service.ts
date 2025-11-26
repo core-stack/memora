@@ -28,7 +28,7 @@ export class InviteService extends Service<InviteEntity> {
   @Inject() private readonly userService: UserService;
   @InjectQueue(JobType.SEND_EMAIL) private readonly sendMail: Queue<EmailPayload>;
 
-  async send(invites: SendInviteDto, manager?: EntityManager) {
+  async send(invites: SendInviteDto, manager?: EntityManager): Promise<SendInviteResponseDto> {
     const tenantId = this.context.params.shouldGetString("tenantId");
 
     const tenant = await this.tenantService.findByID(tenantId, { manager });
