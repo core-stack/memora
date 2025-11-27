@@ -11,7 +11,7 @@ type OpenAIOptions = {
   model: string;
 }
 
-export class OpenAILLMEmbeddingAdapter extends EmbeddingProvider {
+export class OpenAIEmbeddingAdapter extends EmbeddingProvider {
   client: OpenAI;
 
   constructor(private opts: OpenAIOptions, preset: LLMPreset) {

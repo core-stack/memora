@@ -10,7 +10,7 @@ type OpenAIOptions = {
   model: string;
 }
 
-export class OpenAILLMTextAdapter extends TextProvider {
+export class OpenAITextAdapter extends TextProvider {
   client: OpenAI;
 
   constructor(private opts: OpenAIOptions) {
@@ -65,14 +65,12 @@ export class OpenAILLMTextAdapter extends TextProvider {
   }
 
   iterableStream(params: GenerateParams): AsyncIterable<string> {
-    const self = this;
-
     return {
       async *[Symbol.asyncIterator]() {
         const { prompt, maxTokens, temperature } = params;
 
-        const stream = await self.client.chat.completions.create({
-          model: self.opts.model,
+        const stream = await this.client.chat.completions.create({
+          model: this.opts.model,
           messages: [ { role: "user", content: prompt } ],
           max_tokens: maxTokens,
           temperature,
@@ -119,7 +117,7 @@ export class OpenAILLMTextAdapter extends TextProvider {
       parsed = JSON.parse(text);
     } catch (err) {
       throw new Error(
-        `Falha ao fazer parse do JSON retornado pelo modelo: ${err}\nConteúdo recebido:\n${text}`
+        `Failure parsing output: ${err}\nOutput:\n${text}`
       );
     }
 
