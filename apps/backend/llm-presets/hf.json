@@ -1,5 +1,6 @@
 [
   {
+    "key": "huggingface-embedding-all-MiniLM-L6-v2",
     "name": "Hugging Face Embedding (all-MiniLM-L6-v2)",
     "description": "Modelo leve e rápido para geração de embeddings semânticos gerais.",
     "iconPath": "huggingface.webp",
@@ -16,6 +17,7 @@
     }
   },
   {
+    "key": "huggingface-embedding-all-mpnet-base-v2",
     "name": "Hugging Face Embedding (all-mpnet-base-v2)",
     "description": "Modelo balanceado entre velocidade e qualidade, ideal para buscas semânticas.",
     "iconPath": "huggingface.webp",
@@ -32,6 +34,7 @@
     }
   },
   {
+    "key": "huggingface-embedding-bge-large-en-v1.5",
     "name": "Hugging Face Embedding (bge-large-en-v1.5)",
     "description": "Modelo de alta qualidade para embeddings densos, ideal para recuperação de contexto e RAG.",
     "iconPath": "huggingface.webp",

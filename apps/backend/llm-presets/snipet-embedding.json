@@ -1,0 +1,19 @@
+[
+  {
+    "key": "snipet-embedding-snipet-0.1",
+    "name": "Snipet Embedding (snipet-0.1)",
+    "description": "Modelo padrão da Snipet para embeddings. (powered by Voyage)",
+    "iconPath": "snipet.png",
+    "adapter": "voyage",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "required": ["apiKey"],
+    "default": true,
+    "config": {
+      "type": "EMBEDDING",
+      "model": "voyage-3-lite",
+      "dimension": 512
+    }
+  }
+]

@@ -1,5 +1,6 @@
 [
   {
+    "key": "openai-text-claude-3-opus",
     "name": "Claude 3 Opus",
     "description": "Constitutional AI for safe and helpful conversations",
     "iconPath": "claude.webp",
@@ -15,6 +16,7 @@
     }
   },
   {
+    "key": "openai-text-claude-3-sonnet",
     "name": "Claude 3 Sonnet",
     "description": "Constitutional AI for safe and helpful conversations",
     "iconPath": "claude.webp",
@@ -30,6 +32,7 @@
     }
   },
   {
+    "key": "openai-text-claude-3-haiku",
     "name": "Claude 3 Haiku",
     "description": "Constitutional AI for safe and helpful conversations",
     "iconPath": "claude.webp",
@@ -45,6 +48,7 @@
     }
   },
   {
+    "key": "openai-text-claude-2.1",
     "name": "Claude 2.1",
     "description": "Constitutional AI for safe and helpful conversations",
     "iconPath": "claude.webp",

@@ -1,5 +1,6 @@
 [
   {
+    "key": "anthropic-embedding-claude-3-opus",
     "name": "Anthropic Claude Embedding (Claude-3 Opus)",
     "description": "Embedding associado ao modelo Claude 3 Opus da Anthropic (uso estimado para pipelines RAG).",
     "iconPath": "claude.webp",
@@ -16,6 +17,7 @@
     }
   },
   {
+    "key": "anthropic-embedding-claude-3-sonnet",
     "name": "Anthropic Claude Embedding (Claude-3 Sonnet)",
     "description": "Embedding estimado para o modelo Claude 3 Sonnet da Anthropic, para uso semântico.",
     "iconPath": "claude.webp",
@@ -32,6 +34,7 @@
     }
   },
   {
+    "key": "anthropic-embedding-claude-2.1",
     "name": "Anthropic Claude Embedding (Claude-2.1)",
     "description": "Embedding estimado para o modelo Claude 2.1 da Anthropic, opção mais acessível.",
     "iconPath": "claude.webp",

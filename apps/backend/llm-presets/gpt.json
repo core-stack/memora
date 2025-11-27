@@ -1,5 +1,6 @@
 [
   {
+    "key": "openai-text-gpt-4o",
     "name": "OpenAI GPT-4o",
     "description": "Modelo de linguagem multimodal avançado da OpenAI, otimizado para velocidade e custo.",
     "iconPath": "gpt.webp",
@@ -15,6 +16,7 @@
     }
   },
   {
+    "key": "openai-text-gpt-4o-mini",
     "name": "OpenAI GPT-4o Mini",
     "description": "Versão leve e rápida do GPT-4o, ideal para tarefas de texto com baixo custo.",
     "iconPath": "gpt.webp",
@@ -30,6 +32,7 @@
     }
   },
   {
+    "key": "openai-text-gpt-4-turbo",
     "name": "OpenAI GPT-4 Turbo",
     "description": "Versão otimizada do GPT-4 para texto, com custo reduzido e alto desempenho.",
     "iconPath": "gpt.webp",
@@ -45,6 +48,7 @@
     }
   },
   {
+    "key": "openai-text-gpt-3.5-turbo",
     "name": "OpenAI GPT-3.5 Turbo",
     "description": "Modelo econômico e rápido para geração e compreensão de texto.",
     "iconPath": "gpt.webp",

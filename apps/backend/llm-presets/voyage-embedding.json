@@ -1,0 +1,66 @@
+[
+  {
+    "key": "voyage-embedding-voyage-3",
+    "name": "Voyage Embedding (voyage-3)",
+    "description": "Modelo SOTA da Voyage para busca semântica, classificação e RAG de alta qualidade.",
+    "iconPath": "voyage.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "adapter": "voyage",
+    "required": ["apiKey"],
+    "config": {
+      "type": "EMBEDDING",
+      "model": "voyage-3",
+      "dimension": 1024
+    }
+  },
+  {
+    "key": "voyage-embedding-voyage-3-lite",
+    "name": "Voyage Embedding (voyage-3-lite)",
+    "description": "Modelo otimizado para velocidade e custo baixo, ideal para buscas rápidas em grande escala.",
+    "iconPath": "voyage.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "adapter": "voyage",
+    "required": ["apiKey"],
+    "config": {
+      "type": "EMBEDDING",
+      "model": "voyage-3-lite",
+      "dimension": 512
+    }
+  },
+  {
+    "key": "voyage-embedding-voyage-3-large",
+    "name": "Voyage Embedding (voyage-3-large)",
+    "description": "Maior modelo de embeddings da Voyage, com qualidade máxima para aplicações críticas e RAG avançado.",
+    "iconPath": "voyage.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "adapter": "voyage",
+    "required": ["apiKey"],
+    "config": {
+      "type": "EMBEDDING",
+      "model": "voyage-3-large",
+      "dimension": 1536
+    }
+  },
+  {
+    "key": "voyage-embedding-voyage-code-3",
+    "name": "Voyage Embedding (voyage-code-3)",
+    "description": "Modelo especializado para embeddings de código, ideal para buscas em repositórios e análise de bases de código.",
+    "iconPath": "voyage.webp",
+    "fields": {
+      "apiKey": "secret-string"
+    },
+    "adapter": "voyage",
+    "required": ["apiKey"],
+    "config": {
+      "type": "EMBEDDING",
+      "model": "voyage-code-3",
+      "dimension": 1024
+    }
+  }
+]
