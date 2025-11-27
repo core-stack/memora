@@ -91,6 +91,7 @@
     "rxjs": "^7.8.1",
     "stream-to-blob": "^2.0.1",
     "typeorm": "^0.3.27",
+    "voyageai": "^0.0.8",
     "word-extractor": "^1.0.4",
     "zod": "^4.1.12"
   },

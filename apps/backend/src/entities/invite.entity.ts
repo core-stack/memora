@@ -1,6 +1,6 @@
 import moment from "moment";
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn
+  Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn
 } from "typeorm";
 
 import { env } from "../env";
@@ -54,18 +54,22 @@ export class InviteEntity {
 
   @Field({ type: "class", class: () => TenantEntity, required: false })
   @ManyToOne(() => TenantEntity, (t) => t.invites)
+  @JoinColumn({ name: "tenant_id" })
   tenant: TenantEntity;
 
   @Field({ type: "class", class: () => RoleEntity, required: false })
   @ManyToOne(() => RoleEntity, (r) => r.invites)
+  @JoinColumn({ name: "role_id" })
   role: RoleEntity;
 
   @Field({ type: "class", class: () => UserEntity, required: false })
   @ManyToOne(() => UserEntity, (u) => u.invites)
+  @JoinColumn({ name: "user_id" })
   user?: UserEntity;
 
   @Field({ type: "class", class: () => MemberEntity, required: false })
   @ManyToOne(() => MemberEntity, (m) => m.invites)
+  @JoinColumn({ name: "creator_id" })
   creator: MemberEntity;
 
   constructor(invite: Partial<InviteEntity>) {

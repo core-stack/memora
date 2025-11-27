@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 import { CreatedBy, MemberId, TenantId } from "../shared/controller/decorators/context";
 import { Field } from "../shared/model";
@@ -29,12 +29,12 @@ export class NotificationEntity {
 
   @TenantId()
   @Field({ type: "string", uuid: true, description: "The ID of the tenant this notification belongs to" })
-  @Column()
+  @Column({ name: "tenant_id", type: "uuid" })
   tenantId: string;
 
   @CreatedBy()
   @Field({ type: "string", uuid: true, required: false, description: "The ID of the user who created the notification" })
-  @Column({ name: "created_by_id", nullable: true })
+  @Column({ name: "created_by_id", nullable: true, type: "uuid" })
   createdById?: string;
 
   @MemberId()
@@ -52,13 +52,16 @@ export class NotificationEntity {
 
   @Field({ type: "class", class: () => TenantEntity })
   @ManyToOne(() => TenantEntity, (t) => t.notifications)
+  @JoinColumn({ name: "tenant_id" })
   tenant: TenantEntity;
 
   @Field({ type: "class", class: () => MemberEntity, required: false })
   @ManyToOne(() => MemberEntity, (m) => m.notifications)
+  @JoinColumn({ name: "created_by_id" })
   createdBy?: MemberEntity;
 
   @Field({ type: "class", class: () => MemberEntity, required: false })
   @ManyToOne(() => MemberEntity, (m) => m.notifications)
+  @JoinColumn({ name: "destination_id" })
   destination: MemberEntity;
 }

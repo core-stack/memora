@@ -1,5 +1,5 @@
 import {
-  Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
+  Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
 } from "typeorm";
 
 import { ApiExtraModels } from "@nestjs/swagger";
@@ -104,14 +104,17 @@ export class SourceEntity {
 
   @Field({ type: "class", class: () => KnowledgeEntity, required: false })
   @ManyToOne(() => KnowledgeEntity, (knowledge) => knowledge.sources, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "knowledge_id" })
   knowledge?: KnowledgeEntity;
 
   @Field({ type: "class", class: () => FolderEntity, required: false })
   @ManyToOne(() => FolderEntity, (folder) => folder.sources, { onDelete: "CASCADE", nullable: true })
+  @JoinColumn({ name: "folder_id" })
   folder?: FolderEntity;
 
   @Field({ type: "class", class: () => TenantEntity, required: false })
   @ManyToOne(() => TenantEntity, (tenant) => tenant.sources, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "tenant_id" })
   tenant?: TenantEntity;
 
   @Field({ type: "date", description: "The timestamp when the source was created" })

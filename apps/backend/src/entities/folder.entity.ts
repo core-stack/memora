@@ -3,8 +3,6 @@ import {
   UpdateDateColumn
 } from "typeorm";
 
-import { KnowledgeId, TenantId } from "@/shared/controller/decorators";
-
 import { Field } from "../shared/model";
 import { KnowledgeEntity } from "./knowledge.entity";
 import { SourceEntity } from "./source.entity";
@@ -15,7 +13,6 @@ export class FolderEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @KnowledgeId()
   @Field({ type: "string", uuid: true, description: "The ID of the associated knowledge base" })
   @Column({ name: "knowledge_id", type: "uuid" })
   knowledgeId: string;
@@ -50,7 +47,6 @@ export class FolderEntity {
   @OneToMany(() => SourceEntity, (source) => source.folder)
   sources?: SourceEntity[];
 
-  @TenantId()
   @Field({ type: "string", uuid: true, description: "The ID of the tenant this folder belongs to" })
   @Column({ name: "tenant_id", type: "uuid" })
   tenantId: string;

@@ -1,5 +1,5 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique,
+  Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique,
   UpdateDateColumn
 } from "typeorm";
 
@@ -42,12 +42,12 @@ export class RoleEntity {
 
   @TenantId()
   @Field({ type: "string", uuid: true, nullable: true, description: "The ID of the tenant this role belongs to" })
-  @Column({ name: "tenant_id", nullable: true })
+  @Column({ name: "tenant_id", nullable: true, type: "uuid" })
   tenantId?: string;
 
   @CreatedBy()
   @Field({ type: "string", uuid: true, nullable: true, description: "The ID of the user who created the role" })
-  @Column({ name: "created_by", nullable: true })
+  @Column({ name: "created_by", nullable: true, type: "uuid" })
   createdById?: string;
 
   @Field({ type: "date", description: "The timestamp when the role was created" })
@@ -60,10 +60,12 @@ export class RoleEntity {
 
   @Field({ type: "class", class: () => TenantEntity, required: false })
   @ManyToOne(() => TenantEntity, (t) => t.roles, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "tenant_id" })
   tenant?: TenantEntity;
 
   @Field({ type: "class", class: () => MemberEntity, required: false })
   @ManyToOne(() => MemberEntity, (m) => m.id)
+  @JoinColumn({ name: "created_by" })
   createdBy?: MemberEntity;
 
   @Field({ type: "class", class: () => UserEntity, isArray: true, required: false })

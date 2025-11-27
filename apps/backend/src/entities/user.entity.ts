@@ -43,7 +43,7 @@ export class UserEntity {
   image?: string | null;
 
   @Field({ type: "string", description: "The unique identifier of the role", uuid: true })
-  @Column({ name: "role_id" })
+  @Column({ name: "role_id", type: "uuid" })
   roleId: string;
 
   @Field({ type: "date", description: "The date the user was created", example: "2025-10-05T14:48:00.000Z" })

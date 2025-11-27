@@ -3,8 +3,6 @@ import {
   UpdateDateColumn
 } from "typeorm";
 
-import { KnowledgeId } from "@/shared/controller/decorators";
-
 import { Field } from "../shared/model";
 import { KnowledgeEntity } from "./knowledge.entity";
 import { MessageEntity } from "./message.entity";
@@ -19,7 +17,6 @@ export class ChatEntity {
   @Column({ length: 50 })
   name: string;
 
-  @KnowledgeId()
   @Field({ type: "string", uuid: true, description: "The ID of the associated knowledge base" })
   @Column({ name: "knowledge_id", type: "uuid" })
   knowledgeId: string;

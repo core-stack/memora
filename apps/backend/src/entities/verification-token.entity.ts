@@ -25,7 +25,7 @@ export class VerificationTokenEntity {
   expires: Date;
 
   @Field({ type: "string", uuid: true })
-  @Column({ name: "user_id" })
+  @Column({ name: "user_id", type: "uuid" })
   userId: string;
 
   @Field({ type: "date" })

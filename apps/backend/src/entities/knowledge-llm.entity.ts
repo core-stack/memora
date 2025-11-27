@@ -36,7 +36,7 @@ export class KnowledgeLLMEntity {
   knowledgeId: string;
 
   @Field({ type: "string", uuid: true, description: "The ID of the associated LLM" })
-  @Column({ name: "llm_id", type: "uuid"  })
+  @Column({ name: "llm_id", type: "uuid" })
   llmId: string;
 
   @Field({ type: "date", description: "The timestamp when the link was created" })

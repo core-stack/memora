@@ -7,6 +7,9 @@ enum LLMType {
 
 export class LLMPreset {
   @Field({ type: "string", description: "The unique identifier of the LLM preset." })
+  key: string;
+
+  @Field({ type: "string", description: "The name of the LLM preset." })
   name: string;
 
   @Field({ type: "string", description: "A description of the LLM preset.", example: "A state-of-the-art LLM for general reasoning." })

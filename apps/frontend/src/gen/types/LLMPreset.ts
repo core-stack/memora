@@ -50,6 +50,11 @@ export type LLMPreset = {
      * @description The unique identifier of the LLM preset.
      * @type string
     */
+    key: string;
+    /**
+     * @description The name of the LLM preset.
+     * @type string
+    */
     name: string;
     /**
      * @description List of required field names.

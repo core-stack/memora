@@ -14,6 +14,7 @@ export const llmentitySchema = z.object({
 "creatorId": z.uuid().describe("The ID of the user who created the LLM").nullish(),
 "default": z.boolean().default(false).describe("Indicates if this is the default LLM for its type"),
 "id": z.uuid().describe("The unique identifier of the LLM"),
+"key": z.string().describe("The unique key of the LLM"),
 get "knowledgeLLMs"(){
                 return z.array(knowledgeLLMEntitySchema).optional()
               },

@@ -141,6 +141,9 @@ components:
         config:
           description: The configuration for the LLM
           type: object
+        key:
+          description: The unique key of the LLM
+          type: string
         model:
           description: The model identifier
           type: string
@@ -154,6 +157,7 @@ components:
             - TEXT
           type: string
       required:
+        - key
         - name
         - model
         - config
@@ -556,6 +560,9 @@ components:
           description: The unique identifier of the LLM
           format: uuid
           type: string
+        key:
+          description: The unique key of the LLM
+          type: string
         knowledgeLLMs:
           items:
             $ref: "#/components/schemas/KnowledgeLLMEntity"
@@ -583,6 +590,7 @@ components:
       required:
         - id
         - default
+        - key
         - name
         - model
         - config
@@ -629,8 +637,11 @@ components:
         iconPath:
           description: The URL or path of the icon representing the LLM.
           type: string
-        name:
+        key:
           description: The unique identifier of the LLM preset.
+          type: string
+        name:
+          description: The name of the LLM preset.
           type: string
         required:
           description: List of required field names.
@@ -641,6 +652,7 @@ components:
             type: string
           type: array
       required:
+        - key
         - name
         - description
         - iconPath

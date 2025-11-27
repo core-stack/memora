@@ -18,6 +18,11 @@ dotenv.config({
   path: buildEnvPaths(envFile)
 });
 
+const llmSchema = z.object({
+  key: z.string(),
+  name: z.string().optional().default("Snipet default")
+}).catchall(z.any());
+
 const envSchema = z.object({
   // APP
   APP_PORT: z.coerce.number().default(3000),
@@ -38,7 +43,7 @@ const envSchema = z.object({
   GOOGLE_ENABLED: z.coerce.boolean().default(false),
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
-  GOOGLE_REDIRECT_URI: z.string().optional(),
+  GOOGLE_REDIRECT_URI: z.string().optional().default("http://localhost:5173/api/auth/google/callback"),
 
   // JWT
   JWT_SECRET: z.string().default("change-me"),
@@ -104,6 +109,8 @@ const envSchema = z.object({
   // LLM
   LLM_INSTANCE_LIMIT: z.coerce.number().optional().default(10),
   LLM_INSTANCE_DURATION: z.coerce.number().optional().default(moment().minutes(15).valueOf()),
+  LLM_EMBEDDING_DEFAULT_SETTINGS: z.string().transform((s) => llmSchema.parse(JSON.parse(s))),
+  LLM_TEXT_DEFAULT_SETTINGS: z.string().transform((s) => llmSchema.parse(JSON.parse(s))),
 
   // GEMINI
   GEMINI_API_KEY: z.string(),

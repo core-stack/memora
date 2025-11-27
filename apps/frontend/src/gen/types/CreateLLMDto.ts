@@ -18,6 +18,11 @@ export type CreateLLMDto = {
     */
     config: object;
     /**
+     * @description The unique key of the LLM
+     * @type string
+    */
+    key: string;
+    /**
      * @description The model identifier
      * @type string
     */

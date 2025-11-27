@@ -12,6 +12,7 @@ import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { KnowledgeLLMEntity } from "../../entities/knowledge-llm.entity";
 import { KnowledgeEntity } from "../../entities/knowledge.entity";
 import { KnowledgeService } from "../knowledge/knowledge.service";
+import { CreateLLMDto } from "./dto/create-llm.dto";
 
 @Injectable()
 export class LLMService extends Service<LLMEntity> {
@@ -71,8 +72,8 @@ export class LLMService extends Service<LLMEntity> {
     return this.manager.getInstance(llm.llm);
   }
 
-  override async create(input: LLMEntity, manager?: EntityManager): Promise<LLMEntity> {
-    const preset = this.manager.getPresets().find(preset => preset.config.model === input.model);
+  override async create(input: CreateLLMDto, manager?: EntityManager): Promise<LLMEntity> {
+    const preset = this.manager.getPresets().find(preset => preset.key === input.key);
     if (!preset) throw new NotFoundException("Model not found");
     await Promise.all(Object.entries(input.config).map(async ([ key, value ]) => {
       const isSecret = preset.fields?.[key] === "secret-string";
@@ -80,7 +81,6 @@ export class LLMService extends Service<LLMEntity> {
         input.config[key] = await this.securityService.encrypt(value as string, env.ENCRYPT_MASTER_PASSWORD);
       }
     }));
-
-    return super.create(input, manager);
+    return super.create(new LLMEntity(input), manager);
   }
 }

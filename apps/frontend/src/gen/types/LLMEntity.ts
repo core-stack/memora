@@ -40,6 +40,11 @@ export type LLMEntity = {
     */
     id: string;
     /**
+     * @description The unique key of the LLM
+     * @type string
+    */
+    key: string;
+    /**
      * @type array | undefined
     */
     knowledgeLLMs?: KnowledgeLLMEntity[];
