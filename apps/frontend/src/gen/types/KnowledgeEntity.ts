@@ -19,40 +19,60 @@ export type KnowledgeEntityStatusEnumKey = (typeof knowledgeEntityStatusEnum)[ke
 
 export type KnowledgeEntity = {
     /**
-     * @description The unique identifier of the knowledge base
-     * @type string, uuid
+     * @type array | undefined
     */
-    id: string;
+    chats?: ChatEntity[];
     /**
-     * @description The URL-friendly slug for the knowledge base
-     * @type string
+     * @description The timestamp when the knowledge base was created
+     * @type string, date-time
     */
-    slug: string;
-    /**
-     * @description The title of the knowledge base
-     * @type string
-    */
-    title: string;
-    /**
-     * @description A brief description of the knowledge base
-     * @type string
-    */
-    description?: string | null;
-    /**
-     * @description The status of the knowledge base
-     * @type string
-    */
-    status: KnowledgeEntityStatusEnumKey;
+    createdAt: string;
     /**
      * @description The error message if deletion fails
      * @type string
     */
     deleteError?: string | null;
     /**
+     * @description A brief description of the knowledge base
+     * @type string
+    */
+    description?: string | null;
+    /**
      * @description The number of files in the knowledge base
      * @type number
     */
     files: number;
+    /**
+     * @type array | undefined
+    */
+    folders?: FolderEntity[];
+    /**
+     * @description The unique identifier of the knowledge base
+     * @type string, uuid
+    */
+    id: string;
+    /**
+     * @type array | undefined
+    */
+    knowledgeLLMs?: KnowledgeLLMEntity[];
+    /**
+     * @type array | undefined
+    */
+    messages?: MessageEntity[];
+    /**
+     * @description The URL-friendly slug for the knowledge base
+     * @type string
+    */
+    slug: string;
+    /**
+     * @type array | undefined
+    */
+    sources?: SourceEntity[];
+    /**
+     * @description The status of the knowledge base
+     * @type string
+    */
+    status: KnowledgeEntityStatusEnumKey;
     /**
      * @description The total storage used by the knowledge base in bytes
      * @type string
@@ -64,33 +84,13 @@ export type KnowledgeEntity = {
     */
     tenantId: string;
     /**
-     * @description The timestamp when the knowledge base was created
-     * @type string, date-time
+     * @description The title of the knowledge base
+     * @type string
     */
-    createdAt: string;
+    title: string;
     /**
      * @description The timestamp when the knowledge base was last updated
      * @type string, date-time
     */
     updatedAt: string;
-    /**
-     * @type array | undefined
-    */
-    folders?: FolderEntity[];
-    /**
-     * @type array | undefined
-    */
-    sources?: SourceEntity[];
-    /**
-     * @type array | undefined
-    */
-    chats?: ChatEntity[];
-    /**
-     * @type array | undefined
-    */
-    messages?: MessageEntity[];
-    /**
-     * @type array | undefined
-    */
-    knowledgeLLMs?: KnowledgeLLMEntity[];
 };

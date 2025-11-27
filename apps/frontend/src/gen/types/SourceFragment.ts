@@ -21,33 +21,26 @@ export type SourceFragmentSourceTypeEnumKey = (typeof sourceFragmentSourceTypeEn
 
 export type SourceFragment = {
     /**
-     * @type string, uuid
+     * @type string
     */
-    id: string;
+    content: string;
     /**
      * @type string, date-time
     */
     createdAt: string;
     /**
-     * @type string, date-time
+     * @type string, uuid
     */
-    updatedAt: string;
-    /**
-     * @type string
-    */
-    content: string;
-    /**
-     * @type number | undefined
-    */
-    seqId?: number;
+    id: string;
     /**
      * @type string, uuid
     */
     knowledgeId: string;
+    metadata: (SourceDocMetadata | SourceImageMetadata | SourceVideoMetadata | SourceAudioMetadata);
     /**
-     * @type string, uuid
+     * @type number | undefined
     */
-    tenantId: string;
+    seqId?: number;
     /**
      * @type string, uuid
     */
@@ -57,5 +50,12 @@ export type SourceFragment = {
      * @type string
     */
     sourceType: SourceFragmentSourceTypeEnumKey;
-    metadata: (SourceDocMetadata | SourceImageMetadata | SourceVideoMetadata | SourceAudioMetadata);
+    /**
+     * @type string, uuid
+    */
+    tenantId: string;
+    /**
+     * @type string, date-time
+    */
+    updatedAt: string;
 };

@@ -14,6 +14,14 @@ export type VerificationTokenEntityTypeEnumKey = (typeof verificationTokenEntity
 
 export type VerificationTokenEntity = {
     /**
+     * @type string, date-time
+    */
+    createdAt: string;
+    /**
+     * @type string, date-time
+    */
+    expires: string;
+    /**
      * @type string, uuid
     */
     token: string;
@@ -24,21 +32,13 @@ export type VerificationTokenEntity = {
     /**
      * @type string, date-time
     */
-    expires: string;
-    /**
-     * @type string, uuid
-    */
-    userId: string;
-    /**
-     * @type string, date-time
-    */
-    createdAt: string;
-    /**
-     * @type string, date-time
-    */
     updatedAt: string;
     /**
      * @type object | undefined
     */
     user?: UserEntity;
+    /**
+     * @type string, uuid
+    */
+    userId: string;
 };

@@ -7,15 +7,15 @@ import { useApirEntitySchema } from "./useApirEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const accountEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the account"),
+    "createdAt": z.string().datetime().describe("The date the account was created"),
+"id": z.uuid().describe("The unique identifier of the account"),
 "provider": z.string().describe("The provider of the account"),
 "providerAccountId": z.string().describe("The provider account id of the account"),
-"userId": z.uuid().describe("The unique identifier of the user"),
+"updatedAt": z.string().datetime().describe("The date the account was updated"),
 get "user"(){
                 return useApirEntitySchema.optional()
               },
-"createdAt": z.string().datetime().describe("The date the account was created"),
-"updatedAt": z.string().datetime().describe("The date the account was updated")
+"userId": z.uuid().describe("The unique identifier of the user")
     })
 
 export type AccountEntitySchema = z.infer<typeof accountEntitySchema>

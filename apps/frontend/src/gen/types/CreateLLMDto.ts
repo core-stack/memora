@@ -13,20 +13,20 @@ export type CreateLLMDtoTypeEnumKey = (typeof createLLMDtoTypeEnum)[keyof typeof
 
 export type CreateLLMDto = {
     /**
-     * @description The name of the LLM
-     * @type string
+     * @description The configuration for the LLM
+     * @type object
     */
-    name: string;
+    config: object;
     /**
      * @description The model identifier
      * @type string
     */
     model: string;
     /**
-     * @description The configuration for the LLM
-     * @type object
+     * @description The name of the LLM
+     * @type string
     */
-    config: object;
+    name: string;
     /**
      * @description The type of the LLM
      * @type string

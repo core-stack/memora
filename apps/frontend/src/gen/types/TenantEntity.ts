@@ -11,21 +11,6 @@ import type { SourceEntity } from "./SourceEntity.ts";
 
 export type TenantEntity = {
     /**
-     * @description The unique identifier of the tenant
-     * @type string, uuid
-    */
-    id: string;
-    /**
-     * @description The name of the tenant
-     * @type string
-    */
-    name: string;
-    /**
-     * @description A brief description of the tenant
-     * @type string
-    */
-    description?: string | null;
-    /**
      * @description The URL of the background image for the tenant
      * @type string
     */
@@ -36,20 +21,30 @@ export type TenantEntity = {
     */
     createdAt: string;
     /**
-     * @description The timestamp when the tenant was last updated
-     * @type string, date-time
+     * @description A brief description of the tenant
+     * @type string
     */
-    updatedAt: string;
+    description?: string | null;
+    /**
+     * @description The unique identifier of the tenant
+     * @type string, uuid
+    */
+    id: string;
+    /**
+     * @description The invites associated with this tenant
+     * @type array | undefined
+    */
+    invites?: InviteEntity[];
     /**
      * @description The members associated with this tenant
      * @type array | undefined
     */
     members?: MemberEntity[];
     /**
-     * @description The invites associated with this tenant
-     * @type array | undefined
+     * @description The name of the tenant
+     * @type string
     */
-    invites?: InviteEntity[];
+    name: string;
     /**
      * @description The notifications associated with this tenant
      * @type array | undefined
@@ -65,4 +60,9 @@ export type TenantEntity = {
      * @type array | undefined
     */
     sources?: SourceEntity[];
+    /**
+     * @description The timestamp when the tenant was last updated
+     * @type string, date-time
+    */
+    updatedAt: string;
 };

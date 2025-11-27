@@ -6,8 +6,8 @@
 import { z } from "zod/v4";
 
 export const fileURLResponseDtoSchema = z.object({
-    "url": z.string(),
-"key": z.string()
+    "key": z.string(),
+"url": z.string()
     })
 
 export type FileURLResponseDtoSchema = z.infer<typeof fileURLResponseDtoSchema>

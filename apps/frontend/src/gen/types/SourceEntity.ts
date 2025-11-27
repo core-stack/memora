@@ -11,6 +11,15 @@ import type { SourceImageMetadata } from "./SourceImageMetadata.ts";
 import type { SourceVideoMetadata } from "./SourceVideoMetadata.ts";
 import type { TenantEntity } from "./TenantEntity.ts";
 
+export const sourceEntityIndexStatusEnum = {
+    "PENDING": "PENDING",
+    "INDEXING": "INDEXING",
+    "INDEXED": "INDEXED",
+    "ERROR": "ERROR"
+} as const;
+
+export type SourceEntityIndexStatusEnumKey = (typeof sourceEntityIndexStatusEnum)[keyof typeof sourceEntityIndexStatusEnum];
+
 export const sourceEntitySourceTypeEnum = {
     "TEXT": "TEXT",
     "DOC": "DOC",
@@ -22,102 +31,93 @@ export const sourceEntitySourceTypeEnum = {
 
 export type SourceEntitySourceTypeEnumKey = (typeof sourceEntitySourceTypeEnum)[keyof typeof sourceEntitySourceTypeEnum];
 
-export const sourceEntityIndexStatusEnum = {
-    "PENDING": "PENDING",
-    "INDEXING": "INDEXING",
-    "INDEXED": "INDEXED",
-    "ERROR": "ERROR"
-} as const;
-
-export type SourceEntityIndexStatusEnumKey = (typeof sourceEntityIndexStatusEnum)[keyof typeof sourceEntityIndexStatusEnum];
-
 export type SourceEntity = {
     /**
-     * @description The unique identifier of the source
-     * @type string, uuid
+     * @description The timestamp when the source was created
+     * @type string, date-time
     */
-    id: string;
-    /**
-     * @description The key of the source file in the storage
-     * @type string
-    */
-    key: string;
-    /**
-     * @description The path of the source file
-     * @type string
-    */
-    path: string;
-    /**
-     * @description The name of the source
-     * @type string
-    */
-    name: string;
+    createdAt: string;
     /**
      * @description A brief description of the source
      * @type string | undefined
     */
     description?: string;
     /**
-     * @description The original name of the file
-     * @type string | undefined
+     * @type object | undefined
     */
-    originalName?: string;
-    /**
-     * @description The metadata of the source
-    */
-    metadata: (SourceDocMetadata | SourceImageMetadata | SourceVideoMetadata | SourceAudioMetadata);
-    /**
-     * @description The type of the source
-     * @type string
-    */
-    sourceType: SourceEntitySourceTypeEnumKey;
-    /**
-     * @description The indexing status of the source
-     * @type string
-    */
-    indexStatus: SourceEntityIndexStatusEnumKey;
-    /**
-     * @description The error message if indexing fails
-     * @type string | undefined
-    */
-    indexError?: string;
-    /**
-     * @description The ID of the memory associated with this source
-     * @type string | undefined, uuid
-    */
-    memoryId?: string;
-    /**
-     * @description The ID of the knowledge base this source belongs to
-     * @type string, uuid
-    */
-    knowledgeId: string;
-    /**
-     * @description The ID of the tenant this source belongs to
-     * @type string, uuid
-    */
-    tenantId: string;
+    folder?: FolderEntity;
     /**
      * @description The ID of the folder this source belongs to
      * @type string | undefined, uuid
     */
     folderId?: string;
     /**
+     * @description The unique identifier of the source
+     * @type string, uuid
+    */
+    id: string;
+    /**
+     * @description The error message if indexing fails
+     * @type string | undefined
+    */
+    indexError?: string;
+    /**
+     * @description The indexing status of the source
+     * @type string
+    */
+    indexStatus: SourceEntityIndexStatusEnumKey;
+    /**
+     * @description The key of the source file in the storage
+     * @type string
+    */
+    key: string;
+    /**
      * @type object | undefined
     */
     knowledge?: KnowledgeEntity;
     /**
-     * @type object | undefined
+     * @description The ID of the knowledge base this source belongs to
+     * @type string, uuid
     */
-    folder?: FolderEntity;
+    knowledgeId: string;
+    /**
+     * @description The ID of the memory associated with this source
+     * @type string | undefined, uuid
+    */
+    memoryId?: string;
+    /**
+     * @description The metadata of the source
+    */
+    metadata: (SourceDocMetadata | SourceImageMetadata | SourceVideoMetadata | SourceAudioMetadata);
+    /**
+     * @description The name of the source
+     * @type string
+    */
+    name: string;
+    /**
+     * @description The original name of the file
+     * @type string | undefined
+    */
+    originalName?: string;
+    /**
+     * @description The path of the source file
+     * @type string
+    */
+    path: string;
+    /**
+     * @description The type of the source
+     * @type string
+    */
+    sourceType: SourceEntitySourceTypeEnumKey;
     /**
      * @type object | undefined
     */
     tenant?: TenantEntity;
     /**
-     * @description The timestamp when the source was created
-     * @type string, date-time
+     * @description The ID of the tenant this source belongs to
+     * @type string, uuid
     */
-    createdAt: string;
+    tenantId: string;
     /**
      * @description The timestamp when the source was last updated
      * @type string, date-time

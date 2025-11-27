@@ -7,20 +7,20 @@ import { knowledgeLLMEntitySchema } from "./knowledgeLLMEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const llmentitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the LLM"),
-"default": z.boolean().default(false).describe("Indicates if this is the default LLM for its type"),
-"name": z.string().describe("The name of the LLM"),
-"model": z.string().describe("The model identifier"),
-"config": z.object({
+    "config": z.object({
     
     }).describe("The configuration for the LLM"),
-"type": z.enum(["EMBEDDING", "TEXT"]).describe("The type of the LLM"),
-"tenantId": z.uuid().describe("The ID of the tenant this LLM belongs to"),
+"createdAt": z.string().datetime().describe("The timestamp when the LLM was created"),
 "creatorId": z.uuid().describe("The ID of the user who created the LLM").nullish(),
+"default": z.boolean().default(false).describe("Indicates if this is the default LLM for its type"),
+"id": z.uuid().describe("The unique identifier of the LLM"),
 get "knowledgeLLMs"(){
                 return z.array(knowledgeLLMEntitySchema).optional()
               },
-"createdAt": z.string().datetime().describe("The timestamp when the LLM was created"),
+"model": z.string().describe("The model identifier"),
+"name": z.string().describe("The name of the LLM"),
+"tenantId": z.uuid().describe("The ID of the tenant this LLM belongs to"),
+"type": z.enum(["EMBEDDING", "TEXT"]).describe("The type of the LLM"),
 "updatedAt": z.string().datetime().describe("The timestamp when the LLM was last updated")
     })
 

@@ -6,20 +6,20 @@
 import { z } from "zod/v4";
 
 export const llmpresetSchema = z.object({
-    "name": z.string().describe("The unique identifier of the LLM preset."),
-"description": z.string().describe("A description of the LLM preset."),
-"iconPath": z.string().describe("The URL or path of the icon representing the LLM."),
-"fields": z.optional(z.object({
+    "adapter": z.string().describe("Name of the adapter responsible for executing the LLM."),
+"config": z.optional(z.object({
     
-    }).catchall(z.enum(["string", "secret-string"]))),
+    }).catchall(z.any()).describe("Adapter configuration.")),
 "defaults": z.optional(z.object({
     
     }).catchall(z.string())),
-"required": z.optional(z.array(z.string()).describe("List of required field names.")),
-"adapter": z.string().describe("Name of the adapter responsible for executing the LLM."),
-"config": z.optional(z.object({
+"description": z.string().describe("A description of the LLM preset."),
+"fields": z.optional(z.object({
     
-    }).catchall(z.any()).describe("Adapter configuration."))
+    }).catchall(z.enum(["string", "secret-string"]))),
+"iconPath": z.string().describe("The URL or path of the icon representing the LLM."),
+"name": z.string().describe("The unique identifier of the LLM preset."),
+"required": z.optional(z.array(z.string()).describe("List of required field names."))
     })
 
 export type LLMPresetSchema = z.infer<typeof llmpresetSchema>

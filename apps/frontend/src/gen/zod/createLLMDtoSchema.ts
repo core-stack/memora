@@ -6,11 +6,11 @@
 import { z } from "zod/v4";
 
 export const createLLMDtoSchema = z.object({
-    "name": z.string().describe("The name of the LLM"),
-"model": z.string().describe("The model identifier"),
-"config": z.object({
+    "config": z.object({
     
     }).describe("The configuration for the LLM"),
+"model": z.string().describe("The model identifier"),
+"name": z.string().describe("The name of the LLM"),
 "type": z.enum(["EMBEDDING", "TEXT"]).describe("The type of the LLM")
     })
 

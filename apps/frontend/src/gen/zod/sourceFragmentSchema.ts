@@ -10,18 +10,18 @@ import { sourceVideoMetadataSchema } from "./sourceVideoMetadataSchema.ts";
 import { z } from "zod/v4";
 
 export const sourceFragmentSchema = z.object({
-    "id": z.uuid(),
+    "content": z.string(),
 "createdAt": z.string().datetime(),
-"updatedAt": z.string().datetime(),
-"content": z.string(),
-"seqId": z.optional(z.number()),
+"id": z.uuid(),
 "knowledgeId": z.uuid(),
-"tenantId": z.uuid(),
-"sourceId": z.uuid(),
-"sourceType": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]).describe("The type of the source"),
 get "metadata"(){
                 return z.union([sourceDocMetadataSchema, sourceImageMetadataSchema, sourceVideoMetadataSchema, sourceAudioMetadataSchema])
-              }
+              },
+"seqId": z.optional(z.number()),
+"sourceId": z.uuid(),
+"sourceType": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]).describe("The type of the source"),
+"tenantId": z.uuid(),
+"updatedAt": z.string().datetime()
     })
 
 export type SourceFragmentSchema = z.infer<typeof sourceFragmentSchema>

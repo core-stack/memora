@@ -8,25 +8,25 @@ import { sourceEntitySchema } from "./sourceEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const folderEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the folder"),
-"knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
+    get "children"(){
+                return z.array(folderEntitySchema).optional()
+              },
+"createdAt": z.string().datetime().describe("The timestamp when the folder was created"),
+"id": z.uuid().describe("The unique identifier of the folder"),
 get "knowledge"(){
                 return knowledgeEntitySchema.optional()
               },
+"knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
 "name": z.string().describe("The name of the folder"),
-"root": z.boolean().describe("Indicates if the folder is a root folder").nullish(),
-"parentId": z.uuid().describe("The ID of the parent folder").nullish(),
 get "parent"(){
                 return folderEntitySchema.optional()
               },
-get "children"(){
-                return z.array(folderEntitySchema).optional()
-              },
+"parentId": z.uuid().describe("The ID of the parent folder").nullish(),
+"root": z.boolean().describe("Indicates if the folder is a root folder").nullish(),
 get "sources"(){
                 return z.array(sourceEntitySchema).optional()
               },
 "tenantId": z.uuid().describe("The ID of the tenant this folder belongs to"),
-"createdAt": z.string().datetime().describe("The timestamp when the folder was created"),
 "updatedAt": z.string().datetime().describe("The timestamp when the folder was last updated")
     })
 

@@ -6,8 +6,8 @@
 import { z } from "zod/v4";
 
 export const getUploadUrlDtoSchema = z.object({
-    "fileName": z.string(),
-"contentType": z.string(),
+    "contentType": z.string(),
+"fileName": z.string(),
 "fileSize": z.number().describe("File size in bytes (max: 100.00 MB")
     })
 

@@ -19,19 +19,11 @@ export type SourceAudioMetadata = {
     /**
      * @type string
     */
-    extension: string;
-    /**
-     * @type string
-    */
     contentType: string;
-    /**
-     * @type number
-    */
-    size: number;
     /**
      * @type number | undefined
     */
-    lastModified?: number;
+    duration?: number;
     /**
      * @type object | undefined
     */
@@ -39,9 +31,17 @@ export type SourceAudioMetadata = {
     /**
      * @type string
     */
-    type: SourceAudioMetadataTypeEnumKey;
+    extension: string;
     /**
      * @type number | undefined
     */
-    duration?: number;
+    lastModified?: number;
+    /**
+     * @type number
+    */
+    size: number;
+    /**
+     * @type string
+    */
+    type: SourceAudioMetadataTypeEnumKey;
 };

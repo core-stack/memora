@@ -6,16 +6,16 @@
 import { z } from "zod/v4";
 
 export const sourceImageMetadataSchema = z.object({
-    "extension": z.string(),
-"contentType": z.string(),
-"size": z.number(),
-"lastModified": z.optional(z.number()),
+    "contentType": z.string(),
 "exif": z.optional(z.object({
     
     })),
+"extension": z.string(),
+"height": z.optional(z.number()),
+"lastModified": z.optional(z.number()),
+"size": z.number(),
 "type": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]),
-"width": z.optional(z.number()),
-"height": z.optional(z.number())
+"width": z.optional(z.number())
     })
 
 export type SourceImageMetadataSchema = z.infer<typeof sourceImageMetadataSchema>

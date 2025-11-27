@@ -8,11 +8,11 @@ export type CreateAccountDto = {
     /**
      * @type string
     */
-    name: string;
+    email: string;
     /**
      * @type string
     */
-    email: string;
+    name: string;
     /**
      * @minLength 6
      * @maxLength 100

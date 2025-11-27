@@ -11,18 +11,17 @@ import { sourceEntitySchema } from "./sourceEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const tenantEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the tenant"),
-"name": z.string().describe("The name of the tenant"),
-"description": z.string().describe("A brief description of the tenant").nullish(),
-"backgroundImage": z.nullable(z.string().describe("The URL of the background image for the tenant")),
+    "backgroundImage": z.nullable(z.string().describe("The URL of the background image for the tenant")),
 "createdAt": z.string().datetime().describe("The timestamp when the tenant was created"),
-"updatedAt": z.string().datetime().describe("The timestamp when the tenant was last updated"),
-get "members"(){
-                return z.array(memberEntitySchema).describe("The members associated with this tenant").optional()
-              },
+"description": z.string().describe("A brief description of the tenant").nullish(),
+"id": z.uuid().describe("The unique identifier of the tenant"),
 get "invites"(){
                 return z.array(inviteEntitySchema).describe("The invites associated with this tenant").optional()
               },
+get "members"(){
+                return z.array(memberEntitySchema).describe("The members associated with this tenant").optional()
+              },
+"name": z.string().describe("The name of the tenant"),
 get "notifications"(){
                 return z.array(notificationEntitySchema).describe("The notifications associated with this tenant").optional()
               },
@@ -31,7 +30,8 @@ get "roles"(){
               },
 get "sources"(){
                 return z.array(sourceEntitySchema).describe("The sources associated with this tenant").optional()
-              }
+              },
+"updatedAt": z.string().datetime().describe("The timestamp when the tenant was last updated")
     })
 
 export type TenantEntitySchema = z.infer<typeof tenantEntitySchema>

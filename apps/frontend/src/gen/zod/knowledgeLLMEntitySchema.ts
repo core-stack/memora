@@ -8,17 +8,17 @@ import { llmentitySchema } from "./LLMEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const knowledgeLLMEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the knowledge-llm link"),
+    "createdAt": z.string().datetime().describe("The timestamp when the link was created"),
 "default": z.boolean().default(false).describe("Indicates if this is the default LLM for the knowledge base"),
+"id": z.uuid().describe("The unique identifier of the knowledge-llm link"),
 get "knowledge"(){
                 return knowledgeEntitySchema.optional()
               },
+"knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
 get "llm"(){
                 return llmentitySchema.optional()
               },
-"knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
 "llmId": z.uuid().describe("The ID of the associated LLM"),
-"createdAt": z.string().datetime().describe("The timestamp when the link was created"),
 "updatedAt": z.string().datetime().describe("The timestamp when the link was last updated")
     })
 

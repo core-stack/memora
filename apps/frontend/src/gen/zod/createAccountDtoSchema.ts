@@ -6,8 +6,8 @@
 import { z } from "zod/v4";
 
 export const createAccountDtoSchema = z.object({
-    "name": z.string(),
-"email": z.string(),
+    "email": z.string(),
+"name": z.string(),
 "password": z.string().min(6).max(100)
     })
 

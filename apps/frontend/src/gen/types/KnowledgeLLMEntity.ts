@@ -8,10 +8,10 @@ import type { LLMEntity } from "./LLMEntity.ts";
 
 export type KnowledgeLLMEntity = {
     /**
-     * @description The unique identifier of the knowledge-llm link
-     * @type string, uuid
+     * @description The timestamp when the link was created
+     * @type string, date-time
     */
-    id: string;
+    createdAt: string;
     /**
      * @description Indicates if this is the default LLM for the knowledge base
      * @default false
@@ -19,28 +19,28 @@ export type KnowledgeLLMEntity = {
     */
     default: boolean;
     /**
-     * @type object | undefined
+     * @description The unique identifier of the knowledge-llm link
+     * @type string, uuid
     */
-    knowledge?: KnowledgeEntity;
+    id: string;
     /**
      * @type object | undefined
     */
-    llm?: LLMEntity;
+    knowledge?: KnowledgeEntity;
     /**
      * @description The ID of the associated knowledge base
      * @type string, uuid
     */
     knowledgeId: string;
     /**
+     * @type object | undefined
+    */
+    llm?: LLMEntity;
+    /**
      * @description The ID of the associated LLM
      * @type string, uuid
     */
     llmId: string;
-    /**
-     * @description The timestamp when the link was created
-     * @type string, date-time
-    */
-    createdAt: string;
     /**
      * @description The timestamp when the link was last updated
      * @type string, date-time

@@ -8,11 +8,11 @@ export type GetUploadUrlDto = {
     /**
      * @type string
     */
-    fileName: string;
+    contentType: string;
     /**
      * @type string
     */
-    contentType: string;
+    fileName: string;
     /**
      * @description File size in bytes (max: 100.00 MB
      * @type number

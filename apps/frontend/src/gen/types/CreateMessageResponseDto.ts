@@ -9,9 +9,9 @@ export type CreateMessageResponseDto = {
     /**
      * @type object
     */
-    userMessage: MessageEntity;
+    aiMessage: MessageEntity;
     /**
      * @type object
     */
-    aiMessage: MessageEntity;
+    userMessage: MessageEntity;
 };

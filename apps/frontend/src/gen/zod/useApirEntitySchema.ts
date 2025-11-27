@@ -11,26 +11,26 @@ import { verificationTokenEntitySchema } from "./verificationTokenEntitySchema.t
 import { z } from "zod/v4";
 
 export const useApirEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the user"),
-"name": z.string().describe("The name of the user"),
-"email": z.email().describe("The email of the user"),
-"emailVerified": z.nullable(z.string().datetime().describe("The date the user email was verified")),
-"image": z.nullable(z.url().describe("The image of the user")),
-"roleId": z.uuid().describe("The unique identifier of the role"),
-"createdAt": z.string().datetime().describe("The date the user was created"),
-"updatedAt": z.string().datetime().describe("The date the user was updated"),
-get "role"(){
-                return roleEntitySchema.optional()
-              },
-get "accounts"(){
+    get "accounts"(){
                 return z.array(accountEntitySchema).optional()
               },
+"createdAt": z.string().datetime().describe("The date the user was created"),
+"email": z.email().describe("The email of the user"),
+"emailVerified": z.nullable(z.string().datetime().describe("The date the user email was verified")),
+"id": z.uuid().describe("The unique identifier of the user"),
+"image": z.nullable(z.url().describe("The image of the user")),
 get "invites"(){
                 return z.array(inviteEntitySchema).optional()
               },
 get "members"(){
                 return z.array(memberEntitySchema).optional()
               },
+"name": z.string().describe("The name of the user"),
+get "role"(){
+                return roleEntitySchema.optional()
+              },
+"roleId": z.uuid().describe("The unique identifier of the role"),
+"updatedAt": z.string().datetime().describe("The date the user was updated"),
 get "verificationTokens"(){
                 return z.array(verificationTokenEntitySchema).optional()
               }

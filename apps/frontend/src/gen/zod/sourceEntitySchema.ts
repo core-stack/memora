@@ -13,32 +13,32 @@ import { tenantEntitySchema } from "./tenantEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const sourceEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the source"),
-"key": z.string().describe("The key of the source file in the storage"),
-"path": z.string().describe("The path of the source file"),
-"name": z.string().describe("The name of the source"),
+    "createdAt": z.string().datetime().describe("The timestamp when the source was created"),
 "description": z.optional(z.string().describe("A brief description of the source")),
-"originalName": z.optional(z.string().describe("The original name of the file")),
-get "metadata"(){
-                return z.union([sourceDocMetadataSchema, sourceImageMetadataSchema, sourceVideoMetadataSchema, sourceAudioMetadataSchema]).describe("The metadata of the source")
-              },
-"sourceType": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]).describe("The type of the source"),
-"indexStatus": z.enum(["PENDING", "INDEXING", "INDEXED", "ERROR"]).describe("The indexing status of the source"),
-"indexError": z.optional(z.string().describe("The error message if indexing fails")),
-"memoryId": z.optional(z.uuid().describe("The ID of the memory associated with this source")),
-"knowledgeId": z.uuid().describe("The ID of the knowledge base this source belongs to"),
-"tenantId": z.uuid().describe("The ID of the tenant this source belongs to"),
-"folderId": z.optional(z.uuid().describe("The ID of the folder this source belongs to")),
-get "knowledge"(){
-                return knowledgeEntitySchema.optional()
-              },
 get "folder"(){
                 return folderEntitySchema.optional()
               },
+"folderId": z.optional(z.uuid().describe("The ID of the folder this source belongs to")),
+"id": z.uuid().describe("The unique identifier of the source"),
+"indexError": z.optional(z.string().describe("The error message if indexing fails")),
+"indexStatus": z.enum(["PENDING", "INDEXING", "INDEXED", "ERROR"]).describe("The indexing status of the source"),
+"key": z.string().describe("The key of the source file in the storage"),
+get "knowledge"(){
+                return knowledgeEntitySchema.optional()
+              },
+"knowledgeId": z.uuid().describe("The ID of the knowledge base this source belongs to"),
+"memoryId": z.optional(z.uuid().describe("The ID of the memory associated with this source")),
+get "metadata"(){
+                return z.union([sourceDocMetadataSchema, sourceImageMetadataSchema, sourceVideoMetadataSchema, sourceAudioMetadataSchema]).describe("The metadata of the source")
+              },
+"name": z.string().describe("The name of the source"),
+"originalName": z.optional(z.string().describe("The original name of the file")),
+"path": z.string().describe("The path of the source file"),
+"sourceType": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]).describe("The type of the source"),
 get "tenant"(){
                 return tenantEntitySchema.optional()
               },
-"createdAt": z.string().datetime().describe("The timestamp when the source was created"),
+"tenantId": z.uuid().describe("The ID of the tenant this source belongs to"),
 "updatedAt": z.string().datetime().describe("The timestamp when the source was last updated")
     })
 

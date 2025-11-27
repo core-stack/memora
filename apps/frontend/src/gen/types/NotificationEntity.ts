@@ -8,20 +8,38 @@ import type { TenantEntity } from "./TenantEntity.ts";
 
 export type NotificationEntity = {
     /**
-     * @description The unique identifier of the notification
-     * @type string, uuid
+     * @description The timestamp when the notification was created
+     * @type string, date-time
     */
-    id: string;
+    createdAt: string;
     /**
-     * @description The title of the notification
-     * @type string
+     * @type object | undefined
     */
-    title: string;
+    createdBy?: MemberEntity;
+    /**
+     * @description The ID of the user who created the notification
+     * @type string | undefined, uuid
+    */
+    createdById?: string;
     /**
      * @description The description of the notification
      * @type string
     */
     description: string;
+    /**
+     * @type object | undefined
+    */
+    destination?: MemberEntity;
+    /**
+     * @description The ID of the user who should receive the notification
+     * @type string, uuid
+    */
+    destinationId: string;
+    /**
+     * @description The unique identifier of the notification
+     * @type string, uuid
+    */
+    id: string;
     /**
      * @description A link associated with the notification
      * @type string | undefined
@@ -34,26 +52,6 @@ export type NotificationEntity = {
     */
     read: boolean;
     /**
-     * @description The ID of the tenant this notification belongs to
-     * @type string, uuid
-    */
-    tenantId: string;
-    /**
-     * @description The ID of the user who created the notification
-     * @type string | undefined, uuid
-    */
-    createdById?: string;
-    /**
-     * @description The ID of the user who should receive the notification
-     * @type string, uuid
-    */
-    destinationId: string;
-    /**
-     * @description The timestamp when the notification was created
-     * @type string, date-time
-    */
-    createdAt: string;
-    /**
      * @description The timestamp when the notification was read
      * @type string | undefined, date-time
     */
@@ -63,11 +61,13 @@ export type NotificationEntity = {
     */
     tenant: TenantEntity;
     /**
-     * @type object | undefined
+     * @description The ID of the tenant this notification belongs to
+     * @type string, uuid
     */
-    createdBy?: MemberEntity;
+    tenantId: string;
     /**
-     * @type object | undefined
+     * @description The title of the notification
+     * @type string
     */
-    destination?: MemberEntity;
+    title: string;
 };

@@ -6,13 +6,13 @@
 import { z } from "zod/v4";
 
 export const sourceDocMetadataSchema = z.object({
-    "extension": z.string(),
-"contentType": z.string(),
-"size": z.number(),
-"lastModified": z.optional(z.number()),
+    "contentType": z.string(),
 "exif": z.optional(z.object({
     
     })),
+"extension": z.string(),
+"lastModified": z.optional(z.number()),
+"size": z.number(),
 "type": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"])
     })
 

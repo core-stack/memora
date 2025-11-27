@@ -7,10 +7,10 @@ import { messageEntitySchema } from "./messageEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const createMessageResponseDtoSchema = z.object({
-    get "userMessage"(){
+    get "aiMessage"(){
                 return messageEntitySchema
               },
-get "aiMessage"(){
+get "userMessage"(){
                 return messageEntitySchema
               }
     })

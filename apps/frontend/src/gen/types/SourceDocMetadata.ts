@@ -19,23 +19,23 @@ export type SourceDocMetadata = {
     /**
      * @type string
     */
-    extension: string;
+    contentType: string;
+    /**
+     * @type object | undefined
+    */
+    exif?: object;
     /**
      * @type string
     */
-    contentType: string;
-    /**
-     * @type number
-    */
-    size: number;
+    extension: string;
     /**
      * @type number | undefined
     */
     lastModified?: number;
     /**
-     * @type object | undefined
+     * @type number
     */
-    exif?: object;
+    size: number;
     /**
      * @type string
     */

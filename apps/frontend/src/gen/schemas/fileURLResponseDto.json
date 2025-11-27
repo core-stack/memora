@@ -1,1 +1,1 @@
-{"type":"object","properties":{"url":{"type":"string","example":"https://example.com/file.pdf"},"key":{"type":"string","example":"path/to/my-file.pdf"}},"required":["url","key"],"x-readme-ref-name":"FileURLResponseDto"}
+{"properties":{"key":{"example":"path/to/my-file.pdf","type":"string"},"url":{"example":"https://example.com/file.pdf","type":"string"}},"required":["url","key"],"type":"object","x-readme-ref-name":"FileURLResponseDto"}

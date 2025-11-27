@@ -8,42 +8,47 @@ import type { SourceEntity } from "./SourceEntity.ts";
 
 export type FolderEntity = {
     /**
+     * @type array | undefined
+    */
+    children?: FolderEntity[];
+    /**
+     * @description The timestamp when the folder was created
+     * @type string, date-time
+    */
+    createdAt: string;
+    /**
      * @description The unique identifier of the folder
      * @type string, uuid
     */
     id: string;
+    /**
+     * @type object | undefined
+    */
+    knowledge?: KnowledgeEntity;
     /**
      * @description The ID of the associated knowledge base
      * @type string, uuid
     */
     knowledgeId: string;
     /**
-     * @type object | undefined
-    */
-    knowledge?: KnowledgeEntity;
-    /**
      * @description The name of the folder
      * @type string
     */
     name: string;
     /**
-     * @description Indicates if the folder is a root folder
-     * @type boolean
+     * @type object | undefined
     */
-    root?: boolean | null;
+    parent?: FolderEntity;
     /**
      * @description The ID of the parent folder
      * @type string, uuid
     */
     parentId?: string | null;
     /**
-     * @type object | undefined
+     * @description Indicates if the folder is a root folder
+     * @type boolean
     */
-    parent?: FolderEntity;
-    /**
-     * @type array | undefined
-    */
-    children?: FolderEntity[];
+    root?: boolean | null;
     /**
      * @type array | undefined
     */
@@ -53,11 +58,6 @@ export type FolderEntity = {
      * @type string, uuid
     */
     tenantId: string;
-    /**
-     * @description The timestamp when the folder was created
-     * @type string, date-time
-    */
-    createdAt: string;
     /**
      * @description The timestamp when the folder was last updated
      * @type string, date-time

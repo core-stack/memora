@@ -8,11 +8,11 @@ export type ErrorResponse = {
     /**
      * @type string
     */
-    error: string;
+    code: string;
     /**
      * @type string
     */
-    code: string;
+    error: string;
     /**
      * @type string, date-time
     */

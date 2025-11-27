@@ -1,1 +1,1 @@
-{"type":"object","properties":{"redirect":{"type":"string","description":"The path to redirect","example":"/"}},"required":["redirect"],"x-readme-ref-name":"LoginResponseDto"}
+{"properties":{"redirect":{"description":"The path to redirect","example":"/","type":"string"}},"required":["redirect"],"type":"object","x-readme-ref-name":"LoginResponseDto"}

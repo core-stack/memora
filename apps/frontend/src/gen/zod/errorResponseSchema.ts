@@ -6,8 +6,8 @@
 import { z } from "zod/v4";
 
 export const errorResponseSchema = z.object({
-    "error": z.string(),
-"code": z.string(),
+    "code": z.string(),
+"error": z.string(),
 "timestamp": z.string().datetime()
     })
 

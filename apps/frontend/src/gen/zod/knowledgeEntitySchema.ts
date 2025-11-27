@@ -11,32 +11,32 @@ import { sourceEntitySchema } from "./sourceEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const knowledgeEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the knowledge base"),
-"slug": z.string().describe("The URL-friendly slug for the knowledge base"),
-"title": z.string().describe("The title of the knowledge base"),
-"description": z.string().describe("A brief description of the knowledge base").nullish(),
-"status": z.enum(["DELETING", "DELETE_ERROR", "OK"]).describe("The status of the knowledge base"),
-"deleteError": z.string().describe("The error message if deletion fails").nullish(),
-"files": z.number().describe("The number of files in the knowledge base"),
-"storage": z.string().describe("The total storage used by the knowledge base in bytes"),
-"tenantId": z.uuid().describe("The ID of the tenant this knowledge base belongs to"),
+    get "chats"(){
+                return z.array(chatEntitySchema).optional()
+              },
 "createdAt": z.string().datetime().describe("The timestamp when the knowledge base was created"),
-"updatedAt": z.string().datetime().describe("The timestamp when the knowledge base was last updated"),
+"deleteError": z.string().describe("The error message if deletion fails").nullish(),
+"description": z.string().describe("A brief description of the knowledge base").nullish(),
+"files": z.number().describe("The number of files in the knowledge base"),
 get "folders"(){
                 return z.array(folderEntitySchema).optional()
               },
-get "sources"(){
-                return z.array(sourceEntitySchema).optional()
-              },
-get "chats"(){
-                return z.array(chatEntitySchema).optional()
+"id": z.uuid().describe("The unique identifier of the knowledge base"),
+get "knowledgeLLMs"(){
+                return z.array(knowledgeLLMEntitySchema).optional()
               },
 get "messages"(){
                 return z.array(messageEntitySchema).optional()
               },
-get "knowledgeLLMs"(){
-                return z.array(knowledgeLLMEntitySchema).optional()
-              }
+"slug": z.string().describe("The URL-friendly slug for the knowledge base"),
+get "sources"(){
+                return z.array(sourceEntitySchema).optional()
+              },
+"status": z.enum(["DELETING", "DELETE_ERROR", "OK"]).describe("The status of the knowledge base"),
+"storage": z.string().describe("The total storage used by the knowledge base in bytes"),
+"tenantId": z.uuid().describe("The ID of the tenant this knowledge base belongs to"),
+"title": z.string().describe("The title of the knowledge base"),
+"updatedAt": z.string().datetime().describe("The timestamp when the knowledge base was last updated")
     })
 
 export type KnowledgeEntitySchema = z.infer<typeof knowledgeEntitySchema>

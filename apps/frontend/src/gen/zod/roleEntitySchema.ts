@@ -10,29 +10,29 @@ import { useApirEntitySchema } from "./useApirEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const roleEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the role"),
-"key": z.string().describe("The key of the role"),
-"name": z.string().describe("The name of the role"),
-"permissions": z.number().describe("The permissions of the role as a bitmask"),
-"scope": z.enum(["TENANT", "GLOBAL"]).describe("The scope of the role"),
-"tenantId": z.nullable(z.uuid().describe("The ID of the tenant this role belongs to")),
-"createdById": z.nullable(z.uuid().describe("The ID of the user who created the role")),
-"createdAt": z.string().datetime().describe("The timestamp when the role was created"),
-"updatedAt": z.string().datetime().describe("The timestamp when the role was last updated"),
-get "tenant"(){
-                return tenantEntitySchema.optional()
-              },
+    "createdAt": z.string().datetime().describe("The timestamp when the role was created"),
 get "createdBy"(){
                 return memberEntitySchema.optional()
               },
-get "users"(){
-                return z.array(useApirEntitySchema).optional()
+"createdById": z.nullable(z.uuid().describe("The ID of the user who created the role")),
+"id": z.uuid().describe("The unique identifier of the role"),
+get "invites"(){
+                return z.array(inviteEntitySchema).optional()
               },
+"key": z.string().describe("The key of the role"),
 get "members"(){
                 return z.array(memberEntitySchema).optional()
               },
-get "invites"(){
-                return z.array(inviteEntitySchema).optional()
+"name": z.string().describe("The name of the role"),
+"permissions": z.number().describe("The permissions of the role as a bitmask"),
+"scope": z.enum(["TENANT", "GLOBAL"]).describe("The scope of the role"),
+get "tenant"(){
+                return tenantEntitySchema.optional()
+              },
+"tenantId": z.nullable(z.uuid().describe("The ID of the tenant this role belongs to")),
+"updatedAt": z.string().datetime().describe("The timestamp when the role was last updated"),
+get "users"(){
+                return z.array(useApirEntitySchema).optional()
               }
     })
 

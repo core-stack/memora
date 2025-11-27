@@ -8,19 +8,19 @@ import { knowledgeEntitySchema } from "./knowledgeEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const messageEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the message"),
-"messageRole": z.enum(["user", "assistant", "system"]).describe("The role of the message sender"),
-"content": z.string().describe("The content of the message"),
-"chatId": z.uuid().describe("The ID of the chat this message belongs to"),
-get "chat"(){
+    get "chat"(){
                 return chatEntitySchema.optional()
               },
-"knowledgeId": z.uuid().describe("The ID of the knowledge base associated with this message"),
+"chatId": z.uuid().describe("The ID of the chat this message belongs to"),
+"content": z.string().describe("The content of the message"),
+"createdAt": z.string().datetime().describe("The timestamp when the message was created"),
+"id": z.uuid().describe("The unique identifier of the message"),
 get "knowledge"(){
                 return knowledgeEntitySchema.optional()
               },
+"knowledgeId": z.uuid().describe("The ID of the knowledge base associated with this message"),
+"messageRole": z.enum(["user", "assistant", "system"]).describe("The role of the message sender"),
 "tenantId": z.uuid().describe("The ID of the tenant this message belongs to"),
-"createdAt": z.string().datetime().describe("The timestamp when the message was created"),
 "updatedAt": z.string().datetime().describe("The timestamp when the message was last updated")
     })
 

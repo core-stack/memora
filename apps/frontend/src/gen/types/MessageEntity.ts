@@ -16,48 +16,48 @@ export type MessageEntityMessageRoleEnumKey = (typeof messageEntityMessageRoleEn
 
 export type MessageEntity = {
     /**
-     * @description The unique identifier of the message
-     * @type string, uuid
+     * @type object | undefined
     */
-    id: string;
-    /**
-     * @description The role of the message sender
-     * @type string
-    */
-    messageRole: MessageEntityMessageRoleEnumKey;
-    /**
-     * @description The content of the message
-     * @type string
-    */
-    content: string;
+    chat?: ChatEntity;
     /**
      * @description The ID of the chat this message belongs to
      * @type string, uuid
     */
     chatId: string;
     /**
+     * @description The content of the message
+     * @type string
+    */
+    content: string;
+    /**
+     * @description The timestamp when the message was created
+     * @type string, date-time
+    */
+    createdAt: string;
+    /**
+     * @description The unique identifier of the message
+     * @type string, uuid
+    */
+    id: string;
+    /**
      * @type object | undefined
     */
-    chat?: ChatEntity;
+    knowledge?: KnowledgeEntity;
     /**
      * @description The ID of the knowledge base associated with this message
      * @type string, uuid
     */
     knowledgeId: string;
     /**
-     * @type object | undefined
+     * @description The role of the message sender
+     * @type string
     */
-    knowledge?: KnowledgeEntity;
+    messageRole: MessageEntityMessageRoleEnumKey;
     /**
      * @description The ID of the tenant this message belongs to
      * @type string, uuid
     */
     tenantId: string;
-    /**
-     * @description The timestamp when the message was created
-     * @type string, date-time
-    */
-    createdAt: string;
     /**
      * @description The timestamp when the message was last updated
      * @type string, date-time

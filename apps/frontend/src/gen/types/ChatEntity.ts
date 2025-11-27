@@ -8,38 +8,38 @@ import type { MessageEntity } from "./MessageEntity.ts";
 
 export type ChatEntity = {
     /**
+     * @description The timestamp when the chat was created
+     * @type string, date-time
+    */
+    createdAt: string;
+    /**
      * @description The unique identifier of the chat
      * @type string, uuid
     */
     id: string;
     /**
-     * @description The name of the chat
-     * @type string
+     * @type object | undefined
     */
-    name: string;
+    knowledge?: KnowledgeEntity;
     /**
      * @description The ID of the associated knowledge base
      * @type string, uuid
     */
     knowledgeId: string;
     /**
-     * @type object | undefined
-    */
-    knowledge?: KnowledgeEntity;
-    /**
      * @type array | undefined
     */
     messages?: MessageEntity[];
+    /**
+     * @description The name of the chat
+     * @type string
+    */
+    name: string;
     /**
      * @description The ID of the tenant this chat belongs to
      * @type string, uuid
     */
     tenantId: string;
-    /**
-     * @description The timestamp when the chat was created
-     * @type string, date-time
-    */
-    createdAt: string;
     /**
      * @description The timestamp when the chat was last updated
      * @type string, date-time

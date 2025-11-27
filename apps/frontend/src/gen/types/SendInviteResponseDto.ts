@@ -10,7 +10,7 @@ export type SendInviteResponseDto = {
     /**
      * @type array
     */
-    sendedInvites: InviteEntity[];
+    alreadyInTenant: MemberEntity[];
     /**
      * @type array
     */
@@ -18,5 +18,5 @@ export type SendInviteResponseDto = {
     /**
      * @type array
     */
-    alreadyInTenant: MemberEntity[];
+    sendedInvites: InviteEntity[];
 };

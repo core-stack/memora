@@ -6,8 +6,8 @@
 import { z } from "zod/v4";
 
 export const updateKnowledgeDtoSchema = z.object({
-    "title": z.optional(z.string().describe("The title of the knowledge base")),
-"description": z.string().describe("A brief description of the knowledge base").nullish()
+    "description": z.string().describe("A brief description of the knowledge base").nullish(),
+"title": z.optional(z.string().describe("The title of the knowledge base"))
     })
 
 export type UpdateKnowledgeDtoSchema = z.infer<typeof updateKnowledgeDtoSchema>

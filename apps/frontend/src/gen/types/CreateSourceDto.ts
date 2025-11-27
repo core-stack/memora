@@ -21,10 +21,19 @@ export type CreateSourceDtoSourceTypeEnumKey = (typeof createSourceDtoSourceType
 
 export type CreateSourceDto = {
     /**
+     * @description The ID of the folder this source belongs to
+     * @type string | undefined, uuid
+    */
+    folderId?: string;
+    /**
      * @description The key of the source file in the storage
      * @type string
     */
     key: string;
+    /**
+     * @description The metadata of the source
+    */
+    metadata: (SourceDocMetadata | SourceImageMetadata | SourceVideoMetadata | SourceAudioMetadata);
     /**
      * @description The name of the source
      * @type string
@@ -36,17 +45,8 @@ export type CreateSourceDto = {
     */
     originalName?: string;
     /**
-     * @description The metadata of the source
-    */
-    metadata: (SourceDocMetadata | SourceImageMetadata | SourceVideoMetadata | SourceAudioMetadata);
-    /**
      * @description The type of the source
      * @type string
     */
     sourceType: CreateSourceDtoSourceTypeEnumKey;
-    /**
-     * @description The ID of the folder this source belongs to
-     * @type string | undefined, uuid
-    */
-    folderId?: string;
 };

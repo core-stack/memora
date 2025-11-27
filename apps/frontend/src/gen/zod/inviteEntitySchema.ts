@@ -10,27 +10,27 @@ import { useApirEntitySchema } from "./useApirEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const inviteEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the invite"),
-"tenantId": z.uuid().describe("The ID of the tenant this invite belongs to"),
-"email": z.email().describe("The email address of the person being invited"),
-"roleId": z.uuid().describe("The ID of the role assigned to the invited person"),
-"userId": z.optional(z.uuid().describe("The ID of the user being invited, if they already exist")),
-"creatorId": z.uuid().describe("The ID of the user who created the invite"),
-"expiresAt": z.string().datetime().describe("The timestamp when the invite expires"),
-"createdAt": z.string().datetime().describe("The timestamp when the invite was created"),
-"updatedAt": z.string().datetime().describe("The timestamp when the invite was last updated"),
-get "tenant"(){
-                return tenantEntitySchema.optional()
+    "createdAt": z.string().datetime().describe("The timestamp when the invite was created"),
+get "creator"(){
+                return memberEntitySchema.optional()
               },
+"creatorId": z.uuid().describe("The ID of the user who created the invite"),
+"email": z.email().describe("The email address of the person being invited"),
+"expiresAt": z.string().datetime().describe("The timestamp when the invite expires"),
+"id": z.uuid().describe("The unique identifier of the invite"),
 get "role"(){
                 return roleEntitySchema.optional()
               },
+"roleId": z.uuid().describe("The ID of the role assigned to the invited person"),
+get "tenant"(){
+                return tenantEntitySchema.optional()
+              },
+"tenantId": z.uuid().describe("The ID of the tenant this invite belongs to"),
+"updatedAt": z.string().datetime().describe("The timestamp when the invite was last updated"),
 get "user"(){
                 return useApirEntitySchema.optional()
               },
-get "creator"(){
-                return memberEntitySchema.optional()
-              }
+"userId": z.optional(z.uuid().describe("The ID of the user being invited, if they already exist"))
     })
 
 export type InviteEntitySchema = z.infer<typeof inviteEntitySchema>

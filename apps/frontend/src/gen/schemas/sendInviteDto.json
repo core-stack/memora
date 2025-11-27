@@ -1,1 +1,1 @@
-{"type":"object","properties":{"emails":{"type":"array","items":{"type":"object","properties":{"email":{"type":"string"},"roleId":{"type":"string"}},"required":["email","roleId"],"x-readme-ref-name":"SendInviteItemDto"}}},"required":["emails"],"x-readme-ref-name":"SendInviteDto"}
+{"properties":{"emails":{"items":{"properties":{"email":{"type":"string"},"roleId":{"type":"string"}},"required":["email","roleId"],"type":"object","x-readme-ref-name":"SendInviteItemDto"},"type":"array"}},"required":["emails"],"type":"object","x-readme-ref-name":"SendInviteDto"}

@@ -8,9 +8,9 @@ export type FileURLResponseDto = {
     /**
      * @type string
     */
-    url: string;
+    key: string;
     /**
      * @type string
     */
-    key: string;
+    url: string;
 };

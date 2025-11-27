@@ -8,17 +8,17 @@ import { messageEntitySchema } from "./messageEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const chatEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the chat"),
-"name": z.string().describe("The name of the chat"),
-"knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
+    "createdAt": z.string().datetime().describe("The timestamp when the chat was created"),
+"id": z.uuid().describe("The unique identifier of the chat"),
 get "knowledge"(){
                 return knowledgeEntitySchema.optional()
               },
+"knowledgeId": z.uuid().describe("The ID of the associated knowledge base"),
 get "messages"(){
                 return z.array(messageEntitySchema).optional()
               },
+"name": z.string().describe("The name of the chat"),
 "tenantId": z.uuid().describe("The ID of the tenant this chat belongs to"),
-"createdAt": z.string().datetime().describe("The timestamp when the chat was created"),
 "updatedAt": z.string().datetime().describe("The timestamp when the chat was last updated")
     })
 

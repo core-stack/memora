@@ -17,15 +17,37 @@ export type RoleEntityScopeEnumKey = (typeof roleEntityScopeEnum)[keyof typeof r
 
 export type RoleEntity = {
     /**
+     * @description The timestamp when the role was created
+     * @type string, date-time
+    */
+    createdAt: string;
+    /**
+     * @type object | undefined
+    */
+    createdBy?: MemberEntity;
+    /**
+     * @description The ID of the user who created the role
+     * @type string, uuid
+    */
+    createdById: string | null;
+    /**
      * @description The unique identifier of the role
      * @type string, uuid
     */
     id: string;
     /**
+     * @type array | undefined
+    */
+    invites?: InviteEntity[];
+    /**
      * @description The key of the role
      * @type string
     */
     key: string;
+    /**
+     * @type array | undefined
+    */
+    members?: MemberEntity[];
     /**
      * @description The name of the role
      * @type string
@@ -42,43 +64,21 @@ export type RoleEntity = {
     */
     scope: RoleEntityScopeEnumKey;
     /**
+     * @type object | undefined
+    */
+    tenant?: TenantEntity;
+    /**
      * @description The ID of the tenant this role belongs to
      * @type string, uuid
     */
     tenantId: string | null;
-    /**
-     * @description The ID of the user who created the role
-     * @type string, uuid
-    */
-    createdById: string | null;
-    /**
-     * @description The timestamp when the role was created
-     * @type string, date-time
-    */
-    createdAt: string;
     /**
      * @description The timestamp when the role was last updated
      * @type string, date-time
     */
     updatedAt: string;
     /**
-     * @type object | undefined
-    */
-    tenant?: TenantEntity;
-    /**
-     * @type object | undefined
-    */
-    createdBy?: MemberEntity;
-    /**
      * @type array | undefined
     */
     users?: UserEntity[];
-    /**
-     * @type array | undefined
-    */
-    members?: MemberEntity[];
-    /**
-     * @type array | undefined
-    */
-    invites?: InviteEntity[];
 };

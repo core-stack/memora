@@ -7,15 +7,15 @@ import { useApirEntitySchema } from "./useApirEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const verificationTokenEntitySchema = z.object({
-    "token": z.uuid(),
-"type": z.enum(["ACTIVE_ACCOUNT", "RESET_PASSWORD"]),
+    "createdAt": z.string().datetime(),
 "expires": z.string().datetime(),
-"userId": z.uuid(),
-"createdAt": z.string().datetime(),
+"token": z.uuid(),
+"type": z.enum(["ACTIVE_ACCOUNT", "RESET_PASSWORD"]),
 "updatedAt": z.string().datetime(),
 get "user"(){
                 return useApirEntitySchema.optional()
-              }
+              },
+"userId": z.uuid()
     })
 
 export type VerificationTokenEntitySchema = z.infer<typeof verificationTokenEntitySchema>

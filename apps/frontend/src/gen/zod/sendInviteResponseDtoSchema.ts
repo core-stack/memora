@@ -8,14 +8,14 @@ import { memberEntitySchema } from "./memberEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const sendInviteResponseDtoSchema = z.object({
-    get "sendedInvites"(){
-                return z.array(inviteEntitySchema)
+    get "alreadyInTenant"(){
+                return z.array(memberEntitySchema)
               },
 get "reSendedInvites"(){
                 return z.array(inviteEntitySchema)
               },
-get "alreadyInTenant"(){
-                return z.array(memberEntitySchema)
+get "sendedInvites"(){
+                return z.array(inviteEntitySchema)
               }
     })
 

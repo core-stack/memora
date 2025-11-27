@@ -13,38 +13,6 @@ export type FieldsEnumKey = (typeof fieldsEnum)[keyof typeof fieldsEnum];
 
 export type LLMPreset = {
     /**
-     * @description The unique identifier of the LLM preset.
-     * @type string
-    */
-    name: string;
-    /**
-     * @description A description of the LLM preset.
-     * @type string
-    */
-    description: string;
-    /**
-     * @description The URL or path of the icon representing the LLM.
-     * @type string
-    */
-    iconPath: string;
-    /**
-     * @type object | undefined
-    */
-    fields?: {
-        [key: string]: FieldsEnumKey;
-    };
-    /**
-     * @type object | undefined
-    */
-    defaults?: {
-        [key: string]: string;
-    };
-    /**
-     * @description List of required field names.
-     * @type array | undefined
-    */
-    required?: string[];
-    /**
      * @description Name of the adapter responsible for executing the LLM.
      * @type string
     */
@@ -56,4 +24,36 @@ export type LLMPreset = {
     config?: {
         [key: string]: any;
     };
+    /**
+     * @type object | undefined
+    */
+    defaults?: {
+        [key: string]: string;
+    };
+    /**
+     * @description A description of the LLM preset.
+     * @type string
+    */
+    description: string;
+    /**
+     * @type object | undefined
+    */
+    fields?: {
+        [key: string]: FieldsEnumKey;
+    };
+    /**
+     * @description The URL or path of the icon representing the LLM.
+     * @type string
+    */
+    iconPath: string;
+    /**
+     * @description The unique identifier of the LLM preset.
+     * @type string
+    */
+    name: string;
+    /**
+     * @description List of required field names.
+     * @type array | undefined
+    */
+    required?: string[];
 };

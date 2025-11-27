@@ -6,11 +6,6 @@
 
 export type RecentSearch = {
     /**
-     * @description The text of the recent search
-     * @type string
-    */
-    text: string;
-    /**
      * @description The count of the recent search
      * @type number
     */
@@ -20,4 +15,9 @@ export type RecentSearch = {
      * @type string, date-time
     */
     lastUsed: string;
+    /**
+     * @description The text of the recent search
+     * @type string
+    */
+    text: string;
 };

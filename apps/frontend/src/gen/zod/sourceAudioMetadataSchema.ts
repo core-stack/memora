@@ -6,15 +6,15 @@
 import { z } from "zod/v4";
 
 export const sourceAudioMetadataSchema = z.object({
-    "extension": z.string(),
-"contentType": z.string(),
-"size": z.number(),
-"lastModified": z.optional(z.number()),
+    "contentType": z.string(),
+"duration": z.optional(z.number()),
 "exif": z.optional(z.object({
     
     })),
-"type": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]),
-"duration": z.optional(z.number())
+"extension": z.string(),
+"lastModified": z.optional(z.number()),
+"size": z.number(),
+"type": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"])
     })
 
 export type SourceAudioMetadataSchema = z.infer<typeof sourceAudioMetadataSchema>

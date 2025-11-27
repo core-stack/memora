@@ -1,1 +1,1 @@
-{"type":"object","properties":{"content":{"type":"string","description":"The content of the message"}},"required":["content"],"x-readme-ref-name":"CreateMessageDto"}
+{"properties":{"content":{"description":"The content of the message","type":"string"}},"required":["content"],"type":"object","x-readme-ref-name":"CreateMessageDto"}

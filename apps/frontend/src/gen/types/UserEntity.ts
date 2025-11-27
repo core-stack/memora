@@ -11,15 +11,14 @@ import type { VerificationTokenEntity } from "./VerificationTokenEntity.ts";
 
 export type UserEntity = {
     /**
-     * @description The unique identifier of the user
-     * @type string, uuid
+     * @type array | undefined
     */
-    id: string;
+    accounts?: AccountEntity[];
     /**
-     * @description The name of the user
-     * @type string
+     * @description The date the user was created
+     * @type string, date-time
     */
-    name: string;
+    createdAt: string;
     /**
      * @description The email of the user
      * @type string, email
@@ -31,33 +30,15 @@ export type UserEntity = {
     */
     emailVerified: string | null;
     /**
+     * @description The unique identifier of the user
+     * @type string, uuid
+    */
+    id: string;
+    /**
      * @description The image of the user
      * @type string, uri
     */
     image: string | null;
-    /**
-     * @description The unique identifier of the role
-     * @type string, uuid
-    */
-    roleId: string;
-    /**
-     * @description The date the user was created
-     * @type string, date-time
-    */
-    createdAt: string;
-    /**
-     * @description The date the user was updated
-     * @type string, date-time
-    */
-    updatedAt: string;
-    /**
-     * @type object | undefined
-    */
-    role?: RoleEntity;
-    /**
-     * @type array | undefined
-    */
-    accounts?: AccountEntity[];
     /**
      * @type array | undefined
     */
@@ -66,6 +47,25 @@ export type UserEntity = {
      * @type array | undefined
     */
     members?: MemberEntity[];
+    /**
+     * @description The name of the user
+     * @type string
+    */
+    name: string;
+    /**
+     * @type object | undefined
+    */
+    role?: RoleEntity;
+    /**
+     * @description The unique identifier of the role
+     * @type string, uuid
+    */
+    roleId: string;
+    /**
+     * @description The date the user was updated
+     * @type string, date-time
+    */
+    updatedAt: string;
     /**
      * @type array | undefined
     */

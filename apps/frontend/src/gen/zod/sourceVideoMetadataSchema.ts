@@ -6,17 +6,17 @@
 import { z } from "zod/v4";
 
 export const sourceVideoMetadataSchema = z.object({
-    "extension": z.string(),
-"contentType": z.string(),
-"size": z.number(),
-"lastModified": z.optional(z.number()),
+    "contentType": z.string(),
+"duration": z.optional(z.number()),
 "exif": z.optional(z.object({
     
     })),
-"type": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]),
-"width": z.optional(z.number()),
+"extension": z.string(),
 "height": z.optional(z.number()),
-"duration": z.optional(z.number())
+"lastModified": z.optional(z.number()),
+"size": z.number(),
+"type": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]),
+"width": z.optional(z.number())
     })
 
 export type SourceVideoMetadataSchema = z.infer<typeof sourceVideoMetadataSchema>

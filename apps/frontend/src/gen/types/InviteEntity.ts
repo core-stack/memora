@@ -10,45 +10,52 @@ import type { UserEntity } from "./UserEntity.ts";
 
 export type InviteEntity = {
     /**
-     * @description The unique identifier of the invite
-     * @type string, uuid
+     * @description The timestamp when the invite was created
+     * @type string, date-time
     */
-    id: string;
+    createdAt: string;
     /**
-     * @description The ID of the tenant this invite belongs to
-     * @type string, uuid
+     * @type object | undefined
     */
-    tenantId: string;
-    /**
-     * @description The email address of the person being invited
-     * @type string, email
-    */
-    email: string;
-    /**
-     * @description The ID of the role assigned to the invited person
-     * @type string, uuid
-    */
-    roleId: string;
-    /**
-     * @description The ID of the user being invited, if they already exist
-     * @type string | undefined, uuid
-    */
-    userId?: string;
+    creator?: MemberEntity;
     /**
      * @description The ID of the user who created the invite
      * @type string, uuid
     */
     creatorId: string;
     /**
+     * @description The email address of the person being invited
+     * @type string, email
+    */
+    email: string;
+    /**
      * @description The timestamp when the invite expires
      * @type string, date-time
     */
     expiresAt: string;
     /**
-     * @description The timestamp when the invite was created
-     * @type string, date-time
+     * @description The unique identifier of the invite
+     * @type string, uuid
     */
-    createdAt: string;
+    id: string;
+    /**
+     * @type object | undefined
+    */
+    role?: RoleEntity;
+    /**
+     * @description The ID of the role assigned to the invited person
+     * @type string, uuid
+    */
+    roleId: string;
+    /**
+     * @type object | undefined
+    */
+    tenant?: TenantEntity;
+    /**
+     * @description The ID of the tenant this invite belongs to
+     * @type string, uuid
+    */
+    tenantId: string;
     /**
      * @description The timestamp when the invite was last updated
      * @type string, date-time
@@ -57,17 +64,10 @@ export type InviteEntity = {
     /**
      * @type object | undefined
     */
-    tenant?: TenantEntity;
-    /**
-     * @type object | undefined
-    */
-    role?: RoleEntity;
-    /**
-     * @type object | undefined
-    */
     user?: UserEntity;
     /**
-     * @type object | undefined
+     * @description The ID of the user being invited, if they already exist
+     * @type string | undefined, uuid
     */
-    creator?: MemberEntity;
+    userId?: string;
 };

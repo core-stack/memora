@@ -43,7 +43,7 @@ async function bootstrap(): Promise<void> {
 
   app.use(cookieParser());
 
-  await generateApi(document, true);
+  await generateApi(document);
   await app.listen(env.APP_PORT);
 }
 

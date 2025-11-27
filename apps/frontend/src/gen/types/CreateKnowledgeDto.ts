@@ -6,6 +6,11 @@
 
 export type CreateKnowledgeDto = {
     /**
+     * @description A brief description of the knowledge base
+     * @type string
+    */
+    description?: string | null;
+    /**
      * @description The URL-friendly slug for the knowledge base
      * @type string
     */
@@ -15,9 +20,4 @@ export type CreateKnowledgeDto = {
      * @type string
     */
     title: string;
-    /**
-     * @description A brief description of the knowledge base
-     * @type string
-    */
-    description?: string | null;
 };

@@ -11,28 +11,28 @@ import { useApirEntitySchema } from "./useApirEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const memberEntitySchema = z.object({
-    "id": z.uuid().describe("The unique identifier of the member"),
-"owner": z.boolean().default(false).describe("Indicates if the member is the owner of the tenant"),
-"userId": z.uuid().describe("The ID of the user"),
-"tenantId": z.uuid().describe("The ID of the tenant"),
-"roleId": z.uuid().describe("The ID of the role assigned to the member"),
-"createdAt": z.string().datetime().describe("The timestamp when the member was created"),
-"updatedAt": z.string().datetime().describe("The timestamp when the member was last updated"),
-get "user"(){
-                return useApirEntitySchema.optional()
-              },
-get "tenant"(){
-                return tenantEntitySchema.optional()
-              },
-get "role"(){
-                return roleEntitySchema.optional()
+    "createdAt": z.string().datetime().describe("The timestamp when the member was created"),
+"id": z.uuid().describe("The unique identifier of the member"),
+get "invites"(){
+                return z.array(inviteEntitySchema).optional()
               },
 get "notifications"(){
                 return z.array(notificationEntitySchema).optional()
               },
-get "invites"(){
-                return z.array(inviteEntitySchema).optional()
-              }
+"owner": z.boolean().default(false).describe("Indicates if the member is the owner of the tenant"),
+get "role"(){
+                return roleEntitySchema.optional()
+              },
+"roleId": z.uuid().describe("The ID of the role assigned to the member"),
+get "tenant"(){
+                return tenantEntitySchema.optional()
+              },
+"tenantId": z.uuid().describe("The ID of the tenant"),
+"updatedAt": z.string().datetime().describe("The timestamp when the member was last updated"),
+get "user"(){
+                return useApirEntitySchema.optional()
+              },
+"userId": z.uuid().describe("The ID of the user")
     })
 
 export type MemberEntitySchema = z.infer<typeof memberEntitySchema>

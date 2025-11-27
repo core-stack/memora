@@ -19,23 +19,27 @@ export type SourceImageMetadata = {
     /**
      * @type string
     */
-    extension: string;
+    contentType: string;
+    /**
+     * @type object | undefined
+    */
+    exif?: object;
     /**
      * @type string
     */
-    contentType: string;
+    extension: string;
     /**
-     * @type number
+     * @type number | undefined
     */
-    size: number;
+    height?: number;
     /**
      * @type number | undefined
     */
     lastModified?: number;
     /**
-     * @type object | undefined
+     * @type number
     */
-    exif?: object;
+    size: number;
     /**
      * @type string
     */
@@ -44,8 +48,4 @@ export type SourceImageMetadata = {
      * @type number | undefined
     */
     width?: number;
-    /**
-     * @type number | undefined
-    */
-    height?: number;
 };

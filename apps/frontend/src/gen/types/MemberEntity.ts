@@ -11,10 +11,23 @@ import type { UserEntity } from "./UserEntity.ts";
 
 export type MemberEntity = {
     /**
+     * @description The timestamp when the member was created
+     * @type string, date-time
+    */
+    createdAt: string;
+    /**
      * @description The unique identifier of the member
      * @type string, uuid
     */
     id: string;
+    /**
+     * @type array | undefined
+    */
+    invites?: InviteEntity[];
+    /**
+     * @type array | undefined
+    */
+    notifications?: NotificationEntity[];
     /**
      * @description Indicates if the member is the owner of the tenant
      * @default false
@@ -22,25 +35,23 @@ export type MemberEntity = {
     */
     owner: boolean;
     /**
-     * @description The ID of the user
-     * @type string, uuid
+     * @type object | undefined
     */
-    userId: string;
-    /**
-     * @description The ID of the tenant
-     * @type string, uuid
-    */
-    tenantId: string;
+    role?: RoleEntity;
     /**
      * @description The ID of the role assigned to the member
      * @type string, uuid
     */
     roleId: string;
     /**
-     * @description The timestamp when the member was created
-     * @type string, date-time
+     * @type object | undefined
     */
-    createdAt: string;
+    tenant?: TenantEntity;
+    /**
+     * @description The ID of the tenant
+     * @type string, uuid
+    */
+    tenantId: string;
     /**
      * @description The timestamp when the member was last updated
      * @type string, date-time
@@ -51,19 +62,8 @@ export type MemberEntity = {
     */
     user?: UserEntity;
     /**
-     * @type object | undefined
+     * @description The ID of the user
+     * @type string, uuid
     */
-    tenant?: TenantEntity;
-    /**
-     * @type object | undefined
-    */
-    role?: RoleEntity;
-    /**
-     * @type array | undefined
-    */
-    notifications?: NotificationEntity[];
-    /**
-     * @type array | undefined
-    */
-    invites?: InviteEntity[];
+    userId: string;
 };

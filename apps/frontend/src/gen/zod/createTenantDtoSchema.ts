@@ -6,9 +6,9 @@
 import { z } from "zod/v4";
 
 export const createTenantDtoSchema = z.object({
-    "name": z.string().describe("The name of the tenant"),
+    "backgroundImage": z.nullable(z.string().describe("The URL of the background image for the tenant")),
 "description": z.string().describe("A brief description of the tenant").nullish(),
-"backgroundImage": z.nullable(z.string().describe("The URL of the background image for the tenant"))
+"name": z.string().describe("The name of the tenant")
     })
 
 export type CreateTenantDtoSchema = z.infer<typeof createTenantDtoSchema>

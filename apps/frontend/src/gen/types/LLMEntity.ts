@@ -14,10 +14,20 @@ export type LLMEntityTypeEnumKey = (typeof LLMEntityTypeEnum)[keyof typeof LLMEn
 
 export type LLMEntity = {
     /**
-     * @description The unique identifier of the LLM
+     * @description The configuration for the LLM
+     * @type object
+    */
+    config: object;
+    /**
+     * @description The timestamp when the LLM was created
+     * @type string, date-time
+    */
+    createdAt: string;
+    /**
+     * @description The ID of the user who created the LLM
      * @type string, uuid
     */
-    id: string;
+    creatorId?: string | null;
     /**
      * @description Indicates if this is the default LLM for its type
      * @default false
@@ -25,44 +35,34 @@ export type LLMEntity = {
     */
     default: boolean;
     /**
-     * @description The name of the LLM
-     * @type string
+     * @description The unique identifier of the LLM
+     * @type string, uuid
     */
-    name: string;
+    id: string;
+    /**
+     * @type array | undefined
+    */
+    knowledgeLLMs?: KnowledgeLLMEntity[];
     /**
      * @description The model identifier
      * @type string
     */
     model: string;
     /**
-     * @description The configuration for the LLM
-     * @type object
-    */
-    config: object;
-    /**
-     * @description The type of the LLM
+     * @description The name of the LLM
      * @type string
     */
-    type: LLMEntityTypeEnumKey;
+    name: string;
     /**
      * @description The ID of the tenant this LLM belongs to
      * @type string, uuid
     */
     tenantId: string;
     /**
-     * @description The ID of the user who created the LLM
-     * @type string, uuid
+     * @description The type of the LLM
+     * @type string
     */
-    creatorId?: string | null;
-    /**
-     * @type array | undefined
-    */
-    knowledgeLLMs?: KnowledgeLLMEntity[];
-    /**
-     * @description The timestamp when the LLM was created
-     * @type string, date-time
-    */
-    createdAt: string;
+    type: LLMEntityTypeEnumKey;
     /**
      * @description The timestamp when the LLM was last updated
      * @type string, date-time

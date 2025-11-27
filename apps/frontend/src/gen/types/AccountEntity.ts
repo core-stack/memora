@@ -7,6 +7,11 @@ import type { UserEntity } from "./UserEntity.ts";
 
 export type AccountEntity = {
     /**
+     * @description The date the account was created
+     * @type string, date-time
+    */
+    createdAt: string;
+    /**
      * @description The unique identifier of the account
      * @type string, uuid
     */
@@ -22,22 +27,17 @@ export type AccountEntity = {
     */
     providerAccountId: string;
     /**
-     * @description The unique identifier of the user
-     * @type string, uuid
+     * @description The date the account was updated
+     * @type string, date-time
     */
-    userId: string;
+    updatedAt: string;
     /**
      * @type object | undefined
     */
     user?: UserEntity;
     /**
-     * @description The date the account was created
-     * @type string, date-time
+     * @description The unique identifier of the user
+     * @type string, uuid
     */
-    createdAt: string;
-    /**
-     * @description The date the account was updated
-     * @type string, date-time
-    */
-    updatedAt: string;
+    userId: string;
 };
