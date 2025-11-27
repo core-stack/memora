@@ -1,0 +1,1 @@
+{"properties":{"roleId":{"description":"The ID of the role assigned to the member","format":"uuid","type":"string"}},"type":"object","x-readme-ref-name":"UpdateMemberDto"}

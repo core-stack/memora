@@ -1,0 +1,1 @@
+{"properties":{"description":{"description":"A brief description of the knowledge base","nullable":true,"type":"string"},"slug":{"description":"The URL-friendly slug for the knowledge base","type":"string"},"title":{"description":"The title of the knowledge base","type":"string"}},"required":["slug","title"],"type":"object","x-readme-ref-name":"CreateKnowledgeDto"}

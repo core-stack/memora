@@ -1,0 +1,1 @@
+{"properties":{"contentType":{"type":"string"},"exif":{"type":"object"},"extension":{"type":"string"},"lastModified":{"type":"number"},"size":{"type":"number"},"type":{"enum":["TEXT","DOC","LINK","VIDEO","AUDIO","IMAGE"],"type":"string"}},"required":["extension","contentType","size","type"],"type":"object","x-readme-ref-name":"SourceDocMetadata"}

@@ -1,0 +1,1 @@
+{"properties":{"email":{"description":"The email of the user","example":"my@example.com","format":"email","type":"string"},"password":{"description":"The password of the user","format":"password","type":"string"},"redirect":{"description":"The path to redirect","example":"/","type":"string"}},"required":["email","password"],"type":"object","x-readme-ref-name":"LoginDto"}
