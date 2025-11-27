@@ -1,9 +1,6 @@
 "use client";
 
 import { useForm } from 'react-hook-form';
-import { FaFacebook } from 'react-icons/fa';
-import { FcGoogle } from 'react-icons/fc';
-
 import { FormInput } from '@/components/form/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,19 +9,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Link } from '@/components/ui/link';
 import { Separator } from '@/components/ui/separator';
-import { loginDtoSchema, useApiAuthLogin, useApiAuthOauth2, useApiAuthProviders } from '@/gen';
+import { loginDtoSchema, useApiAuthLogin, useApiAuthProviders } from '@/gen';
 import { useRouter } from '@/hooks/use-router';
 import { useSearchParams } from '@/hooks/use-search-params';
-import { capitalizeFirstLetter } from '@/lib/string';
-import { cn } from '@/lib/utils';
 import { zodResolver } from '@/utils/zod-resolver';
 
 import type { LoginDtoSchema } from '@/gen';
+import { Oauth2Providers } from '../components/oauth-providers';
 
-const providerIconMap = {
-  google: FcGoogle,
-  facebook: FaFacebook
-}
 export function LoginForm() {
   const [searchParams] = useSearchParams();
   const form = useForm<LoginDtoSchema>({
@@ -40,7 +32,6 @@ export function LoginForm() {
   const isLoading = form.formState.isSubmitting;
   const { data: providers = [] } = useApiAuthProviders();
   const { mutate, error } = useApiAuthLogin();
-  const { mutate: mutateOauth } = useApiAuthOauth2();
   const onSubmit = form.handleSubmit(async (data) => {
     mutate({ data }, {
       onSuccess: ({ redirect }) => {
@@ -48,13 +39,6 @@ export function LoginForm() {
       }
     });
   });
-
-  const handleOauth2 = (provider: string) => mutateOauth({ provider }, { onSuccess: ({ url }) => window.location.href = url });
-
-  const getProviderIcon = (provider: keyof typeof providerIconMap) => {
-    const Icon = providerIconMap[provider];
-    return <Icon className="mr-2 h-4 w-4" />;
-  };
 
   return (
     <div className="grid gap-6">
@@ -96,20 +80,7 @@ export function LoginForm() {
           </div>
         </div>
       }
-      <div className="flex justify-center gap-4">
-        {providers.map(provider => (
-          <Button
-            variant="outline"
-            type="button"
-            className={cn(providers.length === 1 && 'w-full')}
-            isLoading={isLoading}
-            onClick={() => handleOauth2(provider)}
-          >
-            {getProviderIcon(provider as keyof typeof providerIconMap)}
-            {capitalizeFirstLetter(provider)}
-          </Button>
-        ))}
-      </div>
+      <Oauth2Providers disableButtons={isLoading} />
       <div className="text-center text-sm text-muted-foreground">
         Don't have an account?{" "}
         <Link href="/auth/create-account" className="underline underline-offset-4 hover:text-primary">
