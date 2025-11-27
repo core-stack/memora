@@ -47,6 +47,12 @@ export type LLMPreset = {
     */
     iconPath: string;
     /**
+     * @description Indicates if should ignore received fields in the request.
+     * @default false
+     * @type boolean
+    */
+    ignoreFields: boolean;
+    /**
      * @description The unique identifier of the LLM preset.
      * @type string
     */

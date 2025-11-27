@@ -4,15 +4,16 @@
     "name": "Snipet Text (snipet-0.1)",
     "description": "Modelo de texto leve e rápido, excelente para uso em grande escala com baixo custo. (powered by Voyage)",
     "iconPath": "snipet.png",
-    "adapter": "voyage",
+    "adapter": "gemini",
     "fields": {
       "apiKey": "secret-string"
     },
     "required": ["apiKey"],
     "default": true,
+    "ignoreFields": true,
     "config": {
       "type": "TEXT",
-      "model": "voyage-3.5-lite"
+      "model": "gemini-2.5-pro"
     }
   }
 ]

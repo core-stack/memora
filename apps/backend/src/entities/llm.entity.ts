@@ -12,7 +12,6 @@ export enum LLMType {
 
 @Entity("llms")
 @Unique("llms_name_tenant_unique", [ "name", "tenantId" ])
-@Unique("llms_default_tenant_type_unique", [ "default", "tenantId", "type" ])
 export class LLMEntity {
   @Field({ type: "string", uuid: true, description: "The unique identifier of the LLM" })
   @PrimaryGeneratedColumn("uuid")

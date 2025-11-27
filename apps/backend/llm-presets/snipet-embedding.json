@@ -10,6 +10,7 @@
     },
     "required": ["apiKey"],
     "default": true,
+    "ignoreFields": true,
     "config": {
       "type": "EMBEDDING",
       "model": "voyage-3-lite",

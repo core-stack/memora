@@ -51,6 +51,12 @@ export class LLMPreset {
   @Field({ type: "string", description: "Name of the adapter responsible for executing the LLM.", example: "openai" })
   adapter: string;
 
+  @Field({
+    type: "boolean",
+    default: false,
+    description: "Indicates if should ignore received fields in the request."
+  })
+  ignoreFields: boolean;
 
   @Field({
     type: "object",

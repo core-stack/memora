@@ -18,6 +18,7 @@ export const llmpresetSchema = z.object({
     
     }).catchall(z.enum(["string", "secret-string"]))),
 "iconPath": z.string().describe("The URL or path of the icon representing the LLM."),
+"ignoreFields": z.boolean().default(false).describe("Indicates if should ignore received fields in the request."),
 "key": z.string().describe("The unique identifier of the LLM preset."),
 "name": z.string().describe("The name of the LLM preset."),
 "required": z.optional(z.array(z.string()).describe("List of required field names."))

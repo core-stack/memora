@@ -33,13 +33,15 @@ export function ConfigureLLDialog({ preset, tenantId }: ConfigureLLDialogProps) 
       ...preset.defaults,
       key: preset.key,
       type: preset.config?.type,
-      model: preset.config?.model
+      model: preset.config?.model,
+      config: {}
     }
   });
 
   const invalidate = useApiInvalidate();
   const { mutate } = useApiLLMCreate();
   const isLoading = form.formState.isSubmitting;
+  console.log(form.watch());
 
   const handleSubmit = form.handleSubmit((data) => {
     mutate({ data, tenantId }, {
@@ -85,7 +87,10 @@ export function ConfigureLLDialog({ preset, tenantId }: ConfigureLLDialogProps) 
             autoFocus
           />
           <div className="space-y-4 py-4">
-            {preset.fields && Object.entries(preset.fields).map(([fieldName, fieldType]) => (
+            {
+              !preset.ignoreFields &&
+              preset.fields &&
+              Object.entries(preset.fields).map(([fieldName, fieldType]) => (
               <FormInput
                 type={fieldType === 'string' ? "text" : "password"}
                 key={fieldName}

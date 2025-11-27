@@ -1,6 +1,6 @@
 "use client"
 
-import { Settings, Trash2 } from 'lucide-react';
+import { Settings, Sparkles, Trash2 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { DateFormat, formatDate } from '@/utils/format';
 
 import type { LLMEntity, LLMPreset } from '@/gen';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface LLMListItemProps {
   tenantId: string;
@@ -55,7 +56,15 @@ export function LLMListItem({ llm, preset, tenantId }: LLMListItemProps) {
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className={cn("relative h-10 w-10 shrink-0 rounded-lg flex items-center justify-center", !preset && "bg-muted")}>
               { !preset && <Settings className="h-6 w-6 text-muted-foreground" /> }
-              { preset && <img src={preset.iconPath} alt={preset.name} width={48} height={48} className="object-cover" /> }
+              {
+                preset &&
+                <Avatar>
+                  <AvatarImage src={preset.iconPath} alt={preset.name} width={48} height={48} className="object-cover" />
+                  <AvatarFallback>
+                    <Sparkles />
+                  </AvatarFallback>
+                </Avatar>
+              }
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
