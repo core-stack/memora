@@ -2029,9 +2029,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/SendInviteResponseDto"
+                $ref: "#/components/schemas/SendInviteResponseDto"
       security:
         - access-token: []
       tags:
@@ -2046,6 +2044,15 @@ paths:
           in: path
           schema:
             type: string
+        - name: relations
+          required: false
+          in: query
+          description: "Relations. Allowed fields: role, tenant, creator"
+          schema:
+            example: role,tenant
+            type: array
+            items:
+              type: string
         - name: tenantId
           in: path
           required: true
@@ -2171,6 +2178,15 @@ paths:
     get:
       operationId: InviteController_findMany
       parameters:
+        - name: relations
+          required: false
+          in: query
+          description: "Relations. Allowed fields: role, tenant, creator"
+          schema:
+            example: role,tenant
+            type: array
+            items:
+              type: string
         - name: limit
           required: false
           in: query
@@ -3456,7 +3472,7 @@ components:
           format: date-time
           type: string
           description: The date the user email was verified
-          example: 2025-11-26T22:09:45.565Z
+          example: 2025-11-27T10:46:46.796Z
           nullable: true
         image:
           type: string

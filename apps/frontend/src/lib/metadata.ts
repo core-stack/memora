@@ -1,6 +1,6 @@
-import exifr from 'exifr';
+import exifr from "exifr";
 
-import { sourceEntitySourceTypeEnum } from '@/gen';
+import { sourceEntitySourceTypeEnum } from "@/gen";
 
 import type { SourceAudioMetadata, SourceDocMetadata, SourceImageMetadata, SourceVideoMetadata } from '@/gen';
 
@@ -26,8 +26,7 @@ export async function getFileMetadata(file: File): Promise<SourceAudioMetadata |
     let exifData: Record<string, any> | undefined;
     try {
       exifData = await exifr.parse(file, { gps: true });
-    } catch (e) {
-    }
+    } catch {}
 
     return { ...imageMeta, exif: exifData };
   }

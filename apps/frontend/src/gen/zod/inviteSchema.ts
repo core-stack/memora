@@ -14,7 +14,8 @@ export const invitePathParamsSchema = z.object({
 export type InvitePathParamsSchema = z.infer<typeof invitePathParamsSchema>
 
 export const inviteQueryParamsSchema = z.object({
-    "limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
+    "relations": z.optional(z.array(z.string()).describe("Relations. Allowed fields: role, tenant, creator")),
+"limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
 "offset": z.optional(z.coerce.number().describe("Number of records to skip")),
 "sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: "))
     }).optional()

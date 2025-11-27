@@ -1,27 +1,33 @@
-import { ArrowUpDown } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import moment from "moment";
+import { useState } from "react";
 
-import { AsyncBoundary } from '@/components/async-boundary';
-import { Button } from '@/components/ui/button';
+import { AsyncBoundary } from "@/components/async-boundary";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
-} from '@/components/ui/table';
-import { useApiInvite, useApiInviteDelete } from '@/gen';
-import { useApiInvalidate } from '@/hooks/use-api-invalidate';
-import { useAuth } from '@/hooks/use-auth';
-import { useTenant } from '@/hooks/use-tenant';
-import { useToast } from '@/hooks/use-toast';
-import { Permission } from '@snipet/permission';
+} from "@/components/ui/table";
+import { inviteQueryKeyFn, useApiInvite, useApiInviteDelete, useApiInviteSend } from "@/gen";
+import { useApiInvalidate } from "@/hooks/use-api-invalidate";
+import { useAuth } from "@/hooks/use-auth";
+import { useTenant } from "@/hooks/use-tenant";
+import { useToast } from "@/hooks/use-toast";
+import { isPast } from "@/lib/date";
+import { Permission } from "@snipet/permission";
 import {
   flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel,
   useReactTable
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
 import type { InviteEntity, TenantEntity } from "@/gen";
 import type {
   ColumnDef, ColumnFiltersState, SortingState, VisibilityState
 } from "@tanstack/react-table";
-
 export const InvitesTable = () => {
   const { tenant, isLoading, error } = useTenant();
   return (
@@ -37,13 +43,38 @@ const Component = ({ tenant }: { tenant: TenantEntity }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({});
-  const { data: invites } = useApiInvite({ tenantId: tenant.id });
+  const { data: invites } = useApiInvite({ tenantId: tenant.id, params: { relations: ["role"] } });
   const { mutate: deleteInvite } = useApiInviteDelete();
+  const { mutate: createInvite } = useApiInviteSend();
 
   const invalidate = useApiInvalidate();
 
   const { toast } = useToast();
   const { canInTenant } = useAuth();
+  
+  const handleResend = (email: string, roleId: string) => {
+    createInvite({
+      tenantId: tenant.id,
+      data: { emails: [{ email, roleId }] }
+    }, { 
+      onSuccess: () => {
+        toast({ title: "Invite sent", description: "The invite has been sent." })
+        invalidate(inviteQueryKeyFn({ tenantId: tenant.id }));
+      }
+    })
+  }
+
+  const handleCancel = (id: string) => {
+    deleteInvite(
+      { tenantId: tenant.id, id },
+      {
+        onSuccess: () => {
+          toast({ title: "Invite canceled", description: "The invite has been canceled." })
+          invalidate(inviteQueryKeyFn({ tenantId: tenant.id }));
+        }
+      }
+    );
+  }
 
   const inviteColumns: ColumnDef<InviteEntity>[] = [
     {
@@ -65,51 +96,17 @@ const Component = ({ tenant }: { tenant: TenantEntity }) => {
         )
       },
       cell: ({ row }) => {
-        return <span className="capitalize">{row.getValue("role") === "ADMIN" ? "Admin" : "Membro"}</span>
-      },
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="p-0 hover:bg-transparent"
-          >
-            Send at
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => {
-        const createdAt = new Date(row.getValue("createdAt"))
-        const formatted = new Intl.DateTimeFormat("pt-BR", {
-          dateStyle: "medium",
-        }).format(createdAt)
-        return <div>{formatted}</div>
+        return <span className="capitalize">{row.original.role?.name}</span>
       },
     },
     {
       accessorKey: "expiresAt",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="p-0 hover:bg-transparent"
-          >
-            Expires at
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
+      header: "Status",
       cell: ({ row }) => {
-        const expiresAt = new Date(row.getValue("expiresAt"))
-        const formatted = new Intl.DateTimeFormat("pt-BR", {
-          dateStyle: "medium",
-        }).format(expiresAt)
-        return <div>{formatted}</div>
+        if (moment(row.original.expiresAt).isAfter(moment())) {
+          return <Badge variant="outline">Active</Badge>
+        }
+        return <Badge variant="outline" className="text-destructive border-destructive">Expired</Badge>
       },
     },
     {
@@ -117,23 +114,27 @@ const Component = ({ tenant }: { tenant: TenantEntity }) => {
       cell: ({ row }) => {
         return canInTenant(Permission.DELETE_INVITE) ? (
           <div className="text-right">
-            <Button
-              variant="destructive-outline"
-              size="sm"
-              onClick={() => {
-                deleteInvite(
-                  { tenantId: tenant.id, id: row.getValue("id") },
-                  {
-                    onSuccess: () => {
-                      toast({ title: "Invite canceled", description: "The invite has been canceled." })
-                      invalidate("/api/tenant/:tenantId/invite");
-                    }
-                  }
-                );
-              }}
-            >
-              Cancel
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {
+                  isPast(row.original.expiresAt) && (
+                    <DropdownMenuItem onClick={() => handleResend(row.original.email, row.original.roleId)}>
+                      Resend
+                    </DropdownMenuItem>
+                  )
+                }
+                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleCancel(row.getValue("id"))}>
+                  Cancel
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         ) : null
       },
@@ -158,7 +159,6 @@ const Component = ({ tenant }: { tenant: TenantEntity }) => {
       rowSelection,
     },
   });
-  console.log(invitesTable.getRowModel(), invites, tenant);
 
   return (
     <>

@@ -16,7 +16,7 @@ export type InviteSendPathParamsSchema = z.infer<typeof inviteSendPathParamsSche
 /**
  * @description Emails sent
  */
-export const inviteSend200Schema = z.array(sendInviteResponseDtoSchema)
+export const inviteSend200Schema = sendInviteResponseDtoSchema
 
 export type InviteSend200Schema = z.infer<typeof inviteSend200Schema>
 

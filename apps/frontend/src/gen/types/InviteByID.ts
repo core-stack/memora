@@ -17,6 +17,14 @@ export type InviteByIDPathParams = {
     tenantId: string;
 };
 
+export type InviteByIDQueryParams = {
+    /**
+     * @description Relations. Allowed fields: role, tenant, creator
+     * @type array | undefined
+    */
+    relations?: string[];
+};
+
 /**
  * @description Record found successfully
 */
@@ -42,5 +50,6 @@ export type InviteByIDQueryResponse = InviteByID200;
 export type InviteByIDQuery = {
     Response: InviteByID200;
     PathParams: InviteByIDPathParams;
+    QueryParams: InviteByIDQueryParams;
     Errors: InviteByID400 | InviteByID404 | InviteByID500;
 };

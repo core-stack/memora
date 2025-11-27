@@ -15,6 +15,11 @@ export type InvitePathParams = {
 
 export type InviteQueryParams = {
     /**
+     * @description Relations. Allowed fields: role, tenant, creator
+     * @type array | undefined
+    */
+    relations?: string[];
+    /**
      * @description Maximum number of records to return
      * @type number | undefined
     */

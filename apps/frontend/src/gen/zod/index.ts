@@ -40,7 +40,7 @@ export type { FolderUpdatePathParamsSchema, FolderUpdate200Schema, FolderUpdate4
 export type { ForgetPasswordDtoSchema } from "./forgetPasswordDtoSchema.ts";
 export type { GetOAuth2UrlResponseDtoSchema } from "./getOAuth2UrlResponseDtoSchema.ts";
 export type { GetUploadUrlDtoSchema } from "./getUploadUrlDtoSchema.ts";
-export type { InviteByIDPathParamsSchema, InviteByID200Schema, InviteByID400Schema, InviteByID404Schema, InviteByID500Schema, InviteByIDQueryResponseSchema } from "./inviteByIDSchema.ts";
+export type { InviteByIDPathParamsSchema, InviteByIDQueryParamsSchema, InviteByID200Schema, InviteByID400Schema, InviteByID404Schema, InviteByID500Schema, InviteByIDQueryResponseSchema } from "./inviteByIDSchema.ts";
 export type { InviteCreatePathParamsSchema, InviteCreate201Schema, InviteCreate400Schema, InviteCreate409Schema, InviteCreate500Schema, InviteCreateMutationRequestSchema, InviteCreateMutationResponseSchema } from "./inviteCreateSchema.ts";
 export type { InviteDeletePathParamsSchema, InviteDelete200Schema, InviteDelete400Schema, InviteDelete404Schema, InviteDelete500Schema, InviteDeleteMutationResponseSchema } from "./inviteDeleteSchema.ts";
 export type { InviteEntitySchema } from "./inviteEntitySchema.ts";
@@ -258,6 +258,7 @@ export { forgetPasswordDtoSchema } from "./forgetPasswordDtoSchema.ts";
 export { getOAuth2UrlResponseDtoSchema } from "./getOAuth2UrlResponseDtoSchema.ts";
 export { getUploadUrlDtoSchema } from "./getUploadUrlDtoSchema.ts";
 export { inviteByIDPathParamsSchema } from "./inviteByIDSchema.ts";
+export { inviteByIDQueryParamsSchema } from "./inviteByIDSchema.ts";
 export { inviteByID200Schema } from "./inviteByIDSchema.ts";
 export { inviteByID400Schema } from "./inviteByIDSchema.ts";
 export { inviteByID404Schema } from "./inviteByIDSchema.ts";

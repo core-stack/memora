@@ -27,7 +27,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum([ "development", "production", "test" ]).default("development"),
 
   // INVITE
-  DEFAULT_INVITE_EXPIRES: z.coerce.number().optional().default(60 * 60 * 24), // 1 day
+  DEFAULT_INVITE_EXPIRES: z.coerce.number().optional().default(60 ), // 1 day
 
   // AUTH
   REQUIRE_EMAIL_VERIFICATION: z.coerce.boolean().optional().default(false),

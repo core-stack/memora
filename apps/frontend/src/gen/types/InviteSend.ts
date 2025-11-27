@@ -16,7 +16,7 @@ export type InviteSendPathParams = {
 /**
  * @description Emails sent
 */
-export type InviteSend200 = SendInviteResponseDto[];
+export type InviteSend200 = SendInviteResponseDto;
 
 export type InviteSendMutationRequest = SendInviteDto;
 

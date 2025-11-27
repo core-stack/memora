@@ -41,7 +41,7 @@ export type { ForgetPasswordDto } from "./ForgetPasswordDto.ts";
 export type { GetOAuth2UrlResponseDto } from "./GetOAuth2UrlResponseDto.ts";
 export type { GetUploadUrlDto } from "./GetUploadUrlDto.ts";
 export type { InvitePathParams, InviteQueryParams, Invite200, Invite400, Invite500, InviteQueryResponse, InviteQuery } from "./Invite.ts";
-export type { InviteByIDPathParams, InviteByID200, InviteByID400, InviteByID404, InviteByID500, InviteByIDQueryResponse, InviteByIDQuery } from "./InviteByID.ts";
+export type { InviteByIDPathParams, InviteByIDQueryParams, InviteByID200, InviteByID400, InviteByID404, InviteByID500, InviteByIDQueryResponse, InviteByIDQuery } from "./InviteByID.ts";
 export type { InviteCreatePathParams, InviteCreate201, InviteCreate400, InviteCreate409, InviteCreate500, InviteCreateMutationRequest, InviteCreateMutationResponse, InviteCreateMutation } from "./InviteCreate.ts";
 export type { InviteDeletePathParams, InviteDelete200, InviteDelete400, InviteDelete404, InviteDelete500, InviteDeleteMutationResponse, InviteDeleteMutation } from "./InviteDelete.ts";
 export type { InviteEntity } from "./InviteEntity.ts";

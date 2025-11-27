@@ -41,23 +41,33 @@ export class InviteService extends Service<InviteEntity> {
     const reSendedInvites: InviteEntity[] = [];
 
     // verify if exists member with email
-    const alreadyInTenant = await this.memberService.findByUserEmail(tenantId, invites.getEmails(), manager);
-
+    const alreadyInTenant = await this.memberService.findByUserEmail(
+      tenantId,
+      invites.getEmails(),
+      { relations: [ "user" ] },
+      manager
+    );
     // remove already in tenant
     invites.emails = invites.emails.filter(
       ({ email }) => !alreadyInTenant.some(member => member.user?.email === email)
     );
 
     // verify if exists invite with email
-    const invitesWithEmail = await this.repository(manager).find({
+    const invitesWithEmail = (await this.repository(manager).find({
       where: { email: In(invites.getEmails()), tenantId }
-    });
+    }));
 
     const rolesCache: RoleEntity[] = [];
     //#region Re send invites
     if (invitesWithEmail && invitesWithEmail.length > 0) {
       for (const invite of invitesWithEmail) {
         const inviteWithEmail = invites.emails.find(email => email.email === invite.email);
+        if (alreadyInTenant.find(member => member.user?.email === invite.email)) {
+          console.log("here");
+          
+          await this.repository(manager).remove(invite);
+          continue;
+        }
         if (!inviteWithEmail) continue;
         if (!rolesCache.find(role => role.id === inviteWithEmail.roleId)) {
           const role = await this.roleService.findUnique({

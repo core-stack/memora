@@ -14,6 +14,12 @@ export const inviteByIDPathParamsSchema = z.object({
 
 export type InviteByIDPathParamsSchema = z.infer<typeof inviteByIDPathParamsSchema>
 
+export const inviteByIDQueryParamsSchema = z.object({
+    "relations": z.optional(z.array(z.string()).describe("Relations. Allowed fields: role, tenant, creator"))
+    }).optional()
+
+export type InviteByIDQueryParamsSchema = z.infer<typeof inviteByIDQueryParamsSchema>
+
 /**
  * @description Record found successfully
  */

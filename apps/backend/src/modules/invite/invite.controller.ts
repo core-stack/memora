@@ -7,14 +7,17 @@ import { SendInviteDto, SendInviteResponseDto } from "./dto/send-invites.dto";
 import { InviteService } from "./invite.service";
 
 @Controller("tenant/:tenantId/invite")
-export class InviteController extends BaseController({ entity: InviteEntity }) {
+export class InviteController extends BaseController({
+  entity: InviteEntity,
+  allowedRelations: [ "role", "tenant", "creator" ]
+}) {
   constructor(public service: InviteService) {
     super(service);
   }
 
   @HttpPost("send")
   @ApiResponses([
-    { status: 200, type: SendInviteResponseDto, isArray: true, description: "Emails sent" }
+    { status: 200, type: SendInviteResponseDto, description: "Emails sent" }
   ])
   async send(@HttpBody(SendInviteDto) invites: SendInviteDto): Promise<SendInviteResponseDto> {
     return this.service.send(invites);
