@@ -31,11 +31,12 @@ export function ConfigureLLDialog({ preset, tenantId }: ConfigureLLDialogProps) 
     resolver: zodResolver(createLLMDtoSchema),
     defaultValues: {
       ...preset.defaults,
+      key: preset.key,
       type: preset.config?.type,
       model: preset.config?.model
     }
   });
-  
+
   const invalidate = useApiInvalidate();
   const { mutate } = useApiLLMCreate();
   const isLoading = form.formState.isSubmitting;

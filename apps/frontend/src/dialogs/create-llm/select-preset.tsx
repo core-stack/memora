@@ -1,6 +1,6 @@
 "use client"
 
-import { Search } from "lucide-react";
+import { Search, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { DialogType } from "../";
 
 import type { LLMPreset } from "@/gen";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export interface SelectPresetDialogProps {
   onSelectPreset?: (preset: LLMPreset) => void;
@@ -27,14 +28,14 @@ export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true, te
   const [searchQuery, setSearchQuery] = useState("");
   const { openDialog, closeDialog } = useDialog();
   const { data: presets = [] } = useApiLLMGetPresets({ tenantId });
-  
+
   const filteredPresets = presets.filter(
     (preset) =>
       preset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       preset.description.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
-  const handleSelectPreset = (preset: LLMPreset) => {    
+  const handleSelectPreset = (preset: LLMPreset) => {
     onSelectPreset?.(preset);
     setSearchQuery("")
     if (openConfigDialog) openDialog({ type: DialogType.CONFIGURE_LLM, props: { preset, tenantId }});
@@ -67,15 +68,12 @@ export function SelectPresetDialog({ onSelectPreset, openConfigDialog = true, te
                 onClick={() => handleSelectPreset(preset)}
                 className="w-full flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-accent hover:border-accent-foreground/20 transition-colors text-left"
               >
-                <div className="relative h-12 w-12 shrink-0 rounded-lg flex items-center justify-center overflow-hidden">
-                  <img
-                    src={preset.iconPath || "/placeholder.svg"}
-                    alt={preset.name}
-                    width={48}
-                    height={48}
-                    className="object-cover"
-                  />
-                </div>
+                  <Avatar>
+                    <AvatarImage src={preset.iconPath} alt={preset.name} />
+                    <AvatarFallback>
+                      <Sparkles className="h-6 w-6" />
+                    </AvatarFallback>
+                  </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-foreground">{preset.name}</h3>
