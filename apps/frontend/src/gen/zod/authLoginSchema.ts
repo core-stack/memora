@@ -3,17 +3,36 @@
 * Do not edit manually.
 */
 
+import { errorResponseSchema } from "./errorResponseSchema.ts";
 import { loginDtoSchema } from "./loginDtoSchema.ts";
+import { loginResponseDtoSchema } from "./loginResponseDtoSchema.ts";
 import { z } from "zod/v4";
 
-export const authLogin201Schema = z.any()
+/**
+ * @description The login response
+ */
+export const authLogin200Schema = loginResponseDtoSchema
 
-export type AuthLogin201Schema = z.infer<typeof authLogin201Schema>
+export type AuthLogin200Schema = z.infer<typeof authLogin200Schema>
+
+/**
+ * @description The login error response
+ */
+export const authLogin400Schema = errorResponseSchema
+
+export type AuthLogin400Schema = z.infer<typeof authLogin400Schema>
+
+/**
+ * @description Internal server error
+ */
+export const authLogin500Schema = errorResponseSchema
+
+export type AuthLogin500Schema = z.infer<typeof authLogin500Schema>
 
 export const authLoginMutationRequestSchema = loginDtoSchema
 
 export type AuthLoginMutationRequestSchema = z.infer<typeof authLoginMutationRequestSchema>
 
-export const authLoginMutationResponseSchema = authLogin201Schema
+export const authLoginMutationResponseSchema = authLogin200Schema
 
 export type AuthLoginMutationResponseSchema = z.infer<typeof authLoginMutationResponseSchema>

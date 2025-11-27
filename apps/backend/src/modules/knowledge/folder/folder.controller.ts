@@ -11,8 +11,8 @@ export class FolderController extends BaseController({
   entity: FolderEntity,
   createDto: CreateFolderDto,
   updateDto: UpdateFolderDto,
-  allowedFilters: [ "parentId", "name", "tenantId", "root" ]
-  // allowedRelations: [ 'children', 'knowledge', 'parent', 'sources' ]
+  allowedFilters: [ "parentId", "name", "tenantId", "root", "knowledgeId" ],
+  allowedRelations: [ "knowledge", "children", "parent", "sources" ]
 }) {
   constructor(folderService: FolderService) {
     super(folderService);

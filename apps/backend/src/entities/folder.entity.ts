@@ -1,13 +1,13 @@
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
-} from 'typeorm';
+} from "typeorm";
 
-import { KnowledgeId, TenantId } from '@/shared/controller/decorators';
+import { KnowledgeId, TenantId } from "@/shared/controller/decorators";
 
-import { Field } from '../shared/model';
-import { KnowledgeEntity } from './knowledge.entity';
-import { SourceEntity } from './source.entity';
+import { Field } from "../shared/model";
+import { KnowledgeEntity } from "./knowledge.entity";
+import { SourceEntity } from "./source.entity";
 
 @Entity("folders")
 export class FolderEntity {

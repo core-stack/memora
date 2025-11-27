@@ -1,19 +1,19 @@
-import { env } from '@/env';
-import { ErrorResponse } from '@/shared/controller';
-import { ApiResponses, HttpGet, HttpPost } from '@/shared/controller/decorators';
-import { HttpBody } from '@/shared/controller/decorators/body';
-import { Public } from '@/shared/controller/decorators/public';
-import { Controller, Logger, Param, Query, Res } from '@nestjs/common';
-import { ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ErrorResponse } from "@/shared/controller";
+import { ApiResponses, HttpGet, HttpPost } from "@/shared/controller/decorators";
+import { HttpBody } from "@/shared/controller/decorators/body";
+import { Public } from "@/shared/controller/decorators/public";
+import { Controller, Logger, Param, Query, Res } from "@nestjs/common";
+import { ApiParam, ApiQuery } from "@nestjs/swagger";
 
-import { AuthService } from './auth.service';
-import { ActiveAccountDto } from './dto/active-account.dto';
-import { CreateAccountDto } from './dto/create-account.dto';
-import { ForgetPasswordDto } from './dto/forget-password.dto';
-import { GetOAuth2UrlResponseDto } from './dto/get-oauth2-url.dto';
-import { LoginDto, LoginResponseDto } from './dto/login.dto';
+import { AuthService } from "./auth.service";
+import { ActiveAccountDto } from "./dto/active-account.dto";
+import { CreateAccountDto } from "./dto/create-account.dto";
+import { ForgetPasswordDto } from "./dto/forget-password.dto";
+import { GetOAuth2UrlResponseDto } from "./dto/get-oauth2-url.dto";
+import { LoginDto, LoginResponseDto } from "./dto/login.dto";
 
 import type { Response } from "express";
+
 @Public("login", "logout", "createAccount", "activeAccount", "forgetPassword")
 @Controller("auth")
 export class AuthController {
@@ -26,26 +26,51 @@ export class AuthController {
     return this.authService.getActiveProviders();
   }
 
+  @ApiResponses([
+    { status: 200, type: LoginResponseDto, description: "The login response" },
+    { status: 400, type: ErrorResponse, description: "The login error response" },
+    { status: 500, type: ErrorResponse, description: "Internal server error" }
+  ])
   @HttpPost("login")
   async login(@HttpBody(LoginDto) body: LoginDto): Promise<LoginResponseDto> {
     return await this.authService.login(body);
   }
 
+  @ApiResponses([
+    { status: 204, description: "The logout response" },
+    { status: 400, type: ErrorResponse, description: "The logout error response" },
+    { status: 500, type: ErrorResponse, description: "Internal server error" }
+  ])
   @HttpPost("logout")
   async logout(): Promise<void> {
     return this.authService.logout();
   }
 
+  @ApiResponses([
+    { status: 204, description: "The create account response" },
+    { status: 400, type: ErrorResponse, description: "The create account error response" },
+    { status: 500, type: ErrorResponse, description: "Internal server error" }
+  ])
   @HttpPost("create-account")
   async createAccount(@HttpBody(CreateAccountDto) body: CreateAccountDto): Promise<void>  {
     return this.authService.createAccount(body);
   }
 
-  @HttpPost("active-account", { ignore: !env.REQUIRE_EMAIL_VERIFICATION })
+  @ApiResponses([
+    { status: 204, description: "The active account response" },
+    { status: 400, type: ErrorResponse, description: "The active account error response" },
+    { status: 500, type: ErrorResponse, description: "Internal server error" }
+  ])
+  @HttpPost("active-account")
   async activeAccount(@HttpBody(ActiveAccountDto) body: ActiveAccountDto): Promise<void>  {
     return this.authService.activeAccount(body);
   }
 
+  @ApiResponses([
+    { status: 204, description: "The forget password response" },
+    { status: 400, type: ErrorResponse, description: "The forget password error response" },
+    { status: 500, type: ErrorResponse, description: "Internal server error" }
+  ])
   @HttpPost("forget-password")
   async forgetPassword(@HttpBody(ForgetPasswordDto) body: ForgetPasswordDto): Promise<void>  {
     return this.authService.forgetPassword(body);

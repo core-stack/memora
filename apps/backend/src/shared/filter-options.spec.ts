@@ -1,6 +1,6 @@
-import { Request } from 'express';
+import { Request } from "express";
 
-import { FilterOptions } from './filter-options';
+import { FilterOptions } from "./filter-options";
 
 class TestUser {
   id: string;

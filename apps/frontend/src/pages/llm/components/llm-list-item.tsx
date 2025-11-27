@@ -36,7 +36,7 @@ export function LLMListItem({ llm, preset, tenantId }: LLMListItemProps) {
         confirm: {
           text: "Yes",
           action: () => {
-            mutate({ id: llm.id, tenantId }, { 
+            mutate({ id: llm.id, tenantId }, {
               onSuccess: () => {
                 toast({ title: "Delete LLM", description: "The LLM has been deleted." })
                 invalidate(LLMQueryKeyFn({ tenantId }));
@@ -47,7 +47,7 @@ export function LLMListItem({ llm, preset, tenantId }: LLMListItemProps) {
       }
     });
   }
-  
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -60,11 +60,11 @@ export function LLMListItem({ llm, preset, tenantId }: LLMListItemProps) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <h4 className="font-medium text-foreground truncate">{llm.name}</h4>
-                <Badge 
-                  variant={preset?.config.type === "TEXT" ? "default" : "secondary"}
-                  className={cn("text-xs", preset?.config.type === "TEXT" && "text-foreground")}
+                <Badge
+                  variant={preset?.config?.type === "TEXT" ? "default" : "secondary"}
+                  className={cn("text-xs", preset?.config?.type === "TEXT" && "text-foreground")}
                 >
-                  {preset?.config.type}
+                  {preset?.config?.type}
                 </Badge>
               </div>
               <div className='flex items-center gap-2 text-sm'>

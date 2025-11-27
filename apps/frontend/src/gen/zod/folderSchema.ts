@@ -15,13 +15,15 @@ export const folderPathParamsSchema = z.object({
 export type FolderPathParamsSchema = z.infer<typeof folderPathParamsSchema>
 
 export const folderQueryParamsSchema = z.object({
-    "limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
+    "relations": z.optional(z.array(z.string()).describe("Relations. Allowed fields: knowledge, children, parent, sources")),
+"limit": z.optional(z.coerce.number().describe("Maximum number of records to return")),
 "offset": z.optional(z.coerce.number().describe("Number of records to skip")),
-"sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: parentId, name, tenantId, root")),
+"sort": z.optional(z.array(z.string()).describe("Sort order. Use \"-\" to DESC. Allowed fields: parentId, name, tenantId, root, knowledgeId")),
 "filter[parentId]": z.optional(z.string().describe("Filter by parentId")),
 "filter[name]": z.optional(z.string().describe("Filter by name")),
 "filter[tenantId]": z.optional(z.string().describe("Filter by tenantId")),
-"filter[root]": z.optional(z.string().describe("Filter by root"))
+"filter[root]": z.optional(z.string().describe("Filter by root")),
+"filter[knowledgeId]": z.optional(z.string().describe("Filter by knowledgeId"))
     }).optional()
 
 export type FolderQueryParamsSchema = z.infer<typeof folderQueryParamsSchema>

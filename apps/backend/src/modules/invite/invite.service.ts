@@ -64,7 +64,7 @@ export class InviteService extends Service<InviteEntity> {
         const inviteWithEmail = invites.emails.find(email => email.email === invite.email);
         if (alreadyInTenant.find(member => member.user?.email === invite.email)) {
           console.log("here");
-          
+
           await this.repository(manager).remove(invite);
           continue;
         }

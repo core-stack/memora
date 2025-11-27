@@ -1,13 +1,13 @@
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
-} from 'typeorm';
+} from "typeorm";
 
-import { KnowledgeId } from '@/shared/controller/decorators';
+import { KnowledgeId } from "@/shared/controller/decorators";
 
-import { Field } from '../shared/model';
-import { KnowledgeEntity } from './knowledge.entity';
-import { MessageEntity } from './message.entity';
+import { Field } from "../shared/model";
+import { KnowledgeEntity } from "./knowledge.entity";
+import { MessageEntity } from "./message.entity";
 
 @Entity("chats")
 export class ChatEntity {

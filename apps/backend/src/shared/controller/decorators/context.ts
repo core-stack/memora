@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import "reflect-metadata";
 
 export const CONTEXT_FIELDS_KEY = Symbol("context:fields");
 
@@ -10,9 +10,9 @@ export interface ContextFieldOptions {
 export function ContextField(options: ContextFieldOptions): PropertyDecorator {
   return (target, propertyKey) => {
     const constructor = target.constructor;
-    
+
     const existing = Reflect.getMetadata(CONTEXT_FIELDS_KEY, constructor) || [];
-    
+
     if (!existing.find((item: any) => item.propertyKey === propertyKey)) {
       existing.push({ propertyKey, ...options });
       Reflect.defineMetadata(CONTEXT_FIELDS_KEY, existing, constructor);

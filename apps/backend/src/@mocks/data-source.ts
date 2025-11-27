@@ -18,7 +18,7 @@ export function createDataSourceMock(repo?: any, manager?: any) {
       commitTransaction: jest.fn(),
       rollbackTransaction: jest.fn(),
       release: jest.fn(),
-      manager,
-    })),
+      manager
+    }))
   } as unknown as jest.Mocked<DataSource>;
 }

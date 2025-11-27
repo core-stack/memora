@@ -14,25 +14,25 @@ import { z } from "zod/v4";
 
 export const sourceEntitySchema = z.object({
     "createdAt": z.string().datetime().describe("The timestamp when the source was created"),
-"description": z.optional(z.string().describe("A brief description of the source")),
+"description": z.string().describe("A brief description of the source").nullish(),
 get "folder"(){
                 return folderEntitySchema.optional()
               },
-"folderId": z.optional(z.uuid().describe("The ID of the folder this source belongs to")),
+"folderId": z.uuid().describe("The ID of the folder this source belongs to").nullish(),
 "id": z.uuid().describe("The unique identifier of the source"),
-"indexError": z.optional(z.string().describe("The error message if indexing fails")),
+"indexError": z.string().describe("The error message if indexing fails").nullish(),
 "indexStatus": z.enum(["PENDING", "INDEXING", "INDEXED", "ERROR"]).describe("The indexing status of the source"),
 "key": z.string().describe("The key of the source file in the storage"),
 get "knowledge"(){
                 return knowledgeEntitySchema.optional()
               },
 "knowledgeId": z.uuid().describe("The ID of the knowledge base this source belongs to"),
-"memoryId": z.optional(z.uuid().describe("The ID of the memory associated with this source")),
+"memoryId": z.uuid().describe("The ID of the memory associated with this source").nullish(),
 get "metadata"(){
                 return z.union([sourceDocMetadataSchema, sourceImageMetadataSchema, sourceVideoMetadataSchema, sourceAudioMetadataSchema]).describe("The metadata of the source")
               },
 "name": z.string().describe("The name of the source"),
-"originalName": z.optional(z.string().describe("The original name of the file")),
+"originalName": z.string().describe("The original name of the file").nullish(),
 "path": z.string().describe("The path of the source file"),
 "sourceType": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]).describe("The type of the source"),
 get "tenant"(){

@@ -13,15 +13,15 @@ export function ActivateAccountPage() {
   const { token } = useParams<{ token?: string }>();
   const errorMessage = useRef<string | null>(token ? null : "Invalid activation code");
   const { mutate: activeAccount } = useApiAuthActiveAccount();
-  
+
   useEffect(() => {
     if (!errorMessage.current && token) {
       activeAccount({ data: { token } }, {
         onSuccess: ()  => setIsLoading(false),
         onError: (error) => {
           setIsLoading(false);
-          errorMessage.current = error.message ?? "Invalid activation code"
-        }, 
+          errorMessage.current = error.response?.data.error ?? "Invalid activation code"
+        },
       })
     }
   }, [activeAccount, token]);
@@ -33,7 +33,6 @@ export function ActivateAccountPage() {
       else return "Account Activated!";
     }
   }
-  
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-linear-to-b from-background/50 to-background">

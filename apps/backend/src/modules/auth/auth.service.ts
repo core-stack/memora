@@ -183,11 +183,11 @@ export class AuthService extends GenericService {
       manager
     );
 
-    if (!user) throw new NotFoundException("Email or password invalid");
-    if (!user.password) throw new NotFoundException("Email or password invalid");
+    if (!user) throw new BadRequestException("Email or password invalid");
+    if (!user.password) throw new BadRequestException("Email or password invalid");
 
     const valid = await user.comparePassword(data.password);
-    if (!valid) throw new NotFoundException("Email or password invalid");
+    if (!valid) throw new BadRequestException("Email or password invalid");
 
     const { token } = await this.authManager.createSessionAndTokens(user);
 

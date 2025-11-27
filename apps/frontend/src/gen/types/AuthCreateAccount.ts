@@ -4,15 +4,29 @@
 */
 
 import type { CreateAccountDto } from "./CreateAccountDto.ts";
+import type { ErrorResponse } from "./ErrorResponse.ts";
 
-export type AuthCreateAccount201 = any;
+/**
+ * @description The create account response
+*/
+export type AuthCreateAccount204 = any;
+
+/**
+ * @description The create account error response
+*/
+export type AuthCreateAccount400 = ErrorResponse;
+
+/**
+ * @description Internal server error
+*/
+export type AuthCreateAccount500 = ErrorResponse;
 
 export type AuthCreateAccountMutationRequest = CreateAccountDto;
 
-export type AuthCreateAccountMutationResponse = AuthCreateAccount201;
+export type AuthCreateAccountMutationResponse = AuthCreateAccount204;
 
 export type AuthCreateAccountMutation = {
-    Response: AuthCreateAccount201;
+    Response: AuthCreateAccount204;
     Request: AuthCreateAccountMutationRequest;
-    Errors: any;
+    Errors: AuthCreateAccount400 | AuthCreateAccount500;
 };

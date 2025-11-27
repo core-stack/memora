@@ -3,16 +3,30 @@
 * Do not edit manually.
 */
 
+import type { ErrorResponse } from "./ErrorResponse.ts";
 import type { ForgetPasswordDto } from "./ForgetPasswordDto.ts";
 
-export type AuthForgetPassword201 = any;
+/**
+ * @description The forget password response
+*/
+export type AuthForgetPassword204 = any;
+
+/**
+ * @description The forget password error response
+*/
+export type AuthForgetPassword400 = ErrorResponse;
+
+/**
+ * @description Internal server error
+*/
+export type AuthForgetPassword500 = ErrorResponse;
 
 export type AuthForgetPasswordMutationRequest = ForgetPasswordDto;
 
-export type AuthForgetPasswordMutationResponse = AuthForgetPassword201;
+export type AuthForgetPasswordMutationResponse = AuthForgetPassword204;
 
 export type AuthForgetPasswordMutation = {
-    Response: AuthForgetPassword201;
+    Response: AuthForgetPassword204;
     Request: AuthForgetPasswordMutationRequest;
-    Errors: any;
+    Errors: AuthForgetPassword400 | AuthForgetPassword500;
 };

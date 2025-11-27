@@ -15,6 +15,12 @@ export const folderByIDPathParamsSchema = z.object({
 
 export type FolderByIDPathParamsSchema = z.infer<typeof folderByIDPathParamsSchema>
 
+export const folderByIDQueryParamsSchema = z.object({
+    "relations": z.optional(z.array(z.string()).describe("Relations. Allowed fields: knowledge, children, parent, sources"))
+    }).optional()
+
+export type FolderByIDQueryParamsSchema = z.infer<typeof folderByIDQueryParamsSchema>
+
 /**
  * @description Record found successfully
  */

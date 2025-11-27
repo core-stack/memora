@@ -3,17 +3,35 @@
 * Do not edit manually.
 */
 
+import { errorResponseSchema } from "./errorResponseSchema.ts";
 import { forgetPasswordDtoSchema } from "./forgetPasswordDtoSchema.ts";
 import { z } from "zod/v4";
 
-export const authForgetPassword201Schema = z.any()
+/**
+ * @description The forget password response
+ */
+export const authForgetPassword204Schema = z.any()
 
-export type AuthForgetPassword201Schema = z.infer<typeof authForgetPassword201Schema>
+export type AuthForgetPassword204Schema = z.infer<typeof authForgetPassword204Schema>
+
+/**
+ * @description The forget password error response
+ */
+export const authForgetPassword400Schema = errorResponseSchema
+
+export type AuthForgetPassword400Schema = z.infer<typeof authForgetPassword400Schema>
+
+/**
+ * @description Internal server error
+ */
+export const authForgetPassword500Schema = errorResponseSchema
+
+export type AuthForgetPassword500Schema = z.infer<typeof authForgetPassword500Schema>
 
 export const authForgetPasswordMutationRequestSchema = forgetPasswordDtoSchema
 
 export type AuthForgetPasswordMutationRequestSchema = z.infer<typeof authForgetPasswordMutationRequestSchema>
 
-export const authForgetPasswordMutationResponseSchema = authForgetPassword201Schema
+export const authForgetPasswordMutationResponseSchema = authForgetPassword204Schema
 
 export type AuthForgetPasswordMutationResponseSchema = z.infer<typeof authForgetPasswordMutationResponseSchema>

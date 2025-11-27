@@ -10,13 +10,13 @@ import { sourceVideoMetadataSchema } from "./sourceVideoMetadataSchema.ts";
 import { z } from "zod/v4";
 
 export const createSourceDtoSchema = z.object({
-    "folderId": z.optional(z.uuid().describe("The ID of the folder this source belongs to")),
+    "folderId": z.uuid().describe("The ID of the folder this source belongs to").nullish(),
 "key": z.string().describe("The key of the source file in the storage"),
 get "metadata"(){
                 return z.union([sourceDocMetadataSchema, sourceImageMetadataSchema, sourceVideoMetadataSchema, sourceAudioMetadataSchema]).describe("The metadata of the source")
               },
 "name": z.string().describe("The name of the source"),
-"originalName": z.optional(z.string().describe("The original name of the file")),
+"originalName": z.string().describe("The original name of the file").nullish(),
 "sourceType": z.enum(["TEXT", "DOC", "LINK", "VIDEO", "AUDIO", "IMAGE"]).describe("The type of the source")
     })
 

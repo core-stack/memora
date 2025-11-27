@@ -3,12 +3,30 @@
 * Do not edit manually.
 */
 
+import { errorResponseSchema } from "./errorResponseSchema.ts";
 import { z } from "zod/v4";
 
-export const authLogout201Schema = z.any()
+/**
+ * @description The logout response
+ */
+export const authLogout204Schema = z.any()
 
-export type AuthLogout201Schema = z.infer<typeof authLogout201Schema>
+export type AuthLogout204Schema = z.infer<typeof authLogout204Schema>
 
-export const authLogoutMutationResponseSchema = authLogout201Schema
+/**
+ * @description The logout error response
+ */
+export const authLogout400Schema = errorResponseSchema
+
+export type AuthLogout400Schema = z.infer<typeof authLogout400Schema>
+
+/**
+ * @description Internal server error
+ */
+export const authLogout500Schema = errorResponseSchema
+
+export type AuthLogout500Schema = z.infer<typeof authLogout500Schema>
+
+export const authLogoutMutationResponseSchema = authLogout204Schema
 
 export type AuthLogoutMutationResponseSchema = z.infer<typeof authLogoutMutationResponseSchema>

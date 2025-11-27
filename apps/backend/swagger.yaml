@@ -198,6 +198,7 @@ components:
         folderId:
           description: The ID of the folder this source belongs to
           format: uuid
+          nullable: true
           type: string
         key:
           description: The key of the source file in the storage
@@ -214,6 +215,7 @@ components:
           type: string
         originalName:
           description: The original name of the file
+          nullable: true
           type: string
         sourceType:
           description: The type of the source
@@ -1015,12 +1017,14 @@ components:
           type: string
         description:
           description: A brief description of the source
+          nullable: true
           type: string
         folder:
           $ref: "#/components/schemas/FolderEntity"
         folderId:
           description: The ID of the folder this source belongs to
           format: uuid
+          nullable: true
           type: string
         id:
           description: The unique identifier of the source
@@ -1028,6 +1032,7 @@ components:
           type: string
         indexError:
           description: The error message if indexing fails
+          nullable: true
           type: string
         indexStatus:
           description: The indexing status of the source
@@ -1049,6 +1054,7 @@ components:
         memoryId:
           description: The ID of the memory associated with this source
           format: uuid
+          nullable: true
           type: string
         metadata:
           description: The metadata of the source
@@ -1062,6 +1068,7 @@ components:
           type: string
         originalName:
           description: The original name of the file
+          nullable: true
           type: string
         path:
           description: The path of the source file
@@ -1638,6 +1645,33 @@ paths:
         - access-token: []
       tags:
         - Account
+  /api/auth/active-account:
+    post:
+      operationId: AuthController_activeAccount
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActiveAccountDto"
+        required: true
+      responses:
+        "204":
+          description: The active account response
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: The active account error response
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Internal server error
+      tags:
+        - Auth
   /api/auth/create-account:
     post:
       operationId: AuthController_createAccount
@@ -1649,8 +1683,20 @@ paths:
               $ref: "#/components/schemas/CreateAccountDto"
         required: true
       responses:
-        "201":
-          description: ""
+        "204":
+          description: The create account response
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: The create account error response
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Internal server error
       tags:
         - Auth
   /api/auth/forget-password:
@@ -1664,8 +1710,20 @@ paths:
               $ref: "#/components/schemas/ForgetPasswordDto"
         required: true
       responses:
-        "201":
-          description: ""
+        "204":
+          description: The forget password response
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: The forget password error response
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Internal server error
       tags:
         - Auth
   /api/auth/login:
@@ -1679,8 +1737,24 @@ paths:
               $ref: "#/components/schemas/LoginDto"
         required: true
       responses:
-        "201":
-          description: ""
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponseDto"
+          description: The login response
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: The login error response
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Internal server error
       tags:
         - Auth
   /api/auth/logout:
@@ -1688,8 +1762,20 @@ paths:
       operationId: AuthController_logout
       parameters: []
       responses:
-        "201":
-          description: ""
+        "204":
+          description: The logout response
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: The logout error response
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Internal server error
       tags:
         - Auth
   /api/auth/providers:
@@ -3054,6 +3140,15 @@ paths:
     get:
       operationId: FolderController_findMany
       parameters:
+        - description: "Relations. Allowed fields: knowledge, children, parent, sources"
+          in: query
+          name: relations
+          required: false
+          schema:
+            example: knowledge,children
+            items:
+              type: string
+            type: array
         - description: Maximum number of records to return
           in: query
           name: limit
@@ -3069,7 +3164,7 @@ paths:
             example: 0
             type: number
         - description: 'Sort order. Use "-" to DESC. Allowed fields: parentId, name,
-            tenantId, root'
+            tenantId, root, knowledgeId'
           in: query
           name: sort
           required: false
@@ -3098,6 +3193,12 @@ paths:
         - description: Filter by root
           in: query
           name: filter[root]
+          required: false
+          schema:
+            type: string
+        - description: Filter by knowledgeId
+          in: query
+          name: filter[knowledgeId]
           required: false
           schema:
             type: string
@@ -3240,6 +3341,15 @@ paths:
           required: true
           schema:
             type: string
+        - description: "Relations. Allowed fields: knowledge, children, parent, sources"
+          in: query
+          name: relations
+          required: false
+          schema:
+            example: knowledge,children
+            items:
+              type: string
+            type: array
         - in: path
           name: tenantId
           required: true

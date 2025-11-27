@@ -4,7 +4,7 @@
 */
 
 import fetch from "@kubb/plugin-client/clients/axios";
-import type { AuthLoginMutationRequest, AuthLoginMutationResponse } from "../types/AuthLogin.ts";
+import type { AuthLoginMutationRequest, AuthLoginMutationResponse, AuthLogin400, AuthLogin500 } from "../types/AuthLogin.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import { authLoginMutationResponseSchema, authLoginMutationRequestSchema } from "../zod/authLoginSchema.ts";
@@ -22,13 +22,13 @@ export async function authLogin({ data }: { data: AuthLoginMutationRequest }, co
   
   const requestData = authLoginMutationRequestSchema.parse(data)  
   
-  const res = await request<AuthLoginMutationResponse, ResponseErrorConfig<Error>, AuthLoginMutationRequest>({ method : "POST", url : `/api/auth/login`, baseURL : "/", data : requestData, ... requestConfig })  
+  const res = await request<AuthLoginMutationResponse, ResponseErrorConfig<AuthLogin400 | AuthLogin500>, AuthLoginMutationRequest>({ method : "POST", url : `/api/auth/login`, baseURL : "/", data : requestData, ... requestConfig })  
   return authLoginMutationResponseSchema.parse(res.data)
 }
 
 export function authLoginMutationOptions(config: Partial<RequestConfig<AuthLoginMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = authLoginMutationKey()
-  return mutationOptions<AuthLoginMutationResponse, ResponseErrorConfig<Error>, {data: AuthLoginMutationRequest}, typeof mutationKey>({
+  return mutationOptions<AuthLoginMutationResponse, ResponseErrorConfig<AuthLogin400 | AuthLogin500>, {data: AuthLoginMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ data }) => {
       return authLogin({ data }, config)
@@ -41,7 +41,7 @@ export function authLoginMutationOptions(config: Partial<RequestConfig<AuthLogin
  */
 export function useApiAuthLogin<TContext>(options: 
 {
-  mutation?: UseMutationOptions<AuthLoginMutationResponse, ResponseErrorConfig<Error>, {data: AuthLoginMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<AuthLoginMutationResponse, ResponseErrorConfig<AuthLogin400 | AuthLogin500>, {data: AuthLoginMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<AuthLoginMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -49,11 +49,11 @@ export function useApiAuthLogin<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? authLoginMutationKey()
 
-  const baseOptions = authLoginMutationOptions(config) as UseMutationOptions<AuthLoginMutationResponse, ResponseErrorConfig<Error>, {data: AuthLoginMutationRequest}, TContext>
+  const baseOptions = authLoginMutationOptions(config) as UseMutationOptions<AuthLoginMutationResponse, ResponseErrorConfig<AuthLogin400 | AuthLogin500>, {data: AuthLoginMutationRequest}, TContext>
 
-  return useMutation<AuthLoginMutationResponse, ResponseErrorConfig<Error>, {data: AuthLoginMutationRequest}, TContext>({
+  return useMutation<AuthLoginMutationResponse, ResponseErrorConfig<AuthLogin400 | AuthLogin500>, {data: AuthLoginMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<AuthLoginMutationResponse, ResponseErrorConfig<Error>, {data: AuthLoginMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<AuthLoginMutationResponse, ResponseErrorConfig<AuthLogin400 | AuthLogin500>, {data: AuthLoginMutationRequest}, TContext>
 }

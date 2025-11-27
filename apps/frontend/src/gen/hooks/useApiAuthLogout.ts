@@ -4,7 +4,7 @@
 */
 
 import fetch from "@kubb/plugin-client/clients/axios";
-import type { AuthLogoutMutationResponse } from "../types/AuthLogout.ts";
+import type { AuthLogoutMutationResponse, AuthLogout400, AuthLogout500 } from "../types/AuthLogout.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import { authLogoutMutationResponseSchema } from "../zod/authLogoutSchema.ts";
@@ -20,13 +20,13 @@ export type AuthLogoutMutationKey = ReturnType<typeof authLogoutMutationKey>
 export async function authLogout(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<AuthLogoutMutationResponse, ResponseErrorConfig<Error>, unknown>({ method : "POST", url : `/api/auth/logout`, baseURL : "/", ... requestConfig })  
+  const res = await request<AuthLogoutMutationResponse, ResponseErrorConfig<AuthLogout400 | AuthLogout500>, unknown>({ method : "POST", url : `/api/auth/logout`, baseURL : "/", ... requestConfig })  
   return authLogoutMutationResponseSchema.parse(res.data)
 }
 
 export function authLogoutMutationOptions(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const mutationKey = authLogoutMutationKey()
-  return mutationOptions<AuthLogoutMutationResponse, ResponseErrorConfig<Error>, void, typeof mutationKey>({
+  return mutationOptions<AuthLogoutMutationResponse, ResponseErrorConfig<AuthLogout400 | AuthLogout500>, void, typeof mutationKey>({
     mutationKey,
     mutationFn: async() => {
       return authLogout(config)
@@ -39,7 +39,7 @@ export function authLogoutMutationOptions(config: Partial<RequestConfig> & { cli
  */
 export function useApiAuthLogout<TContext>(options: 
 {
-  mutation?: UseMutationOptions<AuthLogoutMutationResponse, ResponseErrorConfig<Error>, void, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<AuthLogoutMutationResponse, ResponseErrorConfig<AuthLogout400 | AuthLogout500>, void, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch },
 }
  = {}) {
@@ -47,11 +47,11 @@ export function useApiAuthLogout<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? authLogoutMutationKey()
 
-  const baseOptions = authLogoutMutationOptions(config) as UseMutationOptions<AuthLogoutMutationResponse, ResponseErrorConfig<Error>, void, TContext>
+  const baseOptions = authLogoutMutationOptions(config) as UseMutationOptions<AuthLogoutMutationResponse, ResponseErrorConfig<AuthLogout400 | AuthLogout500>, void, TContext>
 
-  return useMutation<AuthLogoutMutationResponse, ResponseErrorConfig<Error>, void, TContext>({
+  return useMutation<AuthLogoutMutationResponse, ResponseErrorConfig<AuthLogout400 | AuthLogout500>, void, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<AuthLogoutMutationResponse, ResponseErrorConfig<Error>, void, TContext>
+  }, queryClient) as UseMutationResult<AuthLogoutMutationResponse, ResponseErrorConfig<AuthLogout400 | AuthLogout500>, void, TContext>
 }

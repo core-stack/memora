@@ -1,4 +1,4 @@
-export class GenericResponse<T = {}> {
+export class GenericResponse<T = object> {
   message?: string;
   data?: T;
 

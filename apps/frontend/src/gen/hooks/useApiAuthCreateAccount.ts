@@ -4,7 +4,7 @@
 */
 
 import fetch from "@kubb/plugin-client/clients/axios";
-import type { AuthCreateAccountMutationRequest, AuthCreateAccountMutationResponse } from "../types/AuthCreateAccount.ts";
+import type { AuthCreateAccountMutationRequest, AuthCreateAccountMutationResponse, AuthCreateAccount400, AuthCreateAccount500 } from "../types/AuthCreateAccount.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import { authCreateAccountMutationResponseSchema, authCreateAccountMutationRequestSchema } from "../zod/authCreateAccountSchema.ts";
@@ -22,13 +22,13 @@ export async function authCreateAccount({ data }: { data: AuthCreateAccountMutat
   
   const requestData = authCreateAccountMutationRequestSchema.parse(data)  
   
-  const res = await request<AuthCreateAccountMutationResponse, ResponseErrorConfig<Error>, AuthCreateAccountMutationRequest>({ method : "POST", url : `/api/auth/create-account`, baseURL : "/", data : requestData, ... requestConfig })  
+  const res = await request<AuthCreateAccountMutationResponse, ResponseErrorConfig<AuthCreateAccount400 | AuthCreateAccount500>, AuthCreateAccountMutationRequest>({ method : "POST", url : `/api/auth/create-account`, baseURL : "/", data : requestData, ... requestConfig })  
   return authCreateAccountMutationResponseSchema.parse(res.data)
 }
 
 export function authCreateAccountMutationOptions(config: Partial<RequestConfig<AuthCreateAccountMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = authCreateAccountMutationKey()
-  return mutationOptions<AuthCreateAccountMutationResponse, ResponseErrorConfig<Error>, {data: AuthCreateAccountMutationRequest}, typeof mutationKey>({
+  return mutationOptions<AuthCreateAccountMutationResponse, ResponseErrorConfig<AuthCreateAccount400 | AuthCreateAccount500>, {data: AuthCreateAccountMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ data }) => {
       return authCreateAccount({ data }, config)
@@ -41,7 +41,7 @@ export function authCreateAccountMutationOptions(config: Partial<RequestConfig<A
  */
 export function useApiAuthCreateAccount<TContext>(options: 
 {
-  mutation?: UseMutationOptions<AuthCreateAccountMutationResponse, ResponseErrorConfig<Error>, {data: AuthCreateAccountMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<AuthCreateAccountMutationResponse, ResponseErrorConfig<AuthCreateAccount400 | AuthCreateAccount500>, {data: AuthCreateAccountMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<AuthCreateAccountMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -49,11 +49,11 @@ export function useApiAuthCreateAccount<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? authCreateAccountMutationKey()
 
-  const baseOptions = authCreateAccountMutationOptions(config) as UseMutationOptions<AuthCreateAccountMutationResponse, ResponseErrorConfig<Error>, {data: AuthCreateAccountMutationRequest}, TContext>
+  const baseOptions = authCreateAccountMutationOptions(config) as UseMutationOptions<AuthCreateAccountMutationResponse, ResponseErrorConfig<AuthCreateAccount400 | AuthCreateAccount500>, {data: AuthCreateAccountMutationRequest}, TContext>
 
-  return useMutation<AuthCreateAccountMutationResponse, ResponseErrorConfig<Error>, {data: AuthCreateAccountMutationRequest}, TContext>({
+  return useMutation<AuthCreateAccountMutationResponse, ResponseErrorConfig<AuthCreateAccount400 | AuthCreateAccount500>, {data: AuthCreateAccountMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<AuthCreateAccountMutationResponse, ResponseErrorConfig<Error>, {data: AuthCreateAccountMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<AuthCreateAccountMutationResponse, ResponseErrorConfig<AuthCreateAccount400 | AuthCreateAccount500>, {data: AuthCreateAccountMutationRequest}, TContext>
 }

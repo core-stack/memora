@@ -4,16 +4,34 @@
 */
 
 import { createAccountDtoSchema } from "./createAccountDtoSchema.ts";
+import { errorResponseSchema } from "./errorResponseSchema.ts";
 import { z } from "zod/v4";
 
-export const authCreateAccount201Schema = z.any()
+/**
+ * @description The create account response
+ */
+export const authCreateAccount204Schema = z.any()
 
-export type AuthCreateAccount201Schema = z.infer<typeof authCreateAccount201Schema>
+export type AuthCreateAccount204Schema = z.infer<typeof authCreateAccount204Schema>
+
+/**
+ * @description The create account error response
+ */
+export const authCreateAccount400Schema = errorResponseSchema
+
+export type AuthCreateAccount400Schema = z.infer<typeof authCreateAccount400Schema>
+
+/**
+ * @description Internal server error
+ */
+export const authCreateAccount500Schema = errorResponseSchema
+
+export type AuthCreateAccount500Schema = z.infer<typeof authCreateAccount500Schema>
 
 export const authCreateAccountMutationRequestSchema = createAccountDtoSchema
 
 export type AuthCreateAccountMutationRequestSchema = z.infer<typeof authCreateAccountMutationRequestSchema>
 
-export const authCreateAccountMutationResponseSchema = authCreateAccount201Schema
+export const authCreateAccountMutationResponseSchema = authCreateAccount204Schema
 
 export type AuthCreateAccountMutationResponseSchema = z.infer<typeof authCreateAccountMutationResponseSchema>

@@ -3,16 +3,31 @@
 * Do not edit manually.
 */
 
+import type { ErrorResponse } from "./ErrorResponse.ts";
 import type { LoginDto } from "./LoginDto.ts";
+import type { LoginResponseDto } from "./LoginResponseDto.ts";
 
-export type AuthLogin201 = any;
+/**
+ * @description The login response
+*/
+export type AuthLogin200 = LoginResponseDto;
+
+/**
+ * @description The login error response
+*/
+export type AuthLogin400 = ErrorResponse;
+
+/**
+ * @description Internal server error
+*/
+export type AuthLogin500 = ErrorResponse;
 
 export type AuthLoginMutationRequest = LoginDto;
 
-export type AuthLoginMutationResponse = AuthLogin201;
+export type AuthLoginMutationResponse = AuthLogin200;
 
 export type AuthLoginMutation = {
-    Response: AuthLogin201;
+    Response: AuthLogin200;
     Request: AuthLoginMutationRequest;
-    Errors: any;
+    Errors: AuthLogin400 | AuthLogin500;
 };

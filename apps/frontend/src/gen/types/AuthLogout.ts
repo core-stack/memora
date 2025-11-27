@@ -3,12 +3,26 @@
 * Do not edit manually.
 */
 
+import type { ErrorResponse } from "./ErrorResponse.ts";
 
-export type AuthLogout201 = any;
+/**
+ * @description The logout response
+*/
+export type AuthLogout204 = any;
 
-export type AuthLogoutMutationResponse = AuthLogout201;
+/**
+ * @description The logout error response
+*/
+export type AuthLogout400 = ErrorResponse;
+
+/**
+ * @description Internal server error
+*/
+export type AuthLogout500 = ErrorResponse;
+
+export type AuthLogoutMutationResponse = AuthLogout204;
 
 export type AuthLogoutMutation = {
-    Response: AuthLogout201;
-    Errors: any;
+    Response: AuthLogout204;
+    Errors: AuthLogout400 | AuthLogout500;
 };

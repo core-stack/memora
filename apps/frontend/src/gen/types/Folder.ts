@@ -19,6 +19,11 @@ export type FolderPathParams = {
 
 export type FolderQueryParams = {
     /**
+     * @description Relations. Allowed fields: knowledge, children, parent, sources
+     * @type array | undefined
+    */
+    relations?: string[];
+    /**
      * @description Maximum number of records to return
      * @type number | undefined
     */
@@ -29,7 +34,7 @@ export type FolderQueryParams = {
     */
     offset?: number;
     /**
-     * @description Sort order. Use \"-\" to DESC. Allowed fields: parentId, name, tenantId, root
+     * @description Sort order. Use \"-\" to DESC. Allowed fields: parentId, name, tenantId, root, knowledgeId
      * @type array | undefined
     */
     sort?: string[];
@@ -53,6 +58,11 @@ export type FolderQueryParams = {
      * @type string | undefined
     */
     "filter[root]"?: string;
+    /**
+     * @description Filter by knowledgeId
+     * @type string | undefined
+    */
+    "filter[knowledgeId]"?: string;
 };
 
 /**

@@ -21,6 +21,14 @@ export type FolderByIDPathParams = {
     knowledgeId: string;
 };
 
+export type FolderByIDQueryParams = {
+    /**
+     * @description Relations. Allowed fields: knowledge, children, parent, sources
+     * @type array | undefined
+    */
+    relations?: string[];
+};
+
 /**
  * @description Record found successfully
 */
@@ -46,5 +54,6 @@ export type FolderByIDQueryResponse = FolderByID200;
 export type FolderByIDQuery = {
     Response: FolderByID200;
     PathParams: FolderByIDPathParams;
+    QueryParams: FolderByIDQueryParams;
     Errors: FolderByID400 | FolderByID404 | FolderByID500;
 };

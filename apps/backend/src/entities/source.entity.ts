@@ -9,11 +9,11 @@ import { Field } from "../shared/model";
 import { FolderEntity } from "./folder.entity";
 import { KnowledgeEntity } from "./knowledge.entity";
 import {
-  SourceAudioMetadata, SourceDocMetadata, SourceImageMetadata, SourceType, SourceVideoMetadata
+  SourceAudioMetadata, SourceDocMetadata, SourceImageMetadata, SourceType, SourceVideoMetadata,
+  type SourceMetadata
 } from "./metadata.types";
 import { TenantEntity } from "./tenant.entity";
 
-import type { SourceMetadata } from "./metadata.types";
 export enum IndexStatus {
   PENDING = "PENDING",
   INDEXING = "INDEXING",
@@ -43,13 +43,13 @@ export class SourceEntity {
   @Column({ length: 255 })
   name: string;
 
-  @Field({ type: "string", required: false, description: "A brief description of the source" })
+  @Field({ type: "string", required: false, nullable: true, description: "A brief description of the source" })
   @Column({ type: "text", nullable: true })
-  description?: string;
+  description: string | null;
 
-  @Field({ type: "string", required: false, min: 1, max: 255, description: "The original name of the file" })
-  @Column({ name: "original_name", length: 255, nullable: true })
-  originalName?: string;
+  @Field({ type: "string", required: false, nullable: true, min: 1, max: 255, description: "The original name of the file" })
+  @Column({ name: "original_name", type: "varchar", length: 255, nullable: true })
+  originalName: string | null;
 
   @Field({
     type: "oneOf",
@@ -80,27 +80,27 @@ export class SourceEntity {
   })
   indexStatus: IndexStatus;
 
-  @Field({ type: "string", required: false, description: "The error message if indexing fails" })
+  @Field({ type: "string", required: false, nullable: true, description: "The error message if indexing fails" })
   @Column({ name: "index_error", type: "text", nullable: true })
-  indexError?: string;
+  indexError: string | null;
 
-  @Field({ type: "string", uuid: true, required: false, description: "The ID of the memory associated with this source" })
-  @Column({ name: "memory_id", length: 36, nullable: true })
-  memoryId?: string;
+  @Field({ type: "string", uuid: true, required: false, nullable: true, description: "The ID of the memory associated with this source" })
+  @Column({ name: "memory_id", type: "uuid", nullable: true })
+  memoryId: string | null;
 
   @KnowledgeId()
   @Field({ type: "string", uuid: true, description: "The ID of the knowledge base this source belongs to" })
-  @Column({ name: "knowledge_id", length: 36 })
+  @Column({ name: "knowledge_id", type: "uuid" })
   knowledgeId: string;
 
   @TenantId()
   @Field({ type: "string", uuid: true, description: "The ID of the tenant this source belongs to" })
-  @Column({ name: "tenant_id", length: 36 })
+  @Column({ name: "tenant_id", type: "uuid" })
   tenantId: string;
 
-  @Field({ type: "string", uuid: true, required: false, description: "The ID of the folder this source belongs to" })
-  @Column({ name: "folder_id", length: 36, nullable: true })
-  folderId?: string;
+  @Field({ type: "string", uuid: true, required: false, nullable: true, description: "The ID of the folder this source belongs to" })
+  @Column({ name: "folder_id", type: "uuid", nullable: true })
+  folderId: string | null;
 
   @Field({ type: "class", class: () => KnowledgeEntity, required: false })
   @ManyToOne(() => KnowledgeEntity, (knowledge) => knowledge.sources, { onDelete: "CASCADE" })

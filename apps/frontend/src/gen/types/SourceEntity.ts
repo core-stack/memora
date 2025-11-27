@@ -39,18 +39,18 @@ export type SourceEntity = {
     createdAt: string;
     /**
      * @description A brief description of the source
-     * @type string | undefined
+     * @type string
     */
-    description?: string;
+    description?: string | null;
     /**
      * @type object | undefined
     */
     folder?: FolderEntity;
     /**
      * @description The ID of the folder this source belongs to
-     * @type string | undefined, uuid
+     * @type string, uuid
     */
-    folderId?: string;
+    folderId?: string | null;
     /**
      * @description The unique identifier of the source
      * @type string, uuid
@@ -58,9 +58,9 @@ export type SourceEntity = {
     id: string;
     /**
      * @description The error message if indexing fails
-     * @type string | undefined
+     * @type string
     */
-    indexError?: string;
+    indexError?: string | null;
     /**
      * @description The indexing status of the source
      * @type string
@@ -82,9 +82,9 @@ export type SourceEntity = {
     knowledgeId: string;
     /**
      * @description The ID of the memory associated with this source
-     * @type string | undefined, uuid
+     * @type string, uuid
     */
-    memoryId?: string;
+    memoryId?: string | null;
     /**
      * @description The metadata of the source
     */
@@ -96,9 +96,9 @@ export type SourceEntity = {
     name: string;
     /**
      * @description The original name of the file
-     * @type string | undefined
+     * @type string
     */
-    originalName?: string;
+    originalName?: string | null;
     /**
      * @description The path of the source file
      * @type string

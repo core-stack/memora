@@ -4,7 +4,7 @@
 */
 
 import fetch from "@kubb/plugin-client/clients/axios";
-import type { AuthForgetPasswordMutationRequest, AuthForgetPasswordMutationResponse } from "../types/AuthForgetPassword.ts";
+import type { AuthForgetPasswordMutationRequest, AuthForgetPasswordMutationResponse, AuthForgetPassword400, AuthForgetPassword500 } from "../types/AuthForgetPassword.ts";
 import type { RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import { authForgetPasswordMutationResponseSchema, authForgetPasswordMutationRequestSchema } from "../zod/authForgetPasswordSchema.ts";
@@ -22,13 +22,13 @@ export async function authForgetPassword({ data }: { data: AuthForgetPasswordMut
   
   const requestData = authForgetPasswordMutationRequestSchema.parse(data)  
   
-  const res = await request<AuthForgetPasswordMutationResponse, ResponseErrorConfig<Error>, AuthForgetPasswordMutationRequest>({ method : "POST", url : `/api/auth/forget-password`, baseURL : "/", data : requestData, ... requestConfig })  
+  const res = await request<AuthForgetPasswordMutationResponse, ResponseErrorConfig<AuthForgetPassword400 | AuthForgetPassword500>, AuthForgetPasswordMutationRequest>({ method : "POST", url : `/api/auth/forget-password`, baseURL : "/", data : requestData, ... requestConfig })  
   return authForgetPasswordMutationResponseSchema.parse(res.data)
 }
 
 export function authForgetPasswordMutationOptions(config: Partial<RequestConfig<AuthForgetPasswordMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = authForgetPasswordMutationKey()
-  return mutationOptions<AuthForgetPasswordMutationResponse, ResponseErrorConfig<Error>, {data: AuthForgetPasswordMutationRequest}, typeof mutationKey>({
+  return mutationOptions<AuthForgetPasswordMutationResponse, ResponseErrorConfig<AuthForgetPassword400 | AuthForgetPassword500>, {data: AuthForgetPasswordMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ data }) => {
       return authForgetPassword({ data }, config)
@@ -41,7 +41,7 @@ export function authForgetPasswordMutationOptions(config: Partial<RequestConfig<
  */
 export function useApiAuthForgetPassword<TContext>(options: 
 {
-  mutation?: UseMutationOptions<AuthForgetPasswordMutationResponse, ResponseErrorConfig<Error>, {data: AuthForgetPasswordMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<AuthForgetPasswordMutationResponse, ResponseErrorConfig<AuthForgetPassword400 | AuthForgetPassword500>, {data: AuthForgetPasswordMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<AuthForgetPasswordMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -49,11 +49,11 @@ export function useApiAuthForgetPassword<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? authForgetPasswordMutationKey()
 
-  const baseOptions = authForgetPasswordMutationOptions(config) as UseMutationOptions<AuthForgetPasswordMutationResponse, ResponseErrorConfig<Error>, {data: AuthForgetPasswordMutationRequest}, TContext>
+  const baseOptions = authForgetPasswordMutationOptions(config) as UseMutationOptions<AuthForgetPasswordMutationResponse, ResponseErrorConfig<AuthForgetPassword400 | AuthForgetPassword500>, {data: AuthForgetPasswordMutationRequest}, TContext>
 
-  return useMutation<AuthForgetPasswordMutationResponse, ResponseErrorConfig<Error>, {data: AuthForgetPasswordMutationRequest}, TContext>({
+  return useMutation<AuthForgetPasswordMutationResponse, ResponseErrorConfig<AuthForgetPassword400 | AuthForgetPassword500>, {data: AuthForgetPasswordMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<AuthForgetPasswordMutationResponse, ResponseErrorConfig<Error>, {data: AuthForgetPasswordMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<AuthForgetPasswordMutationResponse, ResponseErrorConfig<AuthForgetPassword400 | AuthForgetPassword500>, {data: AuthForgetPasswordMutationRequest}, TContext>
 }

@@ -1,12 +1,12 @@
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
-} from 'typeorm';
+} from "typeorm";
 
-import { KnowledgeId } from '@/shared/controller/decorators';
+import { KnowledgeId } from "@/shared/controller/decorators";
 
-import { Field } from '../shared/model';
-import { ChatEntity } from './chat.entity';
-import { KnowledgeEntity } from './knowledge.entity';
+import { Field } from "../shared/model";
+import { ChatEntity } from "./chat.entity";
+import { KnowledgeEntity } from "./knowledge.entity";
 
 export enum MessageRole {
   USER = "user",
