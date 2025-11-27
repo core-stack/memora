@@ -2,7 +2,6 @@ import {
   Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn
 } from "typeorm";
 
-import { CreatedBy, TenantId } from "../shared/controller/decorators/context";
 import { Field } from "../shared/model";
 import { KnowledgeLLMEntity } from "./knowledge-llm.entity";
 
@@ -23,6 +22,10 @@ export class LLMEntity {
   @Column({ type: "boolean", default: false })
   default: boolean;
 
+  @Field({ type: "string", min: 1, max: 255, description: "The unique key of the LLM" })
+  @Column({ length: 255 })
+  key: string;
+
   @Field({ type: "string", min: 1, max: 255, description: "The name of the LLM" })
   @Column({ length: 255 })
   name: string;
@@ -39,12 +42,10 @@ export class LLMEntity {
   @Column({ type: "enum", enum: LLMType })
   type: LLMType;
 
-  @TenantId()
   @Field({ type: "string", uuid: true, description: "The ID of the tenant this LLM belongs to" })
   @Column({ name: "tenant_id", length: 36 })
   tenantId: string;
 
-  @CreatedBy()
   @Field({ type: "string", uuid: true, required: false, nullable: true, description: "The ID of the user who created the LLM" })
   @Column({ name: "creator_id", length: 36, nullable: true })
   creatorId?: string;
