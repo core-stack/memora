@@ -1,1 +1,0 @@
-{"properties":{"key":{"description":"The key of the role","type":"string"},"name":{"description":"The name of the role","type":"string"},"permissions":{"description":"The permissions of the role as a bitmask","type":"number"}},"required":["key","name","permissions"],"type":"object","x-readme-ref-name":"CreateRoleDto"}

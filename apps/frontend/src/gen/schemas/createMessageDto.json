@@ -1,1 +1,0 @@
-{"properties":{"content":{"description":"The content of the message","type":"string"}},"required":["content"],"type":"object","x-readme-ref-name":"CreateMessageDto"}

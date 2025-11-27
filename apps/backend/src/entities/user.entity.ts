@@ -1,15 +1,15 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import {
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
-} from 'typeorm';
+} from "typeorm";
 
-import { Field } from '../shared/model';
-import { AccountEntity } from './account.entity';
-import { InviteEntity } from './invite.entity';
-import { MemberEntity } from './member.entity';
-import { RoleEntity } from './role.entity';
-import { VerificationTokenEntity } from './verification-token.entity';
+import { Field } from "../shared/model";
+import { AccountEntity } from "./account.entity";
+import { InviteEntity } from "./invite.entity";
+import { MemberEntity } from "./member.entity";
+import { RoleEntity } from "./role.entity";
+import { VerificationTokenEntity } from "./verification-token.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -29,7 +29,12 @@ export class UserEntity {
   @Column({ type: "text", nullable: true })
   password?: string;
 
-  @Field({ type: "date", description: "The date the user email was verified", example: new Date().toISOString(), nullable: true })
+  @Field({
+    type: "date",
+    description: "The date the user email was verified",
+    example: "2025-10-05T14:48:00.000Z",
+    nullable: true
+  })
   @Column({ name: "email_verified", type: "timestamptz", nullable: true })
   emailVerified?: Date | null;
 
@@ -41,11 +46,11 @@ export class UserEntity {
   @Column({ name: "role_id" })
   roleId: string;
 
-  @Field({ type: "date", description: "The date the user was created", example: "2025-10-05T14:48:00.000Z"})
+  @Field({ type: "date", description: "The date the user was created", example: "2025-10-05T14:48:00.000Z" })
   @CreateDateColumn({ name: "created_at", type: "timestamptz" })
   createdAt: Date;
 
-  @Field({ type: "date", description: "The date the user was updated", example: "2025-10-05T14:48:00.000Z"})
+  @Field({ type: "date", description: "The date the user was updated", example: "2025-10-05T14:48:00.000Z" })
   @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
   updatedAt: Date;
 
@@ -75,7 +80,7 @@ export class UserEntity {
     Object.assign(this, user);
   }
 
-  async setPassword(password: string) {
+  async setPassword(password: string): Promise<this> {
     this.password = await bcrypt.hash(password, 10);
     return this;
   }
@@ -85,7 +90,7 @@ export class UserEntity {
     return bcrypt.compare(password, this.password);
   }
 
-  verifyEmail(verify: boolean = true) {
+  verifyEmail(verify: boolean = true): this {
     this.emailVerified = verify ? new Date() : undefined;
     return this;
   }

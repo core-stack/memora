@@ -1,1 +1,0 @@
-{"properties":{"email":{"type":"string"},"roleId":{"type":"string"}},"required":["email","roleId"],"type":"object","x-readme-ref-name":"SendInviteItemDto"}

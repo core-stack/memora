@@ -1,1 +1,0 @@
-{"properties":{"email":{"type":"string"},"name":{"type":"string"},"password":{"maxLength":100,"minLength":6,"type":"string"}},"required":["name","email","password"],"type":"object","x-readme-ref-name":"CreateAccountDto"}

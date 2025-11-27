@@ -1,1 +1,0 @@
-{"properties":{"redirect":{"description":"The path to redirect","example":"/","type":"string"}},"required":["redirect"],"type":"object","x-readme-ref-name":"LoginResponseDto"}
