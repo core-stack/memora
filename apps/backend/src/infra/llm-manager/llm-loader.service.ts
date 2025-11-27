@@ -4,14 +4,18 @@ import { LLMPreset } from "@/types/llm-preset";
 
 import { EmbeddingProvider } from "./provider/embedding/base";
 import { GeminiLLMEmbeddingAdapter } from "./provider/embedding/gemini.adapter";
-import { OpenAILLMEmbeddingAdapter } from "./provider/embedding/openai.adapter";
+import { OpenAIEmbeddingAdapter } from "./provider/embedding/openai.adapter";
 import { TextProvider } from "./provider/text/base";
 import { GeminiTextAdapter } from "./provider/text/gemini.adapter";
-import { OpenAILLMTextAdapter } from "./provider/text/openai.adapter";
+import { OpenAITextAdapter } from "./provider/text/openai.adapter";
+import { VoyageAIEmbeddingAdapter } from "./provider/embedding/voyage.adapter";
 
 @Injectable()
 export class LLMLoaderService {
-  async load<T extends TextProvider | EmbeddingProvider>(llm: LLMEntity, preset: LLMPreset): Promise<T> {
+  async load<T extends TextProvider | EmbeddingProvider>(
+    llm: LLMEntity,
+    preset: LLMPreset
+  ): Promise<T> {
     const adapter = preset.adapter;
     const type = preset.config.type;
 
@@ -19,38 +23,49 @@ export class LLMLoaderService {
     return this.embeddingProviderLoader(adapter, llm, preset) as T;
   }
 
-  private textProviderLoader(adapter: string, llm: LLMEntity, preset: LLMPreset): TextProvider {
+  private textProviderLoader(
+    adapter: string,
+    llm: LLMEntity,
+    preset: LLMPreset
+  ): TextProvider {
     if (preset.config.type !== "TEXT") throw new Error("Invalid provider type");
     let AdapterClass: new (config: any, preset: LLMPreset) => TextProvider;
 
     switch (adapter) {
       case "openai":
-        AdapterClass = OpenAILLMTextAdapter;
+        AdapterClass = OpenAITextAdapter;
         break;
       case "gemini":
         AdapterClass = GeminiTextAdapter;
         break;
       default:
-        AdapterClass = OpenAILLMTextAdapter;
+        AdapterClass = OpenAITextAdapter;
         break;
     }
 
     return new AdapterClass({ ...preset.config, ...llm.config }, preset);
   }
 
-  private embeddingProviderLoader(adapter: string, llm: LLMEntity, preset: LLMPreset): { embed: (text: string) => Promise<number[]> } {
+  private embeddingProviderLoader(
+    adapter: string,
+    llm: LLMEntity,
+    preset: LLMPreset
+  ): { embed: (text: string) => Promise<number[]> } {
     if (preset.config.type !== "EMBEDDING") throw new Error("Invalid provider type");
 
     let AdapterClass: new (config: any, preset: LLMPreset) => EmbeddingProvider;
     switch (adapter) {
       case "openai":
-        AdapterClass = OpenAILLMEmbeddingAdapter;
+        AdapterClass = OpenAIEmbeddingAdapter;
         break;
       case "gemini":
         AdapterClass = GeminiLLMEmbeddingAdapter;
         break;
+      case "voyage":
+        AdapterClass = VoyageAIEmbeddingAdapter;
+        break;
       default:
-        AdapterClass = OpenAILLMEmbeddingAdapter;
+        AdapterClass = OpenAIEmbeddingAdapter;
         break;
     }
 
