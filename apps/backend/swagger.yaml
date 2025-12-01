@@ -139,8 +139,14 @@ components:
     CreateLLMDto:
       properties:
         config:
+          additionalProperties:
+            type: string
           description: The configuration for the LLM
           type: object
+        default:
+          default: false
+          description: Indicates if this is the default LLM for its type
+          type: boolean
         key:
           description: The unique key of the LLM
           type: string
@@ -157,29 +163,12 @@ components:
             - TEXT
           type: string
       required:
+        - default
         - key
         - name
         - model
-        - config
         - type
-      type: object
-    CreateMessageDto:
-      properties:
-        content:
-          description: The content of the message
-          type: string
-      required:
-        - content
-      type: object
-    CreateMessageResponseDto:
-      properties:
-        aiMessage:
-          $ref: "#/components/schemas/MessageEntity"
-        userMessage:
-          $ref: "#/components/schemas/MessageEntity"
-      required:
-        - userMessage
-        - aiMessage
+        - config
       type: object
     CreateRoleDto:
       properties:
@@ -540,9 +529,6 @@ components:
       type: object
     LLMEntity:
       properties:
-        config:
-          description: The configuration for the LLM
-          type: object
         createdAt:
           description: The timestamp when the LLM was created
           format: date-time
@@ -593,7 +579,6 @@ components:
         - key
         - name
         - model
-        - config
         - type
         - tenantId
         - createdAt
@@ -969,6 +954,24 @@ components:
         - sendedInvites
         - reSendedInvites
         - alreadyInTenant
+      type: object
+    SendMessageDto:
+      properties:
+        content:
+          description: The content of the message
+          type: string
+      required:
+        - content
+      type: object
+    SendMessageResponseDto:
+      properties:
+        aiMessage:
+          $ref: "#/components/schemas/MessageEntity"
+        userMessage:
+          $ref: "#/components/schemas/MessageEntity"
+      required:
+        - userMessage
+        - aiMessage
       type: object
     SourceAudioMetadata:
       properties:
@@ -2829,14 +2832,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateMessageDto"
+              $ref: "#/components/schemas/SendMessageDto"
         required: true
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateMessageResponseDto"
+                $ref: "#/components/schemas/SendMessageResponseDto"
           description: ""
       security:
         - access-token: []
