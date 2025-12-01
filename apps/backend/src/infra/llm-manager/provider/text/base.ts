@@ -23,10 +23,6 @@ export interface StreamChunk {
 }
 
 export abstract class TextProvider {
-  constructor() {
-    Object.setPrototypeOf(this, TextProvider.prototype);
-  }
-
   abstract generate(params: GenerateParams): Promise<GenerateResult>;
   abstract stream?(params: GenerateParams, onChunk: (chunk: StreamChunk) => void): Promise<void>;
   abstract iterableStream(params: GenerateParams): AsyncIterable<string>;

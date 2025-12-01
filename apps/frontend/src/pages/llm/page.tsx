@@ -29,7 +29,7 @@ export default function LLMManagementPage() {
 function Page({ tenant }: { tenant: TenantEntity }) {
   const { openDialog } = useDialog();
 
-  const { data: llms = [] } = useApiLLMSuspense({ 
+  const { data: llms = [] } = useApiLLMSuspense({
     tenantId: tenant.id,
     params: { sort: [ 'createdAt' ] }
   });
@@ -41,7 +41,7 @@ function Page({ tenant }: { tenant: TenantEntity }) {
   const filteredLLMs = activeTab === "all" ? llms : llms.filter((llm) => llm.type === activeTab);
 
   const createLLM = () => {
-    openDialog({ 
+    openDialog({
       type: DialogType.SELECT_LLM_PRESET,
       props: { tenantId: tenant.id }
     });
@@ -77,10 +77,10 @@ function Page({ tenant }: { tenant: TenantEntity }) {
           <div className="space-y-3 pr-3">
             {filteredLLMs.map((llm) => (
               <LLMListItem
-                key={llm.id} 
+                key={llm.id}
                 llm={llm}
-                preset={presets.find((p) => (p.config as any).model === llm.model)}
-                tenantId={tenant?.id!}
+                preset={presets.find((p) => p.key === llm.key)}
+                tenantId={tenant.id}
               />
             ))}
           </div>

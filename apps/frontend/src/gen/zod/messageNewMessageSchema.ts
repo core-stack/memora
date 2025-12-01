@@ -3,8 +3,8 @@
 * Do not edit manually.
 */
 
-import { createMessageDtoSchema } from "./createMessageDtoSchema.ts";
-import { createMessageResponseDtoSchema } from "./createMessageResponseDtoSchema.ts";
+import { sendMessageDtoSchema } from "./sendMessageDtoSchema.ts";
+import { sendMessageResponseDtoSchema } from "./sendMessageResponseDtoSchema.ts";
 import { z } from "zod/v4";
 
 export const messageNewMessagePathParamsSchema = z.object({
@@ -15,11 +15,11 @@ export const messageNewMessagePathParamsSchema = z.object({
 
 export type MessageNewMessagePathParamsSchema = z.infer<typeof messageNewMessagePathParamsSchema>
 
-export const messageNewMessage200Schema = createMessageResponseDtoSchema
+export const messageNewMessage200Schema = sendMessageResponseDtoSchema
 
 export type MessageNewMessage200Schema = z.infer<typeof messageNewMessage200Schema>
 
-export const messageNewMessageMutationRequestSchema = createMessageDtoSchema
+export const messageNewMessageMutationRequestSchema = sendMessageDtoSchema
 
 export type MessageNewMessageMutationRequestSchema = z.infer<typeof messageNewMessageMutationRequestSchema>
 

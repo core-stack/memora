@@ -14,7 +14,8 @@ export class RBACGuard implements CanActivate {
     const request: AuthRequest = context.switchToHttp().getRequest();
     const requiredPermissions = this.reflector.get(Permissions, context.getHandler());
 
-    const { session } = request;
+    const { session, isApi } = request;
+    if (isApi) return true;
     if (!session) throw new UnauthorizedException();
 
     let permissions = numberToPermissions(session.user.permissions);

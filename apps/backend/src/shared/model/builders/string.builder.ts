@@ -8,12 +8,18 @@ export const buildStringDecorators = (opts: FieldStringOptions): PropertyDecorat
   const decorators: PropertyDecorator[] = [];
 
   // Swagger
-  decorators.push(buildApiProperty(opts));
+  if (!opts.hidden) decorators.push(buildApiProperty(opts));
 
   // TRANSFORMERS
-  if (opts.trim) decorators.push(Transform(({ value }) => value?.trim(), (typeof opts.trim === "object") ? opts.trim : {}));
-  if (opts.lowercase) decorators.push(Transform(({ value }) => value?.toLowerCase(), (typeof opts.lowercase === "object") ? opts.lowercase : {}));
-  if (opts.uppercase) decorators.push(Transform(({ value }) => value?.toUpperCase(), (typeof opts.uppercase === "object") ? opts.uppercase : {}));
+  if (opts.trim) decorators.push(
+    Transform(({ value }) => value?.trim(), (typeof opts.trim === "object") ? opts.trim : {})
+  );
+  if (opts.lowercase) decorators.push(
+    Transform(({ value }) => value?.toLowerCase(), (typeof opts.lowercase === "object") ? opts.lowercase : {})
+  );
+  if (opts.uppercase) decorators.push(
+    Transform(({ value }) => value?.toUpperCase(), (typeof opts.uppercase === "object") ? opts.uppercase : {})
+  );
 
   // VALIDATORS
   if (opts.length) {

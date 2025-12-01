@@ -16,10 +16,13 @@ export class GeminiTextAdapter extends TextProvider {
   constructor(opts: GeminiAdapterOptions) {
     super();
     this.client = new GoogleGenerativeAI(opts.apiKey);
-    this.model = this.client.getGenerativeModel({ model: opts.model });
+    this.model = this.client.getGenerativeModel({
+      model: opts.model,
+      tools: [ { googleSearch: {} } as any ]
+    });
   }
 
-  async generate(params: GenerateParams): Promise<GenerateResult> {
+  public async generate(params: GenerateParams): Promise<GenerateResult> {
     const { prompt, maxTokens, temperature } = params;
     const start = Date.now();
     const res = await this.model.generateContent({
@@ -39,9 +42,8 @@ export class GeminiTextAdapter extends TextProvider {
     };
   }
 
-  async stream(params: GenerateParams, onChunk: (chunk: StreamChunk) => void): Promise<void> {
+  public async stream(params: GenerateParams, onChunk: (chunk: StreamChunk) => void): Promise<void> {
     const { prompt, maxTokens, temperature } = params;
-    const start = Date.now();
     const res = await this.model.generateContentStream({
       contents: [ {
         role: "user",
@@ -56,7 +58,7 @@ export class GeminiTextAdapter extends TextProvider {
     onChunk({ delta: "", finishReason: "stop" });
   }
 
-  iterableStream(params: GenerateParams): AsyncIterable<string> {
+  public iterableStream(params: GenerateParams): AsyncIterable<string> {
     return {
       async *[Symbol.asyncIterator]() {
         const { prompt, maxTokens, temperature } = params;
@@ -77,7 +79,7 @@ export class GeminiTextAdapter extends TextProvider {
     };
   }
 
-  async withStructuredOutput<S extends ZodObject<any>>(
+  public async withStructuredOutput<S extends ZodObject<any>>(
     query: string,
     schema: S
   ): Promise<output<S>> {
@@ -117,10 +119,10 @@ export class GeminiTextAdapter extends TextProvider {
   }
 
 
-  async healthCheck(): Promise<ProviderHealth> {
+  public async healthCheck(): Promise<ProviderHealth> {
     const start = Date.now();
     try {
-      const res = await this.model.countTokens("ping");
+      await this.model.countTokens("ping");
       return { ok: true, latencyMs: Date.now() - start };
     } catch (error) {
       return { ok: false, error: (error as Error).message };

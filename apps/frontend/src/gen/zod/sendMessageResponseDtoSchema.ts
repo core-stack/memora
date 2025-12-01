@@ -6,7 +6,7 @@
 import { messageEntitySchema } from "./messageEntitySchema.ts";
 import { z } from "zod/v4";
 
-export const createMessageResponseDtoSchema = z.object({
+export const sendMessageResponseDtoSchema = z.object({
     get "aiMessage"(){
                 return messageEntitySchema
               },
@@ -15,4 +15,4 @@ get "userMessage"(){
               }
     })
 
-export type CreateMessageResponseDtoSchema = z.infer<typeof createMessageResponseDtoSchema>
+export type SendMessageResponseDtoSchema = z.infer<typeof sendMessageResponseDtoSchema>

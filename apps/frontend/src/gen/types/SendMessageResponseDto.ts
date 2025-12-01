@@ -5,7 +5,7 @@
 
 import type { MessageEntity } from "./MessageEntity.ts";
 
-export type CreateMessageResponseDto = {
+export type SendMessageResponseDto = {
     /**
      * @type object
     */

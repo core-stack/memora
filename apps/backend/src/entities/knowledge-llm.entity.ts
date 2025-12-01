@@ -46,4 +46,8 @@ export class KnowledgeLLMEntity {
   @Field({ type: "date", description: "The timestamp when the link was last updated" })
   @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
   updatedAt: Date;
+
+  constructor(data: Partial<KnowledgeLLMEntity>) {
+    Object.assign(this, data);
+  }
 }

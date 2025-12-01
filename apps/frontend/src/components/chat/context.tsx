@@ -70,7 +70,7 @@ export const ChatProvider = ({ children, chatId, knowledge, tenant }: ChatProvid
     createChatMutation({ knowledgeId, tenantId, data: { name: "" } },
       {
         onSuccess: async (data) => {
-          router.replace(`/${knowledgeSlug}/chat/${data.id}`);
+          router.replace(`/kn/${knowledgeSlug}/chat/${data.id}`);
           await invalidate(chatQueryKeyFn({ tenantId, knowledgeId }));
           sendMessage(initialMessage, data);
         }

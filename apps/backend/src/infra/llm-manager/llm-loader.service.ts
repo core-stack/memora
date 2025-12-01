@@ -43,7 +43,8 @@ export class LLMLoaderService {
         break;
     }
 
-    return new AdapterClass({ ...preset.config, ...llm.config }, preset);
+    const gemini = new AdapterClass({ ...preset.config, ...llm.config }, preset);
+    return gemini;
   }
 
   private embeddingProviderLoader(

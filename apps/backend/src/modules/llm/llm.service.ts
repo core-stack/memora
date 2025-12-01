@@ -68,19 +68,20 @@ export class LLMService extends Service<LLMEntity> {
     const llm = llms.find(llm => llm.llm?.type === type && llm.default);
     if (!llm) return null;
     if (!llm.llm) return null;
-    if (type == "EMBEDDING") return this.manager.getEmbedding(llm.llm);
     return this.manager.getInstance(llm.llm);
   }
 
   override async create(input: CreateLLMDto, manager?: EntityManager): Promise<LLMEntity> {
     const preset = this.manager.getPresets().find(preset => preset.key === input.key);
     if (!preset) throw new NotFoundException("Model not found");
+    if (preset.config.model && typeof preset.config.model === "string") input.model = preset.config.model;
     await Promise.all(Object.entries(input.config).map(async ([ key, value ]) => {
       const isSecret = preset.fields?.[key] === "secret-string";
       if (isSecret) {
         input.config[key] = await this.securityService.encrypt(value as string, env.ENCRYPT_MASTER_PASSWORD);
       }
     }));
+
     return super.create(new LLMEntity(input), manager);
   }
 }

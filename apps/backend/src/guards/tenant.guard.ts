@@ -11,12 +11,13 @@ export class TenantGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: AuthRequest = context.switchToHttp().getRequest();
 
-    let { session } = request;
+    const { session, isApi } = request;
+    if (isApi) return true;
     if (!session) throw new UnauthorizedException();
 
     if (this.checkTenantAccess(session, request.params.tenantId)) return true;
-    session = await this.authManager.reloadSession(session.id);
-    return this.checkTenantAccess(session, request.params.tenantId);
+    const reloadedSession = await this.authManager.reloadSession(session.id);
+    return this.checkTenantAccess(reloadedSession, request.params.tenantId);
   }
 
   private checkTenantAccess(session: Session, tenantId: string): boolean {

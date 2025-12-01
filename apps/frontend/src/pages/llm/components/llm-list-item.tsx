@@ -48,7 +48,6 @@ export function LLMListItem({ llm, preset, tenantId }: LLMListItemProps) {
       }
     });
   }
-
   return (
     <Card>
       <CardContent className="p-4">
@@ -75,6 +74,9 @@ export function LLMListItem({ llm, preset, tenantId }: LLMListItemProps) {
                 >
                   {preset?.config?.type}
                 </Badge>
+                {
+                  llm.default && <Badge variant="outline">Default</Badge>
+                }
               </div>
               <div className='flex items-center gap-2 text-sm'>
                 <h4 className='text-foreground font-semibold'>Model:</h4>

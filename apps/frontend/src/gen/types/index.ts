@@ -24,8 +24,6 @@ export type { CreateChatDto } from "./CreateChatDto.ts";
 export type { CreateFolderDto } from "./CreateFolderDto.ts";
 export type { CreateKnowledgeDto } from "./CreateKnowledgeDto.ts";
 export type { CreateLLMDtoTypeEnumKey, CreateLLMDto } from "./CreateLLMDto.ts";
-export type { CreateMessageDto } from "./CreateMessageDto.ts";
-export type { CreateMessageResponseDto } from "./CreateMessageResponseDto.ts";
 export type { CreateRoleDto } from "./CreateRoleDto.ts";
 export type { CreateSourceDtoSourceTypeEnumKey, CreateSourceDto } from "./CreateSourceDto.ts";
 export type { CreateTenantDto } from "./CreateTenantDto.ts";
@@ -89,6 +87,8 @@ export type { SearchRecentPathParams, SearchRecent200, SearchRecent400, SearchRe
 export type { SendInviteDto } from "./SendInviteDto.ts";
 export type { SendInviteItemDto } from "./SendInviteItemDto.ts";
 export type { SendInviteResponseDto } from "./SendInviteResponseDto.ts";
+export type { SendMessageDto } from "./SendMessageDto.ts";
+export type { SendMessageResponseDto } from "./SendMessageResponseDto.ts";
 export type { SourcePathParams, SourceQueryParams, Source200, Source400, Source500, SourceQueryResponse, SourceQuery } from "./Source.ts";
 export type { SourceAudioMetadataTypeEnumKey, SourceAudioMetadata } from "./SourceAudioMetadata.ts";
 export type { SourceByIDPathParams, SourceByID200, SourceByID400, SourceByID404, SourceByID500, SourceByIDQueryResponse, SourceByIDQuery } from "./SourceByID.ts";

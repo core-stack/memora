@@ -9,6 +9,7 @@ import { MemberModule } from "../member/member.module";
 import { RoleModule } from "../role/role.module";
 import { TenantController } from "./tenant.controller";
 import { TenantService } from "./tenant.service";
+import { LLMModule } from "../llm/llm.module";
 
 @Module({
   controllers: [ TenantController ],
@@ -19,6 +20,7 @@ import { TenantService } from "./tenant.service";
     TypeOrmModule.forFeature([ TenantEntity ]),
     HTTPContextModule,
     MemberModule,
+    forwardRef(() => LLMModule),
     RoleModule
   ],
   exports: [ TenantService ]

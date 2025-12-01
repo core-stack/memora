@@ -16,7 +16,15 @@ export type CreateLLMDto = {
      * @description The configuration for the LLM
      * @type object
     */
-    config: object;
+    config: {
+        [key: string]: string;
+    };
+    /**
+     * @description Indicates if this is the default LLM for its type
+     * @default false
+     * @type boolean
+    */
+    default: boolean;
     /**
      * @description The unique key of the LLM
      * @type string

@@ -14,11 +14,6 @@ export type LLMEntityTypeEnumKey = (typeof LLMEntityTypeEnum)[keyof typeof LLMEn
 
 export type LLMEntity = {
     /**
-     * @description The configuration for the LLM
-     * @type object
-    */
-    config: object;
-    /**
      * @description The timestamp when the LLM was created
      * @type string, date-time
     */

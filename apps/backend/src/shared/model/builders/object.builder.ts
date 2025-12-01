@@ -7,6 +7,7 @@ import { FieldObjectOptions } from "../types";
 export const buildObjectDecorators = (opts: FieldObjectOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];
 
+  if (opts.hidden) return decorators;
   const isRequired = opts.required ?? true;
 
   const apiMetadata: ApiPropertyOptions = {
@@ -19,7 +20,7 @@ export const buildObjectDecorators = (opts: FieldObjectOptions): PropertyDecorat
   };
 
   if (opts.debug) console.log(apiMetadata);
-  decorators.push(isRequired ? ApiProperty(apiMetadata) : ApiPropertyOptional(apiMetadata));
+  if (!opts.hidden) decorators.push(isRequired ? ApiProperty(apiMetadata) : ApiPropertyOptional(apiMetadata));
   if (opts.debug) console.log("added api property");
 
   decorators.push(ValidateNested({ each: opts.isArray }));

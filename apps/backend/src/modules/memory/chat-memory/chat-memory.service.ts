@@ -1,9 +1,12 @@
+import { KnowledgeLLMEntity, LLMType } from "@/entities";
 import { MessageEntity } from "@/entities/message.entity";
 import { ChatFragment, Fragments } from "@/fragment";
 import { ChatVectorStoreService } from "@/infra/vector/chat-vector-store.service";
 import { MessageService } from "@/modules/knowledge/chat/message/message.service";
 import { buildOptions } from "@/utils/build-options";
 import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
+import { DataSource } from "typeorm";
+import { threadId } from "worker_threads";
 
 export type ChatSearchOptions = {
   lastNMessages?: number;
@@ -19,6 +22,7 @@ export class ChatMemoryService {
   private readonly logger = new Logger(ChatMemoryService.name);
 
   constructor(
+    private readonly dataSource: DataSource,
     private readonly chatVectorStore: ChatVectorStoreService,
     @Inject(forwardRef(() => MessageService)) private readonly messageService: MessageService
   ) {}
@@ -37,12 +41,32 @@ export class ChatMemoryService {
     });
   }
 
-  async add(message: MessageEntity) {
-    await this.chatVectorStore.addFragments(message.knowledgeId, await this.messageToFragment(message));
+  async add(message: MessageEntity): Promise<void> {
+    const llms = await this.dataSource.getRepository(KnowledgeLLMEntity).find({
+      where: {
+        knowledgeId: message.knowledgeId,
+        default: true,
+      },
+      relations: ["llm"]
+    });
+    const embeddingLLM = llms.find(llm => llm.llm?.type === LLMType.EMBEDDING);
+    if (!embeddingLLM) throw new Error("No embedding LLM found");
+
+    await this.chatVectorStore.addFragments(embeddingLLM.llmId, await this.messageToFragment(message));
   }
 
-  async remove(message: MessageEntity) {
-    await this.chatVectorStore.deleteFragments(message.knowledgeId, await this.messageToFragment(message));
+  async remove(message: MessageEntity): Promise<void> {
+    const llms = await this.dataSource.getRepository(KnowledgeLLMEntity).find({
+      where: {
+        knowledgeId: message.knowledgeId,
+        default: true,
+      },
+      relations: ["llm"]
+    });
+    const embeddingLLM = llms.find(llm => llm.llm?.type === LLMType.EMBEDDING);
+    if (!embeddingLLM) throw new Error("No embedding LLM found");
+
+    await this.chatVectorStore.deleteFragments(embeddingLLM.llmId, await this.messageToFragment(message));
   }
 
   async search(knowledgeId: string, chatId: string, ...opts: WithChatSearchOptions[]) {

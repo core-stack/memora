@@ -9,8 +9,8 @@ import { ChatSidebar } from './components/sidebar';
 
 export default function ChatPage() {
   const { chatId } = useParams<{ chatId: string }>();
-  const { tenant, error: tenantError, isLoading } = useTenant();
-  const { knowledge, error: knowledgeError } = useKnowledge();
+  const { tenant, error: tenantError } = useTenant();
+  const { knowledge, error: knowledgeError, isLoading } = useKnowledge();
   const error = tenantError || knowledgeError;
 
   return (

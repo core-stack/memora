@@ -4,7 +4,7 @@
 */
 
 
-export type CreateMessageDto = {
+export type SendMessageDto = {
     /**
      * @description The content of the message
      * @type string

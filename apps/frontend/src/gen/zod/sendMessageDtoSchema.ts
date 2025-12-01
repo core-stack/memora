@@ -5,8 +5,8 @@
 
 import { z } from "zod/v4";
 
-export const createMessageDtoSchema = z.object({
+export const sendMessageDtoSchema = z.object({
     "content": z.string().describe("The content of the message")
     })
 
-export type CreateMessageDtoSchema = z.infer<typeof createMessageDtoSchema>
+export type SendMessageDtoSchema = z.infer<typeof sendMessageDtoSchema>

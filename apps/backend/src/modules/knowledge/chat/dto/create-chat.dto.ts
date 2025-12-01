@@ -1,7 +1,12 @@
 import { ChatEntity } from "@/entities";
-import { ApiHideProperty, PickType } from "@nestjs/swagger";
+import { KnowledgeId, TenantId } from "@/shared/controller/decorators";
+import { PickType } from "@nestjs/swagger";
 
 export class CreateChatDto extends PickType(ChatEntity, [ "name" ]) {
-  @ApiHideProperty()
+
+  @TenantId()
+  tenantId: string;
+
+  @KnowledgeId()
   knowledgeId: string;
 }

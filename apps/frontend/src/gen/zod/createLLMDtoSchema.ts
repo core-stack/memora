@@ -8,7 +8,8 @@ import { z } from "zod/v4";
 export const createLLMDtoSchema = z.object({
     "config": z.object({
     
-    }).describe("The configuration for the LLM"),
+    }).catchall(z.string()).describe("The configuration for the LLM"),
+"default": z.boolean().default(false).describe("Indicates if this is the default LLM for its type"),
 "key": z.string().describe("The unique key of the LLM"),
 "model": z.string().describe("The model identifier"),
 "name": z.string().describe("The name of the LLM"),

@@ -19,7 +19,7 @@ export class LLMEntity {
 
   @Field({ type: "boolean", default: false, description: "Indicates if this is the default LLM for its type" })
   @Column({ type: "boolean", default: false })
-  default: boolean;
+  default?: boolean;
 
   @Field({ type: "string", min: 1, max: 255, description: "The unique key of the LLM" })
   @Column({ length: 255 })
@@ -33,7 +33,14 @@ export class LLMEntity {
   @Column({ length: 255 })
   model: string;
 
-  @Field({ type: "class", class: () => Object, description: "The configuration for the LLM" })
+  @Field({
+    type: "object",
+    additionalProperties: {
+      type: "string"
+    },
+    description: "The configuration for the LLM",
+    hidden: true
+  })
   @Column({ type: "jsonb", default: {} })
   config: Record<string, any>;
 

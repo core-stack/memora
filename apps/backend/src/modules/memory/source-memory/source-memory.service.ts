@@ -9,6 +9,7 @@ import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 
 import { RecentMemory } from "../types/recent";
 import { RecentSearch } from "./types";
+import { LLMType } from "@/entities";
 
 export type FindOptions = {
   knowledgeId: string;
@@ -41,13 +42,18 @@ export class SourceMemoryService {
   ): Promise<Fragments<SourceFragment>> {
     const opts = this.buildFindOptions(knowledgeId, userInput, ...options);
     // get knowledge
-    const knowledge = await this.knowledgeService.findByID(knowledgeId);
-    if (!knowledge) throw new NotFoundException("Knowledge not found");
+    const knowledge = await this.knowledgeService.findByID(
+      knowledgeId,
+      { relations: [ "knowledgeLLMs.llm" ] }
+    );
 
+    if (!knowledge) throw new NotFoundException("Knowledge not found");
+    const llm = knowledge.knowledgeLLMs?.find(llm => llm.default && llm.llm?.type === LLMType.TEXT);
+    if (!llm) throw new NotFoundException("No embedding LLM found");
     const fragments = new Fragments<SourceFragment>();
 
     return fragments.merge(await this.vectorStore.search(
-      knowledgeId,
+      llm.llmId,
       SourceVectorStoreService.withFilters({ ...opts.metadata }),
       SourceVectorStoreService.withDense({ query: userInput, topK: 100 }),
       SourceVectorStoreService.withSparse({ query: userInput, topK: 100 }),

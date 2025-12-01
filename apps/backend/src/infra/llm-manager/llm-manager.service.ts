@@ -5,23 +5,26 @@ import { LLMEntity } from "@/entities/llm.entity";
 import { env } from "@/env";
 import { __root } from "@/root";
 import { LLMPreset } from "@/types/llm-preset";
-import { Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
 import { NotFoundError } from "./errors/not-found.error";
 import { LLMLoaderService } from "./llm-loader.service";
 import { EmbeddingProvider } from "./provider/embedding/base";
 import { TextProvider } from "./provider/text/base";
+import { DataSource } from "typeorm";
+import { SecurityService } from "../security/security.service";
 
 @Injectable()
 export class LLMManagerService {
   private readonly logger = new Logger(LLMManagerService.name);
-
+  @Inject() private readonly dataSource: DataSource;
+  @Inject() private readonly securityService: SecurityService;
   private presets: LLMPreset[] = [];
 
   instances: Map<string, { instance: EmbeddingProvider | TextProvider, lastUse: number }> = new Map();
 
-  constructor(private readonly loader: LLMLoaderService) {}
+  constructor(private readonly loader: LLMLoaderService) { }
 
   async onModuleInit(): Promise<void> {
     try {
@@ -68,9 +71,28 @@ export class LLMManagerService {
   async getEmbedding(entityOrId: LLMEntity | string): Promise<EmbeddingProvider | null> {
     if (typeof entityOrId === "string") {
       const instance = this.instances.get(entityOrId)?.instance;
-      if (!instance) return null;
-      if (instance instanceof TextProvider) throw new Error("Invalid provider type");
-      return instance;
+      if (instance) {
+        if (instance instanceof TextProvider) throw new Error("Invalid provider type");
+        return instance;
+      }
+    }
+
+    if (typeof entityOrId === "string") {
+      const llmRepo = this.dataSource.getRepository(LLMEntity);
+      const entity = await llmRepo.findOneBy({ id: entityOrId });
+      if (!entity) throw new NotFoundError("LLM not found");
+      const config = entity.config;
+      const preset = this.getPresets().find(preset => preset.key === entity.key);
+      if (!preset) throw new NotFoundError("Model not found");
+      await Promise.all(Object.entries(config).map(async ([ key, value ]) => {
+        const isSecret = preset.fields?.[key] === "secret-string";
+        if (isSecret) {
+          config[key] = await this.securityService.decrypt(value as any, env.ENCRYPT_MASTER_PASSWORD);
+        }
+      }));
+
+      entity.config = config;
+      entityOrId = entity;
     }
 
     if (entityOrId.type !== "EMBEDDING") throw new Error("Invalid provider type");
@@ -80,9 +102,9 @@ export class LLMManagerService {
   async getInstance<T extends LLMEntity>(
     llm: T
   ): Promise<T["type"] extends "EMBEDDING" ? EmbeddingProvider : TextProvider> {
-    if (this.instances.has(llm.id)) return this.instances.get(llm.id)!.instance as any;
+    // if (this.instances.has(llm.id)) return this.instances.get(llm.id)!.instance as any;
 
-    const preset = this.presets.find(preset => preset.config.model === llm.model);
+    const preset = this.presets.find(preset => preset.key === llm.key);
     if (!preset) throw new NotFoundError("LLM not found");
     const instance = await this.loader.load(llm, preset);
 

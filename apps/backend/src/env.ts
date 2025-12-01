@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import moment from "moment";
 import path from "path";
@@ -128,6 +129,8 @@ const envSchema = z.object({
   DEBUG_PROMPTS: z.coerce.boolean().optional().default(false),
 
   IGNORE_PLUGINS: z.coerce.boolean().optional().default(false),
+
+  API_KEY: z.string().optional().default("change-me"),
 
   // OPEN TELEMETRY
   OTEL_ENABLED: z.coerce.boolean().optional().default(false),

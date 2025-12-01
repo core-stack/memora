@@ -41,7 +41,6 @@ export function ConfigureLLDialog({ preset, tenantId }: ConfigureLLDialogProps) 
   const invalidate = useApiInvalidate();
   const { mutate } = useApiLLMCreate();
   const isLoading = form.formState.isSubmitting;
-  console.log(form.watch());
 
   const handleSubmit = form.handleSubmit((data) => {
     mutate({ data, tenantId }, {
@@ -55,7 +54,6 @@ export function ConfigureLLDialog({ preset, tenantId }: ConfigureLLDialogProps) 
       }
     })
   })
-
   const handleCancel = () => closeDialog(DialogType.CONFIGURE_LLM);
 
   return (
@@ -91,13 +89,14 @@ export function ConfigureLLDialog({ preset, tenantId }: ConfigureLLDialogProps) 
               !preset.ignoreFields &&
               preset.fields &&
               Object.entries(preset.fields).map(([fieldName, fieldType]) => (
-              <FormInput
-                type={fieldType === 'string' ? "text" : "password"}
-                key={fieldName}
-                name={`config.${fieldName}`}
-                label={capitalizeFirstLetter(fieldName, true)}
-              />
-            ))}
+                <FormInput
+                  type={fieldType === 'string' ? "text" : "password"}
+                  key={fieldName}
+                  name={`config.${fieldName}`}
+                  label={capitalizeFirstLetter(fieldName, true)}
+                />
+              ))
+            }
           </div>
           <DialogFooter>
             <Button onClick={handleCancel} variant="outline" type='button' disabled={isLoading}>

@@ -7,10 +7,7 @@ import { knowledgeLLMEntitySchema } from "./knowledgeLLMEntitySchema.ts";
 import { z } from "zod/v4";
 
 export const llmentitySchema = z.object({
-    "config": z.object({
-    
-    }).describe("The configuration for the LLM"),
-"createdAt": z.string().datetime().describe("The timestamp when the LLM was created"),
+    "createdAt": z.string().datetime().describe("The timestamp when the LLM was created"),
 "creatorId": z.uuid().describe("The ID of the user who created the LLM").nullish(),
 "default": z.boolean().default(false).describe("Indicates if this is the default LLM for its type"),
 "id": z.uuid().describe("The unique identifier of the LLM"),

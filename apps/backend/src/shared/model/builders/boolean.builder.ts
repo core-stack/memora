@@ -7,9 +7,6 @@ import { buildApiProperty } from "./api-property";
 export const buildBooleanDecorators = (opts: FieldBooleanOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];
 
-  // Swagger
-  decorators.push(buildApiProperty(opts));
-
   // TRANSFORM: convert "true"/"false"/1/0/etc in boolean
   decorators.push(
     Transform(({ value }) => {
@@ -23,6 +20,11 @@ export const buildBooleanDecorators = (opts: FieldBooleanOptions): PropertyDecor
   // VALIDATION
   decorators.push(IsBoolean());
   if (opts.debug) console.log("added boolean validator");
+
+  if (opts.hidden) return decorators;
+
+  // Swagger
+  decorators.push(buildApiProperty(opts));
 
   return decorators;
 };

@@ -9,7 +9,7 @@ export const buildDateDecorators = (opts: FieldDateOptions): PropertyDecorator[]
   const decorators: PropertyDecorator[] = [];
 
   // Swagger
-  decorators.push(buildApiProperty(opts));
+  if (!opts.hidden) decorators.push(buildApiProperty(opts));
 
   // TRANSFORM: allow transforming string to Date
   decorators.push(

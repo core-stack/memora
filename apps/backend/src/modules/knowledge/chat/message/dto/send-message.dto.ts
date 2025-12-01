@@ -1,10 +1,18 @@
 import { MessageEntity } from "@/entities";
+import { KnowledgeId, TenantId } from "@/shared/controller/decorators";
 import { ApiProperty, PickType } from "@nestjs/swagger";
 
-export class CreateMessageDto extends PickType(MessageEntity, [ "content" ]) {}
+export class SendMessageDto extends PickType(MessageEntity, [ "content" ]) {
+  @TenantId()
+  tenantId: string;
+
+  @KnowledgeId()
+  knowledgeId: string;
+
+}
 
 
-export class CreateMessageResponseDto {
+export class SendMessageResponseDto {
   @ApiProperty()
   userMessage: MessageEntity;
 

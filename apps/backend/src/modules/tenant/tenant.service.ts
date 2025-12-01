@@ -10,6 +10,9 @@ import { TenantEntity } from "../../entities/tenant.entity";
 import { AuthManager } from "../auth/auth-manager.service";
 import { MemberService } from "../member/member.service";
 import { CreateTenantDto } from "./dto/create-tenant.dto";
+import { LLMService } from "../llm/llm.service";
+import { LLMType } from "@/entities";
+import { env } from "@/env";
 
 @Injectable()
 export class TenantService extends Service<TenantEntity> {
@@ -18,6 +21,7 @@ export class TenantService extends Service<TenantEntity> {
 
   @Inject() private readonly authManager: AuthManager;
   @Inject() private readonly memberService: MemberService;
+  @Inject() private readonly llmService: LLMService;
 
   override async create(input: CreateTenantDto, manager?: EntityManager): Promise<TenantEntity> {
     return this.transaction(async (manager) => {
@@ -51,24 +55,26 @@ export class TenantService extends Service<TenantEntity> {
       );
       //#endregion
 
-
       //#region create llm
-      // await this.llmService.create({
-      //   type: LLMType.EMBEDDING,
-      //   model: env.LLM_EMBEDDING_DEFAULT_SETTINGS.model,
-      //   key: env.LLM_EMBEDDING_DEFAULT_SETTINGS.key,
-      //   name: env.LLM_EMBEDDING_DEFAULT_SETTINGS.name,
-      //   tenantId: tenant.id,
-      //   config: env.LLM_EMBEDDING_DEFAULT_SETTINGS
-      // }, manager);
-      // await this.llmService.create({
-      //   type: LLMType.TEXT,
-      //   model: env.LLM_TEXT_DEFAULT_SETTINGS.model,
-      //   key: env.LLM_TEXT_DEFAULT_SETTINGS.key,
-      //   name: env.LLM_EMBEDDING_DEFAULT_SETTINGS.name,
-      //   tenantId: tenant.id,
-      //   config: env.LLM_TEXT_DEFAULT_SETTINGS
-      // }, manager);
+      await this.llmService.create({
+        type: LLMType.EMBEDDING,
+        model: env.LLM_EMBEDDING_DEFAULT_SETTINGS.model,
+        key: env.LLM_EMBEDDING_DEFAULT_SETTINGS.key,
+        name: env.LLM_EMBEDDING_DEFAULT_SETTINGS.name,
+        tenantId: tenant.id,
+        default: true,
+        config: env.LLM_EMBEDDING_DEFAULT_SETTINGS
+      }, manager);
+
+      await this.llmService.create({
+        type: LLMType.TEXT,
+        model: env.LLM_TEXT_DEFAULT_SETTINGS.model,
+        key: env.LLM_TEXT_DEFAULT_SETTINGS.key,
+        name: env.LLM_TEXT_DEFAULT_SETTINGS.name,
+        tenantId: tenant.id,
+        default: true,
+        config: env.LLM_TEXT_DEFAULT_SETTINGS
+      }, manager);
 
       //#endregion
       // member

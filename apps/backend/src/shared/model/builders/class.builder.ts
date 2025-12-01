@@ -18,7 +18,7 @@ export const buildClassDecorators = (opts: FieldClassOptions): PropertyDecorator
     isArray: opts.isArray
   };
   if (opts.debug) console.log(apiMetadata);
-  decorators.push(isRequired ? ApiProperty(apiMetadata) : ApiPropertyOptional(apiMetadata));
+  if (!opts.hidden) decorators.push(isRequired ? ApiProperty(apiMetadata) : ApiPropertyOptional(apiMetadata));
   if (opts.debug) console.log("added api property");
 
   decorators.push(Type(() => opts.class()));

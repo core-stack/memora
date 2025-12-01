@@ -13,6 +13,7 @@ import {
   CSVProcessor, DocxProcessor, JSONLProcessor, JSONProcessor, PPTProcessor, TextProcessor
 } from "./processors";
 import { PDFProcessor } from "./processors/pdf.processor";
+import { KnowledgeModule } from "@/modules/knowledge/knowledge.module";
 
 @Module({
   providers: [
@@ -31,7 +32,8 @@ import { PDFProcessor } from "./processors/pdf.processor";
     StorageModule,
     forwardRef(() => SourceModule),
     BullModule.registerQueue({ name: JobType.INGEST }),
-    BullBoardModule.forFeature({ name: JobType.INGEST, adapter: BullMQAdapter })
+    BullBoardModule.forFeature({ name: JobType.INGEST, adapter: BullMQAdapter }),
+    KnowledgeModule
   ],
   exports: [ BullModule ]
 })

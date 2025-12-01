@@ -22,6 +22,12 @@ export class AuthGuard implements CanActivate {
       context.getClass()
     ]);
 
+    const apiKey = request.headers["x-api-key"];
+    if (apiKey && typeof apiKey === "string") {
+      request.isApi = true;
+      return await this.authManager.validateApiKey(apiKey);
+    }
+
     const accessToken: string | undefined = request.cookies?.["access-token"];
     const refreshToken: string | undefined = request.cookies?.["refresh-token"];
 

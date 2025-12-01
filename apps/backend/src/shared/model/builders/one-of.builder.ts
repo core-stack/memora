@@ -31,7 +31,7 @@ export const buildOneOfDecorators = (opts: FieldOneOfOptions): PropertyDecorator
   });
 
   // Add ApiProperty
-  decorators.push(
+  if (!opts.hidden) decorators.push(
     isRequired ? ApiProperty(apiMetadata) : ApiPropertyOptional(apiMetadata)
   );
 

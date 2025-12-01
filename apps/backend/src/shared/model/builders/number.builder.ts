@@ -7,7 +7,7 @@ import { buildApiProperty } from "./api-property";
 export const buildNumberDecorators = (opts: FieldNumberOptions): PropertyDecorator[] => {
   const decorators: PropertyDecorator[] = [];
 
-  decorators.push(buildApiProperty(opts));
+  if (!opts.hidden) decorators.push(buildApiProperty(opts));
 
   decorators.push(Transform(({ value }) => Number(value)));
   if (opts.debug) console.log("added number transformer");

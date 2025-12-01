@@ -14,7 +14,8 @@ export class ChatService extends Service<ChatEntity> {
   override async create(data: CreateChatDto, manager?: EntityManager): Promise<ChatEntity> {
     const chat = new ChatEntity({
       name: data.name ?? "New Chat",
-      knowledgeId: data.knowledgeId
+      knowledgeId: data.knowledgeId,
+      tenantId: data.tenantId
     });
     return super.create(chat, manager);
   }

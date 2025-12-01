@@ -8,7 +8,7 @@ export const buildEnumDecorators = (opts: FieldEnumOptions): PropertyDecorator[]
 
   const enumValues = typeof opts.enum === "function" ? opts.enum() : opts.enum;
 
-  decorators.push(buildApiProperty(opts));
+  if (!opts.hidden) decorators.push(buildApiProperty(opts));
 
   decorators.push(IsEnum(enumValues as any));
   if (opts.debug) console.log("added enum validator", enumValues);

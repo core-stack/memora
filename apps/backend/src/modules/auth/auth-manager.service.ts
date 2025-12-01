@@ -1,4 +1,5 @@
 import { EntityManager } from "typeorm";
+import bcrypt from "bcrypt";
 
 import { isUUID } from "@/utils/uuid";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
@@ -10,6 +11,7 @@ import { AccessToken, JWTService, RefreshToken, Tokens } from "./jwt.service";
 import { Provider } from "./providers/types";
 import { Store } from "./store/types";
 import { Session } from "./types";
+import { env } from "@/env";
 
 export const PROVIDERS = Symbol("providers");
 
@@ -34,7 +36,11 @@ export class AuthManager {
     return this._providers[provider].getAuthUrl();
   }
 
-  async oauth2Callback(provider: string, code: string, manager?: EntityManager): Promise<{ token: Tokens; session: Session, user: UserEntity }> {
+  async oauth2Callback(
+    provider: string,
+    code: string,
+    manager?: EntityManager
+  ): Promise<{ token: Tokens; session: Session, user: UserEntity }> {
     const { providerAccountId, email, name, image } = await this._providers[provider].callback(code);
 
     const acc = await this.accountService.createIfNotExists({
@@ -76,6 +82,10 @@ export class AuthManager {
     };
     await this.store.set(session.id, session, { expiry: token.refreshTokenDuration });
     return { token, session };
+  }
+
+  async validateApiKey(apiKey: string): Promise<boolean> {
+    return await bcrypt.compare(apiKey, env.API_KEY);
   }
 
   async getSession(accessToken?: string): Promise<Session | undefined> {

@@ -3,8 +3,8 @@
 * Do not edit manually.
 */
 
-import type { CreateMessageDto } from "./CreateMessageDto.ts";
-import type { CreateMessageResponseDto } from "./CreateMessageResponseDto.ts";
+import type { SendMessageDto } from "./SendMessageDto.ts";
+import type { SendMessageResponseDto } from "./SendMessageResponseDto.ts";
 
 export type MessageNewMessagePathParams = {
     /**
@@ -21,9 +21,9 @@ export type MessageNewMessagePathParams = {
     chatId: string;
 };
 
-export type MessageNewMessage200 = CreateMessageResponseDto;
+export type MessageNewMessage200 = SendMessageResponseDto;
 
-export type MessageNewMessageMutationRequest = CreateMessageDto;
+export type MessageNewMessageMutationRequest = SendMessageDto;
 
 export type MessageNewMessageMutationResponse = MessageNewMessage200;
 
